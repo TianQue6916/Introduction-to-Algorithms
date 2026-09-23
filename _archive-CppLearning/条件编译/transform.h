@@ -1,7 +1,0 @@
-#ifndef TRANSFORM_H
-#define TRANSFORM_H
-
-// Ö»ÉùÃ÷º¯Êý
-void transform(int num);
-
-#endif

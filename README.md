@@ -16,7 +16,6 @@
 | `04-exams/` | Exams 1–14 原卷 + 课程进度表 |
 | `05-subtitles/` | 全部讲次的中英双语字幕（`.srt` 英文原轨 + `.zho-hans.srt` 中文轨） |
 | `06-notes/` | 个人推导笔记：动态规划（DP）判定、LCS 最优子结构、编辑距离贪心反例、Bellman-Ford/Johnson 等 |
-| `_archive-CppLearning/` | **归档**：早期 C++ 语言入门练习（变量、循环、字符串、结构体、文件操作等），与算法课程无关，仅为保留历史而留在此处 |
 
 ## 双语规范
 
@@ -25,3 +24,5 @@
 ## 学习定位
 
 对应方舟计划的**算法主线**，与 `Design-and-Analysis-of-Algorithms-6.046J`（进阶）构成两级算法训练。
+
+> 早期混入的 C/C++ 入门练习已于 2026-09-23 移至独立仓库 [`Introduction-to-Algorithms-codetry`](https://github.com/TianQue6916/Introduction-to-Algorithms-codetry)。
