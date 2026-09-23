@@ -12,7 +12,7 @@
 |---|---|
 | `01-clrs-book/` | CLRS 教材逐段双语翻译，按页分块（`chunk01`–`chunk06`，覆盖 book p005–p242） |
 | `02-lecture-notes/` | 课堂讲义双语翻译（lec15–lec19：递归算法、动态规划、伪多项式、复杂性）+ `LNotes/` 官方讲义 1–20 |
-| `03-problem-sets/` | Problem Set / 作业解答双语（prob7、prob8、ps6、ps7、q2、r15–r17、review2）+ 6.006 PS6 中文版 |
+| `03-problem-sets/` | 官方原卷与解答（`prob7sol`、`prob8sol`、`ps6sol`、`ps7sol`、`r15`–`r17`）+ 对应双语译本（`*.bilingual.md`）+ 6.006 PS6 中文版 |
 | `04-exams/` | Exams 1–14 原卷 + 课程进度表 |
 | `05-subtitles/` | 全部讲次的中英双语字幕（`.srt` 英文原轨 + `.zho-hans.srt` 中文轨） |
 | `06-notes/` | 个人推导笔记：动态规划（DP）判定、LCS 最优子结构、编辑距离贪心反例、Bellman-Ford/Johnson 等 |
