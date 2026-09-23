@@ -1,0 +1,5648 @@
+﻿1
+00:00:11,450 --> 00:00:18,820
+All right, well, welcome to problem session 5 of 6 .006.
+It's a pleasure to see all your smiling faces here today.
+
+2
+00:00:19,920 --> 00:00:27,340
+This week, we're going to cover some problems in graph theory related to
+depth first search and breadth first search, which were roughly the topics
+
+3
+00:00:27,400 --> 00:00:30,260
+that I guess we've covered in the last couple of
+lectures and what's going to be on your homework.
+
+4
+00:00:31,100 --> 00:00:34,900
+And I believe this is basically the
+homework from last year with a few
+
+5
+00:00:35,540 --> 00:00:38,200
+revisions based
+on some typos we cut.
+
+6
+00:00:38,780 --> 00:00:41,560
+Oh, and I caught a spelling mistake that
+I'll bother our instructor about later.
+
+7
+00:00:42,220 --> 00:00:49,680
+OK, so without further ado, let's get started. I guess we'll just do them
+in order for lack of creativity here. The very first problem has to do with
+
+8
+00:00:49,680 --> 00:00:51,080
+some measurements on a graph,
+
+9
+00:00:51,580 --> 00:00:56,280
+which is actually a really interesting one to
+me. So it turns out that in a lot of research in,
+
+10
+00:00:56,820 --> 00:01:01,870
+for some reason in computer science, there's graph theory research
+and then there's networks research. And these are two different
+
+11
+00:01:02,740 --> 00:01:06,220
+communities for weird historical
+reasons that I don't totally understand.
+
+12
+00:01:06,960 --> 00:01:14,240
+But people in the network science literature often measure things like the
+radius of a graph and some other kind of measures that are trying to tell
+
+13
+00:01:14,240 --> 00:01:22,360
+you something about like is a graph a long spread out thing like a line
+graph or something super compact like a star and so on. And so this problem
+
+14
+00:01:22,480 --> 00:01:27,000
+is kind of digging into the algorithmic aspects of how
+we might compute one of the measurements that I believe
+
+15
+00:01:28,000 --> 00:01:30,640
+is
+fairly common in that community.
+
+16
+00:01:32,620 --> 00:01:36,910
+So let's kind of go through these problems.
+As usual, in 6 .006, we like to take
+
+17
+00:01:37,660 --> 00:01:43,420
+actually relatively straightforward computational problems and then dress
+them up with a lot of language to make it annoying for you guys to parse.
+
+18
+00:01:44,040 --> 00:01:46,380
+And indeed, this problem is no exception to
+that.
+
+19
+00:01:47,180 --> 00:01:50,840
+So in this problem,
+we're given an undirected graph.
+
+20
+00:01:56,180 --> 00:01:57,700
+And as usual, we will
+call him g.
+
+21
+00:02:00,680 --> 00:02:07,070
+And we define a particular number that we're trying
+to measure in this problem. So in particular,
+
+22
+00:02:08,160 --> 00:02:10,180
+if we're given a vertex v,
+
+23
+00:02:11,840 --> 00:02:20,480
+then we can define something called the eccentricity of v, which
+is the distance to the farthest away thing. So in particular,
+
+24
+00:02:20,980 --> 00:02:22,520
+we can define
+
+25
+00:02:28,000 --> 00:02:30,580
+given by the following,
+
+26
+00:02:31,480 --> 00:02:34,480
+which is the max
+over all the possible.
+
+27
+00:02:35,490 --> 00:02:36,490
+I'll try to
+make sure my notation.
+
+28
+00:02:38,740 --> 00:02:40,340
+Oops, I've
+already. Oh, that's OK.
+
+29
+00:02:42,860 --> 00:02:49,120
+Over all the
+other vertices of the distance from v to w.
+
+30
+00:02:49,990 --> 00:02:59,040
+So I'm standing at a point on a graph. And now I make a loud noise. And the
+last person to hear me, the distance to him would be the eccentricity of
+
+31
+00:02:59,080 --> 00:02:59,760
+that vertex.
+
+32
+00:03:00,880 --> 00:03:10,520
+And so this is some kind of notion of radius or diameter, but sort of
+planted at a point. And then if we want to learn a property not of a vertex,
+
+33
+00:03:10,640 --> 00:03:11,460
+but of the entire graph,
+
+34
+00:03:12,280 --> 00:03:14,540
+one thing we can
+do is define the radius.
+
+35
+00:03:17,620 --> 00:03:27,020
+And that is given by r of g is the min over
+all of the different vertices u
+
+36
+00:03:27,840 --> 00:03:30,420
+of the eccentricity of u.
+
+37
+00:03:31,680 --> 00:03:37,540
+OK, so I think this is one of these definitions that's really annoying to
+parse and think about. So we should draw a little bit of a schematic and
+
+38
+00:03:37,540 --> 00:03:45,100
+see what's going on here, because especially as a geometry professor, this
+one's kind of nice because it translates directly to what you might do in
+
+39
+00:03:45,100 --> 00:03:45,440
+metric geometry.
+
+40
+00:03:46,040 --> 00:03:48,440
+So let's say that
+I have a circle here.
+
+41
+00:03:49,940 --> 00:03:52,600
+And I want the world's most complicated way
+of defining its radius.
+
+42
+00:03:53,540 --> 00:03:55,540
+OK, so for any given point,
+
+43
+00:03:57,040 --> 00:04:02,820
+there's a point in a circle. That's a circle in case you're wondering. You
+know those internet contests where they have people that just walk up to
+
+44
+00:04:02,820 --> 00:04:06,160
+the board and draw perfect circles and then
+leave? I unfortunately
+
+45
+00:04:07,100 --> 00:04:08,400
+am not an expert at this matter.
+
+46
+00:04:09,580 --> 00:04:17,000
+But anyway, so if we think of a point, like a circle, as some analog of
+our graph, and then I draw a point, which might be the analog of a vertex,
+
+47
+00:04:18,000 --> 00:04:22,400
+then what is eccentricity? Well, it's
+the distance to the farthest away point.
+
+48
+00:04:27,320 --> 00:04:31,520
+The length of this line, roughly, because
+that's the distance to the farthest away thing.
+
+49
+00:04:32,540 --> 00:04:34,900
+So for every different
+point that I draw,
+
+50
+00:04:36,020 --> 00:04:38,480
+each point has
+its own farthest away point in the circle.
+
+51
+00:04:39,780 --> 00:04:46,160
+So there's some positive number that's assigned to every single point
+in this domain. And if I take the minimum of that positive number,
+
+52
+00:04:47,020 --> 00:04:47,820
+where do you think I end up?
+
+53
+00:04:49,020 --> 00:04:55,620
+The center of the circle. JASON KURIYAMA - That's right, Jason. I end up
+in the center of the circle, because if I think about it, the distance to
+
+54
+00:04:55,620 --> 00:04:57,250
+the farthest away
+point in this domain,
+
+55
+00:04:58,000 --> 00:05:01,180
+one thing you can convince yourself is that
+that's sort of as small as possible.
+
+56
+00:05:02,320 --> 00:05:05,100
+So this is what we might
+call a minimax problem in optimization,
+
+57
+00:05:05,800 --> 00:05:07,900
+because we are minimizing
+the maximum distance.
+
+58
+00:05:09,620 --> 00:05:15,360
+This also shows up in game theory, all kinds of different places that solve
+this stuff. But thankfully, in this particular problem, we're not going
+
+59
+00:05:15,360 --> 00:05:15,820
+to need all that.
+
+60
+00:05:17,460 --> 00:05:20,780
+OK, so this homework
+problem has two parts.
+
+61
+00:05:22,040 --> 00:05:24,810
+The
+first is to give an algorithm for computing
+
+62
+00:05:25,440 --> 00:05:31,900
+the radius of a graph. And then the second one is to give an
+algorithm for approximating the radius of the graph really quickly,
+
+63
+00:05:32,640 --> 00:05:34,220
+or more quickly than the
+first part.
+
+64
+00:05:35,070 --> 00:05:37,620
+I actually don't know
+if there's a lower bound there, but
+
+65
+00:05:38,680 --> 00:05:39,500
+come back to that later.
+
+66
+00:05:40,280 --> 00:05:41,310
+OK, so in part A,
+
+67
+00:05:42,520 --> 00:05:52,200
+we're given g. And moreover, we're given one additional piece of information,
+which we actually do need in this problem. I think it's one of those
+
+68
+00:05:52,200 --> 00:05:54,740
+words that kind of slips
+past us when we read graph theory problems.
+
+69
+00:05:55,440 --> 00:05:57,100
+But
+it's important to pay attention, of course.
+
+70
+00:05:57,860 --> 00:05:59,200
+And that is,
+
+71
+00:06:00,500 --> 00:06:05,260
+we're given g, and it's connected. I suppose really
+it should be given connected g, but that's OK.
+
+72
+00:06:06,290 --> 00:06:09,210
+Now what we want is to compute
+
+73
+00:06:11,440 --> 00:06:12,580
+the radius of g
+
+74
+00:06:13,820 --> 00:06:16,500
+in time that
+looks like the product
+
+75
+00:06:17,000 --> 00:06:19,560
+of
+the vertices, the number of vertices, oops,
+
+76
+00:06:20,500 --> 00:06:21,420
+times the number of edges,
+
+77
+00:06:22,760 --> 00:06:24,420
+or the number of edges times the number of
+vertices.
+
+78
+00:06:26,040 --> 00:06:29,320
+Your instructor struggles to speak and write at the
+same time, but it's a skill that I'm working on.
+
+79
+00:06:30,680 --> 00:06:32,840
+And frankly, handwriting
+is much easier with this little chalk.
+
+80
+00:06:34,140 --> 00:06:34,140
+OK,
+
+81
+00:06:34,800 --> 00:06:40,120
+so essentially, I used to have a math professor
+in college that used this phrase all the time.
+
+82
+00:06:40,650 --> 00:06:42,450
+It's important not to
+think here.
+
+83
+00:06:43,840 --> 00:06:47,280
+The problem
+asks you to compute the radius of a graph.
+
+84
+00:06:48,420 --> 00:06:51,060
+And in some sense, there's
+an algorithm that just writes itself
+
+85
+00:06:51,720 --> 00:06:57,140
+for computing the radius. Right? Because the radius
+is the min over all the vertices of the eccentricity.
+
+86
+00:06:57,700 --> 00:07:01,220
+The eccentricity is the max distance. So
+what would be the simplest thing to do here?
+
+87
+00:07:02,160 --> 00:07:04,940
+Well, in some sense,
+it would be to loop over all the vertices,
+
+88
+00:07:05,900 --> 00:07:09,180
+compute their distance
+to all the other vertices, and take
+
+89
+00:07:09,920 --> 00:07:13,800
+the max for each one of those, and then the
+min over all of the guys in the outer loop.
+
+90
+00:07:14,860 --> 00:07:20,480
+Since I just said a sentence that I'm realizing doesn't parse
+particularly well, let's sort of write down what I mean,
+
+91
+00:07:21,000 --> 00:07:23,340
+which is to say,
+we're going to think of the being an outer.
+
+92
+00:07:24,360 --> 00:07:28,400
+That's why we don't use this chalk. An
+outer for loop, which is computing this min.
+
+93
+00:07:29,600 --> 00:07:29,700
+Right?
+
+94
+00:07:33,260 --> 00:07:35,740
+Well, what are we going
+to do? We can compute
+
+95
+00:07:38,980 --> 00:07:41,540
+the shortest path distance
+
+96
+00:07:45,620 --> 00:07:53,360
+to all of the other w
+in my graph.
+
+97
+00:07:54,400 --> 00:07:54,580
+You know,
+
+98
+00:07:55,340 --> 00:07:57,620
+take the max
+
+99
+00:08:00,600 --> 00:08:03,740
+of w of the distance from
+v to all the other w's.
+
+100
+00:08:04,840 --> 00:08:06,940
+Obviously, we
+can kind of do these two at the same time.
+
+101
+00:08:08,200 --> 00:08:11,480
+And then if this number
+is bigger than my current max, keep it.
+
+102
+00:08:12,160 --> 00:08:13,100
+Oh, yikes.
+
+103
+00:08:13,640 --> 00:08:17,820
+If it's smaller than
+the current estimate I have of the radius,
+
+104
+00:08:18,340 --> 00:08:24,480
+then I keep it. And if it's not, then I throw it away.
+Right? So maybe I initialize my radius at infinity.
+
+105
+00:08:25,260 --> 00:08:28,840
+And now, let's call this number,
+I don't know, little r.
+
+106
+00:08:29,560 --> 00:08:32,919
+If little r is less than big R,
+
+107
+00:08:33,559 --> 00:08:35,260
+then just keep it around.
+
+108
+00:08:36,140 --> 00:08:36,320
+Right?
+
+109
+00:08:36,860 --> 00:08:43,080
+And so if we think about it, I don't think it's terribly hard to prove
+that this algorithm is correct, because it's sort of just taking our
+
+110
+00:08:43,080 --> 00:08:48,020
+definition of what the radius of a graph is and
+translating it into a brain -dead algorithm.
+
+111
+00:08:49,540 --> 00:08:56,100
+So I think really the challenge here is proving
+the runtime in this particular algorithm.
+
+112
+00:08:57,480 --> 00:09:01,560
+So what does our runtime
+look like? So we have a loop over vertices.
+
+113
+00:09:03,620 --> 00:09:06,500
+Right?
+So I kind of incur a factor of mod v here.
+
+114
+00:09:07,780 --> 00:09:16,060
+And then, well, our graph is unweighted. So one strategy for
+computing the shortest path distance would be breadth -first search.
+
+115
+00:09:16,810 --> 00:09:18,480
+I think that's what's
+in my notes. Yep.
+
+116
+00:09:19,340 --> 00:09:26,950
+And in general, breadth -first search, if you
+recall from lecture, takes mod v plus mod e time.
+
+117
+00:09:28,440 --> 00:09:32,440
+So the question is, OK, so if I multiply
+these things together, what do I get? I
+
+118
+00:09:33,180 --> 00:09:33,280
+get
+
+119
+00:09:33,960 --> 00:09:36,040
+O of v times
+
+120
+00:09:36,640 --> 00:09:38,680
+v plus e,
+
+121
+00:09:40,700 --> 00:09:42,320
+like that, time.
+
+122
+00:09:43,580 --> 00:09:46,400
+But like, uh -oh, that's not the time that
+my homework problem wanted.
+
+123
+00:09:47,380 --> 00:09:52,260
+Right? Because the homework problem asked
+you to solve this in just mod v times e time.
+
+124
+00:09:53,120 --> 00:09:54,940
+And somehow we've
+incurred an extra factor.
+
+125
+00:09:56,480 --> 00:10:03,580
+And now we have to figure out why this is actually OK. Or we have to fix
+our algorithm. But in this case, it turns out that this runtime is just
+
+126
+00:10:03,580 --> 00:10:04,040
+inaccurate.
+
+127
+00:10:05,120 --> 00:10:05,120
+OK?
+
+128
+00:10:06,780 --> 00:10:09,000
+What's our intuition here? Well,
+
+129
+00:10:10,100 --> 00:10:12,680
+I kind of underlined it
+for you here. Our graph is connected.
+
+130
+00:10:13,980 --> 00:10:17,900
+In particular, there's going
+to be a nice property of connected graphs,
+
+131
+00:10:18,460 --> 00:10:21,520
+which is that the number of edges
+dwarfs the number of vertices here.
+
+132
+00:10:22,120 --> 00:10:23,860
+So really, if we have v plus e,
+
+133
+00:10:24,620 --> 00:10:31,000
+in some sense, this is going to look like a constant factor times e
+plus another e here. So this whole thing is going to be v times e time.
+
+134
+00:10:31,820 --> 00:10:35,340
+Yeah, so let's make
+that argument a tiny bit more formal here.
+
+135
+00:10:36,380 --> 00:10:36,800
+So
+
+136
+00:10:37,440 --> 00:10:41,160
+in particular, we
+know that g is connected.
+
+137
+00:10:43,660 --> 00:10:47,180
+Right. And every vertex,
+
+138
+00:10:48,560 --> 00:10:50,540
+so in particular,
+what can happen here is,
+
+139
+00:10:51,480 --> 00:10:53,250
+OK, unless
+my graph consists of one vertex,
+
+140
+00:10:53,760 --> 00:10:56,180
+which is
+a case you could dispose of pretty quickly,
+
+141
+00:10:57,260 --> 00:11:03,280
+what I can't have is a graph that looks like this, like one vertex and then
+an edge floating around there. Everything has to be connected together.
+
+142
+00:11:07,400 --> 00:11:07,440
+OK.
+
+143
+00:11:08,120 --> 00:11:08,340
+So
+
+144
+00:11:08,900 --> 00:11:10,480
+in particular, what this means
+
+145
+00:11:11,080 --> 00:11:12,280
+is that
+
+146
+00:11:12,940 --> 00:11:14,980
+every vertex
+
+147
+00:11:16,300 --> 00:11:20,480
+is adjacent
+to at least one edge.
+
+148
+00:11:22,400 --> 00:11:29,540
+Again, except, I guess, technically the one vertex case. But I think we
+can convince ourselves that for any graph of constant size, we're not
+
+149
+00:11:29,540 --> 00:11:32,510
+terribly worried about it. Right? It's just
+the asymptotics that matter in this problem.
+
+150
+00:11:33,080 --> 00:11:36,340
+OK.
+So if every vertex is adjacent to one edge,
+
+151
+00:11:36,980 --> 00:11:40,990
+well, and remember that every edge, kind of by
+definition of an edge is adjacent to two vertices,
+
+152
+00:11:42,060 --> 00:11:44,720
+then what we
+can conclude is that the number of vertices
+
+153
+00:11:45,280 --> 00:11:49,680
+is less than or equal to the number of edges
+divided by 2. This is a conservative estimate.
+
+154
+00:11:50,960 --> 00:11:52,090
+And so in particular,
+
+155
+00:11:52,820 --> 00:11:54,120
+what does that mean? It means
+
+156
+00:11:54,960 --> 00:11:58,560
+that v is big O of e.
+
+157
+00:11:59,420 --> 00:12:02,540
+This is a case where we have to be quite
+careful about big O being an upper bound.
+
+158
+00:12:03,660 --> 00:12:07,040
+Right? In this case,
+typically, v is much less than e.
+
+159
+00:12:07,660 --> 00:12:10,860
+Well, depends how many edges, like
+if you have a really dense graph or not.
+
+160
+00:12:12,580 --> 00:12:14,660
+But in
+this case, what does that mean? That means
+
+161
+00:12:16,440 --> 00:12:21,780
+that mod
+v plus mod e is really just big O of mod e.
+
+162
+00:12:22,600 --> 00:12:25,670
+Because
+this is big O of mod e plus big O of mod e.
+
+163
+00:12:26,180 --> 00:12:27,420
+And that means
+
+164
+00:12:28,100 --> 00:12:31,810
+that our
+problem really runs in v
+
+165
+00:12:32,840 --> 00:12:37,360
+times e time, which
+is what we wanted in our problem.
+
+166
+00:12:38,940 --> 00:12:42,040
+Are there any
+questions from our audience on part a here?
+
+167
+00:12:44,840 --> 00:12:45,840
+Cool. Yes? I don't quite
+
+168
+00:12:46,460 --> 00:12:55,380
+understand why where you went from the first statement to the second statement
+there. At most, one edge implies v is less than or equal to e over 2.
+
+169
+00:12:55,780 --> 00:13:02,350
+Oh, yeah. So I guess there's sort of two things that
+matter here. Every vertex is adjacent to one edge at most.
+
+170
+00:13:03,100 --> 00:13:03,900
+And every edge,
+
+171
+00:13:06,040 --> 00:13:06,590
+yikes.
+
+172
+00:13:08,960 --> 00:13:12,770
+Every edge is adjacent to
+
+173
+00:13:14,340 --> 00:13:15,080
+two vertices.
+
+174
+00:13:16,680 --> 00:13:21,640
+I guess actually, it's the second one that matters. So
+you can never have a vertex just floating by itself.
+
+175
+00:13:22,180 --> 00:13:30,760
+So one way that I can count my number of vertices by looking at the number
+of edges and saying that, well, every edge can touch exactly two vertices.
+
+176
+00:13:30,880 --> 00:13:34,200
+Every vertex has
+to touch exactly, well, at least one edge.
+
+177
+00:13:34,840 --> 00:13:38,320
+So if you put those together, you can convince
+yourself that this bound has to be true.
+
+178
+00:13:39,000 --> 00:13:43,700
+If you want to be conservative about it, you can just get rid
+of the divided by 2 here, I guess. It doesn't really matter.
+
+179
+00:13:45,760 --> 00:13:46,900
+Any other questions from
+our audience?
+
+180
+00:13:47,400 --> 00:13:47,560
+Cool.
+
+181
+00:13:48,580 --> 00:13:50,960
+All
+right. So now let's take a look at part b.
+
+182
+00:13:52,420 --> 00:14:02,000
+So in part b here, they ask us to basically do some version of the same
+thing. They want us to now approximate the radius, but we're given a smaller
+
+183
+00:14:02,000 --> 00:14:02,940
+budget of time.
+
+184
+00:14:03,900 --> 00:14:05,210
+So now what we want
+
+185
+00:14:06,680 --> 00:14:08,550
+in number b here is
+
+186
+00:14:09,070 --> 00:14:13,200
+to compute an r star
+
+187
+00:14:14,920 --> 00:14:16,720
+such that I
+
+188
+00:14:17,880 --> 00:14:26,280
+got yelled at in my textbook that St apparently should always be subject
+to. I got an angry review of the textbook I wrote because of that, which was
+
+189
+00:14:26,280 --> 00:14:28,720
+puzzling to
+me. But amazon .com is
+
+190
+00:14:29,360 --> 00:14:37,960
+not a great source of useful data. But in any event, we
+want r star, which is sandwiched between the radius of g
+
+191
+00:14:40,260 --> 00:14:42,640
+and 2 times the radius of g
+
+192
+00:14:43,460 --> 00:14:44,260
+like that.
+
+193
+00:14:46,180 --> 00:14:47,900
+Now, notice, so in
+other words, we want to,
+
+194
+00:14:48,520 --> 00:14:50,320
+the first
+thing you notice is we want to upper bound
+
+195
+00:14:50,980 --> 00:14:51,800
+the radius of our graph.
+
+196
+00:14:53,220 --> 00:15:00,880
+And already, this should suggest to us how we might solve this problem.
+Because if we take a look back at our definition of radius over here, notice
+
+197
+00:15:00,880 --> 00:15:02,140
+that the radius is a min.
+
+198
+00:15:03,160 --> 00:15:07,580
+So what's going to happen
+if I returned epsilon of some other vertex?
+
+199
+00:15:08,420 --> 00:15:13,380
+Well, it's lower bounded by the radius because the
+radius is the smallest possible epsilon over any vertex.
+
+200
+00:15:14,460 --> 00:15:14,900
+That make sense?
+
+201
+00:15:16,120 --> 00:15:22,260
+Now, when I was doing this problem, because I'm
+the dumb instructor of the three, I said, well, OK.
+
+202
+00:15:24,570 --> 00:15:29,440
+But maybe I need to be somehow
+judicious about what vertex I choose.
+
+203
+00:15:30,120 --> 00:15:37,800
+Like, well, in some sense, what this suggests is that maybe I choose some
+other vertex and compute its radius and return that as our approximation.
+
+204
+00:15:39,040 --> 00:15:48,180
+But of course, the problem wants me to sandwich it between two values here.
+So in addition to upper bounding r, I want to be less than 2 times r. In
+
+205
+00:15:48,180 --> 00:15:50,460
+other words, my
+approximation is within a constant factor.
+
+206
+00:15:51,490 --> 00:15:56,120
+I tried some weird stuff, like farthest point sampling
+and so on. Then I realized that you actually don't really
+
+207
+00:15:57,300 --> 00:16:02,020
+need to do any of that. One thing
+you can do is literally choose any vertex,
+
+208
+00:16:03,100 --> 00:16:07,080
+return its eccentricity,
+and that's actually good enough.
+
+209
+00:16:08,460 --> 00:16:09,340
+So here's our algorithm.
+
+210
+00:16:11,580 --> 00:16:13,680
+Right, let me go
+back to my notes here.
+
+211
+00:16:15,160 --> 00:16:20,020
+I don't know why I'm following my notes. I actually do this off the top of
+my head. But they make me feel better if I'm looking at them at the same
+
+212
+00:16:20,020 --> 00:16:20,420
+time.
+
+213
+00:16:21,380 --> 00:16:22,620
+So in particular,
+
+214
+00:16:23,680 --> 00:16:24,940
+what I'm going to do is
+
+215
+00:16:26,260 --> 00:16:26,700
+choose
+
+216
+00:16:30,060 --> 00:16:30,980
+a u and v.
+
+217
+00:16:31,640 --> 00:16:32,460
+Let me be clear here.
+
+218
+00:16:32,980 --> 00:16:33,180
+Any
+
+219
+00:16:34,760 --> 00:16:39,880
+u and v. So if I'm using some data, data structure to
+store all my vertices, I just take the first one, whatever.
+
+220
+00:16:40,820 --> 00:16:41,460
+And two,
+
+221
+00:16:42,640 --> 00:16:45,280
+I'm going to return
+
+222
+00:16:49,640 --> 00:16:52,780
+r star is equal to epsilon of u.
+
+223
+00:16:53,340 --> 00:16:56,380
+Now, of course, this isn't really an algorithm. If
+you do this on your homework, you'll lose points.
+
+224
+00:16:56,940 --> 00:16:59,100
+And the reason is that
+I haven't told you how to compute
+
+225
+00:16:59,840 --> 00:17:07,000
+this value here. So if you were to write out your answer for this problem,
+of course, you should tell us that, like, really, to compute epsilon, what
+
+226
+00:17:07,000 --> 00:17:11,250
+do I do? I use breadth -first search to compute
+the shortest path from u to all the other vertices.
+
+227
+00:17:11,859 --> 00:17:13,910
+And then
+I guess I take the max value here.
+
+228
+00:17:14,579 --> 00:17:17,869
+OK, so I think you guys can fill
+in the details of the algorithm.
+
+229
+00:17:18,700 --> 00:17:22,560
+The bigger challenge is going to be to
+prove that this is actually a good bound.
+
+230
+00:17:24,160 --> 00:17:27,680
+And so
+in other words, what we need to prove here,
+
+231
+00:17:28,600 --> 00:17:34,580
+I don't know, like there's a claim, there's a proposition, there's a
+theorem. So we're somewhere on that axis. I'm going to call this one a claim.
+
+232
+00:17:35,260 --> 00:17:35,560
+Downgrade it.
+
+233
+00:17:37,780 --> 00:17:41,900
+And that is that
+the radius of my graph
+
+234
+00:17:43,000 --> 00:17:45,240
+is less than or equal to r star,
+
+235
+00:17:46,920 --> 00:17:53,460
+which is less than or equal to 2 times the
+radius of my graph. OK,
+
+236
+00:17:54,180 --> 00:17:57,220
+so let's prove this thing.
+
+237
+00:17:58,140 --> 00:18:00,440
+Managing to use all
+of my boards on one problem here.
+
+238
+00:18:02,300 --> 00:18:08,640
+OK, so in particular, to prove this claim, I need to prove
+two inequalities. This is like two homework problems in one.
+
+239
+00:18:09,860 --> 00:18:12,680
+So let's number those
+off. There's 1. There's 2.
+
+240
+00:18:14,480 --> 00:18:15,590
+OK, so
+
+241
+00:18:18,040 --> 00:18:20,180
+let's do inequality 1.
+I think we can squeeze
+
+242
+00:18:21,340 --> 00:18:23,060
+him into a relatively
+small space.
+
+243
+00:18:23,920 --> 00:18:26,940
+So remember, what
+is the radius of my graph?
+
+244
+00:18:28,060 --> 00:18:29,250
+Well, just by definition,
+
+245
+00:18:30,180 --> 00:18:31,740
+we know that it's the min.
+
+246
+00:18:33,360 --> 00:18:37,140
+Over all possible u of
+epsilon of u.
+
+247
+00:18:39,440 --> 00:18:45,260
+So in particular, what's the nice property about the minimum
+of something is that it's less than everything else or equal.
+
+248
+00:18:46,300 --> 00:18:46,640
+So this,
+
+249
+00:18:48,380 --> 00:18:53,440
+maybe let's call this u0 just to distinguish between
+that and the notation I have on the left -hand side.
+
+250
+00:18:54,080 --> 00:18:57,710
+This is less than or equal to epsilon of u
+because,
+
+251
+00:18:59,520 --> 00:19:00,720
+I don't know, because min.
+
+252
+00:19:01,280 --> 00:19:01,380
+Yeah,
+
+253
+00:19:01,960 --> 00:19:04,640
+so that actually already,
+
+254
+00:19:05,380 --> 00:19:08,200
+and of course, this
+is exactly what we chose to be our r star.
+
+255
+00:19:08,980 --> 00:19:13,510
+So our first part of our proof is
+done here. Yeah, so this is the easy part.
+
+256
+00:19:14,820 --> 00:19:15,260
+And sometimes,
+
+257
+00:19:15,820 --> 00:19:19,560
+this is sort of what inspired our algorithm. So we
+expect this bound to be kind of straightforward.
+
+258
+00:19:21,420 --> 00:19:21,940
+OK, but
+
+259
+00:19:22,680 --> 00:19:24,360
+the other half of the
+problem is a little more tricky.
+
+260
+00:19:25,840 --> 00:19:31,240
+And actually, there's a solution in the notes. And then I decided
+just to make it a little more inaccurate to write up my own.
+
+261
+00:19:33,680 --> 00:19:40,240
+But actually, I have an ulterior motive, which is I noticed in this
+class, we don't tend to use the tiny piece of notation that I like.
+
+262
+00:19:41,080 --> 00:19:44,360
+So for my convenience in future problem
+sessions, I thought I'd introduce it now.
+
+263
+00:19:46,160 --> 00:19:48,400
+So we're solving
+a minimization problem.
+
+264
+00:19:49,300 --> 00:19:55,560
+The nice thing is that in this class, everything we do is finite. If you
+take my graduate course, that's not going to be the case. In fact, actually,
+
+265
+00:19:55,560 --> 00:19:59,360
+in lecture two, we're going to do
+variational calculus. But in this course,
+
+266
+00:20:00,270 --> 00:20:03,120
+what does that
+mean? That means if I minimize a function,
+
+267
+00:20:03,840 --> 00:20:06,980
+there's actually a vertex in my graph that
+achieves that minimum.
+
+268
+00:20:08,980 --> 00:20:13,170
+This is different than, for example, if I then
+I'll shut up. But if I wanted to minimize,
+
+269
+00:20:14,190 --> 00:20:19,240
+here's f of x equals 1 over x. And
+I ask you for the minimum value.
+
+270
+00:20:19,980 --> 00:20:23,080
+Well,
+it's overall x greater than or equal to 0.
+
+271
+00:20:23,820 --> 00:20:30,560
+Well, the minimum value is 0 if I take x off to infinity. But it
+never quite crosses 0. So you're kind of in this weird universe.
+
+272
+00:20:31,520 --> 00:20:35,380
+If you remember Jason's lecture, he talked about
+infs and supes as opposed to mins and maxes.
+
+273
+00:20:35,880 --> 00:20:36,300
+But this
+
+274
+00:20:37,180 --> 00:20:41,620
+can't happen in our problem. Because when we compute
+a min, there's actually a vertex that achieves it.
+
+275
+00:20:42,580 --> 00:20:44,320
+And that vertex we call argmin.
+
+276
+00:20:45,840 --> 00:20:48,200
+And so
+this arg here stands for argument.
+
+277
+00:20:49,140 --> 00:20:57,380
+So one thing that I can do is say,
+OK, so remember that my radius is the min
+
+278
+00:20:58,780 --> 00:21:00,780
+over all u
+
+279
+00:21:01,700 --> 00:21:03,240
+of epsilon of u.
+
+280
+00:21:03,800 --> 00:21:06,640
+Then I'm going
+to define a vertex u0
+
+281
+00:21:08,220 --> 00:21:09,400
+to be the argmin
+
+282
+00:21:11,340 --> 00:21:11,960
+over u
+
+283
+00:21:13,220 --> 00:21:21,560
+of epsilon of u. And this is just fancy notation for saying, give me
+the actual vertex that makes this value as small as possible. Yeah?
+
+284
+00:21:22,320 --> 00:21:29,400
+The nice thing about this problem is that we're not worried yet about how
+we make runtime. So I can construct this kind of thing and not worry about
+
+285
+00:21:29,400 --> 00:21:30,520
+how we actually found it.
+
+286
+00:21:31,800 --> 00:21:31,820
+OK.
+
+287
+00:21:32,680 --> 00:21:41,960
+So let's say that we did that. So this is, find me the vertex that actually
+gives me the radius. So in other words, I find that vertex. And then I
+
+288
+00:21:41,960 --> 00:21:48,060
+find his or her farthest away vertex and measure the
+distance. And that distance is the radius of my graph.
+
+289
+00:21:48,920 --> 00:21:49,040
+OK?
+
+290
+00:21:50,370 --> 00:21:52,140
+So let's actually do that. So in
+particular,
+
+291
+00:21:52,900 --> 00:21:55,080
+then
+I can define a second vertex v0.
+
+292
+00:21:56,620 --> 00:22:01,730
+Well, how does the radius algorithm work? I find the
+central guy. And then I find the one that's farthest away.
+
+293
+00:22:02,580 --> 00:22:03,660
+So we're going to make him
+
+294
+00:22:04,620 --> 00:22:05,740
+the argmax
+
+295
+00:22:06,780 --> 00:22:08,540
+over all v in my graph
+
+296
+00:22:09,440 --> 00:22:10,070
+of the distance
+
+297
+00:22:11,020 --> 00:22:12,960
+starting at u to any v.
+
+298
+00:22:14,680 --> 00:22:18,020
+So
+if I think about my circle, it's a circle.
+
+299
+00:22:18,900 --> 00:22:22,020
+Then u0
+is like that center of my circle.
+
+300
+00:22:22,780 --> 00:22:24,320
+And then v0
+
+301
+00:22:25,600 --> 00:22:26,420
+is like that far away point.
+
+302
+00:22:27,640 --> 00:22:28,100
+This is a schematic.
+
+303
+00:22:28,660 --> 00:22:32,100
+My circle is really a graph in this problem.
+But I think the analogy actually works.
+
+304
+00:22:33,200 --> 00:22:33,200
+OK.
+
+305
+00:22:34,020 --> 00:22:41,060
+But in reality, my algorithm was brain dead. I didn't actually compute
+u0. I computed, I just randomly drew, sorry, I shouldn't use that word. I
+
+306
+00:22:41,060 --> 00:22:49,660
+arbitrarily drew a vertex u and then computed the farthest away distance
+from that guy. And of course, what we have to check is that that thing is
+
+307
+00:22:49,740 --> 00:22:51,240
+within a factor
+of 2 of what I wanted.
+
+308
+00:22:52,140 --> 00:22:56,940
+So OK. If I have u, then I'm additionally
+going to define one more thing called v.
+
+309
+00:23:05,400 --> 00:23:05,640
+Oh,
+
+310
+00:23:06,800 --> 00:23:10,460
+boy.
+
+311
+00:23:11,640 --> 00:23:13,600
+So I'm noticing I'm saying
+one thing and I'm writing another.
+
+312
+00:23:14,480 --> 00:23:16,360
+u0 is the center of my graph.
+
+313
+00:23:17,060 --> 00:23:24,740
+I think I said it. I just forgot to write it. And then this v is the
+farthest away guy from him. So basically, the subscript 0 here means is the
+
+314
+00:23:24,760 --> 00:23:29,000
+platonic ideal of what I wanted in my problem.
+And no subscript is going to mean the other one.
+
+315
+00:23:29,900 --> 00:23:30,420
+So now,
+
+316
+00:23:31,860 --> 00:23:36,060
+I compute the farthest away thing from the u that I
+actually chose in my algorithm. That's some v bar.
+
+317
+00:23:37,140 --> 00:23:45,880
+So again, remember, my algorithm just says, OK, I'm going to choose some
+other point v and then return v's distance to some farthest away point.
+
+318
+00:23:47,720 --> 00:23:49,560
+Oh, sorry.
+Choose another. Oh, boy.
+
+319
+00:23:50,120 --> 00:23:50,920
+Choose a point u
+
+320
+00:23:51,960 --> 00:23:54,320
+and return his distance
+to some far away point v.
+
+321
+00:23:54,860 --> 00:23:56,280
+I think I've
+managed to lose everybody.
+
+322
+00:23:56,820 --> 00:23:59,160
+I'm nodding together using these
+here.
+
+323
+00:24:00,040 --> 00:24:01,740
+So why did I introduce
+all of this notation?
+
+324
+00:24:02,400 --> 00:24:08,620
+Because this is what's going on in this problem. To actually compute the
+radius, I want to find the most central point u0 and its distance to its
+
+325
+00:24:08,920 --> 00:24:09,880
+farthest away thing v0.
+
+326
+00:24:10,380 --> 00:24:10,900
+In reality,
+
+327
+00:24:11,600 --> 00:24:15,240
+I arbitrarily chose a
+point u. And I returned u's distance
+
+328
+00:24:15,740 --> 00:24:19,480
+to some point v. And I want to show that those
+two things are within a factor of 2 of each other.
+
+329
+00:24:20,100 --> 00:24:22,880
+OK. That summary makes sense, even
+if I talked in circles for a while.
+
+330
+00:24:23,540 --> 00:24:24,900
+OK. So let's actually do that.
+
+331
+00:24:25,960 --> 00:24:36,260
+So remember that the thing that I'm going to actually return is r star. And
+that is equal to distance from u to v now, because I just made all these
+
+332
+00:24:36,260 --> 00:24:36,610
+definitions.
+
+333
+00:24:37,940 --> 00:24:39,200
+And now, I get to
+
+334
+00:24:40,620 --> 00:24:42,380
+use my favorite inequality.
+
+335
+00:24:43,520 --> 00:24:51,300
+In fact, this is sort of the only inequality we know in this class so far,
+I think, which is the triangle inequality, which says that, of course,
+
+336
+00:24:51,300 --> 00:24:51,800
+this
+
+337
+00:24:52,360 --> 00:24:55,710
+is less than or equal to the distance from
+u
+
+338
+00:24:56,440 --> 00:25:01,640
+to u0 plus the
+distance from u0 to v.
+
+339
+00:25:02,340 --> 00:25:10,560
+So in other words, this is saying the shortest path from u to v is always
+upper bounded from the length of the shortest path from u to u0 and then u0
+
+340
+00:25:10,560 --> 00:25:12,220
+to v. This is drawing
+a triangle.
+
+341
+00:25:14,060 --> 00:25:14,060
+Aha.
+
+342
+00:25:15,360 --> 00:25:17,340
+But take a look. What is
+
+343
+00:25:18,380 --> 00:25:19,920
+the actual radius of my graph?
+
+344
+00:25:20,500 --> 00:25:21,680
+Well, in my notation,
+
+345
+00:25:22,280 --> 00:25:24,630
+the
+radius of my graph is exactly the distance
+
+346
+00:25:25,500 --> 00:25:25,940
+from u0
+
+347
+00:25:27,560 --> 00:25:28,760
+to v0.
+
+348
+00:25:30,420 --> 00:25:31,300
+And this thing
+
+349
+00:25:32,740 --> 00:25:36,740
+is bigger than the distance from
+u0 to anything else by definition
+
+350
+00:25:40,960 --> 00:25:42,940
+for all of you. Right?
+
+351
+00:25:43,640 --> 00:25:45,380
+So if
+I flip this inequality backward,
+
+352
+00:25:46,500 --> 00:25:52,960
+well, take a look. This is the distance from u0 to something. This is
+the distance from u0 to something. So I incur two factors of the radius.
+
+353
+00:25:56,440 --> 00:25:57,700
+And I get the
+bound that I want to.
+
+354
+00:25:58,220 --> 00:25:58,340
+Yep.
+
+355
+00:25:58,860 --> 00:26:03,600
+And so this is a slightly more formal proof of
+exactly the same thing that's in the homework notes.
+
+356
+00:26:04,680 --> 00:26:07,410
+OK. So the one thing that's remaining is to
+actually show that our algorithm
+
+357
+00:26:08,100 --> 00:26:12,490
+runs in a reasonable amount of time. So I
+think they give us a budget of order e time.
+
+358
+00:26:14,120 --> 00:26:19,860
+But notice that argument is precisely the argument
+that we just made right here, just minus the v factor.
+
+359
+00:26:20,390 --> 00:26:24,540
+And the v factor just came from looping
+over all the vertices in part a.
+
+360
+00:26:25,960 --> 00:26:28,060
+Now I think we're
+done with problem one.
+
+361
+00:26:29,300 --> 00:26:31,100
+As usual, I've wasted too much time on the
+easy problem.
+
+362
+00:26:32,040 --> 00:26:33,760
+All right. Any
+questions about this one?
+
+363
+00:26:35,080 --> 00:26:37,020
+Excellent. Well, now that I've written too
+much,
+
+364
+00:26:38,100 --> 00:26:39,200
+let's do the rest of it.
+
+365
+00:26:39,980 --> 00:26:42,660
+I spent time on this problem because I
+like it. It looks like a geometry problem.
+
+366
+00:26:43,920 --> 00:26:43,920
+OK.
+
+367
+00:26:46,440 --> 00:26:57,740
+So now, let's see. In problem two, which I noticed that this homework is
+kind of full of prototypical 6 double 6 slash graph theory problems in
+
+368
+00:26:57,740 --> 00:27:03,680
+general. They just go down the list of things that people
+typically do in graph theory that are useful tricks to know.
+
+369
+00:27:04,420 --> 00:27:06,800
+So
+I would suggest the students in this class,
+
+370
+00:27:07,520 --> 00:27:14,830
+even if it's pass -fail, look very closely at this homework before doing
+the current one. I think the ordering works out that they can do that.
+
+371
+00:27:16,900 --> 00:27:18,330
+Because I
+think you'll get some good hints
+
+372
+00:27:18,980 --> 00:27:21,500
+for how to solve
+all the current homework.
+
+373
+00:27:22,500 --> 00:27:24,380
+So you
+heard it here first, guys.
+
+374
+00:27:25,420 --> 00:27:27,520
+OK. So in problem two,
+
+375
+00:27:28,080 --> 00:27:30,440
+we're talking about
+internet investigation.
+
+376
+00:27:31,740 --> 00:27:31,950
+So in particular,
+
+377
+00:27:33,660 --> 00:27:35,720
+MIT
+has a bunch of different routers
+
+378
+00:27:36,640 --> 00:27:38,920
+that are connected by
+cables to one another.
+
+379
+00:27:40,000 --> 00:27:45,900
+And essentially, what are we given? We're given a bunch of different
+routers. And we're given the length of the cable in between them.
+
+380
+00:27:47,020 --> 00:27:49,840
+And the latency, unsurprisingly,
+is proportional to the length of the cable.
+
+381
+00:27:50,820 --> 00:27:55,500
+In my abstract understanding of how computers work, it kind
+of makes sense to me. I'm not sure that's actually true.
+
+382
+00:27:56,260 --> 00:27:56,380
+But
+
+383
+00:27:58,520 --> 00:28:00,360
+that's sort of immaterial
+for 6 double 06.
+
+384
+00:28:01,200 --> 00:28:04,590
+I assume our department has a networks class,
+if you're interested in that kind of thing.
+
+385
+00:28:06,060 --> 00:28:15,400
+And essentially, what we're trying to do is sum up the latency over all
+of the routers. So let's write down a little bit of notation here while I
+
+386
+00:28:15,700 --> 00:28:17,870
+continue
+to dance all over the room here.
+
+387
+00:28:18,440 --> 00:28:20,300
+I keep losing my chuck.
+
+388
+00:28:27,660 --> 00:28:31,050
+Need like a holster. I feel like
+that would be useful for the chuck bucket.
+
+389
+00:28:33,500 --> 00:28:35,880
+So now we're going
+to do problem two here.
+
+390
+00:28:37,160 --> 00:28:38,720
+So we're given R routers.
+
+391
+00:28:41,990 --> 00:28:44,740
+And some of them
+
+392
+00:28:46,360 --> 00:28:48,220
+are marked as entry points.
+
+393
+00:29:18,480 --> 00:29:18,960
+Because of this,
+
+394
+00:29:19,460 --> 00:29:25,320
+so technically, I think a lot of students in this class have encountered
+weighted graphs before. But if you think about the narrative of this course,
+
+395
+00:29:25,780 --> 00:29:31,460
+I think for the version of this homework, we haven't really encountered
+weighted graphs yet. But a better way of putting it, rather than
+
+396
+00:29:31,460 --> 00:29:33,300
+psychologically diagnosing
+your instructors,
+
+397
+00:29:34,220 --> 00:29:40,500
+is that what we're going to find is that there are often problems that look
+like they're weighted graph problems, but they really aren't. And this is
+
+398
+00:29:40,500 --> 00:29:42,540
+a nice example
+where that's the case.
+
+399
+00:29:43,900 --> 00:29:43,900
+OK.
+
+400
+00:29:44,420 --> 00:29:45,920
+So we define latency as
+
+401
+00:29:48,440 --> 00:29:54,440
+follows, that it's at least proportional to
+the shortest path to an entry point.
+
+402
+00:30:01,320 --> 00:30:04,500
+And now we have two additional assumptions
+that we need.
+
+403
+00:30:05,160 --> 00:30:07,320
+One is that the total latency,
+
+404
+00:30:08,540 --> 00:30:10,420
+or at least the latency
+of every vertex,
+
+405
+00:30:11,620 --> 00:30:14,380
+which is
+the same thing, latency,
+
+406
+00:30:15,120 --> 00:30:16,340
+is less than infinity.
+
+407
+00:30:17,640 --> 00:30:24,760
+What is this really saying? By the way? When would the latency be infinity?
+It would only be infinity if I took a pair of scissors and cut a wire and
+
+408
+00:30:24,760 --> 00:30:26,980
+just connected from
+the rest of the network.
+
+409
+00:30:27,540 --> 00:30:27,760
+Yes?
+
+410
+00:30:28,360 --> 00:30:36,240
+Every router is connected to some entry point. That's exactly. There's some
+path from every router to some entry point. Doesn't necessarily mean the
+
+411
+00:30:36,240 --> 00:30:40,860
+entire graph is connected, I guess. But at
+least you can always get to an entry point.
+
+412
+00:30:41,700 --> 00:30:45,380
+And then moreover, and this one's the real
+kicker here,
+
+413
+00:30:45,960 --> 00:30:51,660
+that there's at most 100 R feet of
+wire.
+
+414
+00:30:55,690 --> 00:31:01,440
+Incidentally, R stands for routers. I had the previous
+problem in my head and was thinking radius a long time.
+
+415
+00:31:02,220 --> 00:31:09,980
+So don't be like your instructor and actually read the entire problem before
+getting hung up on it. But in any event, the thing that you're trying to
+
+416
+00:31:09,980 --> 00:31:12,140
+do is to compute
+
+417
+00:31:13,820 --> 00:31:15,000
+the sum.
+
+418
+00:31:16,020 --> 00:31:19,190
+Over all of the routers,
+
+419
+00:31:20,520 --> 00:31:21,920
+I don't know, R, whatever,
+
+420
+00:31:22,460 --> 00:31:24,980
+of the latency of that router.
+
+421
+00:31:25,820 --> 00:31:33,440
+So that's our problem here. Incidentally, this little goofy exercise I
+just did of taking this paragraph problem and writing it in bullet points I
+
+422
+00:31:33,440 --> 00:31:39,660
+find helps me a lot when I'm trying to solve these algorithms problems
+because I think it's really easy to just get thrown off by a wall of text
+
+423
+00:31:39,660 --> 00:31:40,210
+here.
+
+424
+00:31:41,600 --> 00:31:44,360
+So
+this problem is screaming out graph theory.
+
+425
+00:31:46,000 --> 00:31:53,990
+Like using the terms here. We are using the terms, right? Like you've got
+nodes that are kind of like routers and maybe edges are kind of like wires.
+
+426
+00:31:55,000 --> 00:32:02,850
+But there's a bit of a catch, which is that your runtime,
+right? At the end of the day, I think you want order R runtime.
+
+427
+00:32:04,460 --> 00:32:06,720
+That's
+where things get a little funky initially.
+
+428
+00:32:08,260 --> 00:32:10,060
+And so we have to think
+a little bit carefully about how to do it.
+
+429
+00:32:11,300 --> 00:32:13,040
+And here's
+going to be the trick.
+
+430
+00:32:13,580 --> 00:32:21,760
+So this is starting to look like a shortest path problem. What would you
+maybe not want to do would be to iterate over every single router or every
+
+431
+00:32:21,760 --> 00:32:26,070
+single vertex and every single router and compute
+the shortest path between every single pair.
+
+432
+00:32:26,620 --> 00:32:29,240
+Because if you did
+that, oh boy, I'm confusing my terminology.
+
+433
+00:32:30,300 --> 00:32:33,420
+There are entry points, which is the thing
+that I need to compute the distance to.
+
+434
+00:32:34,280 --> 00:32:40,400
+And I need to iterate over every single router and compute its distance
+maybe to all the entry points and then take the min or something like that.
+
+435
+00:32:41,140 --> 00:32:45,300
+But if I had a double for loop, then I'm
+probably not going to get order R time, right?
+
+436
+00:32:46,000 --> 00:32:49,360
+Somehow you expect it to look like something
+squared or like the product of two terms.
+
+437
+00:32:50,000 --> 00:32:54,040
+So it's going to be a little more sneaky than that.
+And we're going to use sort of a canonical trick
+
+438
+00:32:54,540 --> 00:32:55,220
+in graph theory.
+
+439
+00:32:56,460 --> 00:33:05,860
+OK. So let's follow the Toucan Sam approach here. We're going to follow our
+nose and say that, OK, there's basically a graph that's staring us in the
+
+440
+00:33:05,940 --> 00:33:06,800
+face in this problem.
+
+441
+00:33:07,660 --> 00:33:12,630
+But then we have to make a little bit of an edit
+because we'd like to use the kind of linear looking time
+
+442
+00:33:13,420 --> 00:33:14,960
+search that BFS
+
+443
+00:33:15,480 --> 00:33:19,160
+affords us. But it looks like we have edge
+weights in our graph, right? Because the wires
+
+444
+00:33:19,700 --> 00:33:21,960
+are associated to lengths,
+
+445
+00:33:22,480 --> 00:33:23,560
+right? Different wires
+have different sizes.
+
+446
+00:33:24,620 --> 00:33:29,900
+But we have this nice fun fact, which is that the total
+amount of wire in our whole universe is less than 100R.
+
+447
+00:33:32,020 --> 00:33:35,800
+I guess the units of this 100 are kind of weird,
+right? It's like feet per router or something.
+
+448
+00:33:36,520 --> 00:33:37,440
+But whatever.
+
+449
+00:33:38,400 --> 00:33:41,390
+OK. So in particular,
+I'm going to make a graph.
+
+450
+00:33:46,320 --> 00:33:46,600
+With
+
+451
+00:33:47,120 --> 00:33:47,760
+a node
+
+452
+00:33:48,840 --> 00:33:50,000
+per router,
+
+453
+00:33:51,160 --> 00:33:52,640
+right? So maybe here's a router.
+
+454
+00:33:53,300 --> 00:33:54,120
+There's another router.
+
+455
+00:33:55,060 --> 00:33:55,260
+There's router
+
+456
+00:33:56,100 --> 00:33:57,180
+1 and router 2.
+
+457
+00:33:58,040 --> 00:34:04,520
+But since I want to use the sort of linear time advantages
+of breadth -first search when I'm computing distances,
+
+458
+00:34:05,340 --> 00:34:06,940
+I can be a little
+bit sneaky about this,
+
+459
+00:34:07,520 --> 00:34:12,500
+which is to say instead of having like 10 feet
+of wires, I'm going to have 10 one -foot wires,
+
+460
+00:34:13,179 --> 00:34:13,460
+yeah?
+
+461
+00:34:14,699 --> 00:34:17,139
+Except
+now I'm additionally going to have
+
+462
+00:34:18,500 --> 00:34:24,400
+little chains. So here
+maybe the length L12 is equal to 3, right?
+
+463
+00:34:25,060 --> 00:34:27,920
+So I'm going to put
+three edges in between.
+
+464
+00:34:29,080 --> 00:34:32,170
+So in other words, I'm
+going to connect them
+
+465
+00:34:34,360 --> 00:34:35,100
+with
+
+466
+00:34:35,699 --> 00:34:36,320
+chains
+
+467
+00:34:38,460 --> 00:34:42,580
+of Li edges
+
+468
+00:34:44,080 --> 00:34:45,400
+for each wire.
+
+469
+00:34:49,320 --> 00:34:55,260
+Does that make sense? So essentially, I'm going to take my weighted graph
+problem and make it unweighted by just like repeating a bunch of, well, not
+
+470
+00:34:55,260 --> 00:34:57,420
+really repeating, but
+chaining together a bunch of edges
+
+471
+00:34:57,940 --> 00:35:02,920
+so that the total length of this thing is equal
+to the distance from one router to another.
+
+472
+00:35:04,180 --> 00:35:04,280
+OK.
+
+473
+00:35:05,760 --> 00:35:10,060
+One thing we might as well do is bound the number
+of vertices and edges in our graph when we do that.
+
+474
+00:35:11,000 --> 00:35:11,720
+So first of all,
+
+475
+00:35:15,720 --> 00:35:17,100
+let's think about
+the number of vertices.
+
+476
+00:35:18,360 --> 00:35:20,980
+And we can be totally lazy and
+upper bound this stuff. It doesn't matter.
+
+477
+00:35:21,580 --> 00:35:26,320
+Well, for one thing, I have one node per
+router. So we incur one factor of r there.
+
+478
+00:35:28,460 --> 00:35:33,860
+And now notice that we're kind of laying down cable
+one little piece at a time here in our chains.
+
+479
+00:35:35,400 --> 00:35:38,050
+And now I always tend to have a fence post
+style
+
+480
+00:35:38,840 --> 00:35:43,060
+headache about exactly what the constant factor
+is here. But if we're conservative about it,
+
+481
+00:35:44,420 --> 00:35:46,760
+we incur at
+most a factor of 100 r
+
+482
+00:35:47,280 --> 00:35:52,460
+kind of additional edges because those are all the different pieces that
+we could lay together. I think it's actually less than that because of the
+
+483
+00:35:52,460 --> 00:35:52,680
+endpoints.
+
+484
+00:35:53,200 --> 00:36:01,020
+But whatever because r plus 100 r is big O of r. So
+the number of vertices in my graph here is big O of r.
+
+485
+00:36:02,280 --> 00:36:03,820
+Similarly, what's the
+number of edges?
+
+486
+00:36:07,520 --> 00:36:11,600
+Well, this is exactly the amount
+of cable that's inside of my network,
+
+487
+00:36:12,180 --> 00:36:13,080
+I believe. Yep.
+
+488
+00:36:13,720 --> 00:36:15,260
+Right. So this is exactly 100 r.
+
+489
+00:36:17,680 --> 00:36:17,980
+Well,
+
+490
+00:36:18,520 --> 00:36:22,280
+I guess the way the problem is written,
+it's upper bounded by 100 r, but whatever.
+
+491
+00:36:23,860 --> 00:36:26,580
+So this again is big O of r.
+
+492
+00:36:27,460 --> 00:36:33,280
+This is kind of convenient. So now we have one number that rules them all,
+which is r. Which tells you both the number of vertices and the number of
+
+493
+00:36:33,280 --> 00:36:40,280
+edges up to a constant factor. So one thing I can convince
+myself is if I do BFS on my graph, that's sort of OK. Remember,
+
+494
+00:36:41,000 --> 00:36:42,080
+that's vertices plus edges time.
+
+495
+00:36:43,020 --> 00:36:44,770
+But in this
+case, those are the same.
+
+496
+00:36:46,040 --> 00:36:46,040
+OK.
+
+497
+00:36:47,180 --> 00:36:47,810
+So remember,
+
+498
+00:36:49,220 --> 00:36:57,320
+at the end of the day, I'm trying to compute the latency. This
+is like the length of the shortest path to the entry point nodes.
+
+499
+00:36:58,520 --> 00:37:01,260
+So here would
+be a brain -dead algorithm, which would say
+
+500
+00:37:01,820 --> 00:37:02,200
+for
+
+501
+00:37:03,700 --> 00:37:04,660
+all routers,
+
+502
+00:37:07,000 --> 00:37:09,800
+for all entry points,
+
+503
+00:37:14,380 --> 00:37:14,980
+compute, I
+
+504
+00:37:16,760 --> 00:37:20,300
+don't know, let's call the router on i, the
+entry point j.
+
+505
+00:37:20,920 --> 00:37:24,020
+I compute distance i, j, like using breadth
+-first search or something.
+
+506
+00:37:25,380 --> 00:37:29,620
+And then I take the min
+of these values.
+
+507
+00:37:33,100 --> 00:37:33,220
+And
+
+508
+00:37:34,820 --> 00:37:36,520
+add them all
+together. So I compute
+
+509
+00:37:37,140 --> 00:37:42,560
+for every router. I look at every possible entry point. I compute its
+distance to the entry point. I take the min over all these things.
+
+510
+00:37:43,180 --> 00:37:45,240
+And now I add
+that to my running sum.
+
+511
+00:37:47,260 --> 00:37:52,000
+There's a problem here, which is I haven't told you the
+relative number of entry points to the total number of routers.
+
+512
+00:37:52,620 --> 00:37:55,220
+So at least the
+way that I've written this algorithm here,
+
+513
+00:37:56,380 --> 00:37:57,460
+how much time would this take?
+
+514
+00:37:58,100 --> 00:37:59,560
+Well,
+there's two different for loops.
+
+515
+00:38:00,520 --> 00:38:08,020
+And in the worst possible case, at least in my brain -dead algorithm, I
+don't notice that if I am an entry point, then I don't need to compute
+
+516
+00:38:08,020 --> 00:38:08,420
+distances.
+
+517
+00:38:10,580 --> 00:38:12,480
+Well, this would
+take order r squared.
+
+518
+00:38:14,220 --> 00:38:14,480
+Whoa.
+
+519
+00:38:14,980 --> 00:38:15,680
+r squared time,
+
+520
+00:38:16,740 --> 00:38:16,740
+right?
+
+521
+00:38:18,060 --> 00:38:20,600
+At least, right? Actually, I
+shouldn't even write big O. I should write,
+
+522
+00:38:21,990 --> 00:38:24,200
+what's lower bound? Oh, god. I'm a terrible
+algorithm professor.
+
+523
+00:38:25,200 --> 00:38:25,220
+Omega
+
+524
+00:38:26,380 --> 00:38:31,320
+of r squared time, because I haven't even counted for the
+amount of time I need to take to compute the distance.
+
+525
+00:38:33,390 --> 00:38:36,840
+And this is a problem because I've only given
+you a budget of linear time for your algorithm.
+
+526
+00:38:37,880 --> 00:38:39,200
+So this is frowny face.
+
+527
+00:38:40,300 --> 00:38:43,100
+I tried drawing the turd emoji on my notes,
+and it really didn't work.
+
+528
+00:38:44,800 --> 00:38:46,580
+So we need a better trick.
+
+529
+00:38:47,460 --> 00:38:50,710
+And this is
+actually one of these prototypical tricks,
+
+530
+00:38:51,500 --> 00:38:53,120
+which is to do the following.
+
+531
+00:38:53,800 --> 00:39:00,820
+So let's construct a graph. I'm going to draw my graph in a particular way.
+But notice that there's nothing about my algorithm that cares about the
+
+532
+00:39:00,820 --> 00:39:02,940
+way that I drew it. This is just to make my
+life easier,
+
+533
+00:39:03,520 --> 00:39:09,540
+which is I'm going to put all the entry points on the left
+and all the remaining non -entry point routers on the right,
+
+534
+00:39:10,260 --> 00:39:10,720
+because I can.
+
+535
+00:39:11,900 --> 00:39:14,580
+And so this is what my graph looks like. So
+these are my entry points.
+
+536
+00:39:16,880 --> 00:39:18,250
+Here are my other routers.
+
+537
+00:39:21,840 --> 00:39:26,700
+My graph doesn't have to be bipartite. It could be
+that my routers are connected to each other, whatever.
+
+538
+00:39:29,960 --> 00:39:31,460
+I go from my entry points to
+
+539
+00:39:32,140 --> 00:39:35,000
+the routers in the graph. I'm trying
+to make sure that my graph is connected.
+
+540
+00:39:35,960 --> 00:39:35,960
+OK.
+
+541
+00:39:36,620 --> 00:39:38,480
+And so essentially
+what this problem is asking you to
+
+542
+00:39:39,260 --> 00:39:44,960
+do is to say, OK, for every single node in my
+graph, I need to compute the distance to the closest
+
+543
+00:39:45,700 --> 00:39:48,040
+entry point and then sum
+all those things together.
+
+544
+00:39:48,920 --> 00:39:50,440
+That's the
+schematic we could have in mind.
+
+545
+00:39:53,300 --> 00:39:53,480
+So
+
+546
+00:39:55,480 --> 00:40:00,020
+in some sense, what we want to do is think
+about the set of entry points as one giant node,
+
+547
+00:40:00,860 --> 00:40:07,770
+because it doesn't matter which of these guys I choose for
+my shortest path to an entry point. I just need to find one.
+
+548
+00:40:09,060 --> 00:40:15,020
+And so here's the basic trick. And this is one that appears all over graph
+theory, which is I'm going to introduce one additional node to my graph.
+
+549
+00:40:15,280 --> 00:40:17,480
+And I'm going to put him on the left -hand
+side.
+
+550
+00:40:18,180 --> 00:40:20,620
+He's really big,
+because he is a supernode,
+
+551
+00:40:23,440 --> 00:40:24,680
+which is a term of art.
+
+552
+00:40:25,180 --> 00:40:28,620
+This term shows up
+a lot. And I'm going to connect it to every
+
+553
+00:40:31,600 --> 00:40:34,300
+entry point
+in my network of routers.
+
+554
+00:40:36,540 --> 00:40:37,540
+Does that make sense, class?
+
+555
+00:40:39,040 --> 00:40:39,040
+OK.
+
+556
+00:40:40,140 --> 00:40:44,300
+So here's the kind of cool thing. So first
+of all, for every entry point,
+
+557
+00:40:44,940 --> 00:40:50,960
+what's the shortest path from the entry point to the supernode?
+Well, obviously, it has length 1. I drew it for you here.
+
+558
+00:40:52,300 --> 00:40:52,560
+Now,
+
+559
+00:40:53,180 --> 00:40:58,560
+here's the thing. Let's take the shortest path from the
+supernode to any of the routers on the right -hand side.
+
+560
+00:40:59,920 --> 00:41:03,180
+How do I know? Well, clearly, maybe
+I choose this guy here.
+
+561
+00:41:04,380 --> 00:41:07,140
+Well, what is my
+shortest path? It goes here and then there.
+
+562
+00:41:08,860 --> 00:41:14,980
+There's one property that matters here, which is
+that it has to pass through one of these entry nodes.
+
+563
+00:41:16,540 --> 00:41:17,600
+Which one does it has
+to pass through?
+
+564
+00:41:19,620 --> 00:41:19,800
+Shrug.
+
+565
+00:41:20,760 --> 00:41:21,560
+For shame.
+
+566
+00:41:22,120 --> 00:41:22,860
+Well, remember,
+
+567
+00:41:23,560 --> 00:41:25,780
+Justin's favorite
+inequality is the triangle inequality.
+
+568
+00:41:26,600 --> 00:41:29,590
+And what does it say?
+It says that if I compute the shortest path
+
+569
+00:41:30,280 --> 00:41:33,080
+from the supernode to
+any node in my graph,
+
+570
+00:41:33,680 --> 00:41:37,820
+then every subpiece of
+that shortest path is also a shortest path.
+
+571
+00:41:38,840 --> 00:41:40,920
+That sentence was hard to parse. Let's try
+that again.
+
+572
+00:41:41,500 --> 00:41:42,260
+So in particular,
+
+573
+00:41:42,780 --> 00:41:45,180
+if I have a graph from
+the supernode to some router over here,
+
+574
+00:41:46,100 --> 00:41:48,900
+well, we've convinced ourselves it
+has to pass through one of the entry nodes.
+
+575
+00:41:50,680 --> 00:41:55,760
+Which one does it have to pass through? Is it ever
+something that is farther than the closest entry node?
+
+576
+00:41:57,340 --> 00:42:03,200
+Well, no, because I could compute a shorter path in that case by
+choosing the closest entry node and then going to the supernode.
+
+577
+00:42:04,820 --> 00:42:09,110
+So this is a complicated way of
+saying that essentially what we really want
+
+578
+00:42:11,420 --> 00:42:11,700
+is
+
+579
+00:42:12,220 --> 00:42:13,620
+for every router,
+
+580
+00:42:17,660 --> 00:42:18,500
+the distance
+
+581
+00:42:19,080 --> 00:42:20,980
+from that
+router, let's call it i,
+
+582
+00:42:22,340 --> 00:42:24,160
+to the supernode s.
+
+583
+00:42:26,040 --> 00:42:29,540
+Is that quite right? Is that the
+distance to the closest entry point?
+
+584
+00:42:30,720 --> 00:42:37,600
+You went one more inch too far. I went one inch too far, right? Because I
+went to the closest entry point, and then I took an additional edge. So we
+
+585
+00:42:37,600 --> 00:42:38,840
+want to do minus 1.
+
+586
+00:42:40,680 --> 00:42:41,060
+OK.
+
+587
+00:42:41,920 --> 00:42:49,580
+So what does this mean? Well, that means that I don't actually have to
+have this inner for loop over all the possible entry points. I just need to
+
+588
+00:42:49,580 --> 00:42:53,840
+construct this new special graph with one additional
+node. Notice it's not going to affect my runtime.
+
+589
+00:42:54,860 --> 00:42:58,580
+And compute the shortest distance from the
+supernode to every other node in my graph
+
+590
+00:42:59,960 --> 00:43:01,220
+and then use that as my output.
+
+591
+00:43:02,000 --> 00:43:03,420
+Yeah? So in other words,
+
+592
+00:43:05,800 --> 00:43:07,140
+what is
+my algorithm going to look like?
+
+593
+00:43:07,860 --> 00:43:08,300
+Well, first,
+
+594
+00:43:09,260 --> 00:43:14,560
+I'm going to construct my graph. So what do
+I need to do?
+
+595
+00:43:15,580 --> 00:43:22,100
+If I were to write this out on my homework, I'd have to talk about how I've
+got these chains of edges between different pairs of routers. In addition
+
+596
+00:43:22,100 --> 00:43:23,910
+to that,
+I'm going to make one additional supernode
+
+597
+00:43:24,540 --> 00:43:28,000
+and insert an edge from that to every entry
+point.
+
+598
+00:43:29,140 --> 00:43:29,560
+Notice
+
+599
+00:43:30,480 --> 00:43:39,040
+that adding the entry point here just adds a 1 to the number of vertices
+and at most, I guess, an r to the number of edges, which doesn't
+
+600
+00:43:39,740 --> 00:43:43,460
+affect asymptotically the size of either
+of these two sets. So that's a good thing.
+
+601
+00:43:44,720 --> 00:43:53,640
+Now I'm going to use BFS to do
+
+602
+00:43:54,180 --> 00:43:56,260
+single source shortest path
+
+603
+00:43:57,020 --> 00:44:02,500
+from my supernode
+to all other vertices.
+
+604
+00:44:06,220 --> 00:44:07,550
+And how much time does
+this take?
+
+605
+00:44:08,600 --> 00:44:16,800
+Well, remember that in general, BFS takes v plus e time. In this
+case, v plus e are both look like r. So this is order r time.
+
+606
+00:44:18,860 --> 00:44:18,860
+OK?
+
+607
+00:44:19,640 --> 00:44:20,680
+And then finally,
+
+608
+00:44:23,900 --> 00:44:25,680
+I'm going to sum over
+
+609
+00:44:30,350 --> 00:44:31,420
+routers i,
+
+610
+00:44:32,180 --> 00:44:34,540
+the value of the distance
+
+611
+00:44:35,060 --> 00:44:42,880
+from the supernode to the router i minus 1 to account for that
+additional edge that I added. OK? And that's the solution to our problem.
+
+612
+00:44:44,700 --> 00:44:47,260
+OK. Any questions about number 2
+here?
+
+613
+00:44:48,500 --> 00:44:49,660
+Excellent. Go team.
+
+614
+00:44:50,520 --> 00:44:52,940
+OK. So now let's
+move on to problem 3.
+
+615
+00:44:53,700 --> 00:44:55,020
+Am I? Yeah, we're about halfway.
+
+616
+00:44:55,720 --> 00:44:56,180
+OK.
+
+617
+00:44:57,100 --> 00:44:57,900
+So problem 3,
+
+618
+00:44:59,640 --> 00:45:00,600
+right. So we're doing
+
+619
+00:45:02,860 --> 00:45:03,840
+Patry Harder
+
+620
+00:45:04,840 --> 00:45:06,400
+and three wizard friends.
+
+621
+00:45:06,900 --> 00:45:08,920
+The number
+3 here, I believe, is actually irrelevant.
+
+622
+00:45:10,440 --> 00:45:17,420
+Although, like, any time you see a specific number in a problem, you should
+cache that in your bag of things to remember. And in this case, that was
+
+623
+00:45:17,440 --> 00:45:17,960
+a red herring.
+
+624
+00:45:19,020 --> 00:45:23,720
+Patry Harder and
+her three wizard friends
+
+625
+00:45:24,320 --> 00:45:26,500
+are tasked with searching around
+a labyrinth.
+
+626
+00:45:27,280 --> 00:45:34,220
+Yeah? And in particular, there's some nice things
+to know about the labyrinth and Patry Harder world.
+
+627
+00:45:35,010 --> 00:45:37,240
+This is really throwing
+off my dyslexia here,
+
+628
+00:45:39,040 --> 00:45:40,100
+which is the following.
+
+629
+00:45:42,940 --> 00:45:43,500
+Right.
+
+630
+00:45:44,860 --> 00:45:50,480
+So what do we know? We know that there are
+n rooms in my labyrinth.
+
+631
+00:45:55,060 --> 00:45:57,380
+And that each of my rooms has,
+
+632
+00:46:00,460 --> 00:46:01,900
+at most, four doors.
+
+633
+00:46:04,760 --> 00:46:05,020
+OK?
+
+634
+00:46:05,540 --> 00:46:13,740
+So in other words, if I think of building a graph out of my rooms, which is
+like, I don't think I'm giving much away about this problem by jumping to
+
+635
+00:46:13,740 --> 00:46:19,880
+the solution a little bit. What do we know about the degree of
+any vertex, assuming my vertices are rooms in the labyrinth?
+
+636
+00:46:21,800 --> 00:46:23,390
+It's at most 4. So that's kind of
+nice.
+
+637
+00:46:25,760 --> 00:46:27,980
+Right. And all
+the doors start closed.
+
+638
+00:46:31,240 --> 00:46:34,320
+So that seems like
+a useful piece of information to remember.
+
+639
+00:46:35,480 --> 00:46:39,420
+But we have this kind of weird thing, which
+is that some doors
+
+640
+00:46:43,280 --> 00:46:44,000
+are enchanted.
+
+641
+00:46:47,280 --> 00:46:47,940
+And apparently,
+
+642
+00:46:51,140 --> 00:47:00,460
+Patry Harder can open up certain doors for free, which are not the enchanted
+doors. And then other ones, they have to do the blessing and the holy
+
+643
+00:47:00,460 --> 00:47:10,260
+water and whatever it is that happens in this universe and then opens up
+that door. But that costs them materials and heartache. Right? And so we
+
+644
+00:47:10,260 --> 00:47:11,160
+want to minimize that.
+
+645
+00:47:12,000 --> 00:47:12,800
+Right? And so what they're given
+
+646
+00:47:15,360 --> 00:47:16,820
+is basically a map.
+
+647
+00:47:17,480 --> 00:47:23,280
+Right? And this includes all of the different rooms, how they're
+connected to one another, and which of the doors are enchanted.
+
+648
+00:47:23,960 --> 00:47:25,580
+And what I want
+
+649
+00:47:28,700 --> 00:47:35,000
+is the minimum number
+of doors that they have to disenchant.
+
+650
+00:47:38,300 --> 00:47:38,760
+OK?
+
+651
+00:47:39,480 --> 00:47:41,640
+Now, this
+problem is kind of sneaky.
+
+652
+00:47:44,420 --> 00:47:47,720
+The reason why is that there's the network
+that's obvious to build.
+
+653
+00:47:48,320 --> 00:47:54,800
+And that turns out to be not quite the right one. And then you can start
+thinking about adding weights on your graph and going crazy with that. But
+
+654
+00:47:54,800 --> 00:47:55,960
+that turns out not to
+be the right direction.
+
+655
+00:47:57,600 --> 00:48:03,020
+And in fact, in Patry Harder world, apparently, we're
+not worried about their physical fitness. In other words,
+
+656
+00:48:04,040 --> 00:48:06,640
+shortest paths are actually irrelevant
+in this problem. Do you see that?
+
+657
+00:48:07,160 --> 00:48:08,510
+Because let's say that I have
+
+658
+00:48:10,260 --> 00:48:17,920
+a really complicated, annoying problem. Or
+maybe I have, here's my labyrinth.
+
+659
+00:48:20,960 --> 00:48:21,240
+And no,
+
+660
+00:48:22,960 --> 00:48:29,460
+we don't even talk about the entry point, like where they actually go in.
+But just for fiction purposes, let's say that they enter my labyrinth here.
+
+661
+00:48:30,360 --> 00:48:32,020
+And just to be annoying,
+
+662
+00:48:33,000 --> 00:48:38,340
+the two doors that are enchanted, remember, we could make a
+graph where all the vertices are rooms and the edges are doors,
+
+663
+00:48:39,260 --> 00:48:43,060
+are at these two endpoints of the T. So I have
+a giant T, and I enter right in the middle.
+
+664
+00:48:44,260 --> 00:48:45,270
+Now, what is
+
+665
+00:48:46,540 --> 00:48:48,100
+Patry Harder to do here?
+
+666
+00:48:48,740 --> 00:48:52,180
+Well, obviously, since this graph is
+a tree, there's only so much they can do.
+
+667
+00:48:52,780 --> 00:48:56,640
+Maybe they enter here.
+They walk all the way to the end
+
+668
+00:48:57,180 --> 00:49:00,780
+to disenchant the
+door over here. And then they turn around,
+
+669
+00:49:01,840 --> 00:49:04,340
+walk
+to the other end, they disenchant that guy.
+
+670
+00:49:05,560 --> 00:49:07,880
+And now they
+can reach other rooms.
+
+671
+00:49:11,120 --> 00:49:14,100
+Yeah, because that's their goal, to visit
+every room. Sorry, I think I skipped that step.
+
+672
+00:49:16,020 --> 00:49:21,400
+Now, there's a few things to notice about this example, which make
+it a little bit different from the typical graph theory thing,
+
+673
+00:49:21,900 --> 00:49:26,520
+which is once they disenchant this
+door, they walk over here and they open it.
+
+674
+00:49:27,940 --> 00:49:34,020
+Well, now they walk over to this other room just to, you know, it's like,
+you know those gym exercises? You run to the other side of the room, you
+
+675
+00:49:34,020 --> 00:49:35,180
+touch the floor,
+and then you run back.
+
+676
+00:49:35,720 --> 00:49:40,980
+That's kind of what they did here. They ran to this room, they tapped
+that vertex, and now they want to turn around and walk to the other side.
+
+677
+00:49:44,680 --> 00:49:46,180
+So once they open that door,
+
+678
+00:49:46,680 --> 00:49:47,220
+it stays open.
+
+679
+00:49:49,200 --> 00:49:50,360
+And
+that's actually quite important,
+
+680
+00:49:51,480 --> 00:49:55,930
+because what it does is it makes this problem not look like
+a traveling salesman problem, which wouldn't be so great.
+
+681
+00:49:57,320 --> 00:49:57,320
+OK,
+
+682
+00:49:58,200 --> 00:50:00,040
+so right, and moreover,
+
+683
+00:50:00,940 --> 00:50:05,640
+does the fact that there's like, maybe I subdominate these
+edges. I have a bunch of edges here that are all not enchanted.
+
+684
+00:50:06,840 --> 00:50:07,580
+Does that matter?
+
+685
+00:50:08,320 --> 00:50:10,810
+Like if I had like
+5 billion edges here?
+
+686
+00:50:12,840 --> 00:50:19,260
+No, right, because they only ask in this problem for
+the minimum number of doors that you have to disenchant.
+
+687
+00:50:20,500 --> 00:50:29,120
+Yeah, so it might be the Harry Harder walks really far along my graph,
+but as long as they don't walk through an enchanted door, it costs them
+
+688
+00:50:29,120 --> 00:50:29,220
+nothing.
+
+689
+00:50:31,140 --> 00:50:38,040
+So what does that mean? Well, that means that like in some sense, the second
+that I enter a room, I might as well walk to every other room that it's
+
+690
+00:50:38,080 --> 00:50:40,580
+connected to through unenchanted
+doors,
+
+691
+00:50:41,480 --> 00:50:44,280
+and that doesn't cost
+me anything. Right, so sort of as a policy,
+
+692
+00:50:44,860 --> 00:50:51,840
+I should do that, right? I enter a room, and then I kind of just search
+around and enter every possible door that I can that doesn't cost me an
+
+693
+00:50:51,840 --> 00:50:57,020
+enchantment, because those are free, and my
+goal is to visit every room. Yeah,
+
+694
+00:50:58,100 --> 00:51:02,280
+OK, so here's going to be the sneaky trick.
+Like what is that starting to smell like?
+
+695
+00:51:03,260 --> 00:51:09,600
+I open a door, and I want to explore all the other rooms
+that are connected to that one. Maybe a connected component?
+
+696
+00:51:10,320 --> 00:51:14,460
+Yeah, maybe a connected component. There's a
+problem. Is a connected component in this graph?
+
+697
+00:51:15,000 --> 00:51:17,460
+Well, no, like this whole
+graph is one giant connected component.
+
+698
+00:51:18,340 --> 00:51:20,600
+So the sneaky trick is we're actually going
+to remove
+
+699
+00:51:21,280 --> 00:51:25,130
+the enchanted doors that we're supposed to
+erase, and it didn't happen.
+
+700
+00:51:25,780 --> 00:51:33,380
+But the point is that if we remove the connected doors, these are
+like the chunks of my map that I can visit without incurring any cost.
+
+701
+00:51:34,340 --> 00:51:35,640
+So if I think of my graph,
+
+702
+00:51:36,340 --> 00:51:42,240
+maybe there's like a bunch of vertices over here, and then there's an
+enchanted door, and there's a bunch of vertices over here, and then like two
+
+703
+00:51:42,240 --> 00:51:43,840
+more enchanted doors like that.
+
+704
+00:51:44,740 --> 00:51:47,540
+And like what goes on in here, like if
+this is like a giant triangle or something,
+
+705
+00:51:48,040 --> 00:51:50,420
+is actually irrelevant,
+because once I touch any one of these,
+
+706
+00:51:51,040 --> 00:51:52,740
+I can now touch
+all the rest of them.
+
+707
+00:51:53,780 --> 00:51:55,660
+So that's just an algorithm. So
+
+708
+00:51:56,300 --> 00:51:59,360
+our first step is to construct
+
+709
+00:52:02,340 --> 00:52:04,860
+a graph G where the nodes are
+
+710
+00:52:09,620 --> 00:52:10,620
+the rooms.
+
+711
+00:52:13,660 --> 00:52:14,740
+And what should the edges be?
+
+712
+00:52:15,780 --> 00:52:21,380
+Well, if I'm just trying to find these little clumps of
+rooms that I can visit for free if I get to any one of them,
+
+713
+00:52:22,780 --> 00:52:23,840
+then the edges
+
+714
+00:52:26,500 --> 00:52:29,300
+are the non
+-enchanted doors. OK?
+
+715
+00:52:37,400 --> 00:52:40,360
+And so now in step two,
+
+716
+00:52:41,500 --> 00:52:44,160
+I'm going to compute my
+connected components,
+
+717
+00:52:45,900 --> 00:52:47,480
+which we covered in lecture,
+
+718
+00:52:48,780 --> 00:52:51,800
+the connected
+components of my graph G.
+
+719
+00:52:53,440 --> 00:52:57,660
+How much time does that take? Well, remember that there
+are two different algorithms we mentioned that can do this.
+
+720
+00:52:58,680 --> 00:53:03,580
+This is full BFS or DFS.
+
+721
+00:53:05,060 --> 00:53:07,040
+And both of them
+are going to take the same amount of time.
+
+722
+00:53:07,900 --> 00:53:08,680
+What is that time?
+
+723
+00:53:09,980 --> 00:53:12,160
+Linear in the size of
+the graph. Linear in the size of the graph.
+
+724
+00:53:13,220 --> 00:53:15,540
+OK, so initially, that
+could be problematic,
+
+725
+00:53:16,120 --> 00:53:19,460
+because I want
+order n. Remember, there are n rooms here.
+
+726
+00:53:21,000 --> 00:53:25,300
+But thanks to our degree bounds, thanks to
+knowing that every room has at most four doors,
+
+727
+00:53:26,040 --> 00:53:29,840
+you can convince yourself that both the number
+of vertices and the number of edges are order n,
+
+728
+00:53:30,480 --> 00:53:33,440
+which I should probably rush through,
+because as usual, I'm going slowly.
+
+729
+00:53:34,300 --> 00:53:34,300
+OK,
+
+730
+00:53:35,220 --> 00:53:39,340
+so now what do I have? I have a list of all
+the connected components in my graph.
+
+731
+00:53:40,920 --> 00:53:45,680
+And each one is potentially connected
+to some other ones by enchanted doors.
+
+732
+00:53:47,540 --> 00:53:49,680
+So in some sense, I could
+think about
+
+733
+00:53:50,260 --> 00:53:54,200
+this not as a solution to the problem, but I could think
+about modeling my problem as making some new graph,
+
+734
+00:53:54,740 --> 00:53:56,120
+or like I put a giant vertex.
+
+735
+00:53:57,080 --> 00:53:58,200
+And every connected component.
+
+736
+00:53:59,440 --> 00:54:04,980
+And maybe I connect them by enchanted doors. And I
+want a path that touches every one of these rooms.
+
+737
+00:54:06,600 --> 00:54:08,900
+But that's not quite the
+right way to go.
+
+738
+00:54:09,920 --> 00:54:15,940
+And this is what catches me by surprise, because this starts sounding
+scary, right? If you've heard of the traveling salesman problem, it kind of
+
+739
+00:54:15,980 --> 00:54:16,460
+smells like that.
+
+740
+00:54:17,160 --> 00:54:18,180
+But that's not actually correct
+
+741
+00:54:18,840 --> 00:54:22,520
+here for two reasons.
+One is that once I open an enchanted door,
+
+742
+00:54:23,100 --> 00:54:29,300
+I can go back through it. I can hopscotch back and forth through that door
+as many times as I want, and it doesn't cost me anything. It only cost me
+
+743
+00:54:29,300 --> 00:54:30,800
+something the
+first time I open it.
+
+744
+00:54:31,880 --> 00:54:31,880
+Yeah?
+
+745
+00:54:33,760 --> 00:54:38,200
+And moreover, I didn't ask you to actually
+compute me that path.
+
+746
+00:54:38,980 --> 00:54:42,560
+If you read the problem closely, it just asks
+for the minimum number of doors you have to open.
+
+747
+00:54:43,900 --> 00:54:45,060
+So this is a
+really sneaky problem,
+
+748
+00:54:45,680 --> 00:54:48,680
+because it turns
+out there's additional
+
+749
+00:54:49,570 --> 00:54:56,040
+one line of code that solves this problem. That's step three, which
+I'm going to write before steps one and two, just to keep you confused.
+
+750
+00:54:57,520 --> 00:54:57,950
+Is to return
+
+751
+00:55:00,440 --> 00:55:04,740
+this number
+of connected components minus 1.
+
+752
+00:55:07,720 --> 00:55:13,140
+That seems sneaky. Why is that? Well,
+what's going on here is the following,
+
+753
+00:55:14,380 --> 00:55:20,300
+which is that, let's say that I walk along. Remember that my graph is
+connected. So what I know is that I can always get from any one connected
+
+754
+00:55:20,540 --> 00:55:21,480
+component to any other.
+
+755
+00:55:22,460 --> 00:55:25,780
+And so let's
+just take whatever order.
+
+756
+00:55:26,280 --> 00:55:34,100
+Notice that the problem hasn't actually asked me how to return an efficient
+path. It just asked me for the minimum number of doors I have to open.
+
+757
+00:55:35,080 --> 00:55:41,060
+So all I have to do is convince myself there exists a path with this many
+doors I have to open. I don't have to actually return it. If I did, it
+
+758
+00:55:41,060 --> 00:55:43,480
+would be mildly more annoying to
+think about.
+
+759
+00:55:44,360 --> 00:55:44,420
+OK.
+
+760
+00:55:45,860 --> 00:55:49,600
+So my graph is connected. So one
+thing that I could do is make the world's,
+
+761
+00:55:50,480 --> 00:55:50,620
+like,
+
+762
+00:55:51,900 --> 00:55:52,660
+well,
+
+763
+00:55:53,590 --> 00:55:54,550
+how do I want to do this?
+
+764
+00:55:57,140 --> 00:56:01,200
+Well, let's see here. I
+guess I could come up with an ordering that
+
+765
+00:56:01,700 --> 00:56:04,990
+looks like depth first search of my graph.
+That should do it.
+
+766
+00:56:05,700 --> 00:56:09,720
+OK. So maybe I started this
+guy. I just started some arbitrary vertex.
+
+767
+00:56:11,160 --> 00:56:18,260
+I'm going to do depth first search. But rather than on the full graph, on
+this kind of meta graph where I've clumped together rooms that I can get to
+
+768
+00:56:18,260 --> 00:56:19,000
+with no cost.
+
+769
+00:56:19,860 --> 00:56:25,400
+So what am I going to do? I'm going to start walking outward toward this
+guy. And then in depth first search, backtracking and then going back down.
+
+770
+00:56:26,880 --> 00:56:34,000
+And if you think about it, remember that in depth first search, I have
+this property I never need to revisit a clump which I've got to at once.
+
+771
+00:56:34,520 --> 00:56:40,280
+Well, the total number of doors that I'm going to open is exactly the
+number of connected components minus 1 because as soon as I've done that, my
+
+772
+00:56:40,280 --> 00:56:41,680
+depth first search is done here.
+
+773
+00:56:42,880 --> 00:56:46,160
+In other words, that's the number of nodes
+in my graph.
+
+774
+00:56:46,800 --> 00:56:47,300
+So if I took,
+
+775
+00:56:48,900 --> 00:56:51,290
+what would be a better way to,
+
+776
+00:56:52,000 --> 00:56:54,980
+I'm noticing that in my head this
+was easier to articulate than in words.
+
+777
+00:56:58,860 --> 00:56:59,770
+Here would be a way to do it.
+
+778
+00:57:00,700 --> 00:57:01,320
+Would be
+
+779
+00:57:03,260 --> 00:57:09,360
+maybe add some more enchanted doors to the graph. Maybe add some more
+enchanted doors. That's true. Actually, my problem is a little too easy.
+
+780
+00:57:10,630 --> 00:57:18,040
+So as long as my depth first search backtracks along the path that's already
+found, then I'm reaching out into this tentacle, and then reaching back,
+
+781
+00:57:18,120 --> 00:57:24,580
+and then reaching to a new place. I'll now traverse an enchanted
+door that I don't need to because I've already seen the location.
+
+782
+00:57:26,640 --> 00:57:28,580
+Is your traversing a tree? Yeah.
+
+783
+00:57:29,500 --> 00:57:31,960
+I've got
+a shortest path tree that's going on here.
+
+784
+00:57:32,620 --> 00:57:34,240
+Actually, I guess a breadth first
+search would be a better example.
+
+785
+00:57:38,080 --> 00:57:42,860
+In fact, here's, OK, let's be concrete about it. I'm sorry. I should
+have thought about this more carefully than I did at home yesterday.
+
+786
+00:57:43,850 --> 00:57:47,800
+One thing I could do would be to compute a
+shortest path tree from one vertex in this graph
+
+787
+00:57:48,300 --> 00:57:49,060
+to all the other ones.
+
+788
+00:57:51,720 --> 00:57:51,960
+Shortest path.
+
+789
+00:57:52,840 --> 00:57:56,700
+And I could traverse that tree to one node,
+and then traverse it all the way back,
+
+790
+00:57:57,260 --> 00:58:00,640
+and then traverse it to a new node, and then
+traverse it all the way back, and so on.
+
+791
+00:58:01,180 --> 00:58:07,780
+This is not an efficient path from a walking perspective. But from a
+door opening perspective, it's extremely efficient because it's a tree.
+
+792
+00:58:08,330 --> 00:58:13,940
+And remember that the number of edges in a
+spanning tree of my graph is exactly the number
+
+793
+00:58:14,880 --> 00:58:20,480
+of vertices in my graph minus 1,
+which is exactly the property we have here.
+
+794
+00:58:21,660 --> 00:58:22,570
+Sweating for a second there.
+
+795
+00:58:23,520 --> 00:58:23,520
+OK.
+
+796
+00:58:24,800 --> 00:58:30,080
+So now in our remaining 30 minutes here, we've got
+two more problems, which is more than enough time,
+
+797
+00:58:31,060 --> 00:58:32,920
+especially because the
+last problem is
+
+798
+00:58:34,060 --> 00:58:37,260
+largely combinatorial and less algorithmic.
+So I think it's OK to focus,
+
+799
+00:58:38,000 --> 00:58:40,520
+maybe talk about that
+at a high level and show a fun plot.
+
+800
+00:58:41,480 --> 00:58:44,200
+OK. So for problem four, we have
+an airline,
+
+801
+00:58:44,920 --> 00:58:48,840
+Purity Atlantic.
+That's cute, Jason, really.
+
+802
+00:58:49,980 --> 00:58:54,080
+And it's owned by Richard Ransom. Did I get
+that right?
+
+803
+00:58:55,300 --> 00:58:59,460
+And Purity Atlantic has
+a cute sail.
+
+804
+00:59:00,760 --> 00:59:03,860
+This is not like
+a cute angle, I suppose.
+
+805
+00:59:04,920 --> 00:59:12,880
+Which is essentially the following, which is that you can book an itinerary
+where you have your home city, and then you choose, I believe, three
+
+806
+00:59:12,880 --> 00:59:13,760
+other cities
+
+807
+00:59:14,320 --> 00:59:15,170
+that you want to visit.
+
+808
+00:59:16,340 --> 00:59:17,900
+And then Purity Atlantic,
+
+809
+00:59:19,020 --> 00:59:21,460
+maybe you're on your honeymoon, and you're
+not concerned with price,
+
+810
+00:59:22,200 --> 00:59:27,950
+but rather just the efficiency because you don't want to spend your
+whole time in an airplane. That's particularly true this month.
+
+811
+00:59:28,740 --> 00:59:35,880
+Then what do you want to do? You want to minimize your total
+number of connections, right? Because as we all know in
+
+812
+00:59:37,320 --> 00:59:39,840
+spring 2020, we don't
+want to spend very much time in airports.
+
+813
+00:59:40,480 --> 00:59:40,480
+Yeah?
+
+814
+00:59:41,440 --> 00:59:41,940
+So right.
+
+815
+00:59:43,310 --> 00:59:46,700
+So how do we do that?
+Well, we make a website where
+
+816
+00:59:47,360 --> 00:59:54,820
+you tell Purity Atlantic the cities that you want to visit in your home
+city, and they give you back an efficient itinerary that minimizes the number
+
+817
+00:59:54,820 --> 00:59:55,500
+of connections.
+
+818
+00:59:56,800 --> 00:59:57,930
+OK. And the question is,
+
+819
+00:59:58,680 --> 01:00:05,190
+how do you actually do that, right? How do you compute the best
+itinerary that minimizes the number of flights you have to take?
+
+820
+01:00:06,140 --> 01:00:11,300
+So what are our variables? And sometimes it feels like the variables are
+all the different permutations of the cities you could visit, right? I could
+
+821
+01:00:11,300 --> 01:00:11,760
+go to,
+
+822
+01:00:12,760 --> 01:00:20,760
+I don't know, Cambridge, Boston, and then Cambridge in the UK. Maybe you're
+doing a university thing, and then, I don't know, Budapest and some other
+
+823
+01:00:20,760 --> 01:00:22,390
+place. Or I
+could do those in any other order.
+
+824
+01:00:23,460 --> 01:00:26,560
+And that feels like it should be factorial,
+which would be bad news.
+
+825
+01:00:28,940 --> 01:00:38,420
+But this is one of these problems which I suppose a computer science
+theorist might call fixed parameter tractable, but that's sort of an overkill
+
+826
+01:00:38,420 --> 01:00:44,220
+term here. But essentially, as long as you ignore all
+the factors that make this problem hard, then it's easy.
+
+827
+01:00:45,460 --> 01:00:46,160
+A different way to put
+
+828
+01:00:46,980 --> 01:00:49,700
+it is that, OK, if I'm
+only visiting cities,
+
+829
+01:00:50,600 --> 01:00:54,500
+what's the total number
+of possible orderings of my three cities?
+
+830
+01:00:56,860 --> 01:00:57,060
+Class.
+
+831
+01:00:59,240 --> 01:01:03,240
+So I have city A, B,
+C. I could do B, C, A. I could do B, A, C.
+
+832
+01:01:05,060 --> 01:01:05,940
+Listen up.
+
+833
+01:01:06,500 --> 01:01:08,000
+JASON KUOCHILAWAEGAWAEGAWAEGAWAEGAWAE Yeah,
+fine, Jason.
+
+834
+01:01:08,870 --> 01:01:10,640
+I'll do that.
+
+835
+01:01:11,500 --> 01:01:11,500
+So
+
+836
+01:01:13,260 --> 01:01:15,110
+this is what we call direct
+proof mathematically,
+
+837
+01:01:15,720 --> 01:01:17,270
+which are all the possible ways
+
+838
+01:01:19,600 --> 01:01:20,980
+to visit three cities.
+
+839
+01:01:28,960 --> 01:01:33,560
+And now, by my direct proof, I claim there
+are no other ways to visit three cities.
+
+840
+01:01:34,480 --> 01:01:38,180
+And in particular, there are 1, 2, 3, 4, 5,
+6 different
+
+841
+01:01:39,240 --> 01:01:40,560
+orderings of the
+cities that I can visit.
+
+842
+01:01:41,580 --> 01:01:46,260
+Notice that this is a constant in my problem. I
+am not asking you to make a website that takes
+
+843
+01:01:47,560 --> 01:01:55,940
+the total set of cities that you want to visit as a couple and order
+them. It's specifically 3. You might also notice that 6 is 3 factorial,
+
+844
+01:01:56,890 --> 01:01:59,420
+which is perhaps a more
+efficient way to get to that same balance.
+
+845
+01:02:01,240 --> 01:02:01,240
+OK,
+
+846
+01:02:02,160 --> 01:02:06,780
+so right. So there's six different
+orderings of the cities. And in each case,
+
+847
+01:02:07,910 --> 01:02:14,120
+what am I going to have to do? I'm going to have to
+compute the sum of going from my source city to city.
+
+848
+01:02:15,990 --> 01:02:19,250
+From the first one to the second one, from the second one
+to the third one, to the third one back to the first one.
+
+849
+01:02:21,620 --> 01:02:22,820
+So what
+
+850
+01:02:23,320 --> 01:02:24,480
+do I need? Well,
+
+851
+01:02:25,260 --> 01:02:31,760
+I need, in some sense, I want to be conservative about it, just the cost
+of flying from every city to every other city. But that's not quite right.
+
+852
+01:02:32,520 --> 01:02:39,860
+I only need the cost of flying from every city that you have specified as
+a city you're interested in to every other city that you specified that
+
+853
+01:02:39,860 --> 01:02:40,810
+you're interested in.
+
+854
+01:02:42,000 --> 01:02:42,100
+OK,
+
+855
+01:02:42,920 --> 01:02:43,580
+so in particular,
+
+856
+01:02:45,000 --> 01:02:46,010
+I go to my new one.
+
+857
+01:02:46,780 --> 01:02:48,560
+So in this problem, we
+have c cities
+
+858
+01:02:50,740 --> 01:02:51,950
+and f flights.
+
+859
+01:02:56,650 --> 01:03:00,520
+OK, and initially, it might seem that
+we have to compute a ton of shortest paths.
+
+860
+01:03:01,160 --> 01:03:03,740
+But if I
+want to go from Boston to
+
+861
+01:03:04,600 --> 01:03:13,440
+Budapest to London to I'm running out of cities Paris and back to Boston
+or whatever ordering I prefer, do I need to worry about the shortest path
+
+862
+01:03:13,700 --> 01:03:17,300
+from Nebraska to California?
+
+863
+01:03:17,800 --> 01:03:22,580
+Potentially not. That could be irrelevant. The only ones
+that I care about are those four cities that I've identified.
+
+864
+01:03:24,200 --> 01:03:28,640
+OK, so there's three
+factorial possible permutations.
+
+865
+01:03:29,840 --> 01:03:30,810
+And at the end of the day,
+
+866
+01:03:31,680 --> 01:03:34,860
+well, there's 2 times
+4 choose 2.
+
+867
+01:03:36,860 --> 01:03:40,140
+If
+you're wondering, this is 12 or big O of 1.
+
+868
+01:03:40,860 --> 01:03:43,920
+Pairs of cities,
+
+869
+01:03:45,620 --> 01:03:52,280
+meaning that
+for itinerary purposes,
+
+870
+01:03:53,440 --> 01:03:54,690
+itinerary.
+
+871
+01:03:57,100 --> 01:04:03,520
+OK, meaning that if I always enter an airport
+in one of city A, B, C, or my hometown,
+
+872
+01:04:04,080 --> 01:04:06,060
+and I
+always exit through another one,
+
+873
+01:04:06,900 --> 01:04:10,270
+so then there's four possible
+cities. I choose them two at a time.
+
+874
+01:04:11,640 --> 01:04:17,840
+Notice that flights might not be ordered. Like I might be able to get
+from one city to another, but then maybe the airplane has a connection or
+
+875
+01:04:17,840 --> 01:04:19,460
+something.
+So going back is a different cost.
+
+876
+01:04:20,120 --> 01:04:20,380
+But totally,
+
+877
+01:04:20,880 --> 01:04:25,900
+there's 2 times 4 choose 2 different pairs
+of cities that I could enter or exit from.
+
+878
+01:04:27,280 --> 01:04:27,400
+OK,
+
+879
+01:04:28,480 --> 01:04:30,060
+so now what am I going to do?
+
+880
+01:04:31,120 --> 01:04:31,780
+Well, so
+
+881
+01:04:32,620 --> 01:04:33,460
+I can compute
+
+882
+01:04:34,580 --> 01:04:40,240
+the 12 different shortest paths that matter in my
+graph. So when I say shortest path, what do I mean?
+
+883
+01:04:40,940 --> 01:04:42,400
+Well, I'm going
+to construct a graph,
+
+884
+01:04:46,780 --> 01:04:49,260
+G,
+
+885
+01:04:50,000 --> 01:04:51,760
+with one vertex
+
+886
+01:04:53,900 --> 01:04:57,720
+per city and one
+
+887
+01:04:59,920 --> 01:05:00,300
+edge
+
+888
+01:05:01,920 --> 01:05:02,940
+per flight.
+
+889
+01:05:05,940 --> 01:05:12,260
+And notice the number of connections that I need to make,
+the minimum number between any city and any other city,
+
+890
+01:05:13,260 --> 01:05:16,440
+is equal to the shortest path, the
+length of the shortest path minus 1.
+
+891
+01:05:17,300 --> 01:05:18,340
+So maybe I have,
+
+892
+01:05:18,840 --> 01:05:20,000
+here's Boston,
+
+893
+01:05:20,600 --> 01:05:21,340
+here's London,
+
+894
+01:05:22,020 --> 01:05:22,520
+here's Paris,
+
+895
+01:05:25,120 --> 01:05:27,440
+B, L, P for short.
+
+896
+01:05:28,570 --> 01:05:30,620
+Then the length of my
+shortest path
+
+897
+01:05:31,380 --> 01:05:32,020
+is 2.
+
+898
+01:05:32,680 --> 01:05:34,960
+And the number of connections I have to
+make is 1 because I stopped through London.
+
+899
+01:05:37,240 --> 01:05:38,940
+So what am I going to do? Well,
+
+900
+01:05:40,280 --> 01:05:46,920
+for every pair of
+cities in this, oops,
+
+901
+01:05:48,960 --> 01:05:49,200
+no,
+
+902
+01:05:52,150 --> 01:05:58,180
+that's OK. In the set of the source city
+and the three cities you want to visit,
+
+903
+01:05:58,900 --> 01:05:59,670
+I'm going to compute
+
+904
+01:06:04,010 --> 01:06:05,540
+the length of the shortest path.
+
+905
+01:06:06,220 --> 01:06:10,060
+So this is the minimum number of connections I
+need to get from any one of these to any other
+
+906
+01:06:10,600 --> 01:06:11,960
+one in my graph,
+
+907
+01:06:13,440 --> 01:06:13,640
+G.
+
+908
+01:06:14,440 --> 01:06:18,740
+Well, how much time does this take? Well,
+there's 12 such pairs. We already argued that.
+
+909
+01:06:19,660 --> 01:06:20,300
+And how much
+
+910
+01:06:21,200 --> 01:06:23,300
+time does it take to
+
+911
+01:06:24,560 --> 01:06:26,940
+actually do shortest paths,
+say, using breadth -first search?
+
+912
+01:06:28,560 --> 01:06:32,940
+Linear time the size of the graph. JASON KURIYAMA - Linear time the
+size of the graph. I think Jason actually has a t -shirt that says that.
+
+913
+01:06:34,200 --> 01:06:41,600
+Well, in this case, remember that's big O of the number of edges plus the
+number of vertices. But just to make your life a little more annoying,
+
+914
+01:06:42,580 --> 01:06:44,620
+the
+number of vertices is the number of cities,
+
+915
+01:06:45,260 --> 01:06:56,000
+the number of edges, the number of flights. So this takes 12 times
+O of C plus F time, which of course is just O of C plus F time.
+
+916
+01:06:57,760 --> 01:07:03,640
+Notice this is one of these things where we're being sneaky.
+We told you that you specifically visit three places.
+
+917
+01:07:04,160 --> 01:07:05,560
+And that's where
+this number 12 came from.
+
+918
+01:07:08,910 --> 01:07:10,940
+And if you're going to visit three cities, then
+this would be a very different homework problem.
+
+919
+01:07:11,820 --> 01:07:16,380
+This is one of those things you've got to remember, right?
+Where we've given you a few constants and you should use them.
+
+920
+01:07:17,880 --> 01:07:17,880
+OK.
+
+921
+01:07:18,600 --> 01:07:19,940
+So now what
+
+922
+01:07:20,760 --> 01:07:23,840
+can I do? I can iterate
+
+923
+01:07:27,660 --> 01:07:32,180
+over every permutation
+
+924
+01:07:33,720 --> 01:07:36,200
+of A, B,
+
+925
+01:07:37,620 --> 01:07:37,970
+C.
+
+926
+01:07:38,600 --> 01:07:38,700
+Right?
+
+927
+01:07:39,540 --> 01:07:46,500
+So this is like saying I go from
+my source to city 1, to city 2, to city 3,
+
+928
+01:07:47,280 --> 01:07:48,200
+back to my source.
+
+929
+01:07:48,960 --> 01:07:49,540
+Right?
+
+930
+01:07:50,120 --> 01:07:57,000
+I add
+together and compute the cost of
+
+931
+01:07:59,920 --> 01:08:04,540
+that trip. And remember, cost in this case is
+equal to the minimum number of connections.
+
+932
+01:08:06,120 --> 01:08:07,260
+And then I return the minimizer.
+
+933
+01:08:11,080 --> 01:08:19,680
+So I say, is it cheaper for me to go Boston, Budapest, Paris, Boston, Paris,
+Budapest, and so on. So a for loop over permutations, which generally is
+
+934
+01:08:19,720 --> 01:08:21,479
+frowned upon. But in this case,
+
+935
+01:08:22,020 --> 01:08:24,660
+because we told
+you you're visiting precisely three places,
+
+936
+01:08:26,279 --> 01:08:34,760
+how many steps are going to happen in that for loop? Well, we actually
+wrote them all out over here on our board. It's exactly 3 factorial, or 6
+
+937
+01:08:34,760 --> 01:08:35,300
+steps.
+
+938
+01:08:36,180 --> 01:08:37,880
+3 times 2 times 1, which
+
+939
+01:08:39,220 --> 01:08:39,500
+is 6. OK?
+
+940
+01:08:40,720 --> 01:08:45,140
+So right. So at the end
+of the day, this for loop is going to take,
+
+941
+01:08:46,380 --> 01:08:46,920
+well,
+
+942
+01:08:48,640 --> 01:08:49,500
+order 6 time,
+
+943
+01:08:50,680 --> 01:08:55,520
+which of course, is just order 1. So it doesn't
+really contribute to our runtime at all.
+
+944
+01:08:56,319 --> 01:09:00,319
+And
+our entire algorithm runs in C plus F time.
+
+945
+01:09:01,660 --> 01:09:01,760
+OK?
+
+946
+01:09:02,359 --> 01:09:07,859
+So right. So this is one of these problems where you're really taking
+advantage of the constants that we gave you. We said you're visiting
+
+947
+01:09:08,580 --> 01:09:09,620
+three cities, so use it.
+
+948
+01:09:10,640 --> 01:09:14,779
+Incidentally, as a computer science theorist,
+if I said you're visiting exactly 17 cities,
+
+949
+01:09:15,779 --> 01:09:19,260
+well, what would be our numbers now?
+I mean, there would be 17 factorial,
+
+950
+01:09:19,840 --> 01:09:21,380
+and then like 17 choose 2.
+
+951
+01:09:22,160 --> 01:09:25,080
+Those are big numbers, but they're still
+constants. So for purposes of this class,
+
+952
+01:09:25,859 --> 01:09:28,960
+that would be OK. But
+the second that I gave it a name like m,
+
+953
+01:09:30,060 --> 01:09:33,540
+then I got to think about those
+factorial things a little more carefully.
+
+954
+01:09:34,859 --> 01:09:35,080
+All right.
+
+955
+01:09:36,500 --> 01:09:45,020
+So that's this problem. So the basic trick here was that like, yeah, it
+looks like all pairs shortest path, but it's not quite. It's all pairs of
+
+956
+01:09:45,060 --> 01:09:50,300
+things that you're actually going to travel between shortest
+path. And since that number of pairs is finite, this is 12,
+
+957
+01:09:50,890 --> 01:09:52,370
+that's an OK thing to do.
+
+958
+01:09:53,740 --> 01:09:53,740
+OK.
+
+959
+01:09:55,760 --> 01:09:56,100
+How are we doing?
+
+960
+01:09:57,260 --> 01:09:58,220
+Ah, 15 minutes. Perfect.
+
+961
+01:10:00,100 --> 01:10:02,340
+I didn't want to do the last problem, and I
+think I've managed to
+
+962
+01:10:03,440 --> 01:10:04,500
+get myself in
+exactly that position.
+
+963
+01:10:05,760 --> 01:10:12,680
+OK. So the very last problem on this homework, which again, this homework
+really follows the prototypical 6 -006 breadth -first search, depth -first
+
+964
+01:10:12,680 --> 01:10:15,740
+search homework. I feel
+like they all fall into a similar pattern.
+
+965
+01:10:16,440 --> 01:10:19,880
+Again, all these resources are available to
+you guys. You should look at them.
+
+966
+01:10:20,730 --> 01:10:21,660
+We're not
+trying to hide anything.
+
+967
+01:10:22,680 --> 01:10:27,740
+This problem involves solving a pocket cube, which
+is like a little mini Rubik's cube, which is 2 by 2.
+
+968
+01:10:30,020 --> 01:10:33,120
+And it looks like this.
+
+969
+01:10:33,640 --> 01:10:34,300
+Ah, there's a star.
+
+970
+01:10:35,000 --> 01:10:35,180
+Actually,
+
+971
+01:10:35,840 --> 01:10:37,780
+here we go.
+
+972
+01:10:38,540 --> 01:10:39,840
+Right. So
+here's my Rubik's cube.
+
+973
+01:10:42,240 --> 01:10:45,980
+Looks like a cube, which
+I'm having some trouble drawing.
+
+974
+01:10:47,360 --> 01:10:49,460
+And in particular, it's 2 by 2,
+
+975
+01:10:51,780 --> 01:10:55,380
+which makes it a little
+easier than your typical Rubik's cube.
+
+976
+01:10:55,880 --> 01:10:55,980
+OK.
+
+977
+01:10:56,960 --> 01:10:59,620
+And in
+particular, we're going to mark some faces.
+
+978
+01:11:00,540 --> 01:11:02,840
+Sneakily, they used
+a little geometry term here, which is cute.
+
+979
+01:11:03,360 --> 01:11:03,460
+So
+
+980
+01:11:04,100 --> 01:11:07,420
+here's face F0. I'm sorry, you can't quite
+see that, but
+
+981
+01:11:08,580 --> 01:11:10,390
+the
+top face is F0, in case you were wondering.
+
+982
+01:11:11,100 --> 01:11:12,500
+The left face
+
+983
+01:11:14,100 --> 01:11:15,100
+is F1.
+
+984
+01:11:15,900 --> 01:11:17,900
+And the front -facing face here,
+
+985
+01:11:19,190 --> 01:11:19,640
+F2.
+
+986
+01:11:20,720 --> 01:11:25,820
+Notice that we've identified these by vectors that point 90
+degrees out from the face. These are called normal vectors.
+
+987
+01:11:26,980 --> 01:11:29,980
+If you want to define those rigorously, you
+can take my grad level class.
+
+988
+01:11:31,200 --> 01:11:32,890
+But for a
+Rubik's cube, it's not terribly difficult.
+
+989
+01:11:34,060 --> 01:11:42,820
+But in any event, I can talk about flipping this Rubik's cube in a pretty
+easy way, which is that I'm going to fix one corner of my cube. So this is
+
+990
+01:11:42,820 --> 01:11:44,640
+like the
+corner that I'm holding onto with my hands.
+
+991
+01:11:45,260 --> 01:11:47,800
+And now I
+can grab, what, the top,
+
+992
+01:11:48,340 --> 01:11:51,320
+the side, or the
+front of my cube. And I can rotate
+
+993
+01:11:51,840 --> 01:11:53,000
+it clockwise
+or counterclockwise.
+
+994
+01:11:53,800 --> 01:11:59,860
+And you can convince yourself those are all the possible ways that I
+could sort of mess with the state of my cube after fixing one corner.
+
+995
+01:12:01,460 --> 01:12:01,480
+OK?
+
+996
+01:12:02,820 --> 01:12:11,160
+Right. And so this problem basically is involving a very typical trick. In
+fact, a lot of the history of these different search algorithms, breadth
+
+997
+01:12:11,200 --> 01:12:14,390
+-first search, depth -first search, A star,
+which I guess we won't really cover here,
+
+998
+01:12:16,580 --> 01:12:21,130
+date back to, what, 20, 30 years ago. We
+would have called it artificial intelligence.
+
+999
+01:12:22,000 --> 01:12:24,150
+These days, that has a
+very different meaning.
+
+1000
+01:12:26,960 --> 01:12:34,820
+It's all about solving board games and Rubik's cubes and all these kinds
+of things using algorithms. And the way that they would do that is by
+
+1001
+01:12:34,820 --> 01:12:36,860
+searching the different
+spaces of configurations.
+
+1002
+01:12:38,320 --> 01:12:43,100
+So now, if we think of every
+face of this cube as painted with a color,
+
+1003
+01:12:43,700 --> 01:12:47,660
+there are different configurations of my
+graph that I get by flipping the three sides.
+
+1004
+01:12:49,420 --> 01:12:51,960
+So if
+we think of there being a vertex
+
+1005
+01:12:55,460 --> 01:12:55,860
+for heat
+
+1006
+01:12:56,960 --> 01:12:58,280
+of each state
+
+1007
+01:12:59,800 --> 01:13:00,660
+of my cube,
+
+1008
+01:13:02,100 --> 01:13:06,220
+where state here means the
+coloring of every face on my Rubik's cube,
+
+1009
+01:13:06,760 --> 01:13:08,300
+then there's an edge
+
+1010
+01:13:10,660 --> 01:13:12,640
+for every move.
+
+1011
+01:13:14,760 --> 01:13:18,480
+And in this problem, we encoded a move as a
+pair J comma S,
+
+1012
+01:13:19,220 --> 01:13:22,170
+where it's saying
+that I'm going to rotate
+
+1013
+01:13:24,220 --> 01:13:34,140
+face F of J, where J is between, I guess, 0, 1, and 2
+in direction S. And we can just index that as plus or
+
+1014
+01:13:34,660 --> 01:13:37,420
+minus 1 to
+say counterclockwise or clockwise.
+
+1015
+01:13:38,500 --> 01:13:44,600
+So this is a cute thing, where your graph has a
+bunch of vertices, which are all Rubik's cubes.
+
+1016
+01:13:47,060 --> 01:13:47,340
+That's a cube.
+
+1017
+01:13:47,920 --> 01:13:51,960
+And then there are edges, if I can get from
+one to another by doing one of these moves.
+
+1018
+01:13:52,960 --> 01:14:00,300
+And this is a nice abstraction, because if I want to solve a Rubik's cube,
+in the most efficient way possible, one way to do that is to compute the
+
+1019
+01:14:00,300 --> 01:14:02,160
+shortest path from my current
+
+1020
+01:14:02,920 --> 01:14:04,500
+configuration to
+
+1021
+01:14:05,820 --> 01:14:11,260
+the platonic Rubik's cube, where all the colors
+are constant on the different faces of my cube.
+
+1022
+01:14:11,920 --> 01:14:18,080
+And so that's a basic identification that
+happens all over the place in search strategies,
+
+1023
+01:14:18,780 --> 01:14:26,440
+where I'm going to think of every vertex of my graph as being the state
+of some system and every edge as being a transition from one to another.
+
+1024
+01:14:27,020 --> 01:14:28,540
+And then paths in this thing are
+
+1025
+01:14:29,280 --> 01:14:30,500
+different ways
+of solving my puzzle.
+
+1026
+01:14:31,060 --> 01:14:32,680
+So a different one would be,
+
+1027
+01:14:33,260 --> 01:14:35,210
+I don't know, every vertex is
+
+1028
+01:14:35,820 --> 01:14:43,460
+a chessboard with the chess pieces scattered on the chessboard. And every
+edge is one chess move by one player or the other. In that case, you have
+
+1029
+01:14:43,460 --> 01:14:44,440
+to be a little careful, because
+
+1030
+01:14:45,140 --> 01:14:49,110
+you want player 1 or player 2 to go back and forth from each
+other. But I'll let you think about the reduction there.
+
+1031
+01:14:50,660 --> 01:14:52,860
+OK, so this problem,
+
+1032
+01:14:53,620 --> 01:14:58,780
+I think, largely is mostly just fun, like combinatorics rather than
+algorithms. But there's a little bit of algorithms hiding in here.
+
+1033
+01:15:00,300 --> 01:15:07,780
+So they want you to argue that the number of distinct configurations
+of this Rubik's cube, this 2 by 2 guy, is less than 12 million.
+
+1034
+01:15:08,520 --> 01:15:11,440
+This is nice, because 12 million is a number
+that computers can actually cope with.
+
+1035
+01:15:13,080 --> 01:15:14,980
+And so there's a
+pretty straightforward argument there.
+
+1036
+01:15:20,020 --> 01:15:21,800
+Right, so in particular,
+
+1037
+01:15:24,800 --> 01:15:25,340
+here's a cube.
+
+1038
+01:15:27,600 --> 01:15:28,700
+How many corners are in a cube?
+
+1039
+01:15:30,100 --> 01:15:30,400
+Eight.
+
+1040
+01:15:30,920 --> 01:15:34,720
+Thanks. I hid
+one back here, in case you were wondering.
+
+1041
+01:15:35,820 --> 01:15:40,060
+So let's say that I fix
+a corner of the cube, like we've done that.
+
+1042
+01:15:40,780 --> 01:15:48,740
+Then every time that I rotate one of the faces of my cube clockwise or
+counterclockwise, I'm essentially taking one corner of my cube and sticking it
+
+1043
+01:15:48,740 --> 01:15:49,180
+in another place.
+
+1044
+01:15:51,080 --> 01:15:51,560
+So
+
+1045
+01:15:52,160 --> 01:15:52,800
+in all,
+
+1046
+01:15:53,340 --> 01:15:54,000
+seven corners
+
+1047
+01:15:55,720 --> 01:15:56,980
+of my cube can move.
+
+1048
+01:16:00,320 --> 01:16:01,820
+And if I'm not worried
+about like,
+
+1049
+01:16:02,460 --> 01:16:08,840
+it could be that some of these permutations are not actually achievable by
+a set of steps, like maybe I'd have to break my Rubik's cube and glue it
+
+1050
+01:16:08,860 --> 01:16:09,370
+back together.
+
+1051
+01:16:10,440 --> 01:16:12,900
+But if
+I'm being conservative about it, there's of
+
+1052
+01:16:13,540 --> 01:16:18,460
+course less than or equal to seven factorial
+different configurations of the corners.
+
+1053
+01:16:20,960 --> 01:16:21,060
+Right,
+
+1054
+01:16:24,340 --> 01:16:28,220
+so in other words, every time I rotate my face,
+one of the corners ends up in a different place.
+
+1055
+01:16:29,120 --> 01:16:31,450
+So there's seven factorial different
+ways that that could have happened.
+
+1056
+01:16:34,160 --> 01:16:39,220
+OK, so that's part of my bound. Remember that I'm
+trying to bound the total number of configurations here.
+
+1057
+01:16:40,180 --> 01:16:42,200
+And essentially,
+what I've done so far is I've said,
+
+1058
+01:16:43,120 --> 01:16:43,120
+OK,
+
+1059
+01:16:43,980 --> 01:16:45,860
+well, there's a bunch of cubes
+
+1060
+01:16:46,380 --> 01:16:53,220
+in my 2 by 2 Rubik's cube. So I'm going to like, unglue this
+entire cube. Take just this corner and stick it up here.
+
+1061
+01:16:53,940 --> 01:16:56,200
+And there's like seven factorial different
+ways that I could do that.
+
+1062
+01:16:58,140 --> 01:17:01,780
+But I still have to account for the fact that
+I pull this piece off, I stick it on the top,
+
+1063
+01:17:02,300 --> 01:17:06,720
+but I have to figure out its orientation. I
+can still rotate it about this corner.
+
+1064
+01:17:07,520 --> 01:17:14,080
+And in fact, there are three different ways that I could rotate
+it. Right, you can kind of see it. Right, one, two, three.
+
+1065
+01:17:14,620 --> 01:17:14,620
+Yeah,
+
+1066
+01:17:15,500 --> 01:17:16,090
+so in all,
+
+1067
+01:17:17,040 --> 01:17:18,020
+so each corner
+
+1068
+01:17:22,200 --> 01:17:23,180
+can rotate
+
+1069
+01:17:25,360 --> 01:17:25,880
+three ways.
+
+1070
+01:17:27,900 --> 01:17:28,140
+So
+
+1071
+01:17:28,860 --> 01:17:32,340
+that means that I have 3 times 7 factorial
+different
+
+1072
+01:17:33,260 --> 01:17:34,640
+configurations as an upper
+bound.
+
+1073
+01:17:36,460 --> 01:17:38,460
+And this number is, wait for it,
+
+1074
+01:17:39,720 --> 01:17:41,040
+1, 1, 0, 2,
+
+1075
+01:17:41,560 --> 01:17:43,980
+2, 4, 8, 0.
+
+1076
+01:17:44,920 --> 01:17:56,060
+The problem asks you to argue that your upper bound is upper bounded by
+12 million. And indeed, it is less than or equal to 12 million. Is that 3
+
+1077
+01:17:56,140 --> 01:17:57,740
+times 7 factorial or?
+
+1078
+01:17:59,320 --> 01:18:00,380
+Oh, I'm sorry.
+
+1079
+01:18:00,880 --> 01:18:07,060
+Right, because there are seven corners, each of which can rotate three
+different ways. So actually, 3 to the seventh power times 7 factorial.
+
+1080
+01:18:07,860 --> 01:18:09,060
+Thank you, student.
+
+1081
+01:18:10,720 --> 01:18:10,920
+OK,
+
+1082
+01:18:11,820 --> 01:18:16,480
+right, so let's see here. Really
+quickly moving here, the next problem says,
+
+1083
+01:18:17,140 --> 01:18:20,440
+state the maximum and minimum degree of any
+vertex in my graph.
+
+1084
+01:18:22,480 --> 01:18:23,170
+First of all, do I expect
+
+1085
+01:18:24,080 --> 01:18:26,760
+vertices to have different degrees? This is
+kind of a goofy problem.
+
+1086
+01:18:28,460 --> 01:18:32,880
+What
+would it mean to have a vertex that somehow
+
+1087
+01:18:34,680 --> 01:18:41,400
+has lower degree than another vertex? It would mean that there's some
+configuration of this cube for which there are fewer moves that I could do to
+
+1088
+01:18:41,440 --> 01:18:43,880
+change it than a different configuration of
+this cube.
+
+1089
+01:18:45,780 --> 01:18:50,580
+And that's obviously not the case. Right,
+because when I flip one of the faces of my cube,
+
+1090
+01:18:51,360 --> 01:18:56,720
+all I'm doing is I'm moving the colors around. I haven't
+somehow changed the physics of how Rubik's cube works.
+
+1091
+01:18:57,340 --> 01:18:58,660
+And so I
+
+1092
+01:19:00,260 --> 01:19:11,700
+think this was just intended to be annoying by your
+instructors. The min degree is equal to the max degree.
+
+1093
+01:19:13,660 --> 01:19:14,420
+And in fact,
+
+1094
+01:19:15,020 --> 01:19:18,880
+the degree
+of every node in my graph is constant here.
+
+1095
+01:19:20,320 --> 01:19:26,040
+The one thing that's worth noting here, what I haven't argued, it
+turns out, I think, to be true. But what I haven't argued is that I
+
+1096
+01:19:27,160 --> 01:19:29,470
+couldn't rotate a face and
+actually end up in the same configuration.
+
+1097
+01:19:30,160 --> 01:19:34,600
+Like maybe for some reason, I have red all the way
+around the outside. So when I rotate it, nothing changed.
+
+1098
+01:19:35,560 --> 01:19:37,780
+That obviously isn't true,
+but I haven't argued it carefully.
+
+1099
+01:19:38,340 --> 01:19:41,640
+But as long as I don't worry about my graph
+being simple, like I'm OK with self loops,
+
+1100
+01:19:42,540 --> 01:19:43,880
+then
+the degree is certainly constant.
+
+1101
+01:19:44,780 --> 01:19:44,920
+Yeah?
+
+1102
+01:19:46,040 --> 01:19:46,180
+OK.
+
+1103
+01:19:47,860 --> 01:19:48,640
+And in fact, I don't think
+
+1104
+01:19:49,180 --> 01:19:57,940
+that can happen in a typical Rubik's cube. Well, I think the point is
+to say what the degree was. Oh, yeah, indeed. So we haven't computed the
+
+1105
+01:19:57,940 --> 01:20:02,560
+degree, but we've argued that they're equal to one another.
+OK, so now we actually have to compute what that degree is.
+
+1106
+01:20:04,020 --> 01:20:06,080
+And here's how
+to do it. So of course,
+
+1107
+01:20:07,480 --> 01:20:10,800
+well, this I think is actually even easier
+than the first part.
+
+1108
+01:20:11,300 --> 01:20:13,200
+Essentially,
+remember, you have three different options
+
+1109
+01:20:14,240 --> 01:20:16,220
+for faces that I
+can rotate. I can rotate the top,
+
+1110
+01:20:16,800 --> 01:20:17,020
+the front,
+
+1111
+01:20:17,660 --> 01:20:18,220
+or the
+
+1112
+01:20:18,880 --> 01:20:25,220
+side here. So there's
+three faces that we could rotate.
+
+1113
+01:20:27,620 --> 01:20:31,620
+OK, and how many different ways can I rotate them?
+I can rotate them counterclockwise or clockwise.
+
+1114
+01:20:33,020 --> 01:20:34,140
+So there's two directions.
+
+1115
+01:20:34,660 --> 01:20:41,610
+So in all, there's degree 6 for every vertex. There's
+six different ways in or out of a vertex here.
+
+1116
+01:20:43,260 --> 01:20:49,420
+OK, so the next part of the problem gives you a piece of
+code and then does breadth first search on this graph.
+
+1117
+01:20:51,200 --> 01:20:54,260
+And it's super, super slow to give me the
+distance to all the other configurations.
+
+1118
+01:20:56,140 --> 01:20:58,900
+And Jason
+conveniently has run it on his laptop here.
+
+1119
+01:20:59,580 --> 01:21:01,600
+I'm nervous
+to touch your laptop.
+
+1120
+01:21:02,840 --> 01:21:06,260
+I don't care so much,
+but I don't want to infect you.
+
+1121
+01:21:07,020 --> 01:21:07,020
+Yeah.
+
+1122
+01:21:09,340 --> 01:21:14,520
+Right. So we have a piece of code that explores
+the graph of all the configurations of our cube.
+
+1123
+01:21:15,530 --> 01:21:19,980
+So I do a breadth first search and then gives
+me the shortest path, I think, from the base
+
+1124
+01:21:20,480 --> 01:21:26,140
+cube where all the faces are constant to all the other
+configurations that are reachable and generates a plot.
+
+1125
+01:21:29,060 --> 01:21:31,030
+Right. And
+so what they ask is to
+
+1126
+01:21:32,040 --> 01:21:34,360
+figure out the total
+number of configurations that it explores.
+
+1127
+01:21:35,340 --> 01:21:36,590
+One thing that you'll find out,
+
+1128
+01:21:39,260 --> 01:21:40,100
+center down,
+
+1129
+01:21:42,460 --> 01:21:44,840
+is that
+it explores pretty much a third.
+
+1130
+01:21:45,600 --> 01:21:51,360
+Exactly a third of all the possible configurations
+of my cube. I think we can see that here.
+
+1131
+01:21:52,540 --> 01:21:54,860
+So I guess it runs this
+whole thing. You sum them all together.
+
+1132
+01:21:56,980 --> 01:21:56,980
+Right.
+
+1133
+01:21:57,960 --> 01:21:57,960
+Oops.
+
+1134
+01:22:02,420 --> 01:22:02,760
+That's OK.
+
+1135
+01:22:03,600 --> 01:22:12,040
+And so in fact, the kind of fun fact that you can learn about the 2 by 2
+by 2 Rubik's cube is that there's actually three connected components in
+
+1136
+01:22:12,040 --> 01:22:12,600
+this graph.
+
+1137
+01:22:13,240 --> 01:22:21,100
+So in other words, there's sort of like three different Rubik's cubes you
+can make modulo all the different flips that you can do to the faces. And
+
+1138
+01:22:21,100 --> 01:22:25,740
+those correspond to three corner rotations
+of one of the corners of the thing.
+
+1139
+01:22:26,340 --> 01:22:26,340
+OK.
+
+1140
+01:22:28,820 --> 01:22:38,060
+So right. So then the next part of the problem asks you to state the maximum
+number of moves needed to solve any Rubik's cube. And you can see it in
+
+1141
+01:22:38,060 --> 01:22:44,260
+this plot. So what this plot is showing you is the size of
+the level set of this distance function for every distance.
+
+1142
+01:22:46,060 --> 01:22:53,580
+So I think technically it looks like 0. But actually, this is at a 1
+here. We just say there's one vertex at distance 0, which is the source.
+
+1143
+01:22:54,660 --> 01:22:58,780
+And as we move farther and farther out, our tree is
+expanding. And we're seeing more and more vertices.
+
+1144
+01:22:59,900 --> 01:23:03,200
+Apparently, most vertices are approximately
+distance, what is that, 11 or 12,
+
+1145
+01:23:04,180 --> 01:23:08,720
+11 away from the original. And then eventually,
+I explore the entire graph. And I'm done.
+
+1146
+01:23:09,280 --> 01:23:10,940
+And you can
+see that the farthest away vertex
+
+1147
+01:23:11,820 --> 01:23:13,980
+is 14 away, meaning that
+
+1148
+01:23:14,500 --> 01:23:21,980
+the most annoying Rubik's cube to solve can be
+solved in 14 steps for the 2 by 2 by 2 pocket cube.
+
+1149
+01:23:22,600 --> 01:23:28,000
+I'm sure that Jason probably knows the equivalent of this
+number for the 3 by 3 by 3. But I have no idea what it is.
+
+1150
+01:23:29,400 --> 01:23:32,400
+I'm impressed if he can calculate in his
+head like he looks like he was about to try.
+
+1151
+01:23:33,560 --> 01:23:34,140
+But I digress.
+
+1152
+01:23:35,880 --> 01:23:39,140
+Right. So in other words, this is actually
+a fancy term for,
+
+1153
+01:23:40,380 --> 01:23:44,400
+we talked about the radius of your graph in the
+first problem. Now we've got the diameter, which is
+
+1154
+01:23:45,400 --> 01:23:49,560
+well, not necessarily 2 times the radius the way
+that we've defined it here, but actually almost,
+
+1155
+01:23:51,250 --> 01:23:53,760
+I think, within some constant of
+that.
+
+1156
+01:23:55,520 --> 01:23:55,520
+OK.
+
+1157
+01:23:58,140 --> 01:24:00,980
+So notice
+that the vertical axis here is really big.
+
+1158
+01:24:01,740 --> 01:24:07,160
+And this is explaining why this BFS code is so slow, because
+these are all the different configurations it has to hit.
+
+1159
+01:24:07,820 --> 01:24:15,220
+Or more accurately, if I take the y position of each one of these
+vertices and sum up its height, those are all the configurations that are
+
+1160
+01:24:15,400 --> 01:24:15,500
+touchable,
+
+1161
+01:24:16,140 --> 01:24:18,500
+and those are all
+the steps that BFS needs before it's done.
+
+1162
+01:24:19,320 --> 01:24:21,670
+And so that number is in the,
+
+1163
+01:24:23,360 --> 01:24:23,940
+certainly in the millions.
+
+1164
+01:24:24,920 --> 01:24:24,980
+Yeah.
+
+1165
+01:24:26,000 --> 01:24:30,500
+OK. So then the last part of this problem, which it
+conveniently looks like I'm low on time to solve,
+
+1166
+01:24:31,280 --> 01:24:33,240
+but I'll
+refer you to the solution anyway,
+
+1167
+01:24:33,820 --> 01:24:36,500
+is asking how we
+might do this faster.
+
+1168
+01:24:37,360 --> 01:24:39,520
+And so in particular,
+what it says is,
+
+1169
+01:24:41,200 --> 01:24:49,600
+let's say that I have a total of n configurations for my Rubik's cube.
+In this case, it turns out that that's roughly 3 million, I think.
+
+1170
+01:24:50,100 --> 01:24:50,100
+OK.
+
+1171
+01:24:50,660 --> 01:24:52,850
+And now I want an algorithm
+
+1172
+01:24:54,200 --> 01:24:59,300
+that gives me the shortest
+sequence of moves to solve any pocket cube.
+
+1173
+01:25:00,180 --> 01:25:02,840
+Man, I'm
+really ravaging the chalk today.
+
+1174
+01:25:03,880 --> 01:25:12,120
+And I want to solve any cube in a number of
+steps that looks like 2n
+
+1175
+01:25:13,400 --> 01:25:17,500
+to the ceiling of w over 2,
+
+1176
+01:25:18,060 --> 01:25:27,820
+where, let's see here. The code provides, sorry,
+this problem changed on me this afternoon.
+
+1177
+01:25:30,340 --> 01:25:37,880
+Right. So where n sub i is equal to the number
+of configurations reachable within i moves.
+
+1178
+01:25:38,700 --> 01:25:40,340
+Oh, good. I
+see what we did here.
+
+1179
+01:25:45,400 --> 01:25:45,500
+Right.
+
+1180
+01:25:46,800 --> 01:25:51,100
+So if this is my
+base cube, then we've got maybe like a six
+
+1181
+01:25:51,660 --> 01:25:53,780
+different, 1, 2, 3, 4, 5,
+
+1182
+01:25:54,340 --> 01:25:59,840
+6 different cubes that I can reach from those. And then there's six cubes
+I can reach from all of those. But of course, some of those might be
+
+1183
+01:25:59,840 --> 01:26:00,510
+pointing backward
+
+1184
+01:26:01,180 --> 01:26:02,220
+or to each other.
+
+1185
+01:26:03,240 --> 01:26:05,660
+But this is the number
+of things that are reachable in i moves.
+
+1186
+01:26:06,180 --> 01:26:08,660
+And they ask for an algorithm that
+finds the shortest path
+
+1187
+01:26:09,360 --> 01:26:10,360
+in this amount of time.
+
+1188
+01:26:11,040 --> 01:26:14,120
+By the way, big N typically
+exponentiates in that subscript there.
+
+1189
+01:26:14,880 --> 01:26:16,320
+This looks
+innocent, but it's not.
+
+1190
+01:26:18,000 --> 01:26:24,080
+The basic trick here is to do, I'm not going to bother writing it
+down. We'll just talk about it for a second and call it for the day.
+
+1191
+01:26:24,640 --> 01:26:25,280
+No, I'll draw a picture.
+
+1192
+01:26:26,720 --> 01:26:26,980
+So
+
+1193
+01:26:27,560 --> 01:26:30,840
+the breadth first search algorithm that
+we've thought about so far chooses a vertex
+
+1194
+01:26:31,500 --> 01:26:32,940
+and then computes level sets
+
+1195
+01:26:33,620 --> 01:26:35,360
+outward from that vertex
+
+1196
+01:26:35,980 --> 01:26:37,340
+until it maybe reaches
+
+1197
+01:26:38,320 --> 01:26:40,080
+the destination
+that you want to hit.
+
+1198
+01:26:41,760 --> 01:26:48,200
+That doesn't quite work here. And well, I mean, it does work. But it's going
+to be quite slow because let's say I had bad luck and I were in that 14
+
+1199
+01:26:48,200 --> 01:26:48,600
+vertex.
+
+1200
+01:26:49,820 --> 01:26:52,360
+Then somewhere
+in there, I'm going to hit this big height,
+
+1201
+01:26:53,040 --> 01:26:57,600
+which is sitting over
+the 11, before I can get to the vertex 14.
+
+1202
+01:26:59,280 --> 01:27:03,040
+So the trick here is it turns out
+that I can do it by only ever getting to 7.
+
+1203
+01:27:03,960 --> 01:27:05,020
+And the way that I'm going to do
+
+1204
+01:27:05,980 --> 01:27:07,040
+that is instead,
+
+1205
+01:27:08,640 --> 01:27:12,920
+I'm going to run BFS in parallel for two
+different vertices, the source and the target.
+
+1206
+01:27:14,520 --> 01:27:17,820
+Current cube and the cube I would like
+it to be, like the solution to the problem.
+
+1207
+01:27:18,480 --> 01:27:23,300
+I'm first going to compute the level set 1 of
+that cube, then level set 1 of the next cube,
+
+1208
+01:27:23,840 --> 01:27:24,180
+level set 2,
+
+1209
+01:27:25,020 --> 01:27:31,000
+level set 2, 3, 3. And notice that eventually, they're
+going to intersect pretty much right at the midpoint.
+
+1210
+01:27:32,540 --> 01:27:40,040
+And so the size of the level set, I never need to compute a level set that's
+bigger than half of the shortest path length. I have to round up to be
+
+1211
+01:27:40,220 --> 01:27:41,040
+conservative about that.
+
+1212
+01:27:41,700 --> 01:27:43,500
+And that's where
+I get this factor here.
+
+1213
+01:27:44,220 --> 01:27:46,460
+This
+little trick for reducing the search size.
+
+1214
+01:27:47,080 --> 01:27:53,340
+This is another kind of standard trick. If you look at some of the code
+people use for solving board games algorithmically and so on, I think they
+
+1215
+01:27:53,340 --> 01:27:53,690
+typically
+
+1216
+01:27:54,520 --> 01:28:01,900
+sort of search from the beginning and end state outward and try to meet
+in the middle for exactly this reason, which is that exponential growth,
+
+1217
+01:28:02,740 --> 01:28:04,360
+as we all know, can
+be quite problematic.
+
+1218
+01:28:06,100 --> 01:28:09,240
+All right, folks. So I think we're just about
+out of time. And I've certainly worn myself out.
+
+1219
+01:28:10,300 --> 01:28:12,400
+So with that, hopefully, we'll see you next
+week.
+
+1220
+01:28:14,220 --> 01:28:14,580
+Thanks for doing well.
+

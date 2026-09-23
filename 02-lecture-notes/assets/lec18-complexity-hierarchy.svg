@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="420" viewBox="0 0 620 420">
+  <style>
+    text { font-family: 'Noto Sans CJK SC','WenQuanYi Micro Hei',sans-serif; }
+    .outer { fill:#fef9e7; stroke:#d4ac0d; stroke-width:2; }
+    .mid   { fill:#d6eaf8; stroke:#2471a3; stroke-width:2; }
+    .inner { fill:#d5f5e3; stroke:#1e8449; stroke-width:2.5; }
+    .lbl   { font-size:15px; fill:#1b2631; }
+    .lbls  { font-size:12px; fill:#34495e; }
+    .title { font-size:17px; font-weight:bold; fill:#1b2631; }
+    .note  { font-size:11.5px; fill:#7f8c8d; }
+  </style>
+  <text x="310" y="30" text-anchor="middle" class="title">复杂度谱系：集合内含关系（集合越小条件越强）</text>
+
+  <!-- 最外：伪多项式（包含全部） -->
+  <rect x="60" y="70" width="500" height="300" rx="14" class="outer"/>
+  <text x="310" y="98" text-anchor="middle" class="lbl">Pseudopolynomial（伪多项式）— 对「数的个数 × 数值大小」多项式</text>
+  <text x="310" y="120" text-anchor="middle" class="lbls">例：Subset Sum O(nT)、Fibonacci O(n)、counting sort O(n+u)</text>
+
+  <!-- 中：弱多项式 -->
+  <rect x="120" y="150" width="380" height="190" rx="12" class="mid"/>
+  <text x="310" y="176" text-anchor="middle" class="lbl">Weakly Polynomial（弱多项式）— 对「数的个数 × 位数」多项式</text>
+  <text x="310" y="196" text-anchor="middle" class="lbls">例：radix sort O(n logₙ u) = O(n·b/lg n)，b = 位数</text>
+
+  <!-- 内：强多项式 -->
+  <rect x="190" y="228" width="240" height="95" rx="10" class="inner"/>
+  <text x="310" y="258" text-anchor="middle" class="lbl">Strongly Polynomial（强多项式）</text>
+  <text x="310" y="280" text-anchor="middle" class="lbls">— 对「数的个数」多项式，与数值无关</text>
+  <text x="310" y="300" text-anchor="middle" class="lbls">例：O(n log n) 排序、Rod Cutting O(L²)</text>
+
+  <text x="310" y="395" text-anchor="middle" class="note">强 ⊂ 弱 ⊂ 伪多项式：能进内圈的都是外圈特例（整数被输入规模多项式界定时，伪多项式自动变多项式）</text>
+</svg>

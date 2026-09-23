@@ -1,0 +1,4748 @@
+﻿1
+00:00:00,000 --> 00:00:14,540
+All right, welcome back to 006.
+
+2
+00:00:14,980 --> 00:00:18,420
+Today we start a totally new section of the class.
+
+3
+00:00:18,740 --> 00:00:23,600
+Up till now, we've mostly been showing you really cool and powerful algorithms,
+
+4
+00:00:24,240 --> 00:00:28,200
+sorting algorithms, graph algorithms, data structures, trees,
+
+5
+00:00:28,200 --> 00:00:31,960
+lots of good stuff that you can apply to solve tons of algorithmic problems,
+
+6
+00:00:32,119 --> 00:00:36,879
+either by reducing to the things, data structures that we showed you,
+
+7
+00:00:36,960 --> 00:00:39,180
+or reducing to graph problems that we showed you,
+
+8
+00:00:39,340 --> 00:00:41,540
+or by modifying those algorithms a bit.
+
+9
+00:00:41,920 --> 00:00:45,200
+Today we're going to start a new section on algorithmic design,
+
+10
+00:00:45,720 --> 00:00:50,300
+how to from scratch come up with a polynomial time algorithm to solve a problem.
+
+11
+00:00:51,180 --> 00:00:54,840
+So this is a, and in particular we're going to talk about
+
+12
+00:00:54,840 --> 00:00:57,840
+an algorithmic design paradigm called dynamic programming,
+
+13
+00:00:58,200 --> 00:01:00,120
+which is extremely powerful.
+
+14
+00:01:00,260 --> 00:01:02,800
+It's probably the most powerful algorithmic design paradigm,
+
+15
+00:01:02,920 --> 00:01:04,940
+very general, can solve lots of problems.
+
+16
+00:01:06,100 --> 00:01:10,440
+It's a particular type of recursive algorithm design.
+
+17
+00:01:11,100 --> 00:01:15,040
+And in general, this class, all of algorithms,
+
+18
+00:01:15,320 --> 00:01:18,000
+is about recursive algorithm design at some level
+
+19
+00:01:18,000 --> 00:01:21,700
+because we want to write constant size pieces of code
+
+20
+00:01:21,700 --> 00:01:23,860
+that solve problems of arbitrary size.
+
+21
+00:01:23,960 --> 00:01:25,120
+We have some problem size n,
+
+22
+00:01:25,120 --> 00:01:28,160
+and we're trying to write 100 lines of code or whatever
+
+23
+00:01:28,160 --> 00:01:30,520
+some constant amount that doesn't depend on the problem size.
+
+24
+00:01:30,700 --> 00:01:34,560
+We have one algorithm that solves all instances of the problem.
+
+25
+00:01:34,940 --> 00:01:39,340
+And so we have to write code that is recursive or uses loops
+
+26
+00:01:39,340 --> 00:01:42,000
+or somehow reuses the instructions that we give the computer.
+
+27
+00:01:43,200 --> 00:01:46,580
+And you may know you can convert any algorithm based on loops
+
+28
+00:01:46,580 --> 00:01:48,440
+into an algorithm using recursion.
+
+29
+00:01:48,640 --> 00:01:51,940
+And we're going to take the recursive view today in particular
+
+30
+00:01:51,940 --> 00:01:55,640
+because it fits very well with our proof by induction technique,
+
+31
+00:01:55,640 --> 00:01:57,140
+which we've used throughout this class.
+
+32
+00:01:58,160 --> 00:02:01,280
+But also because it gives us some structure
+
+33
+00:02:01,280 --> 00:02:03,479
+on how different subproblems relate
+
+34
+00:02:03,479 --> 00:02:05,840
+in something called a subproblem graph
+
+35
+00:02:05,840 --> 00:02:06,940
+that we'll be talking about today.
+
+36
+00:02:08,440 --> 00:02:10,660
+And so we're going to start out with, in general,
+
+37
+00:02:10,800 --> 00:02:12,820
+how do we design recursive algorithms?
+
+38
+00:02:13,380 --> 00:02:16,120
+That's sort of the overall encompassing everything.
+
+39
+00:02:16,359 --> 00:02:19,840
+We have thought very hard to come up with a cool acronym
+
+40
+00:02:19,840 --> 00:02:22,920
+for this paradigm, which we invented, called SortBot.
+
+41
+00:02:23,519 --> 00:02:24,120
+Thanks, Jason.
+
+42
+00:02:25,460 --> 00:02:26,480
+And so we'll talk about...
+
+43
+00:02:26,480 --> 00:02:27,700
+It's not actually for sorting.
+
+44
+00:02:27,700 --> 00:02:28,140
+It's just...
+
+45
+00:02:28,160 --> 00:02:33,299
+It's just an acronym for subproblems, relations,
+
+46
+00:02:33,700 --> 00:02:38,359
+topological order, base case, original problem, and time.
+
+47
+00:02:39,019 --> 00:02:44,140
+But it's an acronym that will help you remember all the steps you need
+
+48
+00:02:44,140 --> 00:02:45,720
+in order to specify a recursive algorithm.
+
+49
+00:02:46,300 --> 00:02:49,400
+And dynamic programming is going to build on this template
+
+50
+00:02:49,400 --> 00:02:53,060
+by adding one new idea called memoization,
+
+51
+00:02:53,340 --> 00:02:55,960
+which is just the idea of reusing work that you've done before.
+
+52
+00:02:56,740 --> 00:02:58,140
+And that's going to let us solve the problem.
+
+53
+00:02:58,160 --> 00:02:59,240
+And that's going to let us solve tons of problems.
+
+54
+00:03:00,660 --> 00:03:01,140
+And...
+
+55
+00:03:01,140 --> 00:03:02,380
+Let's see.
+
+56
+00:03:02,520 --> 00:03:03,160
+I don't...
+
+57
+00:03:03,160 --> 00:03:04,820
+Let's get into it.
+
+58
+00:03:05,300 --> 00:03:08,160
+So we'll start out today with SortBot.
+
+59
+00:03:08,840 --> 00:03:13,000
+So here is SortBot down the column here.
+
+60
+00:03:13,280 --> 00:03:15,579
+This is a recursive algorithm design paradigm.
+
+61
+00:03:16,280 --> 00:03:19,079
+And in general, what we're going to do is take the problem
+
+62
+00:03:19,079 --> 00:03:20,359
+that we actually want to solve
+
+63
+00:03:20,359 --> 00:03:24,079
+and split it up into lots of possible subproblems.
+
+64
+00:03:24,380 --> 00:03:26,079
+And so the first part is to define
+
+65
+00:03:26,079 --> 00:03:27,160
+what the heck are the subproblems.
+
+66
+00:03:27,160 --> 00:03:27,780
+Subproblems.
+
+67
+00:03:28,160 --> 00:03:30,660
+And in general, we'll want some polynomial number of them.
+
+68
+00:03:30,660 --> 00:03:34,220
+But it's pretty open-ended what these look like.
+
+69
+00:03:34,220 --> 00:03:38,620
+And the hardest part, usually, in defining a recursive algorithm
+
+70
+00:03:38,620 --> 00:03:40,660
+is figuring out what the subproblems should be.
+
+71
+00:03:40,660 --> 00:03:42,980
+Usually, they're related to the problem you want to solve.
+
+72
+00:03:42,980 --> 00:03:45,180
+Often, the problem you want to solve,
+
+73
+00:03:45,180 --> 00:03:47,180
+this is actually near the last step,
+
+74
+00:03:47,180 --> 00:03:48,760
+the original problem you're trying to solve
+
+75
+00:03:48,760 --> 00:03:51,519
+is often one of these subproblems.
+
+76
+00:03:51,519 --> 00:03:53,260
+And then you use the smaller subproblems
+
+77
+00:03:53,260 --> 00:03:56,660
+in order to build up the final original problem.
+
+78
+00:03:56,660 --> 00:03:57,700
+But sometimes, at the end, you need to figure out, oh, well,
+
+79
+00:03:57,700 --> 00:03:58,540
+I'm going to do this.
+
+80
+00:03:58,540 --> 00:04:00,040
+And then you need to take a bunch of subproblems
+
+81
+00:04:00,040 --> 00:04:02,079
+and combine it into your original problem.
+
+82
+00:04:02,079 --> 00:04:04,420
+You can think, one analogy you can think of here
+
+83
+00:04:04,420 --> 00:04:06,700
+is divide and conquer algorithms, which
+
+84
+00:04:06,700 --> 00:04:09,100
+also had this kind of style.
+
+85
+00:04:09,100 --> 00:04:12,280
+But more generally, we're going to relate different subproblem
+
+86
+00:04:12,280 --> 00:04:16,260
+solutions with some recursive structure,
+
+87
+00:04:16,260 --> 00:04:19,339
+some recurrence relation.
+
+88
+00:04:19,339 --> 00:04:21,579
+This is just a recursive algorithm
+
+89
+00:04:21,579 --> 00:04:24,740
+that defines how to solve one problem in terms
+
+90
+00:04:24,740 --> 00:04:27,700
+of smaller subproblems for some notion of subproblems.
+
+91
+00:04:27,700 --> 00:04:29,940
+And so you can take these subproblems,
+
+92
+00:04:29,940 --> 00:04:31,180
+and you can sort them out.
+
+93
+00:04:31,180 --> 00:04:33,580
+And you can also divide them into subproblems.
+
+94
+00:04:33,580 --> 00:04:35,380
+And you can look at the topological order
+
+95
+00:04:35,380 --> 00:04:36,460
+of the subproblems.
+
+96
+00:04:36,460 --> 00:04:38,320
+And you can see that the topological order
+
+97
+00:04:38,320 --> 00:04:40,099
+is a little bit smaller.
+
+98
+00:04:40,099 --> 00:04:43,060
+And this is given by the topological order.
+
+99
+00:04:43,060 --> 00:04:45,760
+So if we think of the subproblems as a graph,
+
+100
+00:04:45,760 --> 00:04:49,620
+and we draw an edge between.
+
+101
+00:04:49,620 --> 00:04:52,159
+So the vertices of the graph are subproblems.
+
+102
+00:04:52,159 --> 00:04:54,539
+The edges are the dependencies between those subproblems.
+
+103
+00:04:54,539 --> 00:04:57,219
+Then what we'd like is the topological ordering,
+
+104
+00:04:57,220 --> 00:05:00,420
+and the topological order is the topological order.
+
+105
+00:05:00,420 --> 00:05:02,320
+And these are the dependencies between them
+
+106
+00:05:02,320 --> 00:05:04,960
+in this recursive relation forms a DAG.
+
+107
+00:05:04,960 --> 00:05:06,440
+We want it to be acyclic.
+
+108
+00:05:06,440 --> 00:05:09,640
+Otherwise, you have an infinite loop in your recursive calls.
+
+109
+00:05:09,640 --> 00:05:13,440
+If you have a cycle, you'll never terminate.
+
+110
+00:05:13,440 --> 00:05:16,600
+And so to make sure that these dependencies
+
+111
+00:05:16,600 --> 00:05:19,480
+between subproblems given by this recurrence relation
+
+112
+00:05:19,480 --> 00:05:21,900
+is acyclic, one way to do that is
+
+113
+00:05:21,900 --> 00:05:24,420
+to specify a topological order.
+
+114
+00:05:24,420 --> 00:05:26,020
+Or you could prove it some other way.
+
+115
+00:05:26,020 --> 00:05:26,540
+But often it's just a for loop.
+
+116
+00:05:26,540 --> 00:05:27,120
+Just do it in this order.
+
+117
+00:05:27,120 --> 00:05:27,220
+OK.
+
+118
+00:05:27,220 --> 00:05:30,980
+Then, of course, any recursive structure needs base cases.
+
+119
+00:05:30,980 --> 00:05:33,860
+So that's a useful step not to forget.
+
+120
+00:05:33,860 --> 00:05:35,440
+We want to solve the original problem
+
+121
+00:05:35,440 --> 00:05:36,440
+using these subproblems.
+
+122
+00:05:36,440 --> 00:05:38,900
+And then we analyze our running time at the end.
+
+123
+00:05:38,900 --> 00:05:42,040
+So six easy steps.
+
+124
+00:05:42,040 --> 00:05:44,020
+Actually, the hardest ones are these two,
+
+125
+00:05:44,020 --> 00:05:45,520
+which are interrelated.
+
+126
+00:05:45,520 --> 00:05:49,140
+And what we're going to see over the next four lectures,
+
+127
+00:05:49,140 --> 00:05:51,700
+this is the first of four lectures on dynamic programming,
+
+128
+00:05:51,700 --> 00:05:55,180
+is lots of examples of applying this paradigm over and over
+
+129
+00:05:55,180 --> 00:05:57,160
+together with the memoization idea,
+
+130
+00:05:57,160 --> 00:05:58,960
+which we'll get to soon.
+
+131
+00:05:58,960 --> 00:06:03,080
+Let's see an example first of an algorithm we've already seen,
+
+132
+00:06:03,080 --> 00:06:07,480
+which is merge sort, so a divide and conquer algorithm phrased
+
+133
+00:06:07,480 --> 00:06:09,200
+with this structure of sort bot.
+
+134
+00:06:09,200 --> 00:06:12,640
+So for the subproblems, so our original problem
+
+135
+00:06:12,640 --> 00:06:16,000
+is to sort the elements of A. And some subproblems
+
+136
+00:06:16,000 --> 00:06:18,200
+that we solve along the way are sorting
+
+137
+00:06:18,200 --> 00:06:21,760
+different subarrays of A. So for every, well,
+
+138
+00:06:21,760 --> 00:06:24,460
+not for every i and j, but for some i and j's,
+
+139
+00:06:24,460 --> 00:06:27,160
+we sort the items from i.
+
+140
+00:06:27,160 --> 00:06:28,740
+Up to j minus 1.
+
+141
+00:06:28,740 --> 00:06:32,160
+So I'm going to define that subproblem to be s of ij.
+
+142
+00:06:32,160 --> 00:06:34,760
+So this is something that I might want to solve.
+
+143
+00:06:34,760 --> 00:06:37,160
+The original problem that I want to solve
+
+144
+00:06:37,160 --> 00:06:40,560
+is s of 0 comma n, where n is the length of the array.
+
+145
+00:06:40,560 --> 00:06:43,060
+So that's what I actually care about in the end.
+
+146
+00:06:43,060 --> 00:06:45,840
+But we're going to solve that by writing it recursively
+
+147
+00:06:45,840 --> 00:06:49,960
+in terms of sorting different subarrays as follows.
+
+148
+00:06:49,960 --> 00:06:51,840
+This is the recurrence relation.
+
+149
+00:06:51,840 --> 00:06:53,180
+I've written it very simply here.
+
+150
+00:06:53,180 --> 00:06:55,500
+Of course, there's a merge algorithm, which
+
+151
+00:06:55,500 --> 00:06:56,960
+is somewhat complicated.
+
+152
+00:06:57,160 --> 00:07:00,720
+But we saw the two-finger linear time merge algorithm
+
+153
+00:07:00,720 --> 00:07:04,220
+given two sorted arrays.
+
+154
+00:07:04,220 --> 00:07:07,180
+So this is supposed to be the sorted array version
+
+155
+00:07:07,180 --> 00:07:08,940
+of the items i through m.
+
+156
+00:07:08,940 --> 00:07:11,660
+m is the middle element between i and j.
+
+157
+00:07:11,660 --> 00:07:15,860
+And the sorted array of the items from m up to j.
+
+158
+00:07:15,860 --> 00:07:19,000
+If we merge those, that gives us the sorted array
+
+159
+00:07:19,000 --> 00:07:21,760
+from i up to j.
+
+160
+00:07:21,760 --> 00:07:24,320
+And that's exactly what merge sort does.
+
+161
+00:07:24,320 --> 00:07:26,760
+So this is, in general, this relation,
+
+162
+00:07:26,760 --> 00:07:29,800
+which is the result of a simple algorithm.
+
+163
+00:07:29,800 --> 00:07:32,099
+And this is the result of a simple algorithm.
+
+164
+00:07:32,099 --> 00:07:33,860
+And the result of a simple algorithm
+
+165
+00:07:33,860 --> 00:07:37,920
+is just some algorithm for, if you're
+
+166
+00:07:37,920 --> 00:07:40,700
+given the solutions to some smaller subproblems,
+
+167
+00:07:40,700 --> 00:07:47,140
+how do I solve the subproblem that I want to solve?
+
+168
+00:07:47,140 --> 00:07:51,640
+And so we need to make sure that this problem is bigger
+
+169
+00:07:51,640 --> 00:07:53,640
+than the ones that we recursively call on
+
+170
+00:07:53,640 --> 00:07:56,159
+and that we don't get an infinite cyclic loop of
+
+171
+00:07:56,160 --> 00:07:56,820
+the array.
+
+172
+00:07:56,820 --> 00:07:58,240
+And that's the way we can solve it.
+
+173
+00:07:58,240 --> 00:08:00,520
+So for example, if I want to solve the subproblem
+
+174
+00:08:00,520 --> 00:08:03,080
+that I want to solve, I'm going to have to do a little bit
+
+175
+00:08:03,080 --> 00:08:20,620
+of a
+
+176
+00:08:20,620 --> 00:08:24,040
+We have a base case, which is if we don't want to sort anything,
+
+177
+00:08:24,040 --> 00:08:25,080
+that's the empty array.
+
+178
+00:08:25,080 --> 00:08:26,000
+And we have a subproblem.
+
+179
+00:08:26,000 --> 00:08:26,100
+And we have a base case.
+
+180
+00:08:26,100 --> 00:08:26,120
+And we have a base case.
+
+181
+00:08:26,120 --> 00:08:26,140
+And we have a base case.
+
+182
+00:08:26,140 --> 00:08:27,560
+I already said the original problem.
+
+183
+00:08:27,560 --> 00:08:29,800
+And then running time is, I mean,
+
+184
+00:08:29,800 --> 00:08:32,860
+there's no better way to solve it than the recurrence
+
+185
+00:08:32,860 --> 00:08:34,520
+that we already saw how to solve.
+
+186
+00:08:34,520 --> 00:08:36,819
+So this is just another way to think of n log n merge
+
+187
+00:08:36,819 --> 00:08:41,260
+sort in this labeled framework of SortBot.
+
+188
+00:08:41,260 --> 00:08:45,520
+Let's get to another problem that does not
+
+189
+00:08:45,520 --> 00:08:51,560
+fit recursion so well, but we can make it better.
+
+190
+00:08:51,560 --> 00:08:54,700
+So we're going to start with a very simple problem, which
+
+191
+00:08:54,700 --> 00:08:56,100
+is computing Fibonacci.
+
+192
+00:08:56,100 --> 00:08:59,240
+And we're going to use Fibonacci numbers.
+
+193
+00:08:59,240 --> 00:09:02,100
+It's really just a toy problem to illustrate
+
+194
+00:09:02,100 --> 00:09:06,360
+a very powerful idea, which is memorization.
+
+195
+00:09:06,360 --> 00:09:08,540
+So the problem I'm interested in is I'm
+
+196
+00:09:08,540 --> 00:09:10,980
+given a particular number n.
+
+197
+00:09:10,980 --> 00:09:14,820
+And I want to compute the nth Fibonacci number.
+
+198
+00:09:14,820 --> 00:09:17,460
+And in case you forgot, the nth Fibonacci number
+
+199
+00:09:17,460 --> 00:09:18,980
+is given by this recurrence.
+
+200
+00:09:18,980 --> 00:09:24,340
+Fn is Fn minus 1 plus Fn minus 2 with base case, let's say,
+
+201
+00:09:24,340 --> 00:09:26,060
+F1 equals F2 equals F3.
+
+202
+00:09:26,060 --> 00:09:26,719
+Fn equals 1.
+
+203
+00:09:29,339 --> 00:09:31,719
+And so we'd like to compute this.
+
+204
+00:09:31,719 --> 00:09:33,380
+This is a recurrence.
+
+205
+00:09:33,380 --> 00:09:36,260
+So it seems very natural to write it
+
+206
+00:09:36,260 --> 00:09:37,540
+as a recursive algorithm.
+
+207
+00:09:37,540 --> 00:09:38,719
+So let's try to do it.
+
+208
+00:09:38,719 --> 00:09:41,619
+We start with what are the subproblems?
+
+209
+00:09:41,619 --> 00:09:47,719
+The obvious subproblems are just the various Fibonacci numbers.
+
+210
+00:09:47,719 --> 00:09:53,199
+Fi for i between 1 and n.
+
+211
+00:09:53,199 --> 00:09:53,800
+F1 equals 1.
+
+212
+00:09:53,800 --> 00:09:54,300
+Fn equals 1.
+
+213
+00:09:54,300 --> 00:09:54,800
+Fn equals 1.
+
+214
+00:09:54,800 --> 00:09:55,300
+Fn equals 1.
+
+215
+00:09:55,300 --> 00:09:55,800
+Fn equals 1.
+
+216
+00:09:55,800 --> 00:09:56,060
+Fn equals 1.
+
+217
+00:09:56,060 --> 00:09:57,599
+So there are n of these subproblems.
+
+218
+00:10:00,640 --> 00:10:01,640
+Cool.
+
+219
+00:10:01,640 --> 00:10:02,140
+Let's see.
+
+220
+00:10:02,140 --> 00:10:04,339
+We want a relation between them.
+
+221
+00:10:07,699 --> 00:10:10,180
+Well, maybe I'll just to distinguish the problems
+
+222
+00:10:10,180 --> 00:10:13,780
+from the Fibonacci numbers, let me write f of i.
+
+223
+00:10:13,780 --> 00:10:16,599
+This is a function, an algorithm we're going to define.
+
+224
+00:10:16,599 --> 00:10:20,619
+And it's defined to be the goal we're trying to get
+
+225
+00:10:20,619 --> 00:10:24,079
+is the i Fibonacci number given i.
+
+226
+00:10:24,079 --> 00:10:25,800
+And then we can write the recurrence.
+
+227
+00:10:25,800 --> 00:10:28,199
+Recurrence relation on these guys,
+
+228
+00:10:28,199 --> 00:10:34,199
+just f of i equals f of i minus 1 plus f of i minus 2.
+
+229
+00:10:34,199 --> 00:10:38,020
+So in other words, recursively compute those Fibonacci numbers,
+
+230
+00:10:38,020 --> 00:10:38,979
+then add them together.
+
+231
+00:10:38,979 --> 00:10:41,099
+That's an algorithm.
+
+232
+00:10:41,099 --> 00:10:44,400
+Next is t for topological order.
+
+233
+00:10:48,599 --> 00:10:51,979
+Here, of course, we just want to compute these in order
+
+234
+00:10:51,979 --> 00:10:53,020
+of increasing i.
+
+235
+00:10:54,380 --> 00:10:55,339
+From the basis.
+
+236
+00:10:55,340 --> 00:10:58,020
+From the base case is up.
+
+237
+00:10:58,020 --> 00:11:01,160
+Another way I like to write this is as a for loop.
+
+238
+00:11:01,160 --> 00:11:05,020
+For i equals 1 to n.
+
+239
+00:11:05,020 --> 00:11:06,840
+We'll see why.
+
+240
+00:11:06,840 --> 00:11:13,560
+But this gives an explicit order to compute these subproblems.
+
+241
+00:11:13,560 --> 00:11:21,720
+And base case is just the same as the Fibonacci numbers.
+
+242
+00:11:21,720 --> 00:11:23,340
+But I guess I should write parentheses.
+
+243
+00:11:25,340 --> 00:11:31,020
+So the original problem we want to solve is f of n.
+
+244
+00:11:31,020 --> 00:11:33,220
+And the time, all right, here's where
+
+245
+00:11:33,220 --> 00:11:35,020
+things get interesting or bad.
+
+246
+00:11:35,020 --> 00:11:39,720
+So what is the running time of this recursive algorithm?
+
+247
+00:11:39,720 --> 00:11:42,580
+As I've stated it so far, the running time
+
+248
+00:11:42,580 --> 00:11:46,020
+is given by a recurrence.
+
+249
+00:11:46,020 --> 00:11:47,780
+Let's write the recurrence.
+
+250
+00:11:47,780 --> 00:11:54,020
+So in order to compute f of n, I recursively compute f of i minus 1, or f of i minus 1.
+
+251
+00:11:54,020 --> 00:11:55,060
+So I'm going to compute the recursive algorithm.
+
+252
+00:11:55,060 --> 00:11:58,599
+So I'm going to compute the recursive algorithm for f of n minus 1 here.
+
+253
+00:11:58,599 --> 00:12:03,839
+And I recursively compute f of n minus 2.
+
+254
+00:12:03,839 --> 00:12:05,579
+So that will take t of n minus 2.
+
+255
+00:12:05,579 --> 00:12:08,020
+This first step will take t of n minus 1.
+
+256
+00:12:08,020 --> 00:12:11,479
+And now I need to solve this recurrence.
+
+257
+00:12:11,479 --> 00:12:14,459
+This is not a recurrence that falls to the master method.
+
+258
+00:12:14,459 --> 00:12:17,800
+It doesn't have a divided by.
+
+259
+00:12:17,800 --> 00:12:19,640
+So we have to think about it a little bit.
+
+260
+00:12:19,640 --> 00:12:21,439
+But we don't have to think about it too hard,
+
+261
+00:12:21,439 --> 00:12:24,339
+because this recurrence is the same as this recurrence.
+
+262
+00:12:24,339 --> 00:12:24,839
+Let's do it again.
+
+263
+00:12:24,840 --> 00:12:26,500
+Which is the same as this recurrence.
+
+264
+00:12:26,500 --> 00:12:27,900
+I've written it three times now.
+
+265
+00:12:27,900 --> 00:12:32,460
+And so the solution to this is the nth Fibonacci number.
+
+266
+00:12:32,460 --> 00:12:33,340
+Oh, sorry.
+
+267
+00:12:33,340 --> 00:12:35,820
+It's a little bit worse, because in addition
+
+268
+00:12:35,820 --> 00:12:38,640
+to those recursions, I also spend constant time
+
+269
+00:12:38,640 --> 00:12:39,840
+to do the addition.
+
+270
+00:12:39,840 --> 00:12:41,080
+Maybe more than constant time.
+
+271
+00:12:41,080 --> 00:12:44,880
+But if we just count the number of additions we do,
+
+272
+00:12:44,880 --> 00:12:51,420
+it will be plus 1 additions.
+
+273
+00:12:51,420 --> 00:12:51,920
+OK.
+
+274
+00:12:51,920 --> 00:12:52,920
+But this is pretty simple.
+
+275
+00:12:52,920 --> 00:12:54,120
+It's just a little bit easier.
+
+276
+00:12:54,120 --> 00:12:58,380
+But this is bigger than the nth Fibonacci number.
+
+277
+00:12:58,380 --> 00:13:01,440
+And if you know anything about Fibonacci numbers,
+
+278
+00:13:01,440 --> 00:13:03,940
+they grow exponentially.
+
+279
+00:13:03,940 --> 00:13:06,280
+They're about golden ratio to the n.
+
+280
+00:13:06,280 --> 00:13:09,580
+I'm wearing golden ratio in case you forgot the number.
+
+281
+00:13:09,580 --> 00:13:13,480
+So that's bad, because golden ratio is bigger than 1.
+
+282
+00:13:13,480 --> 00:13:15,360
+So this is exponential growth.
+
+283
+00:13:15,360 --> 00:13:17,640
+As we know, especially in this time, exponential growth
+
+284
+00:13:17,640 --> 00:13:18,360
+is bad.
+
+285
+00:13:18,360 --> 00:13:19,780
+And algorithms' exponential growth
+
+286
+00:13:19,780 --> 00:13:22,620
+is bad, because we can only solve very small problems
+
+287
+00:13:22,620 --> 00:13:23,880
+with exponential growth.
+
+288
+00:13:23,880 --> 00:13:25,120
+Very small n.
+
+289
+00:13:25,120 --> 00:13:28,600
+So this is a terrible way to compute the nth Fibonacci
+
+290
+00:13:28,600 --> 00:13:29,560
+number.
+
+291
+00:13:29,560 --> 00:13:30,060
+Exponential.
+
+292
+00:13:37,200 --> 00:13:37,700
+Bad.
+
+293
+00:13:40,920 --> 00:13:43,540
+So don't do this.
+
+294
+00:13:43,540 --> 00:13:47,280
+But there's a very tiny tweak to this algorithm
+
+295
+00:13:47,280 --> 00:13:50,640
+that makes it really good, which is memoization.
+
+296
+00:13:53,880 --> 00:13:56,560
+And it's not a big idea.
+
+297
+00:13:56,560 --> 00:14:00,380
+It is the big idea of dynamic programming.
+
+298
+00:14:04,380 --> 00:14:09,120
+It's a funny word, probably made up by computer scientists.
+
+299
+00:14:09,120 --> 00:14:13,380
+Instead of memorization, it's memoization,
+
+300
+00:14:13,380 --> 00:14:16,560
+because we're going to write things down in a memo pad.
+
+301
+00:14:16,560 --> 00:14:18,120
+That's the idea.
+
+302
+00:14:18,120 --> 00:14:22,080
+And it's a very simple idea, which is just remember,
+
+303
+00:14:22,080 --> 00:14:23,120
+and reuse, solutions to subproblems.
+
+304
+00:14:23,120 --> 00:14:42,240
+So let's draw the recursion tree for this recursive algorithm,
+
+305
+00:14:42,240 --> 00:14:43,800
+as we've done it so far.
+
+306
+00:14:43,800 --> 00:14:47,800
+So at the top, we are calling F of n.
+
+307
+00:14:47,800 --> 00:14:50,540
+So here, we're going to do the recursive algorithm.
+
+308
+00:14:50,540 --> 00:14:52,600
+So if we do that, we're going to get the recursive algorithm.
+
+309
+00:14:52,600 --> 00:14:54,600
+And the one side does it right, and then F
+
+310
+00:14:54,600 --> 00:14:56,540
+and b will be the suggestive one.
+
+311
+00:14:56,540 --> 00:14:58,120
+And let's do the recursive algorithm
+
+312
+00:14:58,120 --> 00:14:59,660
+again and do an addition.
+
+313
+00:15:00,320 --> 00:15:04,240
+And then the summation will be just the first statement.
+
+314
+00:15:04,240 --> 00:15:07,140
+So we can do nothing but choose between function
+
+315
+00:15:07,140 --> 00:15:08,060
+and hers.
+
+316
+00:15:08,060 --> 00:15:10,420
+And this is going to use a very similar algorithm
+
+317
+00:15:10,420 --> 00:15:12,540
+to this公ом encontraple alternative
+
+318
+00:15:12,540 --> 00:15:14,120
+where we're particularly good at running
+
+319
+00:15:14,120 --> 00:15:16,880
+a big polynomial about at the whole downadateful maximum
+
+320
+00:15:16,880 --> 00:15:18,500
+and run it over with n minus 4.
+
+321
+00:15:18,500 --> 00:15:19,540
+And they're very similar.
+
+322
+00:15:19,540 --> 00:15:21,040
+And even though uniform is massive,
+
+323
+00:15:21,040 --> 00:15:22,280
+it's very smelly.
+
+324
+00:15:22,600 --> 00:15:25,900
+subproblem is the same as this subproblem.
+
+325
+00:15:25,900 --> 00:15:28,700
+So to compute f of n minus 1, I need f of n minus 3.
+
+326
+00:15:28,700 --> 00:15:32,080
+And also to compute f of n minus 2, I need f of n minus 3.
+
+327
+00:15:32,080 --> 00:15:33,780
+So why are we computing it twice?
+
+328
+00:15:33,780 --> 00:15:36,160
+Let's just do it once.
+
+329
+00:15:36,160 --> 00:15:39,520
+When we solve it, let's write it in a table somewhere.
+
+330
+00:15:39,520 --> 00:15:42,320
+And then when we need it again, we'll just reuse that value.
+
+331
+00:15:42,320 --> 00:15:42,820
+Question?
+
+332
+00:15:42,820 --> 00:15:44,720
+What about f of n minus 2?
+
+333
+00:15:44,720 --> 00:15:46,580
+F of n minus 2 is also shared.
+
+334
+00:15:46,580 --> 00:15:49,540
+So let me use a different symbol.
+
+335
+00:15:49,540 --> 00:15:53,260
+F of n minus 2 is already here.
+
+336
+00:15:53,260 --> 00:15:55,240
+So this was at the same level, but we also
+
+337
+00:15:55,240 --> 00:15:57,500
+get shared reuse between different levels.
+
+338
+00:15:57,500 --> 00:15:59,800
+In fact, I wouldn't even call f of n minus 3
+
+339
+00:15:59,800 --> 00:16:02,360
+because this whole part doesn't need
+
+340
+00:16:02,360 --> 00:16:03,660
+to be computed a second time.
+
+341
+00:16:03,660 --> 00:16:05,620
+If I already computed it here, it
+
+342
+00:16:05,620 --> 00:16:07,160
+doesn't matter which one comes first.
+
+343
+00:16:07,160 --> 00:16:08,560
+Let's say this one comes first.
+
+344
+00:16:08,560 --> 00:16:11,920
+Once this is done, I can write it down and reuse it over here.
+
+345
+00:16:14,500 --> 00:16:18,079
+And then in here, we're going to call f of n minus 3.
+
+346
+00:16:18,079 --> 00:16:19,520
+So there's still a number.
+
+347
+00:16:19,540 --> 00:16:21,579
+Another computation of f of n minus 3.
+
+348
+00:16:21,579 --> 00:16:26,120
+When that one's done, I won't need to do this recursively.
+
+349
+00:16:26,120 --> 00:16:29,500
+So magically, this is going to make this algorithm efficient
+
+350
+00:16:29,500 --> 00:16:32,140
+with this very simple tweak.
+
+351
+00:16:32,140 --> 00:16:35,199
+Let me write down the tweak more explicitly.
+
+352
+00:16:35,199 --> 00:16:39,420
+I won't write code here, but just describe it
+
+353
+00:16:39,420 --> 00:16:41,980
+as a data structure.
+
+354
+00:16:41,980 --> 00:16:47,900
+So we're going to maintain our good friend, the dictionary,
+
+355
+00:16:47,900 --> 00:16:49,280
+which is absolutely necessary.
+
+356
+00:16:49,280 --> 00:16:52,339
+Abstract data type or interface.
+
+357
+00:16:52,339 --> 00:16:54,920
+We could use different data structures to do it.
+
+358
+00:16:54,920 --> 00:16:57,260
+But we're going to map subproblems
+
+359
+00:16:57,260 --> 00:17:01,880
+to their solutions, at least the ones that we've solved already.
+
+360
+00:17:04,560 --> 00:17:08,040
+And usually, we can do this with just a direct access array.
+
+361
+00:17:08,040 --> 00:17:09,520
+But you could use a hash table.
+
+362
+00:17:09,520 --> 00:17:10,700
+Just get expected bounds.
+
+363
+00:17:19,280 --> 00:17:22,180
+And then we can do this with a recursive call.
+
+364
+00:17:22,180 --> 00:17:22,879
+So let's see.
+
+365
+00:17:22,879 --> 00:17:25,300
+Write the code for our recursive function.
+
+366
+00:17:25,300 --> 00:17:28,639
+So in general, once we have a sort bot description,
+
+367
+00:17:28,639 --> 00:17:30,120
+we can turn this into code.
+
+368
+00:17:30,120 --> 00:17:32,420
+We define f of i.
+
+369
+00:17:32,420 --> 00:17:34,860
+And it says, am I in a base case?
+
+370
+00:17:34,860 --> 00:17:36,180
+If so, return this.
+
+371
+00:17:36,180 --> 00:17:38,840
+Otherwise, do this recursive call.
+
+372
+00:17:38,840 --> 00:17:40,240
+That's our recursive algorithm.
+
+373
+00:17:40,240 --> 00:17:41,840
+But we're going to do a little more now.
+
+374
+00:17:41,840 --> 00:17:48,620
+First, we're going to check whether this subproblem that we're trying to solve has already been solved.
+
+375
+00:17:49,280 --> 00:17:55,899
+And if so, we return that stored solution.
+
+376
+00:17:55,899 --> 00:17:58,040
+That's the easy case.
+
+377
+00:17:58,040 --> 00:17:59,300
+But it might not exist.
+
+378
+00:18:11,040 --> 00:18:14,340
+And then we'll compute it in the usual way.
+
+379
+00:18:14,340 --> 00:18:19,280
+So what the code then would look like to define f of i
+
+380
+00:18:19,280 --> 00:18:22,920
+is first we check is i in our data structure.
+
+381
+00:18:22,920 --> 00:18:25,600
+This is usually called the memo.
+
+382
+00:18:28,680 --> 00:18:33,340
+So we say, is this subproblem, is i, in my memo data structure?
+
+383
+00:18:33,340 --> 00:18:35,080
+If so, just return memo of i.
+
+384
+00:18:35,080 --> 00:18:35,620
+Done.
+
+385
+00:18:35,620 --> 00:18:36,980
+No recursion necessary.
+
+386
+00:18:36,980 --> 00:18:39,399
+Otherwise, check if I'm a base case.
+
+387
+00:18:39,399 --> 00:18:40,760
+If so, done.
+
+388
+00:18:40,760 --> 00:18:42,780
+Otherwise, recurse.
+
+389
+00:18:42,780 --> 00:18:46,280
+So recursively call f of i minus 1 and f of i minus 2.
+
+390
+00:18:46,280 --> 00:18:48,899
+And in this recursion, we can see that after we've
+
+391
+00:18:48,900 --> 00:18:51,500
+called f of i minus 1, in fact, it will have already
+
+392
+00:18:51,500 --> 00:18:52,840
+computed f of i minus 2.
+
+393
+00:18:52,840 --> 00:18:55,120
+So while this call is recursive, this one
+
+394
+00:18:55,120 --> 00:18:58,180
+will immediately terminate because i minus 2 will already
+
+395
+00:18:58,180 --> 00:18:59,780
+be in the memo table.
+
+396
+00:18:59,780 --> 00:19:03,000
+And so if you think about what happens, in fact,
+
+397
+00:19:03,000 --> 00:19:07,760
+we'll just have recursion down the left branch of this thing.
+
+398
+00:19:07,760 --> 00:19:09,400
+And all the right branches will be free.
+
+399
+00:19:09,400 --> 00:19:12,160
+We can just look things up in the memo table.
+
+400
+00:19:12,160 --> 00:19:14,420
+So what is the overall running time?
+
+401
+00:19:14,420 --> 00:19:15,100
+For Fibonacci.
+
+402
+00:19:18,900 --> 00:19:25,580
+This should be order n.
+
+403
+00:19:25,580 --> 00:19:27,640
+Why is it order n?
+
+404
+00:19:27,640 --> 00:19:29,000
+This is number of additions.
+
+405
+00:19:31,960 --> 00:19:33,180
+Come back to that in a second.
+
+406
+00:19:36,340 --> 00:19:39,720
+In general, the way to analyze an algorithm like this
+
+407
+00:19:39,720 --> 00:19:41,800
+that uses memoization is we just count
+
+408
+00:19:41,800 --> 00:19:43,840
+how many different subproblems are there.
+
+409
+00:19:43,840 --> 00:19:45,380
+Because once we solve the subproblem,
+
+410
+00:19:45,380 --> 00:19:46,680
+we will never solve it again.
+
+411
+00:19:46,680 --> 00:19:48,300
+That's the whole idea of a memo table.
+
+412
+00:19:48,300 --> 00:19:51,540
+So we will solve each subproblem at most once.
+
+413
+00:19:51,540 --> 00:19:53,659
+And so we just need to count how much time
+
+414
+00:19:53,659 --> 00:19:56,040
+does it take to solve every subproblem.
+
+415
+00:19:56,040 --> 00:19:59,080
+And here you can see it's constant.
+
+416
+00:19:59,080 --> 00:20:01,600
+Either it's a base case and it takes constant time,
+
+417
+00:20:01,600 --> 00:20:05,180
+or we recursively call these things.
+
+418
+00:20:05,180 --> 00:20:06,600
+But those are different subproblems,
+
+419
+00:20:06,600 --> 00:20:08,320
+so we're going to count those later.
+
+420
+00:20:08,320 --> 00:20:10,700
+And then the work that's actually done by this recurrence
+
+421
+00:20:10,700 --> 00:20:12,320
+is a single addition.
+
+422
+00:20:12,320 --> 00:20:14,540
+So in fact, it's n additions.
+
+423
+00:20:14,540 --> 00:20:17,360
+To compute Fn will be exactly n additions.
+
+424
+00:20:17,360 --> 00:20:17,860
+OK.
+
+425
+00:20:17,860 --> 00:20:18,300
+OK.
+
+426
+00:20:18,300 --> 00:20:24,600
+So this turns out to be a very nice closed form in this case.
+
+427
+00:20:24,600 --> 00:20:29,919
+It should be exactly n subproblems to compute F of n
+
+428
+00:20:29,919 --> 00:20:32,980
+because we start at 1.
+
+429
+00:20:32,980 --> 00:20:36,040
+And each one has one addition involved.
+
+430
+00:20:36,040 --> 00:20:40,100
+I guess not the base case, so maybe n minus 2.
+
+431
+00:20:40,100 --> 00:20:40,600
+OK.
+
+432
+00:20:40,600 --> 00:20:43,139
+Definitely order n.
+
+433
+00:20:43,139 --> 00:20:46,320
+Now there's this one subtlety, which
+
+434
+00:20:46,320 --> 00:20:47,860
+let's forget about dynamic programming for a moment.
+
+435
+00:20:47,860 --> 00:20:51,159
+And go back to good old lecture 1 and 2,
+
+436
+00:20:51,159 --> 00:20:55,120
+talking about the word RAM model of computation.
+
+437
+00:20:55,120 --> 00:20:58,899
+A question here that usually doesn't matter in this class.
+
+438
+00:20:58,899 --> 00:21:01,520
+Usually we assume additions take constant time.
+
+439
+00:21:01,520 --> 00:21:04,540
+And we usually do that because it's usually true.
+
+440
+00:21:04,540 --> 00:21:09,860
+And in general, our model is that w bit additions,
+
+441
+00:21:09,860 --> 00:21:13,959
+where w is our machine word size, takes constant time.
+
+442
+00:21:17,860 --> 00:21:20,840
+And that's not the real problem.
+
+443
+00:21:20,840 --> 00:21:24,120
+But for this problem and this problem only pretty much,
+
+444
+00:21:24,120 --> 00:21:27,179
+for Fibonacci numbers, I happen to know that the Fibonacci
+
+445
+00:21:27,179 --> 00:21:28,540
+numbers grow exponentially.
+
+446
+00:21:28,540 --> 00:21:34,879
+So to write them down actually requires theta n bits
+
+447
+00:21:34,879 --> 00:21:37,860
+because they are some constant to the n power.
+
+448
+00:21:37,860 --> 00:21:40,399
+And so they're actually really big.
+
+449
+00:21:40,399 --> 00:21:42,820
+n is probably bigger than w.
+
+450
+00:21:42,820 --> 00:21:44,600
+Usually you think of problems that
+
+451
+00:21:44,600 --> 00:21:47,399
+are much bigger than 64, or whatever your word size happens
+
+452
+00:21:47,400 --> 00:21:49,000
+w is at least log n.
+
+453
+00:21:49,000 --> 00:21:51,400
+But n is probably bigger than w.
+
+454
+00:21:51,400 --> 00:21:52,700
+It might be bigger or smaller.
+
+455
+00:21:52,700 --> 00:21:53,760
+We don't know.
+
+456
+00:21:53,760 --> 00:21:57,660
+And in general, to do an n-bit addition,
+
+457
+00:21:57,660 --> 00:22:02,080
+these are n-bit additions, is going
+
+458
+00:22:02,080 --> 00:22:07,280
+to take a ceiling of n over w time.
+
+459
+00:22:07,280 --> 00:22:11,120
+So in the end, we will spend this times n,
+
+460
+00:22:11,120 --> 00:22:13,260
+because we have to do that many of them, which
+
+461
+00:22:13,260 --> 00:22:18,760
+is n plus n squared over w time.
+
+462
+00:22:18,760 --> 00:22:22,160
+So a bit of a weird running time, but it's polynomial.
+
+463
+00:22:22,160 --> 00:22:26,040
+Whereas this original recursive algorithm was exponential,
+
+464
+00:22:26,040 --> 00:22:28,860
+here using this one simple idea of just remembering
+
+465
+00:22:28,860 --> 00:22:31,020
+the work we've done, suddenly this exponential time
+
+466
+00:22:31,020 --> 00:22:32,500
+algorithm becomes polynomial.
+
+467
+00:22:32,500 --> 00:22:33,120
+Why?
+
+468
+00:22:33,120 --> 00:22:35,820
+Because we have few subproblems.
+
+469
+00:22:35,820 --> 00:22:39,879
+We had n subproblems.
+
+470
+00:22:39,879 --> 00:22:42,760
+And for each subproblem, we could write a recurrence
+
+471
+00:22:42,760 --> 00:22:43,260
+relation.
+
+472
+00:22:43,260 --> 00:22:45,680
+But if we already knew the solutions
+
+473
+00:22:45,680 --> 00:22:49,760
+to smaller subproblems, we could compute this bigger problem
+
+474
+00:22:49,760 --> 00:22:50,700
+very efficiently.
+
+475
+00:22:50,700 --> 00:22:56,320
+This happened to be constant time or constant additions,
+
+476
+00:22:56,320 --> 00:22:57,980
+n over w time.
+
+477
+00:22:57,980 --> 00:22:59,700
+But as long as this is polynomial
+
+478
+00:22:59,700 --> 00:23:02,460
+and this is polynomial, we're happy,
+
+479
+00:23:02,460 --> 00:23:05,280
+because we have this nice formula
+
+480
+00:23:05,280 --> 00:23:09,720
+that the time it takes is at most the sum over all
+
+481
+00:23:09,720 --> 00:23:10,620
+subproblems.
+
+482
+00:23:13,260 --> 00:23:16,879
+So this is the sum of the relation time.
+
+483
+00:23:16,879 --> 00:23:23,680
+So I'm referring to subproblems, the number of them,
+
+484
+00:23:23,680 --> 00:23:26,760
+and the time it takes to evaluate this,
+
+485
+00:23:26,760 --> 00:23:28,379
+ignoring the recursive calls.
+
+486
+00:23:28,379 --> 00:23:29,100
+That's important.
+
+487
+00:23:29,100 --> 00:23:33,640
+This is the non-recursive part.
+
+488
+00:23:33,640 --> 00:23:40,940
+In the notes, I call this non-recursive work.
+
+489
+00:23:40,940 --> 00:23:41,440
+OK.
+
+490
+00:23:41,440 --> 00:23:41,980
+So we have n subproblems.
+
+491
+00:23:41,980 --> 00:23:42,379
+And we have n subproblems.
+
+492
+00:23:42,379 --> 00:23:42,879
+So we have n subproblems.
+
+493
+00:23:42,880 --> 00:23:50,760
+So this formula gives us a way to bound the running time
+
+494
+00:23:50,760 --> 00:23:54,220
+of one of these algorithms if we use memoization.
+
+495
+00:23:54,220 --> 00:23:55,840
+Without memoization, this is not true.
+
+496
+00:23:55,840 --> 00:23:57,820
+Fibonacci took exponential time.
+
+497
+00:23:57,820 --> 00:23:59,600
+But if we add memoization, we know
+
+498
+00:23:59,600 --> 00:24:01,640
+that we only solve each subproblem once.
+
+499
+00:24:01,640 --> 00:24:03,740
+And so we just need to see, for each one,
+
+500
+00:24:03,740 --> 00:24:05,580
+how much did it cost me to compute it,
+
+501
+00:24:05,580 --> 00:24:07,440
+assuming all the recursion work is free,
+
+502
+00:24:07,440 --> 00:24:11,080
+because that's already taken into account by the summation.
+
+503
+00:24:11,080 --> 00:24:12,860
+So in particular, this summation is, at most,
+
+504
+00:24:12,880 --> 00:24:16,000
+the number of subproblems times the time per subproblem, which
+
+505
+00:24:16,000 --> 00:24:17,600
+in this case is order n.
+
+506
+00:24:17,600 --> 00:24:20,340
+We could try to apply that analysis to merge sort,
+
+507
+00:24:20,340 --> 00:24:23,920
+because after all, this is also a recursive algorithm.
+
+508
+00:24:23,920 --> 00:24:26,080
+It happens to not benefit from memoization.
+
+509
+00:24:26,080 --> 00:24:27,620
+But we could throw in memoization.
+
+510
+00:24:27,620 --> 00:24:29,320
+It wouldn't hurt us.
+
+511
+00:24:29,320 --> 00:24:35,140
+But if you think about the call graph here, which is like s
+
+512
+00:24:35,140 --> 00:24:42,720
+of 0 n, which calls s of 0 n over 2, and s of n over 2,
+
+513
+00:24:42,880 --> 00:24:46,920
+n, and so on, it has the same picture.
+
+514
+00:24:46,920 --> 00:24:49,760
+But there's actually no common substructure here.
+
+515
+00:24:49,760 --> 00:24:51,620
+You'll never see a repeated subproblem,
+
+516
+00:24:51,620 --> 00:24:55,600
+because this range is completely disjoint from this range.
+
+517
+00:24:55,600 --> 00:24:57,060
+But you could throw in memoization
+
+518
+00:24:57,060 --> 00:24:59,140
+and try to analyze in the same way and say, well,
+
+519
+00:24:59,140 --> 00:25:01,420
+how many subproblems are there?
+
+520
+00:25:01,420 --> 00:25:05,400
+Well, it looks like there's n choices for i,
+
+521
+00:25:05,400 --> 00:25:09,580
+and not quite n choices, but in general, it's
+
+522
+00:25:09,580 --> 00:25:11,580
+at most n squared different choices.
+
+523
+00:25:11,580 --> 00:25:12,720
+In fact, it's the triangular number.
+
+524
+00:25:12,720 --> 00:25:19,260
+The sum of i equals 1 to n of i, different possible choices
+
+525
+00:25:19,260 --> 00:25:20,380
+for i and j.
+
+526
+00:25:20,380 --> 00:25:25,200
+But this is theta n squared subproblems,
+
+527
+00:25:25,200 --> 00:25:27,480
+which seems not so good.
+
+528
+00:25:27,480 --> 00:25:30,020
+And then how much time are we spending per subproblem?
+
+529
+00:25:30,020 --> 00:25:33,900
+Well, to solve s of ij, we have to merge
+
+530
+00:25:33,900 --> 00:25:35,220
+about that many elements.
+
+531
+00:25:35,220 --> 00:25:36,920
+We know merge takes linear time.
+
+532
+00:25:36,920 --> 00:25:41,480
+And so this takes theta j minus i time to evaluate.
+
+533
+00:25:42,720 --> 00:25:47,280
+And so what we'd like to do is sum over all the subproblems
+
+534
+00:25:47,280 --> 00:25:48,240
+of j minus i.
+
+535
+00:25:48,240 --> 00:25:51,220
+This is the not triangular number,
+
+536
+00:25:51,220 --> 00:25:53,840
+but the tetrahedral number, I guess.
+
+537
+00:25:53,840 --> 00:25:57,500
+And so we end up that the running time is at most
+
+538
+00:25:57,500 --> 00:25:58,080
+n cubed.
+
+539
+00:26:00,800 --> 00:26:02,100
+Great.
+
+540
+00:26:02,100 --> 00:26:06,020
+So it's true that n log n is less than or equal to n cubed,
+
+541
+00:26:06,020 --> 00:26:07,740
+but obviously not terribly useful.
+
+542
+00:26:07,740 --> 00:26:11,280
+This algorithm, by the way we already know how to analyze it,
+
+543
+00:26:11,280 --> 00:26:12,560
+is indeed n log n.
+
+544
+00:26:12,560 --> 00:26:17,120
+And the running time turns out to be theta n log n.
+
+545
+00:26:17,120 --> 00:26:20,960
+So sometimes this equation is not what you want to use.
+
+546
+00:26:20,960 --> 00:26:22,379
+But often it's good enough.
+
+547
+00:26:22,379 --> 00:26:25,080
+And especially if you just want to get a polynomial upper bound,
+
+548
+00:26:25,080 --> 00:26:27,300
+and then you can try to optimize it later.
+
+549
+00:26:27,300 --> 00:26:29,020
+This will give you a polynomial upper bound
+
+550
+00:26:29,020 --> 00:26:31,220
+as long as the number of subproblems is polynomial
+
+551
+00:26:31,220 --> 00:26:34,200
+and the time per subproblem is polynomial.
+
+552
+00:26:34,200 --> 00:26:35,899
+And indeed, n cubed is polynomial.
+
+553
+00:26:35,899 --> 00:26:39,620
+It's not a great polynomial, but this is an alternate way
+
+554
+00:26:39,620 --> 00:26:41,120
+to analyze merge sort.
+
+555
+00:26:41,120 --> 00:26:42,399
+Obviously, don't do this.
+
+556
+00:26:42,400 --> 00:26:47,980
+It's not super merge sort, but it illustrates the technique.
+
+557
+00:26:47,980 --> 00:26:49,360
+Good so far?
+
+558
+00:26:49,360 --> 00:26:51,380
+Any questions?
+
+559
+00:26:51,380 --> 00:26:52,880
+All right.
+
+560
+00:26:52,880 --> 00:26:55,300
+Let me remember where we are.
+
+561
+00:26:57,780 --> 00:26:58,280
+Cool.
+
+562
+00:26:58,280 --> 00:27:01,620
+So the next thing I'd like to do is show you
+
+563
+00:27:01,620 --> 00:27:04,080
+one more algorithm that we've already seen in this class that
+
+564
+00:27:04,080 --> 00:27:08,080
+fits very nicely into this structure, arguably
+
+565
+00:27:08,080 --> 00:27:09,700
+is a dynamic program.
+
+566
+00:27:09,700 --> 00:27:12,220
+And that is DAG shortest path.
+
+567
+00:27:12,400 --> 00:27:15,660
+Oh, so just to close the loop here,
+
+568
+00:27:15,660 --> 00:27:17,540
+when I say dynamic programming, I
+
+569
+00:27:17,540 --> 00:27:22,020
+mean recursion with memoization.
+
+570
+00:27:22,020 --> 00:27:28,520
+I mean we write a recursive piece of code, which
+
+571
+00:27:28,520 --> 00:27:38,200
+is like def f of some args, some subproblem specification.
+
+572
+00:27:38,200 --> 00:27:39,920
+We check is the subproblem.
+
+573
+00:27:42,400 --> 00:27:52,000
+In the memo table, if so, return memo of subproblem.
+
+574
+00:27:56,560 --> 00:28:01,540
+And otherwise, check if it's a base case
+
+575
+00:28:01,540 --> 00:28:03,100
+and solve it if it's a base case.
+
+576
+00:28:03,100 --> 00:28:08,880
+And otherwise, write the recurrence,
+
+577
+00:28:08,880 --> 00:28:11,360
+recurse via relation.
+
+578
+00:28:12,400 --> 00:28:20,700
+And set the memo table of the subproblem
+
+579
+00:28:20,700 --> 00:28:23,620
+to be one of those things.
+
+580
+00:28:23,620 --> 00:28:26,560
+So this is the generic dynamic program.
+
+581
+00:28:26,560 --> 00:28:32,160
+And implicitly, I'm writing Fibonacci in that way.
+
+582
+00:28:32,160 --> 00:28:35,460
+And all of the dynamic programs have this implicit structure,
+
+583
+00:28:35,460 --> 00:28:38,140
+where I start with a memo table, which is empty.
+
+584
+00:28:40,600 --> 00:28:41,340
+And I open it.
+
+585
+00:28:41,340 --> 00:28:42,300
+And I want to write a code.
+
+586
+00:28:42,300 --> 00:28:44,500
+I always just check if I'm in the memo table.
+
+587
+00:28:44,500 --> 00:28:45,540
+If I am, I return it.
+
+588
+00:28:45,540 --> 00:28:50,639
+Otherwise, I compute according to this recursive relation
+
+589
+00:28:50,639 --> 00:28:55,300
+by recursively calling F. And that's it.
+
+590
+00:28:55,300 --> 00:29:00,520
+So this is every DP algorithm is going to have that structure.
+
+591
+00:29:00,520 --> 00:29:05,200
+And it's just using recursion and memoization together.
+
+592
+00:29:05,200 --> 00:29:07,000
+So now let's apply that technique
+
+593
+00:29:07,000 --> 00:29:10,120
+to think about the DAG shortest paths problem.
+
+594
+00:29:10,120 --> 00:29:10,500
+The problem was I give you.
+
+595
+00:29:10,500 --> 00:29:11,000
+DAG shortest paths.
+
+596
+00:29:11,000 --> 00:29:11,500
+DAG shortest paths.
+
+597
+00:29:11,500 --> 00:29:12,000
+DAG shortest paths.
+
+598
+00:29:12,000 --> 00:29:12,880
+So I give you a DAG.
+
+599
+00:29:12,880 --> 00:29:16,560
+I give you a source vertex, S. Single source shortest paths.
+
+600
+00:29:16,560 --> 00:29:20,560
+Compute the shortest path weight from S to every vertex.
+
+601
+00:29:20,560 --> 00:29:22,440
+That's the goal of the problem.
+
+602
+00:29:22,440 --> 00:29:24,840
+And we saw a way to solve that, which is DAG relaxation.
+
+603
+00:29:24,840 --> 00:29:26,660
+I'm going to show you a different way, which
+
+604
+00:29:26,660 --> 00:29:29,920
+turns out to be basically the same, but upside down
+
+605
+00:29:29,920 --> 00:29:33,000
+or flipped left to right, depending
+
+606
+00:29:33,000 --> 00:29:35,700
+which way you direct your edges.
+
+607
+00:29:35,700 --> 00:29:38,160
+So what are our subproblems?
+
+608
+00:29:38,160 --> 00:29:40,540
+Well, here, actually, they're kind of spelled out for us.
+
+609
+00:29:40,540 --> 00:29:41,700
+We want to compute delta of SV.
+
+610
+00:29:42,000 --> 00:29:47,280
+for all v. So that is size of v subproblems.
+
+611
+00:29:47,280 --> 00:29:51,940
+That turns out to be enough for this overall problem.
+
+612
+00:29:51,940 --> 00:29:53,660
+And the original problem we want to solve
+
+613
+00:29:53,660 --> 00:29:55,280
+is all of the subproblems.
+
+614
+00:29:55,280 --> 00:29:57,080
+We solve all the subproblems, we're done.
+
+615
+00:29:57,080 --> 00:30:00,760
+And then we have, I think we wrote this at some point
+
+616
+00:30:00,760 --> 00:30:03,720
+during the DAG shortest paths lecture,
+
+617
+00:30:03,720 --> 00:30:07,520
+we have a recursive relation saying that the shortest way
+
+618
+00:30:07,520 --> 00:30:12,500
+to get from s to v is the minimum of the shortest path
+
+619
+00:30:12,500 --> 00:30:16,300
+to get to some vertex u plus the weight of the edge from u to v.
+
+620
+00:30:16,300 --> 00:30:17,000
+Why?
+
+621
+00:30:17,000 --> 00:30:21,240
+Because if we look at a vertex v, unless we started there,
+
+622
+00:30:21,240 --> 00:30:23,420
+we came from somewhere.
+
+623
+00:30:23,420 --> 00:30:27,800
+And so we can consider all of the possible choices
+
+624
+00:30:27,800 --> 00:30:30,120
+for the previous vertex u.
+
+625
+00:30:30,120 --> 00:30:33,040
+And if you start at s and get to v,
+
+626
+00:30:33,040 --> 00:30:35,080
+you must go through one of them.
+
+627
+00:30:35,080 --> 00:30:37,100
+And so this is finding the best way
+
+628
+00:30:37,100 --> 00:30:37,500
+among all of the subproblems.
+
+629
+00:30:37,500 --> 00:30:40,720
+So all the choices of u, what's the best way to get to u,
+
+630
+00:30:40,720 --> 00:30:44,500
+and then take the edge from u to v for all edges uv.
+
+631
+00:30:44,500 --> 00:30:46,760
+And this is adjacency minus.
+
+632
+00:30:46,760 --> 00:30:48,500
+We don't usually think of that.
+
+633
+00:30:48,500 --> 00:30:51,040
+Usually we look at adjacency plus, the outgoing edges.
+
+634
+00:30:51,040 --> 00:30:53,300
+This is the incoming edges.
+
+635
+00:30:53,300 --> 00:30:58,900
+And so uv is an incoming edge into v.
+
+636
+00:30:58,900 --> 00:31:00,900
+If we take that minimum, and of course,
+
+637
+00:31:00,900 --> 00:31:03,320
+it's possible there is no way to get to v.
+
+638
+00:31:03,320 --> 00:31:06,080
+And so I'll also throw infinity into this set.
+
+639
+00:31:06,080 --> 00:31:07,280
+Take the min of that set.
+
+640
+00:31:07,280 --> 00:31:10,879
+That will give me the shortest pathway in an acyclic graph
+
+641
+00:31:10,879 --> 00:31:12,639
+from s to v. And great.
+
+642
+00:31:12,639 --> 00:31:13,800
+This is recursive.
+
+643
+00:31:13,800 --> 00:31:15,040
+This was a subproblem.
+
+644
+00:31:15,040 --> 00:31:19,700
+These are subproblems which are smaller, I guess.
+
+645
+00:31:19,700 --> 00:31:22,639
+There's no clear notion of smaller here,
+
+646
+00:31:22,639 --> 00:31:25,500
+except we already know the clear notion of smaller
+
+647
+00:31:25,500 --> 00:31:30,700
+is the topological order of our DAG.
+
+648
+00:31:30,700 --> 00:31:32,240
+Because our graph is acyclic, we know
+
+649
+00:31:32,240 --> 00:31:33,360
+it has a topological order.
+
+650
+00:31:33,360 --> 00:31:36,440
+We know how to compute it with DFS.
+
+651
+00:31:36,440 --> 00:31:37,080
+And so that guarantees that we're going to get to v.
+
+652
+00:31:37,080 --> 00:31:37,120
+And so we're going to get to v.
+
+653
+00:31:37,120 --> 00:31:37,160
+And so we're going to get to v.
+
+654
+00:31:37,160 --> 00:31:37,260
+And so we're going to get to v.
+
+655
+00:31:37,280 --> 00:31:38,639
+And so we're going to get to v. And in that guarantees,
+
+656
+00:31:38,639 --> 00:31:41,940
+there is a topological order to compute these problems.
+
+657
+00:31:41,940 --> 00:31:47,080
+And in fact, the relationship between problems
+
+658
+00:31:47,080 --> 00:31:50,560
+is exactly the given graph g.
+
+659
+00:31:50,560 --> 00:31:54,480
+In order to compute the shortest path weight from s to v,
+
+660
+00:31:54,480 --> 00:31:56,680
+I need to know the shortest path weight from s to all
+
+661
+00:31:56,680 --> 00:31:58,700
+of the incoming vertices to v.
+
+662
+00:31:58,700 --> 00:32:02,260
+And so this is, I guess, in the call graph,
+
+663
+00:32:02,260 --> 00:32:05,680
+this vertex calls this vertex.
+
+664
+00:32:05,680 --> 00:32:07,160
+But I'll direct the edge.
+
+665
+00:32:07,160 --> 00:32:11,980
+I'll direct the edge this way to say that this vertex requires
+
+666
+00:32:11,980 --> 00:32:14,920
+this vertex needs to be computed before this one.
+
+667
+00:32:14,920 --> 00:32:19,480
+And so then I can compute them in a topological order.
+
+668
+00:32:19,480 --> 00:32:22,840
+We have a base case, which is delta of ss equals 0.
+
+669
+00:32:22,840 --> 00:32:26,980
+And the running time is, again, we can use this formula
+
+670
+00:32:26,980 --> 00:32:29,280
+and say, let's just sum over all the subproblems
+
+671
+00:32:29,280 --> 00:32:32,400
+of the non-recursive work in our recurrence relation.
+
+672
+00:32:32,400 --> 00:32:34,780
+And so it's computing this min.
+
+673
+00:32:34,780 --> 00:32:37,040
+If I gave you these delta of ss equals 0,
+
+674
+00:32:37,040 --> 00:32:39,800
+and I gave you these deltas for free,
+
+675
+00:32:39,800 --> 00:32:42,620
+and I gave you these weights, which we know from our weight
+
+676
+00:32:42,620 --> 00:32:45,420
+data structure, how long does it take to compute this min?
+
+677
+00:32:45,420 --> 00:32:47,159
+Well, however many things there are,
+
+678
+00:32:47,159 --> 00:32:49,360
+how many numbers we're minning, which
+
+679
+00:32:49,360 --> 00:32:52,860
+is the size of the incoming adjacency list,
+
+680
+00:32:52,860 --> 00:32:55,420
+plus 1 for that infinity.
+
+681
+00:32:55,420 --> 00:32:58,460
+And so if you compute this sum, sum of incoming edges
+
+682
+00:32:58,460 --> 00:33:01,159
+to every vertex, that's all the edges.
+
+683
+00:33:01,159 --> 00:33:03,920
+So this is v plus e.
+
+684
+00:33:03,920 --> 00:33:04,420
+OK?
+
+685
+00:33:04,420 --> 00:33:07,040
+So in fact, this algorithm, which
+
+686
+00:33:07,040 --> 00:33:10,020
+is morally the same algorithm as the one
+
+687
+00:33:10,020 --> 00:33:12,320
+that we saw in the DAG shortest path lecture, which
+
+688
+00:33:12,320 --> 00:33:18,680
+was compute a topological order and process vertices
+
+689
+00:33:18,680 --> 00:33:23,800
+in that order and relax edges going out from vertices.
+
+690
+00:33:23,800 --> 00:33:26,960
+So here, so in that algorithm, we
+
+691
+00:33:26,960 --> 00:33:29,120
+would have tried to relax this edge
+
+692
+00:33:29,120 --> 00:33:31,340
+if there was a better path to v.
+
+693
+00:33:31,340 --> 00:33:33,659
+The first one certainly is better than infinity.
+
+694
+00:33:33,659 --> 00:33:36,840
+So the first one, we relax indeed.
+
+695
+00:33:36,840 --> 00:33:40,000
+Now the next edge, if this gave a better path from s to v,
+
+696
+00:33:40,000 --> 00:33:42,520
+then we would relax that edge and update the weight here
+
+697
+00:33:42,520 --> 00:33:43,740
+and do the same here.
+
+698
+00:33:43,740 --> 00:33:46,959
+In the end, we're just computing this min in the relaxation
+
+699
+00:33:46,959 --> 00:33:48,580
+algorithm, but doing it step by step.
+
+700
+00:33:48,580 --> 00:33:52,480
+In the relaxation algorithm, DAG relaxation,
+
+701
+00:33:52,480 --> 00:33:58,899
+for each incoming edge to v, we update d of v if it's better.
+
+702
+00:33:58,899 --> 00:34:02,080
+And so if you repeatedly update if you're better,
+
+703
+00:34:02,080 --> 00:34:04,280
+that ends up computing a min.
+
+704
+00:34:04,280 --> 00:34:04,780
+OK?
+
+705
+00:34:04,780 --> 00:34:06,820
+So this is the same algorithm, just kind
+
+706
+00:34:06,840 --> 00:34:09,060
+of flipped backwards.
+
+707
+00:34:09,060 --> 00:34:11,279
+A funny thing, although we wrote down
+
+708
+00:34:11,279 --> 00:34:15,600
+the topological order of the subproblem graph here
+
+709
+00:34:15,600 --> 00:34:19,960
+is the topological order of g, because the subproblem graph is
+
+710
+00:34:19,960 --> 00:34:24,719
+g, the algorithm doesn't actually have to compute one.
+
+711
+00:34:24,719 --> 00:34:27,199
+It's doing it automatically for free.
+
+712
+00:34:27,199 --> 00:34:32,299
+If you think about this algorithm, generic dp
+
+713
+00:34:32,299 --> 00:34:35,659
+algorithm, which is check whether we're in our memo
+
+714
+00:34:35,659 --> 00:34:36,159
+table.
+
+715
+00:34:36,159 --> 00:34:36,580
+If so, return.
+
+716
+00:34:36,580 --> 00:34:40,900
+Otherwise, recurse, or base case.
+
+717
+00:34:40,900 --> 00:34:43,299
+This actually is a depth-first search
+
+718
+00:34:43,299 --> 00:34:45,460
+through the subproblem graph, technically
+
+719
+00:34:45,460 --> 00:34:48,460
+through the reverse of the subproblem graph.
+
+720
+00:34:48,460 --> 00:34:58,420
+If I draw an edge, so from small to big,
+
+721
+00:34:58,420 --> 00:35:02,140
+so I'm just saying I orient the edges from my smaller
+
+722
+00:35:02,140 --> 00:35:04,380
+subproblems to the ones that need it,
+
+723
+00:35:04,380 --> 00:35:05,880
+then I'm actually depth-first searching back
+
+724
+00:35:05,880 --> 00:35:06,380
+to the problem.
+
+725
+00:35:06,380 --> 00:35:06,580
+OK?
+
+726
+00:35:06,580 --> 00:35:08,580
+So I'm going to do a little bit of a back-and-forth
+
+727
+00:35:08,580 --> 00:35:11,200
+in this graph, because the bigger problem calls
+
+728
+00:35:11,200 --> 00:35:13,540
+the smaller problem.
+
+729
+00:35:13,540 --> 00:35:16,900
+And the memo table is serving as the have I visited
+
+730
+00:35:16,900 --> 00:35:19,720
+this vertex already check in DFS.
+
+731
+00:35:19,720 --> 00:35:21,880
+So this is actually a DFS algorithm,
+
+732
+00:35:21,880 --> 00:35:25,000
+plus we're doing some computation
+
+733
+00:35:25,000 --> 00:35:28,340
+to actually solve the subproblems we care about.
+
+734
+00:35:28,340 --> 00:35:31,180
+So implicit in this algorithm, we are doing a DFS.
+
+735
+00:35:31,180 --> 00:35:33,940
+And at the same time, we're doing this shortest path
+
+736
+00:35:33,940 --> 00:35:35,200
+computation.
+
+737
+00:35:35,200 --> 00:35:35,700
+OK?
+
+738
+00:35:35,700 --> 00:35:38,080
+So this is the finishing order of that DFS traversal.
+
+739
+00:35:38,080 --> 00:35:39,500
+Because all the edges are backwards,
+
+740
+00:35:39,500 --> 00:35:41,740
+this is the same as the reverse finishing order
+
+741
+00:35:41,740 --> 00:35:42,819
+if the graph is forward.
+
+742
+00:35:42,819 --> 00:35:46,580
+So in the end, we're computing a topological order
+
+743
+00:35:46,580 --> 00:35:51,399
+because dynamic programming includes in it depth first
+
+744
+00:35:51,399 --> 00:35:51,899
+search.
+
+745
+00:35:51,899 --> 00:35:54,720
+Whew, a lot of words.
+
+746
+00:35:54,720 --> 00:35:58,140
+But it's kind of cool that this framework just
+
+747
+00:35:58,140 --> 00:36:02,399
+solves DAG shortest paths without much work.
+
+748
+00:36:02,399 --> 00:36:04,319
+I mean, we did a lot of work in shortest paths
+
+749
+00:36:04,319 --> 00:36:05,500
+to prove that this relation is true.
+
+750
+00:36:05,500 --> 00:36:08,420
+But once you know it's true, the algorithm part
+
+751
+00:36:08,420 --> 00:36:11,400
+is pretty much free.
+
+752
+00:36:11,400 --> 00:36:16,060
+You just write down sort bot, and you're done.
+
+753
+00:36:16,060 --> 00:36:18,560
+OK.
+
+754
+00:36:18,560 --> 00:36:24,780
+This brings us to, in general, at this point,
+
+755
+00:36:24,780 --> 00:36:27,320
+we have seen two examples of dynamic programming.
+
+756
+00:36:27,320 --> 00:36:28,900
+I guess technically merge sort you
+
+757
+00:36:28,900 --> 00:36:30,200
+could think of as a dynamic program,
+
+758
+00:36:30,200 --> 00:36:31,560
+but it doesn't actually reuse anything.
+
+759
+00:36:31,560 --> 00:36:32,760
+So it's not interesting.
+
+760
+00:36:32,760 --> 00:36:34,740
+And indeed, that gave us a really bad bound.
+
+761
+00:36:34,740 --> 00:36:37,299
+But we've definitely seen DAG shortest paths and Fibonacci
+
+762
+00:36:37,299 --> 00:36:39,640
+numbers as two interesting examples.
+
+763
+00:36:39,640 --> 00:36:42,359
+And what the next remainder of this lecture
+
+764
+00:36:42,359 --> 00:36:44,779
+and the next three lectures are going to be about
+
+765
+00:36:44,779 --> 00:36:48,180
+is more and more examples of dynamic programming
+
+766
+00:36:48,180 --> 00:36:51,459
+and how you can use it to solve increasingly general problems.
+
+767
+00:36:51,459 --> 00:36:53,839
+So far, we've just solved an easy problem and a problem
+
+768
+00:36:53,839 --> 00:36:55,240
+we already knew how to solve.
+
+769
+00:36:55,240 --> 00:37:02,839
+Let's go to a new problem, which is bowling.
+
+770
+00:37:02,839 --> 00:37:04,180
+Bowling is popular in Boston.
+
+771
+00:37:04,740 --> 00:37:12,100
+Boston likes to play candle pin bowling, which is a bit unusual.
+
+772
+00:37:12,100 --> 00:37:15,779
+Today, we're going to play an even more unusual bowling game,
+
+773
+00:37:15,779 --> 00:37:20,299
+one that I made up based on a bowling game that Henry
+
+774
+00:37:20,299 --> 00:37:22,859
+Doudny made up in 1908.
+
+775
+00:37:22,859 --> 00:37:26,259
+So ancient bowling, you might call it.
+
+776
+00:37:26,259 --> 00:37:29,140
+Or I think linear bowling is what I might call it.
+
+777
+00:37:29,140 --> 00:37:32,060
+I'll just call it bowling here.
+
+778
+00:37:32,060 --> 00:37:34,339
+And now I'm going to attempt to draw a bowling pin.
+
+779
+00:37:34,339 --> 00:37:34,740
+Not a bowling pin.
+
+780
+00:37:34,740 --> 00:37:37,080
+Not bad.
+
+781
+00:37:37,080 --> 00:37:39,520
+That might get progressively worse.
+
+782
+00:37:39,520 --> 00:37:42,339
+So imagine n identical bowling pins.
+
+783
+00:37:42,339 --> 00:37:44,259
+Please pretend these are identical.
+
+784
+00:37:44,259 --> 00:37:49,100
+And I have a ball, which is approximately the same size
+
+785
+00:37:49,100 --> 00:37:50,180
+as a bowling pin.
+
+786
+00:37:50,180 --> 00:37:52,419
+These bowling pins are pretty close together.
+
+787
+00:37:52,419 --> 00:37:54,879
+I should have left a little gap here.
+
+788
+00:37:54,879 --> 00:37:57,399
+And you are a really good bowler.
+
+789
+00:37:57,399 --> 00:38:00,939
+Now, unfortunately, these bowling pins are on a line.
+
+790
+00:38:00,939 --> 00:38:03,939
+And you're bowling from way down at infinity.
+
+791
+00:38:04,740 --> 00:38:09,680
+So when you bowl, you can only hit one pin or two pins,
+
+792
+00:38:09,680 --> 00:38:10,620
+or zero pins.
+
+793
+00:38:10,620 --> 00:38:13,060
+But probably you want to hit some pins.
+
+794
+00:38:13,060 --> 00:38:17,140
+So if you bowl straight at a pin, you will just hit that one pin.
+
+795
+00:38:17,140 --> 00:38:20,839
+And if you bowl in the middle between two pins,
+
+796
+00:38:20,839 --> 00:38:26,200
+you will knock down two pins.
+
+797
+00:38:26,200 --> 00:38:31,040
+This is your model of bowling, model of computation.
+
+798
+00:38:31,040 --> 00:38:34,120
+Now, what makes this interesting is that the pins have values.
+
+799
+00:38:34,120 --> 00:38:39,960
+Pin i has value vi.
+
+800
+00:38:39,960 --> 00:38:42,799
+This is obviously a toy problem.
+
+801
+00:38:42,799 --> 00:38:47,660
+Though this problem, this type of bowling, does go back to 1908.
+
+802
+00:38:47,660 --> 00:38:50,620
+It was also a toy problem in that setting.
+
+803
+00:38:50,620 --> 00:38:55,680
+So each of these bowling pins has some number on it.
+
+804
+00:38:55,680 --> 00:39:00,620
+Let's say 199.
+
+805
+00:39:00,620 --> 00:39:03,560
+Let me do a slightly more interesting example, maybe
+
+806
+00:39:03,560 --> 00:39:03,720
+another 1.
+
+807
+00:39:03,720 --> 00:39:05,879
+Here.
+
+808
+00:39:05,879 --> 00:39:11,680
+And a 2, and a 5, and a 5, something like this.
+
+809
+00:39:15,620 --> 00:39:17,160
+Or maybe make it a little more interesting.
+
+810
+00:39:17,160 --> 00:39:19,859
+Let's put some negative numbers on here.
+
+811
+00:39:19,859 --> 00:39:24,259
+And the model, so you're at the carnival bowling.
+
+812
+00:39:24,259 --> 00:39:27,560
+Each pin has potentially different values.
+
+813
+00:39:27,560 --> 00:39:33,560
+And the model is, if you hit one pin,
+
+814
+00:39:33,720 --> 00:39:35,879
+you get i.
+
+815
+00:39:35,879 --> 00:39:38,879
+Then you get vi points.
+
+816
+00:39:38,879 --> 00:39:40,879
+So that's straightforward.
+
+817
+00:39:40,879 --> 00:39:43,720
+To make it interesting, when you hit two pins,
+
+818
+00:39:43,720 --> 00:39:45,879
+you get the product.
+
+819
+00:39:45,879 --> 00:39:48,879
+So if I hit two pins, it's always i and i plus 1,
+
+820
+00:39:48,879 --> 00:39:50,379
+for some i.
+
+821
+00:39:50,379 --> 00:39:53,759
+You get vi times vi plus 1 points.
+
+822
+00:39:53,759 --> 00:39:58,480
+This is the game you're playing.
+
+823
+00:39:58,480 --> 00:40:00,879
+And it doesn't really matter that this is a product.
+
+824
+00:40:00,879 --> 00:40:02,959
+The product is just some weird function that's
+
+825
+00:40:02,960 --> 00:40:04,820
+hard to imagine.
+
+826
+00:40:04,820 --> 00:40:06,960
+If you stare at this long enough,
+
+827
+00:40:06,960 --> 00:40:09,600
+you should convince yourself that the optimal solution is
+
+828
+00:40:09,600 --> 00:40:12,460
+probably to, so for each of these numbers,
+
+829
+00:40:12,460 --> 00:40:15,260
+I could leave it singleton or pair it with its left neighbor
+
+830
+00:40:15,260 --> 00:40:16,520
+or pair it with its right neighbor.
+
+831
+00:40:16,520 --> 00:40:17,860
+But the pairings can't overlap.
+
+832
+00:40:17,860 --> 00:40:19,700
+Because once I hit a pin, it's gone.
+
+833
+00:40:19,700 --> 00:40:21,260
+It's knocked over.
+
+834
+00:40:21,260 --> 00:40:22,220
+It disappears.
+
+835
+00:40:22,220 --> 00:40:25,700
+So because of these 9s, which are very high value,
+
+836
+00:40:25,700 --> 00:40:28,160
+what I'd probably like to do is hit both of them together.
+
+837
+00:40:28,160 --> 00:40:30,300
+So pair them up.
+
+838
+00:40:30,300 --> 00:40:31,760
+Because 9 times 9 is 81.
+
+839
+00:40:31,760 --> 00:40:32,760
+That's really hard.
+
+840
+00:40:32,760 --> 00:40:33,420
+Really big.
+
+841
+00:40:33,420 --> 00:40:35,960
+Much better than hitting them individually or hitting 9 times
+
+842
+00:40:35,960 --> 00:40:37,920
+1 or 9 times 2.
+
+843
+00:40:37,920 --> 00:40:40,200
+1 and 1 is kind of funny because it's actually
+
+844
+00:40:40,200 --> 00:40:41,760
+better to hit them individually.
+
+845
+00:40:41,760 --> 00:40:42,960
+That will give you two points.
+
+846
+00:40:42,960 --> 00:40:46,280
+Whereas if I pair them up, I only get one point.
+
+847
+00:40:46,280 --> 00:40:47,980
+2 and minus 5, that seems bad.
+
+848
+00:40:47,980 --> 00:40:49,020
+Negative 10 points.
+
+849
+00:40:49,020 --> 00:40:51,060
+My goal is to maximize score.
+
+850
+00:40:57,060 --> 00:41:00,340
+Do you have to hit all the pins?
+
+851
+00:41:00,340 --> 00:41:02,560
+Let's say no, you don't have to hit all the pins.
+
+852
+00:41:02,760 --> 00:41:04,920
+I could skip the minus 5s.
+
+853
+00:41:04,920 --> 00:41:07,840
+But in fact, here, because they're adjacent,
+
+854
+00:41:07,840 --> 00:41:09,480
+minus 5 times minus 5 is good.
+
+855
+00:41:09,480 --> 00:41:11,300
+That's 25 points.
+
+856
+00:41:11,300 --> 00:41:14,820
+So the optimal solution for this particular instance
+
+857
+00:41:14,820 --> 00:41:19,140
+are to hit all the pins, these positive, these together,
+
+858
+00:41:19,140 --> 00:41:20,080
+these together.
+
+859
+00:41:20,080 --> 00:41:23,460
+If I added, for example, another pin of minus 3 here,
+
+860
+00:41:23,460 --> 00:41:25,700
+I would choose not to hit that pin.
+
+861
+00:41:25,700 --> 00:41:26,400
+Good question.
+
+862
+00:41:26,400 --> 00:41:29,460
+So you just play until you are tired.
+
+863
+00:41:29,460 --> 00:41:32,760
+When you decide to stop playing, how can I maximize your score?
+
+864
+00:41:32,760 --> 00:41:34,800
+There are many variations in this game.
+
+865
+00:41:34,800 --> 00:41:38,620
+All of them, basically any variation, not literally
+
+866
+00:41:38,620 --> 00:41:41,160
+every variation, but many, many variations of this problem
+
+867
+00:41:41,160 --> 00:41:44,580
+can all be solved quickly with dynamic programming.
+
+868
+00:41:44,580 --> 00:41:48,120
+But let's solve this particular one.
+
+869
+00:41:48,120 --> 00:41:48,620
+OK.
+
+870
+00:41:55,120 --> 00:41:58,620
+So now we're really in algorithmic design mode.
+
+871
+00:41:58,620 --> 00:42:01,760
+We need to think about sort bot.
+
+872
+00:42:01,760 --> 00:42:02,760
+And in particular, we need to think
+
+873
+00:42:02,760 --> 00:42:06,080
+about what would the subproblems be here.
+
+874
+00:42:06,080 --> 00:42:08,540
+And at this point, we don't have a lot of help.
+
+875
+00:42:08,540 --> 00:42:11,460
+So I should probably give you some tools.
+
+876
+00:42:11,460 --> 00:42:13,440
+If I want to solve a problem like this,
+
+877
+00:42:13,440 --> 00:42:18,140
+the input is a sequence of numbers.
+
+878
+00:42:18,140 --> 00:42:19,800
+It's a sequence data structure.
+
+879
+00:42:19,800 --> 00:42:23,920
+Maybe it's an array of numbers, which is this v array.
+
+880
+00:42:26,760 --> 00:42:28,960
+And let's see.
+
+881
+00:42:28,960 --> 00:42:39,720
+A general tool for subproblem design,
+
+882
+00:42:39,720 --> 00:42:42,020
+which will cover most of the problems, maybe
+
+883
+00:42:42,020 --> 00:42:45,140
+all of the problems that we see in this class
+
+884
+00:42:45,140 --> 00:42:47,140
+for dynamic programming.
+
+885
+00:42:47,140 --> 00:42:49,780
+Here's a trick.
+
+886
+00:42:49,780 --> 00:42:52,960
+If your input is a sequence, you can't solve it.
+
+887
+00:42:52,960 --> 00:42:53,960
+You can't solve it.
+
+888
+00:42:53,960 --> 00:42:54,960
+You can't solve it.
+
+889
+00:42:54,960 --> 00:42:55,960
+You can't solve it.
+
+890
+00:42:55,960 --> 00:42:56,960
+You can't solve it.
+
+891
+00:42:56,960 --> 00:42:57,960
+You can't solve it.
+
+892
+00:42:57,960 --> 00:43:01,200
+You can't solve it.
+
+893
+00:43:01,200 --> 00:43:04,340
+Here are some good subproblems to consider.
+
+894
+00:43:13,160 --> 00:43:15,640
+We could do all prefixes.
+
+895
+00:43:18,200 --> 00:43:22,340
+So let's call the sequence x.
+
+896
+00:43:22,340 --> 00:43:27,720
+So we could do x prefix means up to a given i for all i.
+
+897
+00:43:27,720 --> 00:43:35,000
+We could do all the suffixes, x from i onward for all i.
+
+898
+00:43:35,000 --> 00:43:41,359
+Or we could do substrings, which are the consecutive items
+
+899
+00:43:41,359 --> 00:43:43,319
+from i to j.
+
+900
+00:43:43,319 --> 00:43:44,560
+I don't write subsequence here.
+
+901
+00:43:44,560 --> 00:43:47,220
+Subsequence means you can omit items in the middle.
+
+902
+00:43:47,220 --> 00:43:49,180
+So substring, you have to start at some position
+
+903
+00:43:49,180 --> 00:43:52,040
+and do all the things up to j.
+
+904
+00:43:52,040 --> 00:43:55,339
+So these are nice, easy to express in Python notation.
+
+905
+00:43:55,339 --> 00:43:57,000
+And these are great because they're polynomial.
+
+906
+00:43:57,000 --> 00:43:58,000
+They're polynomial.
+
+907
+00:43:58,000 --> 00:44:02,240
+If I have n things, if the length of my sequence x is n,
+
+908
+00:44:02,240 --> 00:44:06,060
+then there are n sequences, n prefixes, technically n plus 1.
+
+909
+00:44:06,060 --> 00:44:08,640
+So let's do theta n prefixes.
+
+910
+00:44:08,640 --> 00:44:10,380
+There are theta n suffixes.
+
+911
+00:44:10,380 --> 00:44:14,360
+And there are theta n squared substrings
+
+912
+00:44:14,360 --> 00:44:19,200
+because there's roughly n choices for i and j separately.
+
+913
+00:44:19,200 --> 00:44:19,700
+Sorry?
+
+914
+00:44:19,700 --> 00:44:21,140
+What about subsequences?
+
+915
+00:44:21,140 --> 00:44:22,280
+Subsequences.
+
+916
+00:44:22,280 --> 00:44:22,780
+Good.
+
+917
+00:44:22,780 --> 00:44:24,820
+I didn't write subsequences because, in fact, there
+
+918
+00:44:24,820 --> 00:44:26,240
+are exponentially many subsequences.
+
+919
+00:44:26,240 --> 00:44:26,740
+Right?
+
+920
+00:44:26,740 --> 00:44:27,819
+It's 2 to the n.
+
+921
+00:44:27,819 --> 00:44:30,140
+For every item, I can choose it or not.
+
+922
+00:44:30,140 --> 00:44:31,959
+So I don't want to parametrize.
+
+923
+00:44:31,959 --> 00:44:34,240
+I don't want my subproblems to be subsequences
+
+924
+00:44:34,240 --> 00:44:35,919
+because that's guaranteed.
+
+925
+00:44:35,919 --> 00:44:37,660
+Well, then you're guaranteed to get
+
+926
+00:44:37,660 --> 00:44:40,339
+an exponential number of subproblems, which is bad.
+
+927
+00:44:40,339 --> 00:44:43,720
+We'd like to bound the number of subproblems by a polynomial.
+
+928
+00:44:43,720 --> 00:44:47,859
+So these are three natural ways to get polynomial bounds.
+
+929
+00:44:47,859 --> 00:44:50,140
+Now, prefixes and suffixes are obviously better
+
+930
+00:44:50,140 --> 00:44:53,299
+because there's fewer of them, linear instead of quadratic.
+
+931
+00:44:53,299 --> 00:44:56,720
+And usually, almost every problem you'll encounter
+
+932
+00:44:56,740 --> 00:44:58,359
+is going to be a problem.
+
+933
+00:44:58,359 --> 00:45:00,640
+So prefixes and suffixes are equally good.
+
+934
+00:45:00,640 --> 00:45:02,799
+It doesn't really matter which one you choose.
+
+935
+00:45:02,799 --> 00:45:06,359
+So maybe you like to think of, well, we'll get to.
+
+936
+00:45:08,359 --> 00:45:12,819
+Just choose whichever is more comfortable for you.
+
+937
+00:45:12,819 --> 00:45:14,439
+But sometimes it's not enough, and we'll
+
+938
+00:45:14,439 --> 00:45:15,439
+have to go to substrings.
+
+939
+00:45:15,439 --> 00:45:17,740
+That won't be for another lecture or two.
+
+940
+00:45:17,740 --> 00:45:18,240
+OK.
+
+941
+00:45:18,240 --> 00:45:23,740
+Today, I claim that prefixes or suffixes are enough
+
+942
+00:45:23,740 --> 00:45:25,819
+to solve the bowling problem.
+
+943
+00:45:25,820 --> 00:45:29,320
+So what we're going to do is think about, I prefer suffixes
+
+944
+00:45:29,320 --> 00:45:31,880
+usually because I like to work from left to right,
+
+945
+00:45:31,880 --> 00:45:33,920
+from the beginning to the end.
+
+946
+00:45:33,920 --> 00:45:38,580
+So we're going to think of a suffix of the bowling pins.
+
+947
+00:45:38,580 --> 00:45:40,880
+And so what is the subproblem on a suffix?
+
+948
+00:45:40,880 --> 00:45:43,160
+Well, a natural version is just to solve
+
+949
+00:45:43,160 --> 00:45:45,260
+the original problem, bowling.
+
+950
+00:45:45,260 --> 00:45:47,780
+How do I maximize my score if all I were given
+
+951
+00:45:47,780 --> 00:45:48,860
+were these pins?
+
+952
+00:45:48,860 --> 00:45:52,160
+Suppose the pins to the left of i didn't exist.
+
+953
+00:45:52,160 --> 00:45:54,580
+How would I maximize my score on the remaining pins?
+
+954
+00:45:54,580 --> 00:45:55,400
+Or for this suffix?
+
+955
+00:45:55,400 --> 00:45:56,900
+If I had four pins, what would I do?
+
+956
+00:45:56,900 --> 00:45:58,280
+And there's some weird subproblems here, right?
+
+957
+00:45:58,280 --> 00:46:00,620
+If I just gave you the last pin, what would you do?
+
+958
+00:46:00,620 --> 00:46:01,180
+Nothing.
+
+959
+00:46:01,180 --> 00:46:04,440
+That's clearly different from what I would do globally here.
+
+960
+00:46:04,440 --> 00:46:06,520
+But I claim if I can solve all suffixes,
+
+961
+00:46:06,520 --> 00:46:09,760
+I can solve my original problem because one of the suffixes
+
+962
+00:46:09,760 --> 00:46:11,580
+is the whole sequence.
+
+963
+00:46:14,180 --> 00:46:15,160
+So let's do it.
+
+964
+00:46:18,980 --> 00:46:22,820
+Sort bot for bowling.
+
+965
+00:46:25,400 --> 00:46:29,220
+So here is our dynamic program.
+
+966
+00:46:29,220 --> 00:46:34,080
+The subproblems are suffixes.
+
+967
+00:46:34,080 --> 00:46:40,020
+So I'll write b of i is the maximum score we could get.
+
+968
+00:46:43,060 --> 00:46:50,520
+Possible with our starting.
+
+969
+00:46:50,520 --> 00:46:52,180
+If we started a game with pins i, I, and i, if I started a game
+
+970
+00:46:52,180 --> 00:46:54,060
+with pins i, I would get a maximum score.
+
+971
+00:46:54,060 --> 00:46:54,780
+So for example, if I started a game with pins i, I would get
+
+972
+00:46:54,780 --> 00:46:55,180
+a maximum score of a pin.
+
+973
+00:46:55,180 --> 00:47:02,560
+i plus 1 up to n minus 1, which is a suffix of the pins.
+
+974
+00:47:02,560 --> 00:47:04,600
+Very important whenever you write a dynamic program
+
+975
+00:47:04,600 --> 00:47:06,640
+to define what your subproblems are.
+
+976
+00:47:06,640 --> 00:47:08,200
+Don't just say how to compute them,
+
+977
+00:47:08,200 --> 00:47:10,779
+but first say what is the goal of the subproblem.
+
+978
+00:47:10,779 --> 00:47:13,339
+This is a common mistake to forget to state
+
+979
+00:47:13,339 --> 00:47:15,540
+what you're trying to do.
+
+980
+00:47:15,540 --> 00:47:18,940
+So now I've defined b of i.
+
+981
+00:47:18,940 --> 00:47:23,080
+Now what is the original thing I'm trying to solve?
+
+982
+00:47:23,080 --> 00:47:26,040
+You can also put in sort bot, you could put the o earlier.
+
+983
+00:47:26,040 --> 00:47:28,120
+Then it actually spells sort.
+
+984
+00:47:28,120 --> 00:47:30,100
+So why don't I do that for fun?
+
+985
+00:47:30,100 --> 00:47:32,440
+The original problem we're trying to solve
+
+986
+00:47:32,440 --> 00:47:37,060
+is b of 0, because that is all of the pins.
+
+987
+00:47:37,060 --> 00:47:40,000
+The suffix starting at 0 is everything.
+
+988
+00:47:40,000 --> 00:47:42,700
+So if we can solve that, we're done.
+
+989
+00:47:42,700 --> 00:47:46,140
+Next is r for relate.
+
+990
+00:47:46,140 --> 00:47:49,420
+This is the test of did I get the subproblems right,
+
+991
+00:47:49,420 --> 00:47:53,020
+is whether I can write a recurrence relation.
+
+992
+00:47:53,020 --> 00:47:53,060
+So.
+
+993
+00:47:53,060 --> 00:47:54,500
+So let's try to do it.
+
+994
+00:47:54,500 --> 00:47:58,420
+We want to compute b of i.
+
+995
+00:47:58,420 --> 00:48:04,080
+So we have pin i here, and then the remaining pins.
+
+996
+00:48:07,740 --> 00:48:10,860
+And the big idea here is to just think about,
+
+997
+00:48:10,860 --> 00:48:13,620
+the nice thing about suffixes is if I take off
+
+998
+00:48:13,620 --> 00:48:16,180
+something from the beginning, I still have a suffix.
+
+999
+00:48:16,180 --> 00:48:18,220
+Remember, my goal is to take this subproblem, which
+
+1000
+00:48:18,220 --> 00:48:20,320
+is the suffix starting at i, and reduce it
+
+1001
+00:48:20,320 --> 00:48:23,000
+to a smaller subproblem, which means a smaller suffix.
+
+1002
+00:48:23,000 --> 00:48:28,520
+So I'd like to clip off one or two items here.
+
+1003
+00:48:28,520 --> 00:48:33,880
+And then the remaining problem will be one of my subproblems.
+
+1004
+00:48:33,880 --> 00:48:37,600
+I'll be able to recursively call b of something smaller than i.
+
+1005
+00:48:37,600 --> 00:48:39,760
+Or sorry, b of something larger than i
+
+1006
+00:48:39,760 --> 00:48:44,060
+will be a smaller subsequence, because we're starting later.
+
+1007
+00:48:44,060 --> 00:48:44,880
+So what could I do?
+
+1008
+00:48:44,880 --> 00:48:47,360
+Well, the idea is to just look at pin i
+
+1009
+00:48:47,360 --> 00:48:50,280
+and think, what could I do to pin i?
+
+1010
+00:48:50,280 --> 00:48:52,440
+I could not hit it ever with a ball.
+
+1011
+00:48:52,440 --> 00:48:53,580
+I could skip it.
+
+1012
+00:48:53,580 --> 00:48:55,080
+That's one option.
+
+1013
+00:48:55,080 --> 00:48:57,900
+What would be my score then?
+
+1014
+00:48:57,900 --> 00:49:02,920
+Well, if I skip pin i, that leaves the remaining pins,
+
+1015
+00:49:02,920 --> 00:49:04,600
+which is just a smaller suffix.
+
+1016
+00:49:04,600 --> 00:49:08,980
+So that is b of i plus 1.
+
+1017
+00:49:08,980 --> 00:49:10,360
+I'm going to write a max out here,
+
+1018
+00:49:10,360 --> 00:49:12,020
+because I'd like to maximize my score.
+
+1019
+00:49:12,020 --> 00:49:14,300
+And one of the options is, forget about pin i.
+
+1020
+00:49:14,300 --> 00:49:16,320
+Just solve the rest.
+
+1021
+00:49:16,320 --> 00:49:21,660
+Another option is I throw a ball, and I exactly hit pin i.
+
+1022
+00:49:21,660 --> 00:49:22,320
+That's a thing.
+
+1023
+00:49:22,320 --> 00:49:22,820
+I could do.
+
+1024
+00:49:22,820 --> 00:49:26,380
+And it would leave exactly the same remainder.
+
+1025
+00:49:26,380 --> 00:49:34,700
+So another option is b of i plus 1 plus vi.
+
+1026
+00:49:34,700 --> 00:49:36,320
+Why would I prefer this over this?
+
+1027
+00:49:36,320 --> 00:49:39,880
+Well, if vi is negative, I'd prefer this.
+
+1028
+00:49:39,880 --> 00:49:41,480
+But if vi is positive, I'd actually
+
+1029
+00:49:41,480 --> 00:49:42,960
+prefer this over that.
+
+1030
+00:49:42,960 --> 00:49:47,680
+So you can figure out which is better just locally.
+
+1031
+00:49:47,680 --> 00:49:50,100
+But then there's another thing I can do, which is maybe I
+
+1032
+00:49:50,100 --> 00:49:50,900
+hit this pin.
+
+1033
+00:49:52,320 --> 00:49:55,560
+And I can do this in a pair with some other pin.
+
+1034
+00:49:55,560 --> 00:49:57,320
+Now, there's no pin to the left of this one.
+
+1035
+00:49:57,320 --> 00:49:59,500
+We're assuming we only have the suffix.
+
+1036
+00:49:59,500 --> 00:50:02,560
+And so the only other thing I can do is throw a ball
+
+1037
+00:50:02,560 --> 00:50:04,880
+and hit i together with i plus 1.
+
+1038
+00:50:04,880 --> 00:50:06,700
+And then I get the product.
+
+1039
+00:50:06,700 --> 00:50:08,320
+Now, what pins remain?
+
+1040
+00:50:08,320 --> 00:50:09,480
+i plus 2 on.
+
+1041
+00:50:09,480 --> 00:50:11,080
+Still a suffix.
+
+1042
+00:50:11,080 --> 00:50:13,200
+So if I remove one or two items, of course,
+
+1043
+00:50:13,200 --> 00:50:14,440
+I still get a suffix.
+
+1044
+00:50:14,440 --> 00:50:17,080
+In this case, b of i plus 2.
+
+1045
+00:50:17,080 --> 00:50:21,440
+And then the number of points that I add on are vi times vi
+
+1046
+00:50:21,440 --> 00:50:22,160
+plus 1.
+
+1047
+00:50:22,160 --> 00:50:26,200
+So this is a max of three things.
+
+1048
+00:50:26,200 --> 00:50:28,319
+So how long does it take me to compute it?
+
+1049
+00:50:28,319 --> 00:50:30,440
+I claim constant time.
+
+1050
+00:50:30,440 --> 00:50:32,060
+If I don't count the time it takes
+
+1051
+00:50:32,060 --> 00:50:34,480
+to compute these other subproblems, which are smaller
+
+1052
+00:50:34,480 --> 00:50:38,540
+because they are smaller suffixes further to the right,
+
+1053
+00:50:38,540 --> 00:50:42,440
+then I'm doing a couple of additions, product, max.
+
+1054
+00:50:42,440 --> 00:50:43,879
+These are all nice numbers.
+
+1055
+00:50:43,879 --> 00:50:48,319
+They will assume that they live in the w-bit word
+
+1056
+00:50:48,319 --> 00:50:50,399
+because they were only doing constant size products.
+
+1057
+00:50:50,399 --> 00:50:51,500
+That's good.
+
+1058
+00:50:51,500 --> 00:50:56,700
+So this takes constant non-recursive work.
+
+1059
+00:50:56,700 --> 00:50:58,200
+How many subproblems are?
+
+1060
+00:50:58,200 --> 00:51:01,280
+Well, it's suffixes, so it's a linear number of subproblems.
+
+1061
+00:51:01,280 --> 00:51:05,220
+And so the time I'm going to end up meeting
+
+1062
+00:51:05,220 --> 00:51:09,220
+is the number of subproblems n times
+
+1063
+00:51:09,220 --> 00:51:12,540
+the non-recursive work I do per subproblem, which is constant.
+
+1064
+00:51:12,540 --> 00:51:16,260
+And so this is linear time.
+
+1065
+00:51:16,260 --> 00:51:17,180
+Great.
+
+1066
+00:51:17,180 --> 00:51:18,780
+Now, I didn't finish sort bot.
+
+1067
+00:51:18,780 --> 00:51:21,300
+So there's another t, which is to make sure
+
+1068
+00:51:21,300 --> 00:51:24,300
+that there is a topological order.
+
+1069
+00:51:24,300 --> 00:51:27,540
+And that is in decreasing i order.
+
+1070
+00:51:30,780 --> 00:51:37,560
+Or I might write that as a for loop for i equals n, n minus 1.
+
+1071
+00:51:37,560 --> 00:51:41,680
+This is the order that I would compute my problems
+
+1072
+00:51:41,680 --> 00:51:44,940
+because the suffix starting at n is the empty suffix.
+
+1073
+00:51:44,940 --> 00:51:46,680
+The suffix starting at 0, that's the one
+
+1074
+00:51:46,680 --> 00:51:47,760
+I actually want to compute.
+
+1075
+00:51:47,760 --> 00:51:50,500
+That's the final suffix I should be computing.
+
+1076
+00:51:50,500 --> 00:51:56,520
+And then we have a b for base case, which is that first case,
+
+1077
+00:51:56,520 --> 00:52:02,100
+b of n equals 0 because there's no pins,
+
+1078
+00:52:02,100 --> 00:52:04,440
+so I don't get any points.
+
+1079
+00:52:04,440 --> 00:52:04,940
+Sad.
+
+1080
+00:52:08,340 --> 00:52:09,220
+So this is it.
+
+1081
+00:52:09,220 --> 00:52:12,300
+We just take these components, plug them
+
+1082
+00:52:12,300 --> 00:52:14,720
+into this recursive memoized algorithm,
+
+1083
+00:52:14,720 --> 00:52:17,020
+and we have a linear time algorithm.
+
+1084
+00:52:17,020 --> 00:52:19,360
+I want to briefly mention a different way you could plug
+
+1085
+00:52:19,360 --> 00:52:20,380
+together those pieces.
+
+1086
+00:52:20,380 --> 00:52:21,960
+Which is called bottom-up DP.
+
+1087
+00:52:25,220 --> 00:52:29,520
+Which is, let's do it for this example.
+
+1088
+00:52:29,520 --> 00:52:37,960
+So if I have, let's see, let me start with the base case,
+
+1089
+00:52:37,960 --> 00:52:39,780
+b of n equals 0.
+
+1090
+00:52:39,780 --> 00:52:41,560
+But now it's an assignment.
+
+1091
+00:52:41,560 --> 00:52:44,240
+And I'm going to do the for loop from the topological order
+
+1092
+00:52:44,240 --> 00:52:48,960
+for i equals n, n minus 1 to 0.
+
+1093
+00:52:48,960 --> 00:52:50,280
+Now I'm going to do the relation.
+
+1094
+00:52:50,380 --> 00:53:02,880
+b of i equals max of b of i plus 1, and b of i plus 1 plus vi,
+
+1095
+00:53:02,880 --> 00:53:08,660
+and b of i plus 2 plus vi, vi plus 1.
+
+1096
+00:53:08,660 --> 00:53:12,140
+Technically, this only works if i is strictly less than n minus
+
+1097
+00:53:12,140 --> 00:53:12,940
+1.
+
+1098
+00:53:12,940 --> 00:53:16,540
+So I should have an if i is less than n minus 1
+
+1099
+00:53:16,540 --> 00:53:17,860
+for that last part.
+
+1100
+00:53:17,860 --> 00:53:20,140
+Because I can only do, I can only hit two pins if there's at
+
+1101
+00:53:20,140 --> 00:53:22,640
+least two pins left.
+
+1102
+00:53:22,640 --> 00:53:27,740
+And then return b of 0.
+
+1103
+00:53:27,740 --> 00:53:29,520
+So what I just did is a transformation
+
+1104
+00:53:29,520 --> 00:53:35,900
+from this sort bot template into a non-recursive algorithm,
+
+1105
+00:53:35,900 --> 00:53:40,040
+a for loop algorithm, where I wrote my base case first.
+
+1106
+00:53:40,040 --> 00:53:43,120
+Then I did my topological order.
+
+1107
+00:53:43,120 --> 00:53:46,620
+Then I did my relation.
+
+1108
+00:53:46,620 --> 00:53:49,900
+Then at the end, I did my base, not base case, the original base
+
+1109
+00:53:49,900 --> 00:53:50,400
+case.
+
+1110
+00:53:50,400 --> 00:53:51,900
+And then I did my for loop algorithm,
+
+1111
+00:53:51,900 --> 00:53:53,000
+which is the original problem.
+
+1112
+00:53:57,000 --> 00:53:59,380
+And provided you can write your topological order
+
+1113
+00:53:59,380 --> 00:54:01,940
+as some for loops, this is actually a great way
+
+1114
+00:54:01,940 --> 00:54:03,620
+to write down a DP as code.
+
+1115
+00:54:03,620 --> 00:54:05,380
+If I were going to implement this algorithm,
+
+1116
+00:54:05,380 --> 00:54:06,460
+I would write it this way.
+
+1117
+00:54:06,460 --> 00:54:07,700
+Because this is super fast.
+
+1118
+00:54:07,700 --> 00:54:09,880
+No recursive calls, just one for loop.
+
+1119
+00:54:09,880 --> 00:54:11,880
+In fact, this is almost a trivial algorithm.
+
+1120
+00:54:11,880 --> 00:54:16,280
+It's amazing that this solves the bowling problem.
+
+1121
+00:54:16,280 --> 00:54:19,440
+It's in some sense considering every possible strategy
+
+1122
+00:54:19,440 --> 00:54:23,020
+that we're using is what we like to call local brute force.
+
+1123
+00:54:23,020 --> 00:54:25,280
+Where when we think about pin i, we
+
+1124
+00:54:25,280 --> 00:54:28,260
+look at all of the possible things I could do to pin i.
+
+1125
+00:54:28,260 --> 00:54:31,420
+Here, there's really only three options of what I could do.
+
+1126
+00:54:31,420 --> 00:54:34,860
+Now normally, if I tried all the options for pin i,
+
+1127
+00:54:34,860 --> 00:54:38,060
+and then all the options for i plus 1 and i plus 2 and so on,
+
+1128
+00:54:38,060 --> 00:54:39,100
+that would be exponential.
+
+1129
+00:54:39,100 --> 00:54:40,840
+It'd be 3 times 3 times 3.
+
+1130
+00:54:40,840 --> 00:54:42,080
+That's bad.
+
+1131
+00:54:42,080 --> 00:54:45,080
+But because I can reuse these subproblems,
+
+1132
+00:54:45,080 --> 00:54:47,640
+it turns out to only be linear time.
+
+1133
+00:54:47,640 --> 00:54:49,240
+It's almost like magic.
+
+1134
+00:54:49,240 --> 00:54:56,560
+dp is essentially an idea of using local brute force.
+
+1135
+00:55:02,279 --> 00:55:06,419
+And by defining a small number of subproblems up front,
+
+1136
+00:55:06,419 --> 00:55:09,439
+and as long as I stay within those subproblems,
+
+1137
+00:55:09,439 --> 00:55:12,899
+as long as I'm always recursing into this polynomial space,
+
+1138
+00:55:12,899 --> 00:55:15,580
+I end up only doing polynomial work,
+
+1139
+00:55:15,580 --> 00:55:17,819
+even though I'm in some sense exploring exponentially
+
+1140
+00:55:17,819 --> 00:55:18,439
+many options.
+
+1141
+00:55:19,240 --> 00:55:22,399
+And it's because what I do to this pin
+
+1142
+00:55:22,399 --> 00:55:26,220
+doesn't depend too much to what I do to a pin much later.
+
+1143
+00:55:26,220 --> 00:55:31,819
+And there's a lot of intuition going on here for when dp works.
+
+1144
+00:55:31,819 --> 00:55:36,439
+But we're going to see a lot more examples of that coming up.
+
+1145
+00:55:36,439 --> 00:55:38,819
+And I just want to mention that the intuition for how
+
+1146
+00:55:38,819 --> 00:55:41,720
+to write a recurrence like this is to think about,
+
+1147
+00:55:41,720 --> 00:55:43,200
+in the case of suffixes, you always
+
+1148
+00:55:43,200 --> 00:55:45,000
+want to think about the first item, or maybe
+
+1149
+00:55:45,000 --> 00:55:46,279
+the first couple items.
+
+1150
+00:55:46,279 --> 00:55:48,279
+In the case of prefixes, you always think about the last item.
+
+1151
+00:55:48,279 --> 00:55:49,220
+And in the case of prefixes, you always think about the last item.
+
+1152
+00:55:49,240 --> 00:55:52,939
+And for substrings, it could be any item, maybe in the middle.
+
+1153
+00:55:52,939 --> 00:55:55,020
+If I remove an item from the middle of a substring,
+
+1154
+00:55:55,020 --> 00:55:57,839
+I get two substrings, so I can recurse.
+
+1155
+00:55:57,839 --> 00:56:00,100
+Here, or in general, what we want to do
+
+1156
+00:56:00,100 --> 00:56:03,560
+is identify some feature of the solution
+
+1157
+00:56:03,560 --> 00:56:06,879
+that if we knew that feature, we would be done.
+
+1158
+00:56:06,879 --> 00:56:09,479
+We would reduce to a smaller subproblem.
+
+1159
+00:56:09,479 --> 00:56:11,379
+In this case, we just say, well, what
+
+1160
+00:56:11,379 --> 00:56:15,180
+are the possible things I could do to the first pin?
+
+1161
+00:56:15,180 --> 00:56:16,859
+There are three options.
+
+1162
+00:56:16,859 --> 00:56:19,040
+If I knew which option it was, I would be done.
+
+1163
+00:56:19,040 --> 00:56:21,660
+I could recurse and do my addition.
+
+1164
+00:56:21,660 --> 00:56:23,759
+Now, I don't know which thing I want to do.
+
+1165
+00:56:23,759 --> 00:56:26,640
+So just try them all and take the max.
+
+1166
+00:56:26,640 --> 00:56:28,340
+And if you're maximizing, you take the max.
+
+1167
+00:56:28,340 --> 00:56:29,900
+If you're minimizing, you take the min.
+
+1168
+00:56:29,900 --> 00:56:32,520
+Sometimes you take an or or an and.
+
+1169
+00:56:32,520 --> 00:56:34,480
+There might be some combination function.
+
+1170
+00:56:34,480 --> 00:56:36,120
+For optimization problems where you're
+
+1171
+00:56:36,120 --> 00:56:37,660
+trying to maximize or minimize something,
+
+1172
+00:56:37,660 --> 00:56:39,500
+like shortest paths we're trying to minimize,
+
+1173
+00:56:39,500 --> 00:56:40,660
+we put a min here.
+
+1174
+00:56:40,660 --> 00:56:42,940
+So usually it's min or max.
+
+1175
+00:56:42,940 --> 00:56:46,259
+And this is extremely powerful.
+
+1176
+00:56:46,259 --> 00:56:48,400
+All you need to do, the hard part,
+
+1177
+00:56:49,040 --> 00:56:50,640
+is to do the next thing.
+
+1178
+00:56:50,640 --> 00:56:53,740
+Now, this is the most complex, most complex,
+
+1179
+00:56:53,740 --> 00:56:56,600
+and most creative, and most exciting part of this.
+
+1180
+00:56:56,600 --> 00:57:01,100
+And it's the most dynamic part of this inspired design part,
+
+1181
+00:57:01,100 --> 00:57:04,860
+where you say, what do I need to know that would
+
+1182
+00:57:04,860 --> 00:57:06,440
+let me solve my problem?
+
+1183
+00:57:06,440 --> 00:57:09,440
+And if you can identify that and the number of choices
+
+1184
+00:57:09,440 --> 00:57:12,540
+for what you need to know is polynomial,
+
+1185
+00:57:12,540 --> 00:57:16,540
+then you will be able to get a polynomial dynamic program.
+
+1186
+00:57:16,540 --> 00:57:17,500
+That's the intuition.
+
+1187
+00:57:17,500 --> 00:57:18,900
+We'll see a lot more examples in the next three lectures.
+

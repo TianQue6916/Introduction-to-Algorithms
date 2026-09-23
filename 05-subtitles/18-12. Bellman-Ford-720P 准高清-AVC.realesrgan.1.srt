@@ -1,0 +1,3698 @@
+﻿1
+00:00:11,730 --> 00:00:18,160
+OK, let's get started. Welcome to the 12th
+lecture of 6 .006.
+
+2
+00:00:18,680 --> 00:00:27,080
+This is our second lecture talking about weighted graphs,
+and in particular, weighted shortest paths algorithms.
+
+3
+00:00:27,800 --> 00:00:37,340
+Last time, we talked about weighted graphs. This is a kind of a generalization
+of what we mean by distance in an unweighted graph. Instead of each
+
+4
+00:00:37,760 --> 00:00:39,880
+edge
+having a weight of 1, essentially,
+
+5
+00:00:40,720 --> 00:00:43,220
+we generalize
+that to be any integer.
+
+6
+00:00:44,340 --> 00:00:45,900
+And last time,
+
+7
+00:00:46,860 --> 00:00:55,600
+we showed how to solve single source shortest paths in a graph
+that doesn't have cycles, even if it has 0 or negative weights
+
+8
+00:00:56,480 --> 00:00:59,440
+in linear time, using
+an algorithm called DAG relaxation.
+
+9
+00:01:00,560 --> 00:01:06,200
+We also showed in that lecture how in linear
+time, if we are given the shortest path weights
+
+10
+00:01:06,760 --> 00:01:17,860
+to all the things reachable in finite dis - or with shortest path distance
+that's finite, we can construct a shortest paths tree from those weights
+
+11
+00:01:18,460 --> 00:01:18,880
+in linear time.
+
+12
+00:01:20,120 --> 00:01:24,480
+OK, so this is motivating why we're not
+really going to talk about parent pointers
+
+13
+00:01:25,200 --> 00:01:29,840
+for the next couple of lectures. We're just going
+to concentrate on these shortest path weights.
+
+14
+00:01:30,760 --> 00:01:33,380
+And so today, we're
+going to be talking about
+
+15
+00:01:33,920 --> 00:01:38,840
+our most general algorithm we'll be showing
+for solving single source shortest paths,
+
+16
+00:01:39,400 --> 00:01:40,680
+in particular, in graphs
+
+17
+00:01:41,180 --> 00:01:44,140
+that could contain cycles
+and could have negative weights.
+
+18
+00:01:45,480 --> 00:01:46,620
+So just to recap,
+
+19
+00:01:48,560 --> 00:01:49,900
+our little roadmap here,
+
+20
+00:01:50,960 --> 00:01:57,400
+single source shortest paths in linear time. Last time, we
+discussed another linear time algorithm, DAG relaxation.
+
+21
+00:01:58,400 --> 00:02:07,560
+And today, we're going to be talking about Bellman -Ford, which isn't limited
+to acyclic graphs. In particular, there could be negative weight cycles
+
+22
+00:02:07,620 --> 00:02:08,080
+in our graph.
+
+23
+00:02:09,780 --> 00:02:12,280
+If it has
+cycles and has negative weights,
+
+24
+00:02:12,800 --> 00:02:16,280
+the worry is that we could
+have negative weight cycles, in which case,
+
+25
+00:02:17,340 --> 00:02:21,480
+if a negative
+weight cycle is reachable from our source,
+
+26
+00:02:22,540 --> 00:02:28,380
+then the vertices in that cycle and anything
+reachable from that cycle will potentially
+
+27
+00:02:29,340 --> 00:02:38,900
+have an unbounded number of edges you need to go through.
+There's not a bound on the number of edges for a shortest path,
+
+28
+00:02:39,900 --> 00:02:47,980
+because I could just keep going around that cycle as many times as I want
+and get a shorter path, right? And so we assign those distances to be minus
+
+29
+00:02:47,980 --> 00:02:48,420
+infinity,
+
+30
+00:02:49,220 --> 00:02:56,100
+OK? So that's what we're going to do today in Bellman
+-Ford. In particular, what we're going to do is compute
+
+31
+00:02:56,940 --> 00:02:59,840
+our shortest path distances, these shortest
+path weights,
+
+32
+00:03:01,000 --> 00:03:02,620
+for every vertex in our graph,
+
+33
+00:03:03,920 --> 00:03:12,920
+setting the ones that are not reachable to infinity and the ones that are
+reachable through a negative weight cycle to minus infinity. And all other
+
+34
+00:03:12,920 --> 00:03:14,640
+ones, we're
+going to set to a finite weight.
+
+35
+00:03:16,240 --> 00:03:17,020
+And
+
+36
+00:03:17,720 --> 00:03:21,920
+another thing that we might want is, if
+there's a negative weight cycle in the graph,
+
+37
+00:03:22,720 --> 00:03:26,680
+let's return one, OK? So those are the two
+kinds of things that we're trying to solve
+
+38
+00:03:27,240 --> 00:03:28,180
+in today's lecture,
+
+39
+00:03:29,140 --> 00:03:33,620
+OK? But before we do that, let's
+warm up with two short exercises.
+
+40
+00:03:36,020 --> 00:03:37,380
+The first one,
+
+41
+00:03:38,540 --> 00:03:39,480
+exercise one,
+
+42
+00:03:41,520 --> 00:03:41,520
+OK?
+
+43
+00:03:43,360 --> 00:03:45,320
+Given an undirected graph,
+
+44
+00:03:48,260 --> 00:03:56,180
+given undirected graph, f g,
+
+45
+00:04:01,300 --> 00:04:13,160
+return
+whether g contains a negative weight cycle.
+
+46
+00:04:19,779 --> 00:04:23,880
+Anyone have an idea of how
+we can solve this in linear time, actually?
+
+47
+00:04:25,140 --> 00:04:27,040
+In fact, we
+can do it in order e?
+
+48
+00:04:28,680 --> 00:04:29,720
+No, yes,
+
+49
+00:04:30,320 --> 00:04:31,060
+yes, reachable from s.
+
+50
+00:04:32,900 --> 00:04:33,200
+I guess,
+
+51
+00:04:35,060 --> 00:04:37,900
+let's just say a negative weight
+cycle at all,
+
+52
+00:04:40,260 --> 00:04:42,390
+not in the context
+of single source shortest paths.
+
+53
+00:04:43,100 --> 00:04:45,560
+To detect whether there's a negative weight
+n. JASON KUOCHIKA - Ah,
+
+54
+00:04:46,360 --> 00:04:52,040
+your colleague has determined an
+interesting fact about undirected graphs.
+
+55
+00:04:53,780 --> 00:05:00,080
+If I have a negative weight edge in an undirected
+graph, I can just move back and forth along that edge.
+
+56
+00:05:01,280 --> 00:05:10,540
+That's a cycle of length 2, or I guess, 3 vertices back to where we came
+from, that is of negative weight, because I'm just traversing that weight
+
+57
+00:05:11,360 --> 00:05:12,760
+over and over and over again.
+
+58
+00:05:13,300 --> 00:05:18,200
+So the question of single source
+shortest paths of finding negative weights
+
+59
+00:05:18,720 --> 00:05:22,640
+is not particularly
+interesting in the undirected case.
+
+60
+00:05:23,780 --> 00:05:31,520
+So if I have every negative weight edge, undirected
+edge in my graph, I can just find the reachability from
+
+61
+00:05:32,220 --> 00:05:32,780
+the vertices,
+
+62
+00:05:33,320 --> 00:05:34,340
+the endpoints of that edge,
+
+63
+00:05:36,200 --> 00:05:42,820
+and label them as minus delt. Basically, if
+the connected component containing s
+
+64
+00:05:43,560 --> 00:05:44,620
+has a negative weight edge,
+
+65
+00:05:45,320 --> 00:05:53,340
+then everything in the graph is accessible from a negative weight cycle.
+So this is not such an interesting problem. And so we're going to restrict
+
+66
+00:05:53,340 --> 00:06:02,760
+our discussion today to
+directed graphs.
+
+67
+00:06:08,900 --> 00:06:16,420
+So this is if and only if exists
+
+68
+00:06:17,040 --> 00:06:20,720
+negative weight edge.
+
+69
+00:06:23,780 --> 00:06:23,880
+OK,
+
+70
+00:06:25,240 --> 00:06:26,040
+exercise 2,
+
+71
+00:06:28,460 --> 00:06:38,760
+kind of a little preview for what's to come. We're actually not going to
+show you an algorithm directly that meets this Bellman -Ford running time, v
+
+72
+00:06:38,760 --> 00:06:39,500
+times e.
+
+73
+00:06:40,320 --> 00:06:45,360
+What instead we're going to show you is an
+algorithm that solves single source shortest paths.
+
+74
+00:06:54,220 --> 00:06:57,720
+Single source
+shortest paths in order,
+
+75
+00:06:58,980 --> 00:07:02,320
+v times v plus e time.
+
+76
+00:07:04,440 --> 00:07:12,020
+OK, what is that? That's v squared plus v times
+e, right? That's close to what this v times e is.
+
+77
+00:07:13,000 --> 00:07:15,440
+OK, that's what we're
+going to show you.
+
+78
+00:07:16,080 --> 00:07:18,280
+But if I had such an algorithm,
+
+79
+00:07:19,500 --> 00:07:22,100
+can anyone tell me a single source shortest
+paths algor -
+
+80
+00:07:22,740 --> 00:07:29,680
+how we can use this algorithm to solve single
+source shortest paths in v, just v times e time?
+
+81
+00:07:35,980 --> 00:07:43,980
+Show how to solve SSSP in order,
+
+82
+00:07:44,800 --> 00:07:47,300
+v times e.
+
+83
+00:07:48,690 --> 00:07:50,660
+I guess we can put a dot there as
+well.
+
+84
+00:07:51,560 --> 00:07:51,660
+OK,
+
+85
+00:07:52,860 --> 00:07:53,860
+so this is a little tricky.
+
+86
+00:07:55,180 --> 00:08:03,660
+It's kind of related to the difference we had between the reachability
+problem and the single source shortest paths problem that we saw last lecture,
+
+87
+00:08:04,000 --> 00:08:04,220
+right?
+
+88
+00:08:04,990 --> 00:08:14,620
+When are these asymptotically different in their
+upper bound is when v is asymptotically larger than e,
+
+89
+00:08:15,500 --> 00:08:15,840
+right?
+
+90
+00:08:17,720 --> 00:08:20,500
+But the connected
+component containing S
+
+91
+00:08:22,460 --> 00:08:23,460
+can have at
+
+92
+00:08:24,620 --> 00:08:25,920
+most e vertices,
+
+93
+00:08:26,620 --> 00:08:28,980
+or order e.
+It can actually have at
+
+94
+00:08:29,500 --> 00:08:34,320
+most e plus 1 vertices
+because otherwise it wouldn't be connected.
+
+95
+00:08:36,179 --> 00:08:36,179
+OK,
+
+96
+00:08:37,340 --> 00:08:40,740
+so
+what we can do if we had such an algorithm,
+
+97
+00:08:41,580 --> 00:08:42,120
+we could first,
+
+98
+00:08:42,760 --> 00:08:50,140
+when we're given our graph, explore everything in the graph
+using BFS or DFS, find all the things reachable from S,
+
+99
+00:08:50,820 --> 00:08:52,660
+and then
+just throw away everything else.
+
+100
+00:08:53,380 --> 00:08:54,580
+Now I have a graph for
+
+101
+00:08:55,280 --> 00:08:57,600
+which v is
+asymptotically no bigger than e.
+
+102
+00:08:58,820 --> 00:09:06,700
+And then we can use this algorithm to solve single source shortest paths
+in v times e time. OK, I'm not going to write all that down here. You can
+
+103
+00:09:06,700 --> 00:09:07,240
+see it in the notes.
+
+104
+00:09:08,320 --> 00:09:10,400
+Yeah?
+Does this work if your graph isn't simple?
+
+105
+00:09:11,080 --> 00:09:16,880
+Does this work if your graph isn't simple? I haven't thought about
+it. We are not going to talk about non -simple graphs in this class,
+
+106
+00:09:18,130 --> 00:09:21,040
+but probably not
+because you've got a lot of edges.
+
+107
+00:09:21,900 --> 00:09:25,600
+Though in our class, if we're
+talking about single source shortest paths,
+
+108
+00:09:26,220 --> 00:09:28,420
+if we have multiple edges
+between two vertices,
+
+109
+00:09:28,920 --> 00:09:33,500
+we can just take the minimum weight one because
+it's never better to take the larger ones.
+
+110
+00:09:34,280 --> 00:09:35,760
+Does that answer
+your question? Great.
+
+111
+00:09:36,500 --> 00:09:37,660
+All right, so those are our warm
+-ups.
+
+112
+00:09:38,380 --> 00:09:39,260
+That's our goal.
+
+113
+00:09:39,760 --> 00:09:43,280
+We need to find an algorithm for single
+source shortest paths in general graphs,
+
+114
+00:09:44,180 --> 00:09:47,020
+potentially graphs
+with cycles, and negative weights,
+
+115
+00:09:49,220 --> 00:09:53,600
+and solve it in this v times linear kind of
+time.
+
+116
+00:09:54,400 --> 00:09:54,900
+Does that make sense?
+
+117
+00:09:56,020 --> 00:09:56,240
+All right,
+
+118
+00:09:56,760 --> 00:09:57,020
+so first,
+
+119
+00:09:57,720 --> 00:09:58,960
+before we get to the algorithm,
+
+120
+00:10:00,260 --> 00:10:06,180
+we're going to discuss a
+little bit about shortest paths in general.
+
+121
+00:10:06,680 --> 00:10:10,970
+If we didn't have, the problem here
+is negative weights. How do we find,
+
+122
+00:10:11,720 --> 00:10:18,700
+if we had negative weight cycles, there seems to be these
+problems because we could have minus infinities in our deltas.
+
+123
+00:10:20,460 --> 00:10:21,820
+But if we didn't
+have negative weights,
+
+124
+00:10:22,780 --> 00:10:27,160
+I'd like to assert to you that our shortest
+paths, even if they are negative weights,
+
+125
+00:10:28,540 --> 00:10:30,320
+are going to be simple.
+They won't repeat vertices.
+
+126
+00:10:31,140 --> 00:10:33,720
+So that's the first thing
+we're going to show you.
+
+127
+00:10:37,540 --> 00:10:39,980
+Let's see.
+
+128
+00:10:40,660 --> 00:10:43,820
+Simple shortest paths.
+
+129
+00:10:51,300 --> 00:10:52,680
+So claim.
+
+130
+00:10:55,800 --> 00:11:00,680
+I'm going to give my claims numbers today
+just because I'm going to have a lot of them.
+
+131
+00:11:01,520 --> 00:11:01,720
+If
+
+132
+00:11:03,180 --> 00:11:07,660
+my shortest path distance
+from s to some vertex is finite,
+
+133
+00:11:08,320 --> 00:11:13,200
+meaning it's not
+infinite or minus infinite,
+
+134
+00:11:13,720 --> 00:11:14,700
+some finite value,
+
+135
+00:11:16,440 --> 00:11:17,100
+there exists
+
+136
+00:11:21,350 --> 00:11:22,680
+a shortest path,
+
+137
+00:11:28,240 --> 00:11:30,920
+a shortest s to v path
+
+138
+00:11:33,600 --> 00:11:33,940
+that
+
+139
+00:11:34,460 --> 00:11:36,080
+is simple.
+
+140
+00:11:37,420 --> 00:11:40,560
+And remember, simple means
+not going through a vertex more than once.
+
+141
+00:11:41,540 --> 00:11:41,680
+All right,
+
+142
+00:11:43,200 --> 00:11:44,100
+how are we going to prove this?
+
+143
+00:11:50,900 --> 00:11:55,200
+Consider
+if this claim was not true, right?
+
+144
+00:11:56,080 --> 00:11:56,420
+If
+
+145
+00:11:57,120 --> 00:11:58,580
+every shortest path
+
+146
+00:11:59,460 --> 00:12:02,960
+contains a cycle, essentially, right?
+It repeated a vertex.
+
+147
+00:12:03,940 --> 00:12:04,340
+Then
+
+148
+00:12:05,240 --> 00:12:07,960
+my path looks something
+like this.
+
+149
+00:12:11,460 --> 00:12:14,000
+I mean,
+there's some vertices along here,
+
+150
+00:12:14,920 --> 00:12:16,380
+and then I go to v.
+
+151
+00:12:17,100 --> 00:12:22,630
+So here's s, and then there's some cycle. I repeat
+some vertex. I'm going to call this cycle c.
+
+152
+00:12:24,700 --> 00:12:24,700
+OK?
+
+153
+00:12:25,900 --> 00:12:30,500
+Now,
+what do I know about this path? I know that
+
+154
+00:12:31,600 --> 00:12:33,080
+it's a shortest path,
+
+155
+00:12:34,120 --> 00:12:35,080
+and it has finite weight,
+
+156
+00:12:35,680 --> 00:12:35,980
+right?
+
+157
+00:12:36,700 --> 00:12:37,280
+So in particular,
+
+158
+00:12:37,980 --> 00:12:42,060
+this path, this
+delta distance, is not minus infinity. But
+
+159
+00:12:43,420 --> 00:12:46,660
+if this is not minus infinity, what
+do I know about the weight of this cycle?
+
+160
+00:12:48,720 --> 00:12:54,680
+It's not negative. Yeah, it can't be negative, right? Because
+if it was negative, I could keep going around this cycle,
+
+161
+00:12:55,200 --> 00:12:57,600
+and this
+would have a non -finite weight,
+
+162
+00:12:58,520 --> 00:13:00,200
+shortest path distance from s,
+
+163
+00:13:00,860 --> 00:13:02,000
+right? So I know this is,
+
+164
+00:13:03,100 --> 00:13:09,830
+you know, can't be negative, so it must be 0 or positive,
+right? But if it's 0 or positive, and this is a shortest path,
+
+165
+00:13:10,560 --> 00:13:11,600
+right, went through this cycle,
+
+166
+00:13:12,720 --> 00:13:13,740
+then I could remove it.
+
+167
+00:13:16,980 --> 00:13:18,380
+And now I have
+
+168
+00:13:18,920 --> 00:13:20,840
+a new path with one fewer cycle.
+
+169
+00:13:21,520 --> 00:13:22,920
+I could just keep doing this
+
+170
+00:13:23,480 --> 00:13:24,580
+to create a simple path.
+
+171
+00:13:25,400 --> 00:13:25,560
+OK?
+
+172
+00:13:26,300 --> 00:13:27,720
+So that checks out.
+
+173
+00:13:29,500 --> 00:13:29,500
+OK.
+
+174
+00:13:30,260 --> 00:13:30,760
+So
+
+175
+00:13:32,340 --> 00:13:33,980
+that's interesting. If
+it's simple,
+
+176
+00:13:35,320 --> 00:13:40,400
+what do we know about
+the number of edges in a
+
+177
+00:13:41,180 --> 00:13:48,740
+simple shortest path? How many could there
+possibly be? How long in number of edges
+
+178
+00:13:49,320 --> 00:13:53,540
+could a simple shortest path be? If I can't
+repeat vertices,
+
+179
+00:13:54,440 --> 00:14:05,360
+right, I can have at most v vertices on my simple path, which
+means I can use at most v minus 1 edges, right, fence posting,
+
+180
+00:14:05,860 --> 00:14:06,020
+right?
+
+181
+00:14:07,660 --> 00:14:09,230
+So simple paths
+
+182
+00:14:12,600 --> 00:14:13,200
+have
+
+183
+00:14:14,200 --> 00:14:19,400
+at most v minus 1 edges.
+
+184
+00:14:25,660 --> 00:14:25,900
+That's
+
+185
+00:14:26,640 --> 00:14:29,060
+a nice little thing I'd
+like to box off.
+
+186
+00:14:30,240 --> 00:14:32,140
+That's a really
+nice property, right?
+
+187
+00:14:35,620 --> 00:14:35,800
+So
+
+188
+00:14:36,360 --> 00:14:40,620
+while a shortest path here could
+have an infinite number of edges,
+
+189
+00:14:41,400 --> 00:14:41,620
+right,
+
+190
+00:14:42,480 --> 00:14:47,240
+if the shortest path distance is finite, I
+know I only have to check paths
+
+191
+00:14:48,680 --> 00:14:49,580
+that use up
+
+192
+00:14:50,300 --> 00:14:52,860
+to v minus 1 edges. In
+particular, this
+
+193
+00:14:54,880 --> 00:14:59,340
+is finitely bounded in terms of the number of paths
+I have to consider. It's exponential, potentially,
+
+194
+00:15:00,100 --> 00:15:01,360
+right? But at least it's finite.
+
+195
+00:15:02,040 --> 00:15:02,240
+OK?
+
+196
+00:15:04,040 --> 00:15:05,560
+I potentially had to check
+
+197
+00:15:06,400 --> 00:15:08,280
+every possible path
+
+198
+00:15:09,040 --> 00:15:13,100
+of which there could be
+infinite if there's cycles in my graph. OK.
+
+199
+00:15:14,580 --> 00:15:16,180
+So I
+
+200
+00:15:16,680 --> 00:15:17,540
+have an idea.
+
+201
+00:15:19,020 --> 00:15:19,220
+OK? What
+
+202
+00:15:20,080 --> 00:15:21,660
+if I could
+
+203
+00:15:23,200 --> 00:15:28,340
+find shortest path distances by
+limiting the number of edges I go through,
+
+204
+00:15:29,260 --> 00:15:29,640
+right?
+
+205
+00:15:30,240 --> 00:15:35,920
+So not the full shortest
+path, distance from s to v,
+
+206
+00:15:36,600 --> 00:15:36,860
+but
+
+207
+00:15:37,420 --> 00:15:46,080
+let's limit the number of edges I'm allowed to go through. And let's talk
+about those shortest path distances just among the paths that have at most
+
+208
+00:15:46,100 --> 00:15:46,940
+a certain number of edges.
+
+209
+00:15:47,580 --> 00:15:52,590
+I'm going to call
+this k edge distance.
+
+210
+00:15:55,500 --> 00:15:58,100
+And I'm just going
+to provide a little notation here.
+
+211
+00:15:59,580 --> 00:16:04,740
+Instead of having a delta, I'll have a delta k
+here. That means how many edges I'm limited by.
+
+212
+00:16:05,280 --> 00:16:06,600
+OK? So from s
+
+213
+00:16:07,880 --> 00:16:09,720
+to v is
+
+214
+00:16:12,840 --> 00:16:13,540
+shortest
+
+215
+00:16:15,480 --> 00:16:22,840
+s to v path using, at most,
+
+216
+00:16:23,620 --> 00:16:24,300
+k edges.
+
+217
+00:16:29,900 --> 00:16:30,540
+Short weight.
+
+218
+00:16:33,440 --> 00:16:33,440
+Weight
+
+219
+00:16:34,860 --> 00:16:35,420
+of
+
+220
+00:16:36,360 --> 00:16:37,760
+a shortest path,
+
+221
+00:16:38,500 --> 00:16:40,620
+shortest s to
+v path using, at most,
+
+222
+00:16:41,820 --> 00:16:42,320
+k edges.
+
+223
+00:16:43,100 --> 00:16:49,140
+OK? And these notions seem somewhat
+symmetric, right? If I were able to compute
+
+224
+00:16:50,480 --> 00:16:53,900
+this thing for v minus 1,
+
+225
+00:16:55,620 --> 00:16:55,760
+right,
+
+226
+00:16:58,340 --> 00:16:58,780
+for
+
+227
+00:16:59,560 --> 00:17:00,820
+all the vertices,
+
+228
+00:17:02,100 --> 00:17:05,640
+then if the distance is finite,
+
+229
+00:17:06,460 --> 00:17:08,300
+then I'll have
+successfully computed
+
+230
+00:17:09,020 --> 00:17:16,940
+the real shortest paths because of this statement,
+right? Now, that doesn't mean that if this is
+
+231
+00:17:20,109 --> 00:17:23,510
+the shortest path, it doesn't mean the
+other way, right? If this is minus infinity,
+
+232
+00:17:24,480 --> 00:17:27,880
+right, if the shortest
+path distance is minus infinity,
+
+233
+00:17:29,260 --> 00:17:30,820
+it doesn't
+say anything about what this is,
+
+234
+00:17:31,660 --> 00:17:36,160
+right? It just says the shortest
+path using, at most, v minus 1 vertices,
+
+235
+00:17:37,080 --> 00:17:39,220
+using, at most,
+v minus 1 edges would
+
+236
+00:17:39,970 --> 00:17:41,520
+be whatever this is.
+
+237
+00:17:42,100 --> 00:17:45,840
+But really, the shortest path length needs
+to consider an infinite number of edges,
+
+238
+00:17:46,640 --> 00:17:48,260
+right? So it doesn't really tell us much.
+It doesn't really tell us much about that.
+
+239
+00:17:49,840 --> 00:17:52,170
+But for the finite ones, it does. It works
+well.
+
+240
+00:17:53,160 --> 00:17:58,280
+And so if we are able to compute this thing
+for k equals v minus 1 in
+
+241
+00:17:59,920 --> 00:18:02,720
+a graph that doesn't contain
+negative weight cycles, we'd be done,
+
+242
+00:18:03,280 --> 00:18:03,640
+right?
+
+243
+00:18:06,940 --> 00:18:08,650
+I
+claim to you a stronger statement
+
+244
+00:18:09,900 --> 00:18:11,200
+that if
+
+245
+00:18:16,360 --> 00:18:17,640
+the shortest path using,
+
+246
+00:18:18,560 --> 00:18:21,700
+at most, v edges
+
+247
+00:18:23,220 --> 00:18:26,380
+from s to v
+is less than, strictly less than,
+
+248
+00:18:27,300 --> 00:18:29,960
+delta of v minus 1,
+
+249
+00:18:30,480 --> 00:18:37,200
+right? This is all in
+the subscript here, right?
+
+250
+00:18:37,880 --> 00:18:39,960
+Basically, this is the
+
+251
+00:18:41,200 --> 00:18:42,520
+shortest path distance
+
+252
+00:18:43,720 --> 00:18:44,740
+of any simple path,
+
+253
+00:18:46,140 --> 00:18:52,600
+right? And possibly one that also contains cycles. But
+definitely, it includes all the simple paths, right?
+
+254
+00:18:53,860 --> 00:18:55,680
+If there's a shorter path
+
+255
+00:18:56,760 --> 00:18:57,660
+to my vertex
+
+256
+00:18:58,680 --> 00:19:04,720
+that goes through more than
+v minus 1 edges, this path can't be simple,
+
+257
+00:19:05,480 --> 00:19:05,760
+right?
+
+258
+00:19:06,340 --> 00:19:12,540
+Because it goes through a vertex more than once.
+Otherwise, it would be included in this distance set,
+
+259
+00:19:13,160 --> 00:19:14,940
+right? So if this is the case,
+
+260
+00:19:15,860 --> 00:19:24,560
+and I found a shorter path to v that uses v edges,
+yeah, that uses v edges, that path can't be simple,
+
+261
+00:19:25,160 --> 00:19:26,300
+which means that path,
+
+262
+00:19:27,560 --> 00:19:30,400
+or some path there,
+contains a negative weight cycle,
+
+263
+00:19:31,020 --> 00:19:31,260
+OK?
+
+264
+00:19:31,960 --> 00:19:36,240
+So if this is true, then I know
+
+265
+00:19:37,240 --> 00:19:37,620
+that
+
+266
+00:19:39,060 --> 00:19:41,900
+the real
+shortest path distance from s to v
+
+267
+00:19:42,940 --> 00:19:45,240
+must be minus infinity.
+
+268
+00:19:47,660 --> 00:19:47,760
+Right?
+
+269
+00:19:49,800 --> 00:19:52,120
+I'm going
+to call such a vertex a witness,
+
+270
+00:19:52,880 --> 00:19:58,680
+right? If we can find a vertex that has this property, I
+mean, I haven't shown you how to compute these things yet,
+
+271
+00:19:59,340 --> 00:20:01,860
+right? But if I were able to find a vertex
+v,
+
+272
+00:20:02,860 --> 00:20:04,000
+and these are capital Vs,
+
+273
+00:20:05,140 --> 00:20:07,100
+if you're having trouble,
+
+274
+00:20:08,720 --> 00:20:11,580
+this v is different than
+this v. This is cardinality, right?
+
+275
+00:20:13,300 --> 00:20:14,920
+If we can find such a vertex v,
+
+276
+00:20:15,560 --> 00:20:20,500
+that certifies that there
+is a negative weight cycle in our graph.
+
+277
+00:20:21,760 --> 00:20:26,160
+So I'm going
+to call v is a witness,
+
+278
+00:20:30,860 --> 00:20:30,920
+OK?
+
+279
+00:20:32,600 --> 00:20:34,200
+So if
+
+280
+00:20:36,460 --> 00:20:41,680
+this property is true, it's a witness, and it
+definitely has this. Is it possible, you think,
+
+281
+00:20:42,440 --> 00:20:44,460
+I'm going to claim to
+you that it's possible
+
+282
+00:20:45,000 --> 00:20:47,640
+that a
+vertex could have minus infinite distance,
+
+283
+00:20:49,440 --> 00:20:51,300
+but not have this property hold,
+
+284
+00:20:52,060 --> 00:20:52,300
+OK?
+
+285
+00:20:53,100 --> 00:20:53,660
+I
+
+286
+00:20:54,260 --> 00:20:59,480
+could probably give you an example. I don't have one
+off the top of my head right now, but that's possible.
+
+287
+00:21:00,100 --> 00:21:06,280
+You could imagine there might be no path
+going to a vertex on a negative weight cycle
+
+288
+00:21:07,540 --> 00:21:09,400
+that goes
+through exactly v edges,
+
+289
+00:21:10,100 --> 00:21:13,580
+right? It
+might go through more edges, a shorter one,
+
+290
+00:21:14,480 --> 00:21:14,480
+right?
+
+291
+00:21:15,020 --> 00:21:15,300
+So
+
+292
+00:21:16,100 --> 00:21:16,360
+this
+
+293
+00:21:17,020 --> 00:21:22,300
+equation would be, it would be an equality and
+would not certify that this is true, right?
+
+294
+00:21:23,640 --> 00:21:28,500
+But I claim to you,
+if a vertex has this property, if
+
+295
+00:21:29,120 --> 00:21:31,980
+its shortest
+path distance is minus infinite,
+
+296
+00:21:33,120 --> 00:21:36,420
+then it must be reachable from a
+witness, OK? So that's the claim.
+
+297
+00:21:41,140 --> 00:21:41,660
+If
+
+298
+00:21:42,180 --> 00:21:46,660
+delta sv is minus infinity,
+
+299
+00:21:50,390 --> 00:21:54,580
+then v is reachable
+
+300
+00:21:57,260 --> 00:21:57,580
+from
+
+301
+00:21:58,980 --> 00:22:00,200
+a witness,
+
+302
+00:22:02,760 --> 00:22:05,680
+reachable from a vertex
+that has this property, that has
+
+303
+00:22:06,180 --> 00:22:06,620
+this property.
+
+304
+00:22:07,420 --> 00:22:12,620
+And if it's reachable from something that
+has minus infinity shortest path weight,
+
+305
+00:22:13,160 --> 00:22:14,340
+then I can take that path,
+
+306
+00:22:14,940 --> 00:22:19,960
+go to my reachable vertex, and that's all I'm going
+to do. It's also a minus infinite path, right?
+
+307
+00:22:20,640 --> 00:22:22,160
+OK, so how do we prove this?
+
+308
+00:22:27,980 --> 00:22:31,420
+Well, let's consider,
+
+309
+00:22:37,300 --> 00:22:39,060
+I'm going to
+state a somewhat stronger
+
+310
+00:22:39,660 --> 00:22:40,040
+statement
+
+311
+00:22:41,480 --> 00:22:42,960
+that we'll prove instead,
+
+312
+00:22:43,480 --> 00:22:50,560
+OK? It suffices to prove that every
+negative weight cycle contains a witness.
+
+313
+00:22:51,320 --> 00:22:52,640
+If we were to prove that,
+
+314
+00:22:53,660 --> 00:22:53,840
+right,
+
+315
+00:22:54,480 --> 00:22:56,980
+then
+every vertex with this property,
+
+316
+00:22:58,100 --> 00:23:00,680
+every vertex
+with this property has,
+
+317
+00:23:03,620 --> 00:23:03,620
+is
+
+318
+00:23:05,820 --> 00:23:08,000
+reachable
+from a negative weight cycle by definition,
+
+319
+00:23:09,340 --> 00:23:09,620
+OK?
+
+320
+00:23:14,020 --> 00:23:15,700
+So every,
+
+321
+00:23:19,140 --> 00:23:19,680
+prove
+
+322
+00:23:20,860 --> 00:23:22,780
+every
+
+323
+00:23:24,600 --> 00:23:25,380
+negative
+
+324
+00:23:26,060 --> 00:23:27,860
+weight
+
+325
+00:23:28,700 --> 00:23:36,760
+cycle contains witness,
+
+326
+00:23:37,600 --> 00:23:42,540
+right? If we can prove that every negative
+weight cycle contains a witness,
+
+327
+00:23:43,400 --> 00:23:43,880
+then
+
+328
+00:23:44,640 --> 00:23:50,670
+every vertex reachable from one of those witnesses,
+in particular reachable from a negative weight cycle,
+
+329
+00:23:54,240 --> 00:23:55,640
+has, is,
+
+330
+00:23:57,220 --> 00:24:02,240
+has shortest path distance minus infinity,
+and that should prove the claim, right? Is,
+
+331
+00:24:04,360 --> 00:24:06,600
+this thing has to
+be reachable from a negative weight cycle.
+
+332
+00:24:14,020 --> 00:24:15,770
+If all of these negative
+weight cycles contain witnesses,
+
+333
+00:24:16,580 --> 00:24:20,940
+then all of these vertices
+are reachable from a witness. OK, great,
+
+334
+00:24:21,780 --> 00:24:21,780
+great.
+
+335
+00:24:22,700 --> 00:24:24,020
+Confusing myself there
+for a second.
+
+336
+00:24:24,660 --> 00:24:24,660
+OK,
+
+337
+00:24:25,700 --> 00:24:28,830
+so let's
+consider a negative weight cycle
+
+338
+00:24:30,980 --> 00:24:34,520
+in G, OK? This is
+a directed negative weight cycle,
+
+339
+00:24:35,660 --> 00:24:36,060
+recall,
+
+340
+00:24:37,960 --> 00:24:38,940
+OK? This would be
+
+341
+00:24:39,700 --> 00:24:42,580
+my negative
+weight cycle C, right?
+
+342
+00:24:45,160 --> 00:24:46,720
+So I'm going to say that
+the vertices in this thing, the weights,
+
+343
+00:24:47,380 --> 00:24:48,080
+has negative weight.
+
+344
+00:24:51,060 --> 00:24:53,460
+And I'm going
+to have a little bit of notation. If I have
+
+345
+00:24:54,040 --> 00:24:55,360
+a vertex V here,
+
+346
+00:24:56,400 --> 00:25:01,400
+I'm going to say that its predecessor in the
+cycle, I'm just going to call it V prime,
+
+347
+00:25:03,040 --> 00:25:04,170
+OK? That's just some notation.
+
+348
+00:25:14,360 --> 00:25:17,140
+Shortest
+path distances to every vertex in my graph,
+
+349
+00:25:18,140 --> 00:25:23,980
+shortest path distance going through at most V vertices, and the
+shortest path distance going through at most V minus 1 vertices,
+
+350
+00:25:25,000 --> 00:25:26,360
+then
+I know the following thing holds.
+
+351
+00:25:27,840 --> 00:25:28,120
+Delta
+
+352
+00:25:28,740 --> 00:25:34,480
+V going from S to V for
+any vertex in my cycle
+
+353
+00:25:35,720 --> 00:25:40,200
+can't be bigger than delta V minus
+1
+
+354
+00:25:41,360 --> 00:25:42,020
+from S
+
+355
+00:25:43,240 --> 00:25:43,600
+to U.
+
+356
+00:25:44,860 --> 00:25:45,700
+Plus the weight,
+
+357
+00:25:46,440 --> 00:25:49,070
+sorry, not U, V prime,
+its predecessor,
+
+358
+00:25:50,700 --> 00:25:51,980
+plus the weight
+
+359
+00:25:52,560 --> 00:25:55,340
+going
+from the predecessor to my vertex.
+
+360
+00:25:56,220 --> 00:25:56,700
+Why is that?
+
+361
+00:25:58,340 --> 00:26:01,040
+Why is that?
+Because this is the weight of some vertex.
+
+362
+00:26:01,880 --> 00:26:02,340
+This
+
+363
+00:26:03,320 --> 00:26:05,600
+is the shortest path distance
+
+364
+00:26:06,140 --> 00:26:09,340
+to my predecessor
+using one fewer edge.
+
+365
+00:26:10,460 --> 00:26:13,640
+And so this,
+in particular, is the weight of some path.
+
+366
+00:26:14,980 --> 00:26:15,940
+That uses V edges.
+
+367
+00:26:17,160 --> 00:26:20,280
+So
+if this is the shortest such path distance,
+
+368
+00:26:21,740 --> 00:26:23,300
+this has to
+upper bound it, right?
+
+369
+00:26:23,920 --> 00:26:24,140
+At least,
+
+370
+00:26:24,760 --> 00:26:25,940
+at most, yeah. Is
+
+371
+00:26:26,480 --> 00:26:30,140
+that the triangle inequality? That is a
+statement of the triangle inequality. Thank you.
+
+372
+00:26:32,520 --> 00:26:32,680
+All right,
+
+373
+00:26:33,240 --> 00:26:36,960
+so yes, this is just by triangle
+inequality.
+
+374
+00:26:37,700 --> 00:26:37,800
+OK,
+
+375
+00:26:38,880 --> 00:26:45,400
+now what we can say is let's take this
+equation, summed over all vertices, in my cycle.
+
+376
+00:26:46,000 --> 00:26:53,640
+So I'm just going to add
+summation here of all vertices in my cycle
+
+377
+00:26:54,980 --> 00:26:55,740
+of this whole thing.
+
+378
+00:26:57,500 --> 00:26:59,870
+I'm going to
+do that out a little bit neater.
+
+379
+00:27:01,860 --> 00:27:02,480
+Summation
+
+380
+00:27:03,720 --> 00:27:09,900
+of delta, not D, delta
+
+381
+00:27:10,420 --> 00:27:11,320
+V S V,
+
+382
+00:27:12,900 --> 00:27:12,900
+I
+
+383
+00:27:15,240 --> 00:27:17,200
+guess I don't need
+this open parentheses,
+
+384
+00:27:18,840 --> 00:27:18,880
+equals,
+
+385
+00:27:19,660 --> 00:27:30,900
+or less than or equal to, sum of V in C of
+delta V minus 1 V prime.
+
+386
+00:27:31,480 --> 00:27:31,580
+OK,
+
+387
+00:27:33,740 --> 00:27:37,200
+and here, I'm summing
+over V in C.
+
+388
+00:27:38,840 --> 00:27:41,720
+And this is just my notation
+for it's the predecessor, right?
+
+389
+00:27:42,500 --> 00:27:45,560
+And then
+I'm going to sum over the weights
+
+390
+00:27:46,400 --> 00:27:47,320
+in my cycle,
+
+391
+00:27:48,940 --> 00:27:52,580
+V in C, right? These are
+the sum of the weights in my cycle.
+
+392
+00:27:53,620 --> 00:27:55,240
+Well,
+what do I know about this cycle?
+
+393
+00:27:56,980 --> 00:27:58,540
+This is just
+the weight of C, right?
+
+394
+00:27:59,680 --> 00:28:00,440
+Weight of C.
+
+395
+00:28:02,040 --> 00:28:02,940
+That's awful handwriting.
+
+396
+00:28:04,220 --> 00:28:04,480
+C, what
+
+397
+00:28:05,520 --> 00:28:08,420
+do I know about the
+weight of the cycle? It's negative, right?
+
+398
+00:28:09,460 --> 00:28:09,700
+So
+
+399
+00:28:11,020 --> 00:28:15,240
+this is less
+than 0, which means that if I remove this,
+
+400
+00:28:16,680 --> 00:28:18,250
+this needs to
+be a strict equality,
+
+401
+00:28:18,840 --> 00:28:19,390
+right?
+
+402
+00:28:22,780 --> 00:28:23,600
+But if this,
+
+403
+00:28:24,560 --> 00:28:28,280
+if the sum of all of these is less,
+strictly less than the sum of all these,
+
+404
+00:28:30,000 --> 00:28:37,720
+we can't have none of the vertices in my graph
+satisfying, not satisfying this property,
+
+405
+00:28:39,100 --> 00:28:39,380
+right?
+
+406
+00:28:41,260 --> 00:28:41,580
+Right?
+
+407
+00:28:42,180 --> 00:28:43,240
+If all of them
+
+408
+00:28:43,740 --> 00:28:44,760
+are not witnesses,
+
+409
+00:28:45,520 --> 00:28:46,760
+then this thing
+
+410
+00:28:48,080 --> 00:28:54,570
+is bigger than this thing, at least as big as this thing,
+for every vertex in my cycle, which is a contradiction,
+
+411
+00:28:55,380 --> 00:28:55,920
+right?
+
+412
+00:28:56,700 --> 00:28:58,840
+So the claim holds, if
+
+413
+00:29:00,120 --> 00:29:03,740
+we have
+a negative infinite shortest path distance,
+
+414
+00:29:04,620 --> 00:29:08,190
+then V is reachable from a witness. So it
+suffices for us to find all the witnesses,
+
+415
+00:29:09,360 --> 00:29:12,100
+find all
+the vertices reachable from the witnesses,
+
+416
+00:29:13,120 --> 00:29:17,200
+and then mark them as minus infinity. Does
+that make sense?
+
+417
+00:29:18,240 --> 00:29:18,400
+OK.
+
+418
+00:29:19,840 --> 00:29:20,240
+So
+
+419
+00:29:21,080 --> 00:29:24,360
+now we finally are able
+to get to our algorithm.
+
+420
+00:29:25,860 --> 00:29:26,140
+All right.
+
+421
+00:29:26,640 --> 00:29:27,100
+Bellman -Ford.
+
+422
+00:29:31,820 --> 00:29:32,140
+And
+
+423
+00:29:33,440 --> 00:29:38,200
+what I'm going to show you today is a little different
+than what is normally presented as Bellman -Ford.
+
+424
+00:29:39,120 --> 00:29:40,820
+The original
+Bellman -Ford algorithm
+
+425
+00:29:42,180 --> 00:29:43,350
+does something a
+little different.
+
+426
+00:29:44,560 --> 00:29:47,210
+And because it does something a little
+different, which we'll talk about at the end,
+
+427
+00:29:48,500 --> 00:29:51,050
+it's a little hairier to analyze. I'm going
+to
+
+428
+00:29:51,900 --> 00:29:59,980
+show you a modification that is a little easier to analyze and has
+this nice property that we're going to be able to use the algorithm
+
+429
+00:30:01,200 --> 00:30:06,200
+to give us a negative
+weight cycle if it exists. OK?
+
+430
+00:30:07,080 --> 00:30:07,280
+So
+
+431
+00:30:08,020 --> 00:30:10,920
+we're going to
+say this is maybe a modified Bellman -Ford.
+
+432
+00:30:12,140 --> 00:30:14,400
+And the idea here is to
+
+433
+00:30:17,500 --> 00:30:21,920
+make a vertex
+associated, make many versions of a vertex.
+
+434
+00:30:22,880 --> 00:30:29,060
+OK? And I want this version of the vertex to
+correspond to whether I came here using 0,
+
+435
+00:30:30,000 --> 00:30:31,340
+0 edges, 1 edge,
+
+436
+00:30:32,240 --> 00:30:32,920
+2 edges,
+
+437
+00:30:33,600 --> 00:30:38,020
+3 edges. I have a different version of the
+vertex for each one of these,
+
+438
+00:30:38,860 --> 00:30:45,760
+for a path going through,
+at most, a certain number of edges.
+
+439
+00:30:46,600 --> 00:30:49,240
+OK. So this is an idea
+called graph duplication.
+
+440
+00:30:50,620 --> 00:30:51,740
+Idea.
+
+441
+00:30:54,200 --> 00:30:54,940
+Graph duplication.
+
+442
+00:31:00,000 --> 00:31:03,520
+And this is a common technique for solving
+graph -related problems
+
+443
+00:31:05,000 --> 00:31:08,760
+because essentially what
+I get to do is I get to store information.
+
+444
+00:31:09,340 --> 00:31:14,880
+Right? If
+I'm having different versions of a vertex,
+
+445
+00:31:15,600 --> 00:31:16,860
+I can have that vertex
+
+446
+00:31:17,720 --> 00:31:20,820
+correspond to
+reaching that vertex in a different state.
+
+447
+00:31:21,540 --> 00:31:21,740
+OK?
+
+448
+00:31:22,460 --> 00:31:23,620
+So that's what we're going to do
+here.
+
+449
+00:31:24,320 --> 00:31:25,300
+The idea here
+
+450
+00:31:25,940 --> 00:31:26,970
+is make
+
+451
+00:31:30,820 --> 00:31:31,400
+v
+
+452
+00:31:32,880 --> 00:31:34,760
+plus 1 levels,
+
+453
+00:31:36,160 --> 00:31:43,480
+basically
+duplicate vertices in our graph,
+
+454
+00:31:44,180 --> 00:31:50,700
+where vertex vk in level
+
+455
+00:31:51,340 --> 00:31:57,900
+k represents reaching
+
+456
+00:32:03,600 --> 00:32:04,260
+vertex
+
+457
+00:32:05,540 --> 00:32:10,560
+v using, at most,
+
+458
+00:32:11,160 --> 00:32:11,780
+k edges.
+
+459
+00:32:13,180 --> 00:32:14,230
+OK. So this definition
+
+460
+00:32:15,740 --> 00:32:17,940
+seems
+similar to what we're doing up here. Right?
+
+461
+00:32:19,960 --> 00:32:23,080
+If we have
+vertices that have this property,
+
+462
+00:32:23,880 --> 00:32:26,340
+then their
+shortest paths in this new graph
+
+463
+00:32:26,840 --> 00:32:36,540
+might correspond to these k edge distances. And really, the name of
+the game here is to compute these two for every vertex because then if
+
+464
+00:32:38,420 --> 00:32:41,380
+delta is finite,
+
+465
+00:32:42,360 --> 00:32:46,420
+then this guy will be the length of our
+shortest path. And if they're different,
+
+466
+00:32:47,320 --> 00:32:49,400
+that'll be a witness and
+we can explore from it.
+
+467
+00:32:50,000 --> 00:32:50,000
+OK?
+
+468
+00:32:56,780 --> 00:32:56,780
+So
+
+469
+00:32:57,400 --> 00:33:03,240
+we connect edges
+
+470
+00:33:07,260 --> 00:33:13,520
+from one level
+
+471
+00:33:14,960 --> 00:33:16,860
+to only
+
+472
+00:33:18,240 --> 00:33:18,960
+higher levels,
+
+473
+00:33:22,560 --> 00:33:25,000
+basically levels with
+a higher k.
+
+474
+00:33:33,930 --> 00:33:34,780
+Oh,
+
+475
+00:33:36,140 --> 00:33:36,580
+that's cool.
+
+476
+00:33:37,620 --> 00:33:46,400
+Why is that cool? Because we saw how to solve single source shortest paths
+in a DAG in linear time. Now, this graph that we're going to construct is
+
+477
+00:33:46,400 --> 00:33:48,300
+going to have v plus 1 levels.
+
+478
+00:33:49,220 --> 00:33:50,120
+So could have
+
+479
+00:33:51,940 --> 00:33:53,180
+our graph
+
+480
+00:33:53,680 --> 00:33:55,180
+kind of explodes v times.
+
+481
+00:33:56,100 --> 00:33:56,760
+Right?
+
+482
+00:33:58,140 --> 00:34:01,680
+We're going to do that in a second. I'm going
+to be more precise with what I mean there.
+
+483
+00:34:02,580 --> 00:34:07,020
+But if
+we're multiplying our graph v plus 1 times,
+
+484
+00:34:07,860 --> 00:34:10,340
+then the size of
+our graph is now v times larger.
+
+485
+00:34:10,860 --> 00:34:17,219
+That's not so hard to believe. But
+if we made our graph v times larger
+
+486
+00:34:18,139 --> 00:34:22,440
+and we ran a shortest path algorithm
+in linear time with respect to that graph,
+
+487
+00:34:24,280 --> 00:34:25,760
+then that graph has
+
+488
+00:34:26,300 --> 00:34:31,199
+something like size v
+times v plus
+
+489
+00:34:31,699 --> 00:34:33,100
+e size.
+
+490
+00:34:37,940 --> 00:34:39,060
+That looks familiar maybe?
+
+491
+00:34:43,020 --> 00:34:43,920
+That's this running time.
+
+492
+00:34:44,580 --> 00:34:44,739
+Right?
+
+493
+00:34:45,500 --> 00:34:49,840
+So if we can find an algorithm that runs in
+that running time, we can get down to v times e.
+
+494
+00:34:50,460 --> 00:34:50,620
+OK?
+
+495
+00:34:51,120 --> 00:34:52,080
+So let's try to do that.
+
+496
+00:34:57,740 --> 00:35:01,280
+Here's the transformation. I'm going to show
+you. I'm going to show you first with an example.
+
+497
+00:35:02,280 --> 00:35:02,480
+OK?
+
+498
+00:35:02,980 --> 00:35:03,840
+Here's an example
+
+499
+00:35:04,540 --> 00:35:07,020
+of a directed graph
+
+500
+00:35:07,760 --> 00:35:09,680
+that does
+contain a negative weight cycle.
+
+501
+00:35:10,420 --> 00:35:12,080
+OK? Can anyone find it for me?
+
+502
+00:35:15,460 --> 00:35:15,560
+b,
+
+503
+00:35:17,340 --> 00:35:17,440
+c,
+
+504
+00:35:18,120 --> 00:35:23,840
+d. B, c, d. Right? Has weight minus 4 plus
+3 minus 1. It has a minus 2
+
+505
+00:35:25,160 --> 00:35:25,820
+total weight.
+
+506
+00:35:26,420 --> 00:35:28,020
+Right? So that's
+a negative weight cycle.
+
+507
+00:35:28,540 --> 00:35:31,980
+OK?
+So if I were to take shortest paths from a,
+
+508
+00:35:32,880 --> 00:35:33,220
+right,
+
+509
+00:35:34,020 --> 00:35:35,280
+I will want to say
+
+510
+00:35:35,780 --> 00:35:38,380
+at
+the end of my algorithm, this better be 0.
+
+511
+00:35:39,480 --> 00:35:41,760
+And all of these
+better be minus infinity.
+
+512
+00:35:42,420 --> 00:35:45,760
+Right? So that's what
+I want in my algorithm.
+
+513
+00:35:47,320 --> 00:35:52,720
+So what's my algorithm
+going to be? I'm going to make v plus 1
+
+514
+00:35:53,520 --> 00:35:54,640
+copies of this graph.
+
+515
+00:35:55,280 --> 00:35:56,380
+And I'm going to
+kind of stretch it out.
+
+516
+00:35:56,880 --> 00:35:59,380
+Right? OK. So here I have v,
+
+517
+00:36:00,120 --> 00:36:06,650
+0, 1, 2, 3, 4. There are four vertices
+in my graph. So this is 1, 2, 3, 4, 5
+
+518
+00:36:07,500 --> 00:36:16,960
+copies of my graph. I have a version of vertex A. For each one of
+those copies, a version of vertex B for each of those copies, c and d,
+
+519
+00:36:17,480 --> 00:36:20,220
+et cetera. OK? So I have this nice grid of
+vertices.
+
+520
+00:36:21,860 --> 00:36:23,460
+And I'm not
+going to put any edges
+
+521
+00:36:24,440 --> 00:36:25,200
+within a layer,
+
+522
+00:36:26,120 --> 00:36:26,580
+within a level.
+
+523
+00:36:27,800 --> 00:36:32,140
+Right? Because then, I mean, this graph has
+cycles. Right? And I don't want cycles in my graph.
+
+524
+00:36:32,640 --> 00:36:39,120
+Right? What I'm going to do instead is for every edge
+in my original graph, for example, the edge from A to B,
+
+525
+00:36:40,480 --> 00:36:43,060
+I'm going to connect it
+to the B in the next level.
+
+526
+00:36:43,720 --> 00:36:47,480
+Right? So A0 is connected to B1
+
+527
+00:36:48,320 --> 00:36:49,460
+with an edge weight of minus 5,
+
+528
+00:36:49,960 --> 00:36:50,920
+just like in the original.
+
+529
+00:36:51,800 --> 00:36:55,460
+OK? And I'm going to do that for every edge in
+my graph. And I repeat that down all the way.
+
+530
+00:36:56,360 --> 00:36:56,580
+OK?
+
+531
+00:36:58,260 --> 00:37:10,160
+In addition, I'm going to add a zero weight edge from A0 to A1, or from
+every vertex all the way down the line. These are all zero weight edges
+
+532
+00:37:10,380 --> 00:37:12,860
+corresponding to, I'm not going to traverse
+an edge.
+
+533
+00:37:13,840 --> 00:37:15,640
+I'm just going
+to stay at this vertex.
+
+534
+00:37:16,620 --> 00:37:16,740
+OK?
+
+535
+00:37:17,460 --> 00:37:23,980
+That's going to allow us to simulate this at
+most k edges condition. Now, if you take a look
+
+536
+00:37:24,660 --> 00:37:28,120
+at paths
+in this graph from A0, our starting vertex,
+
+537
+00:37:31,640 --> 00:37:42,600
+clearly, none of the other vertices are in that level, are reachable from
+A0. Right? Just as we want. Right? Because the shortest path distance
+
+538
+00:37:43,380 --> 00:37:46,120
+to any
+of these vertices using at most zero edges
+
+539
+00:37:47,240 --> 00:37:49,860
+should be infinite. Right?
+I can't get there in zero edges.
+
+540
+00:37:51,220 --> 00:37:51,240
+OK?
+
+541
+00:37:53,840 --> 00:38:03,000
+But then any path
+in this graph using at most k edges
+
+542
+00:38:04,060 --> 00:38:07,960
+is going to correspond
+to a path from A0
+
+543
+00:38:09,960 --> 00:38:38,880
+to B3 in this graph.
+
+544
+00:38:40,760 --> 00:38:44,820
+Would correspond to a
+path in this graph that uses at most
+
+545
+00:38:46,280 --> 00:38:48,860
+three edges. Right? So
+let's find such a path.
+
+546
+00:38:49,520 --> 00:38:49,700
+OK?
+
+547
+00:38:50,220 --> 00:38:52,760
+So going from A0,
+
+548
+00:38:53,760 --> 00:38:54,460
+B1,
+
+549
+00:38:56,220 --> 00:38:57,120
+stay at B1,
+
+550
+00:38:58,460 --> 00:39:04,240
+stay at B, sorry. Yeah,
+that's a path using fewer than three edges,
+
+551
+00:39:05,100 --> 00:39:08,100
+or at most three edges.
+OK? But there's another path here.
+
+552
+00:39:09,420 --> 00:39:09,940
+Where is it?
+
+553
+00:39:11,180 --> 00:39:16,660
+Going from A, A, A to B. OK, that's not such
+an interesting one. That's the same path.
+
+554
+00:39:17,460 --> 00:39:20,940
+So I might have more than one path in here
+corresponding to a path in there.
+
+555
+00:39:21,680 --> 00:39:26,020
+But my claim is that any
+path in here corresponds to a path in here.
+
+556
+00:39:26,880 --> 00:39:27,100
+OK?
+
+557
+00:39:28,420 --> 00:39:31,220
+So what's a path of length?
+
+558
+00:39:31,920 --> 00:39:36,200
+Three that's non -trivial. Yeah, A to C to
+D to B. OK?
+
+559
+00:39:36,720 --> 00:39:37,500
+So A
+
+560
+00:39:38,500 --> 00:39:39,150
+to C.
+
+561
+00:39:40,280 --> 00:39:40,940
+To D
+
+562
+00:39:41,800 --> 00:39:42,220
+to B.
+
+563
+00:39:42,760 --> 00:39:43,580
+Yeah, that's a path.
+
+564
+00:39:44,300 --> 00:39:49,320
+Right? And basically, because I constructed this
+so that the edges always move from level to level,
+
+565
+00:39:49,820 --> 00:39:51,520
+as I traverse these edges,
+
+566
+00:39:52,060 --> 00:39:53,400
+I always change levels.
+
+567
+00:39:54,780 --> 00:39:54,780
+Yeah?
+
+568
+00:39:56,740 --> 00:40:04,640
+But my original graph doesn't have these self loops with
+zero A. TANZER. Yes. My original graph doesn't have an edge
+
+569
+00:40:05,540 --> 00:40:06,340
+from A to A.
+
+570
+00:40:07,000 --> 00:40:07,340
+That's true.
+
+571
+00:40:08,100 --> 00:40:08,300
+Right?
+
+572
+00:40:09,960 --> 00:40:11,540
+So I'm
+going to use these edges to correspond to,
+
+573
+00:40:12,560 --> 00:40:14,700
+I'm deciding not
+to take an edge.
+
+574
+00:40:15,580 --> 00:40:15,580
+Right?
+
+575
+00:40:19,280 --> 00:40:24,460
+It's not that I'm doing any work here. I'm
+just staying there for a state.
+
+576
+00:40:25,020 --> 00:40:33,060
+OK? And that's what's going to allow me to get this at most edges. All
+right. So this is the graph we construct. Hopefully, you understand that we
+
+577
+00:40:33,060 --> 00:40:36,220
+made these V layers.
+
+578
+00:40:37,100 --> 00:40:37,320
+Right?
+
+579
+00:40:37,840 --> 00:40:39,400
+This is V.
+
+580
+00:40:39,960 --> 00:40:40,060
+Right?
+
+581
+00:40:42,540 --> 00:40:43,020
+And
+
+582
+00:40:43,560 --> 00:40:49,740
+a vertex, we made V copies of every vertex and
+connected them using edges in this way. OK.
+
+583
+00:40:51,160 --> 00:40:54,100
+So first step of Bellman -Ford is construct
+this graph.
+
+584
+00:40:57,640 --> 00:41:01,280
+So Bellman -Ford, construct
+
+585
+00:41:03,520 --> 00:41:04,880
+G
+
+586
+00:41:05,780 --> 00:41:09,160
+prime as described above.
+
+587
+00:41:09,960 --> 00:41:11,560
+So I have a vertex that has how
+
+588
+00:41:12,440 --> 00:41:14,060
+many vertices?
+
+589
+00:41:17,360 --> 00:41:18,740
+V times V plus 1. Right?
+
+590
+00:41:20,420 --> 00:41:21,880
+V times V plus 1 vertices.
+
+591
+00:41:22,980 --> 00:41:23,860
+And how many edges?
+
+592
+00:41:24,600 --> 00:41:24,840
+Well, I
+
+593
+00:41:25,560 --> 00:41:31,460
+have one edge for outgoing
+edge for each vertex corresponding to
+
+594
+00:41:32,140 --> 00:41:33,380
+just staying in the same place.
+
+595
+00:41:34,000 --> 00:41:34,400
+Right? So
+
+596
+00:41:35,940 --> 00:41:38,660
+that's V
+squared vertices. I mean, edges.
+
+597
+00:41:40,000 --> 00:41:40,840
+I have one edge
+
+598
+00:41:42,600 --> 00:41:44,000
+for every edge in my graph.
+
+599
+00:41:45,060 --> 00:41:46,140
+I have K. Sorry. I
+
+600
+00:41:47,020 --> 00:41:52,500
+have V minus 1. Sorry. Just V.
+I have V edges for every edge in my graph.
+
+601
+00:41:53,000 --> 00:41:54,160
+OK? So that means,
+
+602
+00:41:54,700 --> 00:41:56,270
+so this is the number
+of vertices.
+
+603
+00:42:00,440 --> 00:42:00,940
+And
+
+604
+00:42:01,620 --> 00:42:04,760
+V times V
+
+605
+00:42:06,140 --> 00:42:06,700
+plus
+
+606
+00:42:07,500 --> 00:42:09,310
+V times E.
+
+607
+00:42:11,440 --> 00:42:15,540
+This is V, V plus E.
+
+608
+00:42:16,200 --> 00:42:16,880
+All right. Cool.
+
+609
+00:42:18,820 --> 00:42:20,250
+So that's how many edges I have.
+
+610
+00:42:22,220 --> 00:42:28,880
+So we construct it in that way. It's a DAG. Right?
+If we only have edges going to increasing levels,
+
+611
+00:42:29,480 --> 00:42:33,880
+then this thing can't have cycles because otherwise, that
+would mean there would be an edge pointing backwards.
+
+612
+00:42:34,460 --> 00:42:35,800
+Right? And
+we didn't construct any of those.
+
+613
+00:42:37,240 --> 00:42:37,480
+All right.
+
+614
+00:42:38,000 --> 00:42:39,720
+So
+we construct this graph G prime.
+
+615
+00:42:40,800 --> 00:42:46,020
+We can do that in linear time with respect to these things.
+I just go through all the edges. I make these edges.
+
+616
+00:42:46,780 --> 00:42:47,700
+And I make these vertices.
+
+617
+00:42:48,240 --> 00:42:53,480
+It doesn't take anything. I just
+do it naively. Right? I can do that in time
+
+618
+00:42:54,340 --> 00:42:56,900
+V times V plus E asymptotically.
+
+619
+00:42:59,400 --> 00:42:59,540
+OK.
+
+620
+00:43:00,540 --> 00:43:03,060
+Now, I run
+
+621
+00:43:04,540 --> 00:43:06,040
+DAG relaxation.
+
+622
+00:43:07,080 --> 00:43:09,940
+Our nice algorithm we
+had last time.
+
+623
+00:43:13,540 --> 00:43:13,660
+From
+
+624
+00:43:16,620 --> 00:43:20,600
+in there, it was A0. I'm going to say it's
+S0, our source.
+
+625
+00:43:22,720 --> 00:43:23,600
+Our source vertex.
+
+626
+00:43:24,680 --> 00:43:25,920
+Single source shortest paths.
+
+627
+00:43:27,960 --> 00:43:38,820
+So that I compute delta
+of S0 to VK.
+
+628
+00:43:41,020 --> 00:43:44,200
+For all K in, what
+
+629
+00:43:44,800 --> 00:43:45,220
+is it?
+
+630
+00:43:46,940 --> 00:43:49,160
+0 to V.
+
+631
+00:43:52,240 --> 00:43:54,120
+Right? That's what
+single source shortest paths does.
+
+632
+00:43:54,620 --> 00:44:02,440
+Right? It computes for me this distance from my source at some source.
+Right? To every other vertex in the graph. And so in particular, I get these.
+
+633
+00:44:02,940 --> 00:44:03,060
+Right?
+
+634
+00:44:04,080 --> 00:44:05,840
+Well, that is all of them.
+
+635
+00:44:09,960 --> 00:44:09,960
+So
+
+636
+00:44:11,740 --> 00:44:12,640
+for each
+
+637
+00:44:14,300 --> 00:44:17,340
+vertex V,
+
+638
+00:44:19,340 --> 00:44:19,660
+set
+
+639
+00:44:21,320 --> 00:44:22,460
+the thing I'm going to return,
+
+640
+00:44:24,400 --> 00:44:25,100
+d value,
+
+641
+00:44:26,180 --> 00:44:27,300
+S to V,
+
+642
+00:44:28,060 --> 00:44:29,100
+equal to
+
+643
+00:44:30,080 --> 00:44:34,440
+the shortest path distance I got
+from DAG relaxation to a particular vertex.
+
+644
+00:44:41,510 --> 00:44:44,540
+So I'm going to set
+this to be V minus 1. All right?
+
+645
+00:44:45,280 --> 00:44:46,520
+Why am I doing this?
+
+646
+00:44:47,460 --> 00:44:57,020
+Right? I'm setting it to be the shortest path distance
+to the guy in the second to last row here, or column,
+
+647
+00:44:58,920 --> 00:44:58,940
+in
+
+648
+00:45:01,240 --> 00:45:02,360
+my modified graph.
+
+649
+00:45:06,040 --> 00:45:09,380
+The hope is that this distance
+
+650
+00:45:11,060 --> 00:45:11,940
+in my DAG
+
+651
+00:45:13,840 --> 00:45:16,160
+corresponds to
+
+652
+00:45:18,360 --> 00:45:19,300
+this distance
+
+653
+00:45:20,600 --> 00:45:22,000
+in my original graph. Right?
+
+654
+00:45:22,580 --> 00:45:26,440
+The distance to V using
+at most V minus 1 edges.
+
+655
+00:45:27,320 --> 00:45:27,460
+Right?
+
+656
+00:45:27,980 --> 00:45:32,980
+So that's the claim we're going to prove in just a second. I'm
+going to write it down just so that we can see it. That we have
+
+657
+00:45:33,900 --> 00:45:35,960
+just to continue
+our train of thought.
+
+658
+00:45:36,700 --> 00:45:37,600
+Claim
+
+659
+00:45:40,620 --> 00:45:43,220
+delta S0
+
+660
+00:45:43,800 --> 00:45:46,720
+VK equals delta K,
+
+661
+00:45:48,240 --> 00:45:50,520
+the K edge distance
+
+662
+00:45:51,020 --> 00:45:52,140
+from S to V.
+
+663
+00:45:55,680 --> 00:45:56,880
+That's what we want to claim.
+
+664
+00:45:57,520 --> 00:45:58,180
+That would then,
+
+665
+00:45:58,740 --> 00:46:00,580
+what
+would that mean then? That would mean that
+
+666
+00:46:01,300 --> 00:46:05,660
+I'm correctly setting the shortest
+path distance here for all vertices
+
+667
+00:46:06,640 --> 00:46:07,680
+whose distance is finite.
+
+668
+00:46:09,160 --> 00:46:10,660
+Great. I mean, I set
+
+669
+00:46:11,820 --> 00:46:15,800
+values to things where they're not
+finite, where they're minus infinity also.
+
+670
+00:46:16,500 --> 00:46:21,400
+But in particular,
+I set the ones correctly if they're finite.
+
+671
+00:46:22,480 --> 00:46:26,500
+OK. So the last thing we need to do
+is deal with these minus infinity vertices.
+
+672
+00:46:29,100 --> 00:46:29,280
+Right?
+
+673
+00:46:30,820 --> 00:46:32,060
+But we know
+how to do that. Right?
+
+674
+00:46:32,980 --> 00:46:36,860
+We just look at the witnesses.
+Because we've computed this value
+
+675
+00:46:41,220 --> 00:46:41,540
+for
+
+676
+00:46:42,400 --> 00:46:46,820
+K equals V and K equals V minus 1.
+And if that claim over there is true,
+
+677
+00:46:48,360 --> 00:46:53,120
+then those shortest path distances are the
+same as these K edge shortest path distances.
+
+678
+00:46:55,380 --> 00:46:56,100
+And we can just,
+
+679
+00:46:56,620 --> 00:47:00,660
+for every vertex, we compare these things.
+If this is satisfied, we got a witness.
+
+680
+00:47:02,060 --> 00:47:02,540
+Right? OK.
+
+681
+00:47:03,660 --> 00:47:17,220
+So for each witness
+
+682
+00:47:21,040 --> 00:47:22,160
+u in V,
+
+683
+00:47:24,620 --> 00:47:26,640
+where delta
+
+684
+00:47:28,100 --> 00:47:30,400
+S0 u V,
+
+685
+00:47:32,880 --> 00:47:38,560
+is less than
+strictly S0 u V minus 1,
+
+686
+00:47:39,720 --> 00:47:41,340
+that's the definition
+of a witness here.
+
+687
+00:47:42,520 --> 00:47:45,060
+Close the parentheses.
+
+688
+00:47:46,060 --> 00:47:52,220
+Then for each vertex V reachable
+
+689
+00:47:54,940 --> 00:47:57,360
+from u,
+
+690
+00:47:58,340 --> 00:48:01,660
+set delta, sorry, d.
+
+691
+00:48:02,680 --> 00:48:06,920
+Returning
+d of S V equal to minus infinity.
+
+692
+00:48:07,540 --> 00:48:08,410
+So that's the
+end of the algorithm.
+
+693
+00:48:09,480 --> 00:48:11,320
+Basically, I'm looking
+for all the witnesses.
+
+694
+00:48:13,000 --> 00:48:19,900
+For each witness, I find all the vertices reachable from
+it and set it to minus infinity, just as we argued before.
+
+695
+00:48:20,540 --> 00:48:21,200
+OK. So
+
+696
+00:48:21,740 --> 00:48:23,760
+it remains to prove this claim.
+
+697
+00:48:28,480 --> 00:48:29,560
+How do we prove this claim?
+
+698
+00:48:31,640 --> 00:48:32,140
+Well,
+
+699
+00:48:33,560 --> 00:48:35,300
+we can induct on K. Right?
+
+700
+00:48:36,730 --> 00:48:38,680
+Is this true for K equals 0?
+
+701
+00:48:39,580 --> 00:48:47,880
+Yeah. Right? We kind of already argued it over here when we were
+talking about our initialization step or what DAG relaxation does.
+
+702
+00:48:48,700 --> 00:48:53,060
+It'll set this to be the shortest path from
+this guy to all these vertices.
+
+703
+00:48:53,660 --> 00:48:56,400
+These aren't reachable
+from here. And so these are infinite.
+
+704
+00:48:57,280 --> 00:48:57,900
+And that one's 0.
+
+705
+00:48:59,680 --> 00:48:59,960
+OK.
+
+706
+00:49:00,560 --> 00:49:02,180
+So the base case,
+
+707
+00:49:03,380 --> 00:49:04,080
+so
+
+708
+00:49:04,760 --> 00:49:05,280
+induct
+
+709
+00:49:07,220 --> 00:49:08,240
+on K.
+
+710
+00:49:11,760 --> 00:49:12,460
+Base case,
+
+711
+00:49:13,400 --> 00:49:15,340
+K equals 0. Check.
+
+712
+00:49:15,960 --> 00:49:16,120
+Right?
+
+713
+00:49:17,100 --> 00:49:17,720
+That's all good.
+
+714
+00:49:18,260 --> 00:49:20,100
+Now we induct
+in our inductive step.
+
+715
+00:49:23,000 --> 00:49:31,680
+Let's take a look at the shortest path distance
+from S0 to V of K prime for some K prime.
+
+716
+00:49:32,440 --> 00:49:45,040
+And the assumption is, the inductive hypothesis is, that this distance is
+the K edge distance for all K prime less than K. I mean, all K less than K
+
+717
+00:49:45,040 --> 00:49:45,260
+prime.
+
+718
+00:49:45,780 --> 00:49:45,780
+Right?
+
+719
+00:49:47,060 --> 00:49:49,240
+Well, kind of
+by definition of a shortest path,
+
+720
+00:49:50,300 --> 00:49:57,020
+this is the minimum over
+all incoming vertices of the shortest path
+
+721
+00:49:57,720 --> 00:50:00,620
+from S0 to U of
+
+722
+00:50:01,300 --> 00:50:02,420
+K prime minus 0.
+
+723
+00:50:04,350 --> 00:50:04,420
+Minus 1 plus
+
+724
+00:50:05,520 --> 00:50:11,620
+the weight of the edge
+from U of K prime minus 1
+
+725
+00:50:12,280 --> 00:50:14,800
+to VK
+
+726
+00:50:15,880 --> 00:50:16,180
+prime
+
+727
+00:50:17,620 --> 00:50:22,780
+for all U K prime minus
+1 in the adjacencies,
+
+728
+00:50:23,800 --> 00:50:27,580
+the incoming
+adjacencies of VK prime.
+
+729
+00:50:29,160 --> 00:50:29,900
+OK. What does this mean?
+
+730
+00:50:30,440 --> 00:50:30,740
+Right?
+
+731
+00:50:31,260 --> 00:50:31,840
+I'm just saying,
+
+732
+00:50:32,440 --> 00:50:33,400
+graph G prime,
+
+733
+00:50:34,940 --> 00:50:43,720
+a shortest path to this vertex needs to go first through
+some vertex in the layer before it, which is one of these.
+
+734
+00:50:44,280 --> 00:50:47,160
+And
+in particular, I'm only connected to things
+
+735
+00:50:48,340 --> 00:50:49,360
+adjacent to me.
+
+736
+00:50:49,900 --> 00:50:55,140
+That's all this is saying. I have to go through that vertex
+and take some shortest path to one of those previous vertices.
+
+737
+00:50:57,720 --> 00:50:58,450
+Now, in actuality,
+
+738
+00:51:00,980 --> 00:51:07,120
+these adjacencies, I constructed them to be
+similar to the adjacencies in my original graph
+
+739
+00:51:07,680 --> 00:51:12,620
+in addition to one edge coming from
+my original vertex, from vertex v.
+
+740
+00:51:13,560 --> 00:51:15,150
+So this is the same as
+the minimum
+
+741
+00:51:16,860 --> 00:51:19,030
+of this set delta S0.
+
+742
+00:51:22,380 --> 00:51:23,020
+Same thing.
+
+743
+00:51:26,380 --> 00:51:33,420
+Plus w u v for all
+
+744
+00:51:37,940 --> 00:51:40,940
+u in the incoming adjacencies
+
+745
+00:51:42,890 --> 00:51:45,320
+of my original vertex
+
+746
+00:51:46,600 --> 00:51:48,900
+in addition
+to one more term. What is that other term?
+
+747
+00:51:53,320 --> 00:51:53,920
+These
+
+748
+00:51:54,420 --> 00:52:04,040
+are all of the things corresponding to my incoming edges in my original
+thing. But I also have that one edge coming from the v before it. So this is,
+
+749
+00:52:04,040 --> 00:52:11,260
+I'm going to
+union this with delta S0
+
+750
+00:52:12,260 --> 00:52:14,720
+v of k prime minus 1.
+
+751
+00:52:16,380 --> 00:52:17,100
+Awful.
+
+752
+00:52:18,280 --> 00:52:19,200
+I think there's another
+one here.
+
+753
+00:52:20,600 --> 00:52:23,980
+This is S0 v of k prime minus 1.
+
+754
+00:52:24,860 --> 00:52:26,000
+I'm not going to rewrite it.
+
+755
+00:52:28,600 --> 00:52:28,700
+OK.
+
+756
+00:52:34,240 --> 00:52:35,190
+Then by induction,
+
+757
+00:52:36,220 --> 00:52:41,780
+this thing and this
+thing must be the edge shortest paths using
+
+758
+00:52:42,580 --> 00:52:43,920
+k minus 1 vertices.
+
+759
+00:52:45,320 --> 00:52:46,940
+And then
+that's just the statement
+
+760
+00:52:47,800 --> 00:52:49,920
+of what the shortest path should
+
+761
+00:52:52,880 --> 00:52:55,000
+be using at most k
+
+762
+00:52:55,720 --> 00:52:58,680
+prime edges going from S to v.
+
+763
+00:52:59,940 --> 00:52:59,940
+OK.
+
+764
+00:53:01,680 --> 00:53:02,020
+So
+
+765
+00:53:03,500 --> 00:53:05,660
+these things are
+the same as we claimed.
+
+766
+00:53:06,440 --> 00:53:07,040
+Yay. Check.
+
+767
+00:53:08,840 --> 00:53:15,600
+All right. And then it's not such a trivial, it's kind of a
+trivial leap then to say that at the end of Bellman -Ford,
+
+768
+00:53:17,660 --> 00:53:18,400
+these guys,
+
+769
+00:53:19,740 --> 00:53:21,480
+sorry, the
+things that we return,
+
+770
+00:53:22,480 --> 00:53:25,090
+these guys
+are the shortest path distances.
+
+771
+00:53:25,840 --> 00:53:27,220
+Because here, if they're finite,
+
+772
+00:53:28,720 --> 00:53:32,760
+we set them to their true shortest path
+distance. And if they're minus infinity,
+
+773
+00:53:35,100 --> 00:53:41,380
+that invariant means that these things
+correspond to exactly this claim over here.
+
+774
+00:53:45,000 --> 00:53:45,780
+It's a witness.
+
+775
+00:53:49,180 --> 00:53:52,400
+And then finding all the vertices reachable
+from those witnesses,
+
+776
+00:53:53,160 --> 00:53:55,720
+we set all of the infinite ones
+
+777
+00:53:56,580 --> 00:53:58,480
+to be minus infinity as desired.
+
+778
+00:53:59,020 --> 00:54:00,520
+OK. So what's the running time of
+this thing?
+
+779
+00:54:02,280 --> 00:54:05,660
+Well, we had to construct this graph. So we
+had to take that time.
+
+780
+00:54:06,540 --> 00:54:06,540
+OK.
+
+781
+00:54:07,040 --> 00:54:09,700
+We ran dag relaxation. That takes the same
+amount of time.
+
+782
+00:54:10,420 --> 00:54:13,640
+Right. For
+every vertex, we did order v work.
+
+783
+00:54:14,600 --> 00:54:15,680
+And then for each witness,
+
+784
+00:54:16,480 --> 00:54:18,260
+how many could there be? Most v.
+
+785
+00:54:18,940 --> 00:54:20,920
+Checking
+the reachability of each vertex,
+
+786
+00:54:21,420 --> 00:54:22,920
+that can be done in how long?
+
+787
+00:54:24,580 --> 00:54:25,400
+Order e time.
+
+788
+00:54:26,580 --> 00:54:26,700
+Right.
+
+789
+00:54:27,540 --> 00:54:34,340
+Because we don't need to consider the things that aren't
+connected to x or aren't connected to the witness.
+
+790
+00:54:35,100 --> 00:54:38,220
+Right. So this thing takes order
+
+791
+00:54:38,780 --> 00:54:39,860
+v times e work.
+
+792
+00:54:41,580 --> 00:54:46,740
+So we're upper bounded by this time it took
+to construct the original graph.
+
+793
+00:54:47,640 --> 00:54:49,080
+And then
+we're going to buy the claim we had before.
+
+794
+00:54:51,440 --> 00:54:53,340
+That takes v times e time. OK.
+
+795
+00:54:54,080 --> 00:54:54,920
+So that's Bellman -Ford.
+
+796
+00:54:56,840 --> 00:54:59,350
+I'm just going to leave
+you with two nuggets.
+
+797
+00:55:04,140 --> 00:55:04,420
+First,
+
+798
+00:55:04,960 --> 00:55:06,190
+the shortest path,
+
+799
+00:55:10,940 --> 00:55:14,780
+if for any witness, let's say we have a
+witness here. Do I have any witnesses here?
+
+800
+00:55:19,020 --> 00:55:19,200
+But
+
+801
+00:55:19,940 --> 00:55:24,040
+is there a vertex
+on this cycle that goes through,
+
+802
+00:55:24,880 --> 00:55:26,440
+who has the shortest path,
+
+803
+00:55:27,980 --> 00:55:31,500
+that goes through four vertices
+that's smaller than any other? Right.
+
+804
+00:55:32,200 --> 00:55:35,800
+OK. I can go from a to c to b
+
+805
+00:55:36,500 --> 00:55:37,780
+to d to b to c.
+
+806
+00:55:41,100 --> 00:55:45,100
+And you can work out this algorithm. I have
+it in the notes that you can take a look at.
+
+807
+00:55:45,700 --> 00:55:48,080
+This
+will actually have a shorter path
+
+808
+00:55:49,220 --> 00:55:53,520
+for vertex. Sorry. It'll
+have a shorter path for vertex b.
+
+809
+00:56:01,120 --> 00:56:07,600
+a to b to c to d to b. Thank you.
+That's a path of length four of four edges.
+
+810
+00:56:09,100 --> 00:56:17,200
+That has shorter path than any path that has fewer edges. In
+particular, there's only one other path to b. Using fewer than four.
+
+811
+00:56:18,020 --> 00:56:19,240
+There's two other paths.
+
+812
+00:56:20,220 --> 00:56:25,940
+One path of length that has one edge that has
+weight minus five. And one path, this path,
+
+813
+00:56:26,580 --> 00:56:28,440
+that has weight nine minus one is
+eight.
+
+814
+00:56:29,260 --> 00:56:32,240
+Right.
+Whereas this path, minus five, minus four,
+
+815
+00:56:33,100 --> 00:56:35,160
+three, minus one, has
+
+816
+00:56:35,960 --> 00:56:41,240
+minus 10 plus three is minus seven,
+which is shorter than minus five.
+
+817
+00:56:42,080 --> 00:56:43,680
+So b indeed is a witness.
+
+818
+00:56:44,420 --> 00:56:44,620
+Right.
+
+819
+00:56:45,680 --> 00:56:49,500
+And if we actually take a look at that path
+through this graph,
+
+820
+00:56:50,880 --> 00:56:53,200
+going from a to b
+
+821
+00:56:54,520 --> 00:56:58,160
+to c to d
+
+822
+00:56:59,240 --> 00:57:00,100
+back to b,
+
+823
+00:57:03,500 --> 00:57:04,320
+we see that there's
+
+824
+00:57:05,580 --> 00:57:14,240
+a negative weight cycle in this graph. b to c to d to
+b. And indeed, that's always the case for our witnesses.
+
+825
+00:57:14,900 --> 00:57:17,120
+OK. You can see a proof
+of that in the notes.
+
+826
+00:57:18,020 --> 00:57:22,350
+And you can see in recitation a little
+space optimization to
+
+827
+00:57:22,960 --> 00:57:26,400
+make us not have
+to construct this entire graph on the fly,
+
+828
+00:57:26,920 --> 00:57:31,860
+but actually only use order v space while
+we're going. OK. So that's Bellman -Ford.
+
+829
+00:57:32,400 --> 00:57:33,500
+Sorry for running a little late.
+

@@ -1,0 +1,1301 @@
+1
+00:00:12,540 --> 00:00:22,320
+All right, welcome back to Data Structures Land. Today we continue and complete our segment on binary trees. So this is part two.
+欢迎回到数据结构乐园。今天继续二叉树部分。这是第二部分。
+
+2
+00:00:23,120 --> 00:00:40,700
+If you missed part one, go back and watch part one. Last time we talked about binary trees in general. We had each node stored an item, and also a left pointer and a right pointer to other nodes, and a parent pointer to another node.
+如果错过第一部分请回去看。上次讨论了一般二叉树。每个节点存储了一个元素、左右指针和父指针。
+
+3
+00:00:41,220 --> 00:00:57,600
+This was an example of a tree. B and C are A's children. A is the parents of B and C, and also the root of the entire tree. We defined the height of a node. We didn't use this too much yet, but we're going to use it a lot today. So remember, the height is as drawn in red here.
+这是一个树的例子。B和C是A的子节点。A是父节点和根节点。我们定义了节点的高度，今天会大量用到。
+
+4
+00:00:58,640 --> 00:01:20,100
+Height of the node is the length of the longest downward path counting edges. So B, for example, has a length two path, so we write a two here. You can also think of it as if you just live within the subtree rooted at B, B's subtree, then what is the maximum depth of those nodes? If you prefer to think about it that way, either way is fine.
+高度是最长向下路径的边数。B的路径长度为2。也可理解为子树中节点的最大深度。
+
+5
+00:01:20,640 --> 00:01:32,140
+And in particular, we distinguished H, the height of the root node, as the height of the entire tree. And what we achieved last time was basically all of our operations ran in order H time.
+根节点的高度H就是整棵树的高度。上次所有操作都在O(H)时间内运行。
+
+6
+00:01:33,020 --> 00:01:46,320
+So we had subtree insert, subtree delete, subtree first and last. We could compute the predecessor and successor of a node all in order H time. So as long as H was small, we were happy.
+有子树插入、删除、首末节点。可在O(H)内计算前驱和后继。只要H小就满意。
+
+7
+00:01:47,980 --> 00:02:04,320
+And remember, what does predecessor and successor mean? It's talking about an implicit order in the tree, which is what we call traversal order, which is defined recursively as recursively traverse the left subtree, then output the root, then recursively traverse the right subtree.
+前驱和后继指树中的隐含顺序——遍历顺序。递归定义：先左子树、然后根节点、再右子树。
+
+8
+00:02:05,180 --> 00:02:18,360
+So in this example, the traversal order is F is the, if you go all the way left, that was the first in the traversal order. Then we have some space here.
+例子中遍历顺序从F开始。一直向左走，F是第一个。
+
+9
+00:02:19,580 --> 00:02:22,020
+Then we have D. Then we have B.
+然后D。然后B。
+
+10
+00:02:24,100 --> 00:02:35,620
+Then we do the right subtree of B, which is E. Then we have the root, because we finished the left subtree of the root. So that's A. And then we have C.
+然后B的右子树E。然后根节点A。然后C。
+
+11
+00:02:37,140 --> 00:02:50,040
+So there's an implicit linear order encoded by this tree. And the whole point of binary trees is that we can efficiently update the tree much faster than we could explicitly write down an order in an array or something like that.
+隐式线性顺序由树编码。二叉树的核心是比数组更快地更新顺序。
+
+12
+00:02:51,040 --> 00:03:00,240
+So binary trees let us quickly. Now, quickly is not so quick right now, because everything is order H. And in the worst case, H is linear, because we could have a tree like this.
+二叉树让我们快速操作。但还不够快——全是O(H)，最坏情况H是线性的。
+
+13
+00:03:03,360 --> 00:03:17,680
+But today, we're going to guarantee that H is log n. And so the goal of today is to take all of these operations that run in order H time and get them to run in order log n time, just by modifying the data structure we've already seen. So we've done a lot of the hard work.
+但今天保证H=log n。将所有O(H)操作变成O(log n)，只需修改已有数据结构。
+
+14
+00:03:18,080 --> 00:03:41,980
+Just a little bit more work we need to do today in something called AVL trees, or height balance. OK. But before we get there, I want to talk a little bit more. At the very end of last lecture, we talked about once you have these subtree operations, so I can insert and delete in the subtree, how do I actually use that to solve the problems that we care about in this class, which are sequence data structure and set data structure?
+今天用AVL树或高度平衡来做。在那之前谈谈序列和集合问题：如何用子树操作解决它们？
+
+15
+00:03:43,460 --> 00:03:53,360
+So we talked mostly about the set data structure last time. So in general, we're going to define what traversal order we maintain by a binary tree.
+上次主要讲了集合数据结构。将由二叉树维护遍历顺序。
+
+16
+00:03:53,940 --> 00:04:08,210
+And so for a set, because for the set interface, we're interested in doing queries like find next and find previous, given a key. If it's not there, tell me the previous one or the next one. This is something we could do with binary search.
+对于集合关心查找后继和前驱。给定键不在时告诉我前一个或后一个。
+
+17
+00:04:08,880 --> 00:04:22,019
+And so the big cool thing that binary trees let us do, if we let the traversal order always be all of the items stored in increasing key order, then we are effectively maintaining the items in order.
+如果遍历顺序始终是递增键的顺序，就能有效按键的顺序维护元素。
+
+18
+00:04:23,940 --> 00:04:42,920
+In a traversal order sense, again, we're not explicitly maintaining them in order. But up here, we're maintaining a tree that represents items in key order. And so this lets us do a subtree find operation, which you could easily use to implement find and find previous and so on. As follows,
+我们维护表示键顺序的树，而非显式顺序。能做子树查找操作来实现查找和查找前驱。
+
+19
+00:04:43,360 --> 00:05:00,920
+we start at the root of the tree. So we can say node equals root initially. And then we can recursively search for a key k as follows. We check, well, if the item at the root has a key that's bigger than k, let me draw a little picture.
+从根节点开始，node=root。递归搜索键k。如果根节点键大于k。
+
+20
+00:05:04,220 --> 00:05:16,440
+So we're at some node here. This is a node. And it has a left subtree and a right subtree. And there's some item with some key.
+我们在某个节点。有左子树和右子树，里面有带键的元素。
+
+21
+00:05:16,940 --> 00:05:32,090
+So if the key we're looking for is less than the node's item, that means it's down here in the left subtree. And then we can recurse on node.left. If they're equal, that means that this item is the item we're looking for. So we can just return it or the node, depending on what you're looking for.
+如果找的键小于节点键，在左子树中。递归到node.left。如果相等就返回该节点。
+
+22
+00:05:32,480 --> 00:05:45,600
+And if the key in here is greater than the key we're looking for, then we'll recurse to the right. If you think about it a little bit, this is exactly binary search on an array. It just happens to be on a tree instead.
+如果键更大就递归到右边。这是数组上的二分查找，只是在树上。
+
+23
+00:05:46,200 --> 00:05:47,480
+If you think of an array,
+想象一个数组。
+
+24
+00:05:54,300 --> 00:06:06,960
+like this, where does binary search do? It first looks at the key in the middle. I'm going to draw that as the root. And then it recurses either on the left chunk, which I will draw recursively, or on the right chunk.
+二分查找先看中间键，画成根节点。递归到左边或右边。
+
+25
+00:06:08,240 --> 00:06:18,980
+And so if you happen to have a perfect binary tree like this one, it is simulating exactly binary search in this array. But this we're going to be able to maintain dynamically. Not perfect anymore, but close.
+如果有完美二叉树，就在模拟二分查找。能动态维护——不再完美但很接近。
+
+26
+00:06:19,540 --> 00:06:22,000
+Whereas this we could not maintain in sorted order.
+而数组无法在有序下维护。
+
+27
+00:06:24,140 --> 00:06:38,080
+This is like a generalization of binary search to work on trees instead of on arrays. And for this reason, set binary trees are called binary search trees, because they are the tree version of binary search. So there's many equivalent names.
+这是二分查找从数组到树的推广。所以集合二叉树称为二叉搜索树。
+
+28
+00:06:38,760 --> 00:06:53,760
+So binary search tree is another name for set binary tree. And the key thing that makes this algorithm work is so -called binary search tree property, which is all the keys in the left subtree of a node are less than the root of that node.
+二叉搜索树的关键是BST性质：节点左子树的所有键都小于该节点。
+
+29
+00:06:54,220 --> 00:07:05,700
+And that key is less than all the keys in the right subtree. And this is true recursively all the way down. And so that's how you prove that this algorithm is correct by this property. Why is this true?
+该节点键小于右子树所有键，递归成立。这就是算法正确性的证明。
+
+30
+00:07:06,240 --> 00:07:18,580
+Because if we can maintain traversal order to be increasing key, then that's exactly what traversal order means. It tells you all the things in the left subtree come before the root, which come before all the things in the right subtree.
+因为遍历顺序为递增键顺序，这正是遍历顺序的定义。
+
+31
+00:07:18,960 --> 00:07:21,740
+So this property implies this one.
+所以此性质蕴含彼性质。
+
+32
+00:07:23,940 --> 00:07:34,980
+And how do you maintain things in increasing key order? It's pretty easy. If you want to insert an item, where does it belong? Well, you do this search to find where it would belong if it was there.
+如何维护递增键顺序？插入元素时搜索它应在的位置。
+
+33
+00:07:35,540 --> 00:07:48,060
+If it's there, you can overwrite the value stored with that key. If it's not, this search will fall off the tree at some point. And that's where you insert a new node in your tree.
+如果在就覆盖。如果不在，搜索掉出树外的地方就是插入点。
+
+34
+00:07:48,800 --> 00:07:58,140
+That was covered in recitation, so I don't want to dwell on it. What I want to focus on today is the other application. This is for representing a set, which is relatively easy.
+习题课已讲过。今天关注另一种应用——表示集合。
+
+35
+00:07:59,220 --> 00:08:09,120
+A challenge, which we sort of set ourselves up for, but we need a little more work, is to make sequence binary trees. So suppose I have a binary tree.
+挑战是序列二叉树。假设有二叉树。
+
+36
+00:08:09,540 --> 00:08:17,800
+And what I would like, I mentioned at the end of last time, is that I want the traversal order of my tree to be the sequence order.
+希望遍历顺序=序列顺序。
+
+37
+00:08:19,920 --> 00:08:23,740
+The order that I'm trying to represent is the one that's changed by operations like insert at.
+顺序由插入等操作修改。
+
+38
+00:08:26,100 --> 00:08:39,039
+So I'd just like to do the same thing. But now I have to think about how do I do a search, how do I do insert at, that sort of thing. And here is an algorithm for what I would like to work, but it's not going to quite work yet.
+同样的事，但需要做搜索和插入——有一个算法还不能完全工作。
+
+39
+00:08:40,240 --> 00:08:48,360
+So suppose I give you a subtree specified by a node. So there's all the descendants of that node.
+假设给定一个由节点指定的子树及其所有后代。
+
+40
+00:08:51,320 --> 00:09:04,810
+In the traversal order of that subtree, which starts here and ends here, and the root will be somewhere in the middle, give me the ith node. So if I ask i equals 0, I want to get this leftmost descendant.
+在遍历顺序中找到第i个节点。i=0时最左边的后代。
+
+41
+00:09:05,340 --> 00:09:20,700
+If I ask for i equals the size of the tree minus 1, I want to get the rightmost descendant. That was the first and last in the subtree that we talked about. But we know how to find the first and last. Just walk left or walk right. But we don't know how to find the ith node.
+i=size-1时最右边的后代。知道如何找首末节点——向左或向右走到底。但不知道如何找第i个。
+
+42
+00:09:22,380 --> 00:09:32,370
+And so I'm going to say, in order h times the goal right now, not log n. And the idea is, well, it seems like size matters. Sorry if you heard otherwise.
+目前目标是O(h)。关键是大小很重要。
+
+43
+00:09:34,080 --> 00:09:44,380
+So in particular, I mentioned size when I was talking about the last node in the sequence. The index of that node is size of this subtree minus 1.
+之前提到序列最后一个节点的索引是size-1。
+
+44
+00:09:45,000 --> 00:09:48,020
+So let's define the size of a node.
+定义节点的大小。
+
+45
+00:09:51,400 --> 00:10:00,380
+To be the number of nodes in its subtree. We're calling that subtree paren node.
+子树中的节点数。称为子树父节点。
+
+46
+00:10:05,820 --> 00:10:17,470
+OK. Including the node itself. So if I somehow knew the size, this seems important for understanding indexes. Let's just assume that I knew that magically in constant time.
+包括节点本身。
+
+47
+00:10:21,320 --> 00:10:25,300
+Let's assume that the size of the left subtree. So why don't I expand this diagram a little bit.
+假设知道左子树的大小。扩展一下图示。
+
+48
+00:10:28,960 --> 00:10:40,000
+So we have node as before. But we have a left subtree and a right subtree. So this node here is node.left. This node here is node.right. They might not exist.
+和之前一样有左右子树。node.left和node.right可能不存在。
+
+49
+00:10:40,880 --> 00:10:51,300
+But let's ignore those exceptional cases for now. Let's suppose we knew not only the size of node, but we knew the size of node.left. So that is the size of this tree.
+先忽略异常。假设知道node.size和node.left.size。
+
+50
+00:10:52,070 --> 00:11:02,560
+So we have node.left. And we're going to call that, nl. So let's suppose that there are nl nodes down here. Well, I claim that lets me do the equivalent of a binary search.
+node.left的size=nL。下面有nL个节点。这能做二分查找。
+
+51
+00:11:03,900 --> 00:11:15,580
+Because I'm looking for some index i. And if i is less than nl, then I know that it must be down here. For example, if i equals 0, it's going to be in the left subtree as long as nl is greater than 0.
+寻找索引i。如果i<nL就在左子树。i=0时在左子树。
+
+52
+00:11:16,760 --> 00:11:27,280
+Right. So that's exactly this check. If i is less than nl, I'm going to recurse to the left subtree. To the left. Call subtree at of node.left, comma, i. So it's written here.
+对。如果i<nL递归到左子树，调用subtree_at(node.left,i)。
+
+53
+00:11:27,920 --> 00:11:38,920
+If i equals nl, if you think about it for a second. So nl is the number of nodes here. And so that means this node has index nl. The index of this node is nl.
+如果i=nL，这个节点的索引就是nL。
+
+54
+00:11:39,680 --> 00:11:54,160
+And so if the one index we're looking for is that one, then we just return this node. We're done. And otherwise, i is greater than nl. And that means that the node we're looking for is in the right subtree. Because it comes after the root.
+如果要找的就是那个，直接返回。否则i>nL，节点在右子树中。
+
+55
+00:11:55,040 --> 00:12:12,020
+Again, that's what traversal order means. So if we define it to be sequence order, then we know all the things that come after this node, which is index nl, must be over here. Now, when we recurse down here, our numbering system changes. Because for node, 0 is here.
+这就是遍历顺序的意义。所有在索引nL之后的元素都在右边。递归到右边时编号变了。
+
+56
+00:12:12,460 --> 00:12:24,580
+And then for node.right, 0 is here. So we need to do a little bit of subtraction here, which is when we recurse to the right, we take i minus nl minus 1. Minus nl for these guys, minus 1 for the root node.
+对node.right，0在那。所以需要做减法：i - nL - 1。
+
+57
+00:12:26,140 --> 00:12:37,120
+And that will give us the index we're looking for within this subtree. So my point is, this algorithm is basically the same as this algorithm. But this one uses keys.
+得到要找的索引。这个算法和之前相同，只是用keys。
+
+58
+00:12:38,040 --> 00:12:49,580
+Because we're dealing with a set. And in sets, we assume items have keys. Over here, items don't have to have keys. In fact, we're not touching the items at all. We're just asking, what is the ith item in my sequence?
+是集合所以元素有键。对于序列不需有键，只需问第i个元素是什么。
+
+59
+00:12:51,320 --> 00:13:01,100
+What is the ith item in my traversal order? Which is the same thing as asking, what is the ith node in the traversal order? And this algorithm gives it to you exactly the same way in order h time.
+遍历顺序中第i个元素？算法在O(h)时间给出答案。
+
+60
+00:13:03,700 --> 00:13:16,100
+Now, I'm not going to show you all the operations. But you can use subtree at to implement get at and set at. You just find the appropriate node and return the item or modify the item.
+可用subtree_at实现get_at和set_at。找到节点返回或修改元素。
+
+61
+00:13:17,340 --> 00:13:32,700
+Or you can use it to, most crucially, you can use it to do insert at and delete at. This is a new thing we've never been able to do before. What do you do? Just like over here, if I'm trying to insert an item, I search for that item over here.
+最关键：做insert at和delete at——以前从未能做到。
+
+62
+00:13:33,120 --> 00:13:37,660
+So if I'm trying to insert at i, for example, I look for i. And then
+在i处插入就找i。
+
+63
+00:13:40,620 --> 00:13:49,920
+for insert at i, I want to add a new item just before that one. And conveniently, we already have, I didn't mention, but we have a subtree insert.
+在位置i前添加新元素。已有子树插入操作。
+
+64
+00:13:51,320 --> 00:14:06,280
+And we can add two versions, before and after. I think we covered after, which is successor, before we used predecessor. But we can just call subtree insert before at that node.
+添加before和after两个版本。调用subtree insert before即可。
+
+65
+00:14:06,680 --> 00:14:17,400
+And boom, we will have added a new item just before it. And great. So magically, somehow, we have inserted in the middle of the sequence.
+在中间插入了新元素。
+
+66
+00:14:18,220 --> 00:14:26,880
+And all of the indices update because I'm not storing indices. Instead, to search for an item at index i, I'm using the search algorithm.
+所有索引更新因为没存索引——用搜索算法来找。
+
+67
+00:14:28,940 --> 00:14:32,340
+But there's a problem. What's the problem?
+但有个问题。
+
+68
+00:14:36,310 --> 00:14:48,760
+This seems a little too good to be true. I insert in the middle of this tree. And then somehow, I can magically search and still find the ith item, even though all the indices to the right of that item incremented by 1.
+好得不像是真的——插入后还能找到第i个？右边的索引都增加了1。
+
+69
+00:14:52,900 --> 00:14:54,640
+It's almost true. Answer?
+几乎是真的。回答？
+
+70
+00:14:58,160 --> 00:15:07,440
+Yeah? Because we have to update the sizes. Right. I didn't say, how do I compute the size of the left subtree? So that is the next topic.
+因为必须更新大小。如何计算左子树的大小？这是下个话题。
+
+71
+00:15:11,480 --> 00:15:20,200
+We're almost done. This will actually work. It's really quite awesome. But for it to work, we need something called subtree augmentation.
+快完成了。这确实可行。但需要子树增广。
+
+72
+00:15:22,760 --> 00:15:25,580
+Which I'll talk about generally. And then we'll apply it to size.
+一般性地讲增广，然后应用到size上。
+
+73
+00:15:30,540 --> 00:15:43,260
+So the idea with subtree augmentation is that each node in our binary tree can store a constant number of extra fields.
+每个节点可存常数额外字段。
+
+74
+00:15:44,560 --> 00:16:11,980
+Why not? And in particular, if these fields are of a particular type, or maybe I'll call them properties, I'm going to define a subtree property to be something that can be computed
+称为属性。子树属性可从子节点属性计算。
+
+75
+00:16:21,580 --> 00:16:25,500
+from the properties of the node's children.
+从子节点属性计算。
+
+76
+00:16:28,640 --> 00:16:30,700
+So I should say this is of a node.
+这是指节点的。
+
+77
+00:16:36,690 --> 00:16:39,840
+So children are node.left and node.right.
+子节点是node.left和node.right。
+
+78
+00:16:41,880 --> 00:16:53,520
+You can also access a constant amount of other stuff. For example, the node itself. But the point of a subtree property is it's downward looking. So I'm going to call it node.right.
+子树属性是向下看的。
+
+79
+00:16:53,960 --> 00:16:53,960
+And
+
+80
+00:16:56,260 --> 00:17:15,579
+I want to compute some property about it. We want to store p of the node. And suppose we already know p over here, the property computed for the left subtree, or for the left node. And we already know the property for the right node.
+要存储p(node)。假设已知左右节点的p。
+
+81
+00:17:15,940 --> 00:17:20,319
+Then what I'd like is for this to be computable in constant time.
+p(node)应在常数时间内可计算。
+
+82
+00:17:26,300 --> 00:17:36,580
+So I can compute p of this node given p of the left node and p of the right node. That's a subtree property. Now in particular, size is a subtree property.
+可由左右p计算出。这就是子树属性。size是其中之一。
+
+83
+00:17:37,980 --> 00:17:47,840
+Why? Because I can write this kind of recurrence. Node.size equals node.left.size.
+因为node.size = node.left.size + node.right.size + 1。
+
+84
+00:17:49,400 --> 00:17:59,820
+This is very tedious to write. So node.right.size plus 1.
+写起来繁琐。node.right.size + 1。
+
+85
+00:18:04,220 --> 00:18:15,860
+Thank you. Size of the entire subtree here, called node, is the size of the left subtree plus the size of the right subtree plus 1 for that node itself.
+整棵子树的大小 = left + right + 1。
+
+86
+00:18:17,220 --> 00:18:24,940
+So this is an update rule. Takes constant time to evaluate. It's two additions. Sorry, my t's look kind of like plus signs.
+常数时间计算——两个加法。
+
+87
+00:18:27,940 --> 00:18:29,420
+The plus is a little bigger.
+加号稍大。
+
+88
+00:18:35,680 --> 00:18:50,040
+OK, so we're summing those three things. Boom, we can get node.size. So I claim that as long as my property has this feature, I can maintain it dynamically as I'm changing the tree.
+三项加起来得到node.size。只要属性有这个特征就能动态维护。
+
+89
+00:18:50,600 --> 00:19:04,760
+OK, now this is a little bit of a forward reference because we haven't said exactly how we're going to change the tree yet. But question? If node.size is recursive, how is it happening in constant time? Wouldn't it happen in? OK,
+这是前向引用——还没说树怎么修改。如果node.size递归怎么常数时间？
+
+90
+00:19:06,000 --> 00:19:22,400
+good question. So one natural way, you can think of this as a recursion, which gives you a recursive algorithm. So I wrote, but I didn't write it. But I could have written size of node equals this, size of node.left plus. And that would give you a linear time algorithm to count the size.
+好问题。递归算法size(node)=size(left)+size(right)+1是线性时间。
+
+91
+00:19:23,160 --> 00:19:32,800
+And if you don't have any information, that is what you would do. And that would be very painful. So that would make this algorithm really slow. If I'm calling size of the recursive function, it's bad.
+如果没有先验信息那会很慢。递归调size函数很糟糕。
+
+92
+00:19:33,760 --> 00:19:48,180
+What I'm instead doing is storing the sizes on every single node. OK, and pre -computing this. So in fact, I'm going to define size of node in, so this is the definition mathematically.
+我们在每个节点存储size，预计算好。
+
+93
+00:19:48,540 --> 00:19:59,900
+But the algorithm for this function is just going to be return node.size. So that's constant time. So the challenge now is I have to keep these sizes up to date no matter what I do to the tree.
+算法只需return node.size——常数时间。挑战是无论怎么改树都要保持最新。
+
+94
+00:20:00,620 --> 00:20:14,660
+And you could look back at last lecture and see, OK, what were all the changes that I did in a tree? We only did changes during insert and delete. And I will just claim to you, when we did insert and delete,
+回顾上次课——只在插入删除时修改树。
+
+95
+00:20:17,100 --> 00:20:34,000
+what they ended up doing, in the end, they add or remove a leaf of the tree.
+最终添加或删除叶节点。
+
+96
+00:20:34,920 --> 00:20:36,680
+Remember, leaf was a node with no children.
+叶节点是没有子节点的节点。
+
+97
+00:20:39,200 --> 00:20:48,480
+So let's just think about, if I add a new leaf in a tree, here's a tree. Suppose I add a leaf here. Which subtrees change? Well,
+
+98
+00:20:49,300 --> 00:20:59,780
+which subtrees contain that node? It is its own new subtree. Then its parent, it's in its parent's subtree and its grandparent's subtree and the overall subtree.
+它自身、父节点、祖父节点等的子树。
+
+99
+00:21:00,900 --> 00:21:12,200
+OK, in general, these nodes are called the ancestors of this node that we added. And those are the ones that update. This subtree over here didn't change. It didn't change size. And because
+这些叫祖先节点。只有这些需要更新。不受影响的子树不变。
+
+100
+00:21:12,800 --> 00:21:28,240
+it's a subtree property, no subtree property will change over here because the subtree was untouched. OK, so when I touch this guy, I just have to update the subtree property here, update the subtree property here, update the subtree property here. How many of these are there?
+子树属性不会改变。需更新这个节点的子树属性。有多少个？
+
+101
+00:21:30,600 --> 00:21:37,820
+Yeah, h. I'll say order h to be safe, but I think it's exactly h.
+O(h)个。
+
+102
+00:21:39,880 --> 00:21:51,900
+So also, when I remove a leaf, the same thing. If I remove this leaf, then the subtrees that change are exactly its former ancestors. Cool.
+删除叶节点同理。改变的正好是之前的祖先。
+
+103
+00:21:55,450 --> 00:22:08,560
+So we're going to update those order h ancestors in order
+更新O(h)个祖先。
+
+104
+00:22:10,780 --> 00:22:11,660
+up the tree.
+沿树向上。
+
+105
+00:22:13,760 --> 00:22:25,720
+So what do I mean by update? I mean apply this rule. For size, it's this rule. But in general, the subtree property gives me an update rule that takes constant time.
+更新指应用规则。size就是这个规则。子树属性提供常数时间更新。
+
+106
+00:22:26,300 --> 00:22:48,920
+And so I'm going to apply that update rule to this node, which will fix whatever property is stored in there. Maybe there's more than one property. And then I'll apply it to this node. And because this is already correct by induction, and this is already correct because I didn't touch this subtree, it's unchanged, then I can update the value at this node, the property at this node, in constant time.
+应用规则修复其中属性。可能不止一个。已在常数时间更新。
+
+107
+00:22:49,280 --> 00:22:59,740
+Then I update this one. And because this one is already correct by induction, and this one is already correct because this subtree is unchanged, I can update the property correctly here in constant time.
+然后更新这个——已在常数时间正确更新。
+
+108
+00:23:00,420 --> 00:23:09,380
+So when I make a change in order h time, because I'm making h calls to this constant time algorithm, I can update a constant number of subtree properties.
+O(h)时间内通过h次常数调用更新常数数量的子树属性。
+
+109
+00:23:11,700 --> 00:23:22,490
+This is very powerful. Data structure augmentation is super useful. You will use it on your problem set. We will use it again today. Let me give you some examples of subtree properties.
+非常强大！子树增广超级有用。你们会在作业中用到。举一些例子。
+
+110
+00:23:28,260 --> 00:23:37,820
+They could be common ones are like the sum, or the product, or the min, or the max,
+常见的有和、积、最小、最大等。
+
+111
+00:23:40,390 --> 00:23:44,970
+or sum of squares, or all sorts of things of sum
+平方和等。
+
+112
+00:23:49,920 --> 00:24:04,960
+of every node in the subtree. In fact, subtree size is an example of such a thing. It is the sum over all nodes in the subtree of the value 1.
+子树中所有节点的和。子树大小就是例子——所有节点1的和。
+
+113
+00:24:05,640 --> 00:24:14,960
+That's another way to say count the number of nodes. But you could also say, what's the sum of the keys in these nodes? Or you could say, what's the maximum key in these nodes? Or you could say,
+即节点计数。也可求键的和、最大键等。
+
+114
+00:24:18,260 --> 00:24:32,100
+what is the maximum value in these nodes? You can take any property. It doesn't have to be key. It doesn't have to be anything in particular. This is very powerful. You can take all sums, products, and maintain them as long as they're downward looking, as long as you're only thinking about the subtree.
+任何属性都行——和、积，只要向下看只考虑子树。
+
+115
+00:24:33,480 --> 00:24:38,900
+Some examples of things you cannot maintain are
+不能维护的例子：
+
+116
+00:24:41,980 --> 00:24:42,580
+not
+
+117
+00:24:44,720 --> 00:24:45,560
+a node's index.
+节点的索引。
+
+118
+00:24:48,110 --> 00:25:01,200
+So if you get a little bit too excited about augmentation, you might think, oh, I can do everything. I needed to support subtree at, or let's just say, get at globally. I wanted to know, what is the ith node in my tree?
+你可能认为能做所有事——需要支持subtree_at获取第i个节点。
+
+119
+00:25:01,580 --> 00:25:17,480
+Well, I'll just use data structure augmentation and store in every node what is its index, 0 through n minus 1. I can't maintain that efficiently, because if I insert at the beginning of my traversal order, then all the indices change.
+在每个节点存索引0到n-1。不能高效维护——在开头插入所有索引都变了。
+
+120
+00:25:18,320 --> 00:25:30,880
+So that's an example of an edit. So if I insert a new node over here, so this guy's index was 0, now it's 1. This guy's index was 1, now it's 2. This was 2, now it's 3, and so on. Every node changes its index.
+例如插新节点——原来0变1,1变2,2变3。所有索引都变了。
+
+121
+00:25:31,580 --> 00:25:47,360
+Index is not a subtree property, and that's why we can't maintain it, because it depends on all of the nodes in the tree, or it depends on all the nodes to its left, all the predecessors. So for example, this guy's index depends on how many nodes are over here on the left, which is not in the subtree of that node.
+索引不是子树属性——依赖于左边所有节点。
+
+122
+00:25:48,060 --> 00:26:00,500
+So that's where you have to be careful. Don't use global properties of the tree. You can only use subtree properties. Another example is depth.
+小心！只能用子树属性。另一个例子是深度。
+
+123
+00:26:01,980 --> 00:26:09,640
+Depth is annoying to maintain, but it's not obvious why yet. We will see that in a moment.
+深度麻烦但原因稍后揭晓。
+
+124
+00:26:14,740 --> 00:26:40,020
+The rest of today is about going from order h to order log n, which is what this slide is showing us. So at this point, you should believe that we can do all of the sequence data structure operations in order h time, except for build and iterate, which take linear time, and that we can do all of the set operations in order h time, except build and iterate, which take n log n and n respectively.
+今天剩余：从O(h)到O(log n)。现在你应相信所有序列操作在O(h)。
+
+125
+00:26:40,780 --> 00:26:43,230
+And our goal is to now bound
+目标是约束H。
+
+126
+00:26:48,720 --> 00:26:59,080
+h by log n. We know it's possible at some level, because there are trees that have logarithmic height. That's like this perfect tree here.
+约束H=O(log n)。存在对数高度的树如完美树。
+
+127
+00:27:00,700 --> 00:27:04,080
+But we also know we have to be careful, because there are some bad trees, like this chain.
+也要小心坏树如chain。
+
+128
+00:27:07,260 --> 00:27:07,480
+So
+
+129
+00:27:10,020 --> 00:27:15,100
+if h equals log n, we call this a balanced binary tree.
+H=log n时称为平衡二叉树。
+
+130
+00:27:18,910 --> 00:27:33,940
+There are many balanced binary trees in the world, maybe a dozen or two. A lot of different data structures. Question? Hi, Kurt. You said not to think about things on a global level, just to think of them at a subtree level. Can you explain what that means?
+有一二十种平衡二叉树。有问题吗？
+
+131
+00:27:34,730 --> 00:27:54,020
+OK. What does it mean for a property to be local to a subtree versus global? The best answer is this definition, but that's maybe not the most intuitive definition. This is what I mean. Something that can be computed just knowing information about your left and right children, that is the meaning of subtree property. And those are the only things you're allowed to maintain.
+局部vs全局属性？可从左右子节点信息计算的即子树属性。
+
+132
+00:27:54,620 --> 00:28:12,620
+Those are the only things that are easy to update by walking up this path. And the contrast is that a global property like index, it's global in particular, because I can do one change, add one node, and all of the node's properties change.
+只有这些能通过向上走更新。全局属性如索引一次修改全变。
+
+133
+00:28:13,060 --> 00:28:22,500
+So that's an extreme example of global. We want this very particular notion of local, because that's what we can actually afford to recompute.
+全局的极端例子。我们要特定的局部概念。
+
+134
+00:28:23,680 --> 00:28:25,420
+Hopefully that clarifies. Yeah?
+希望说清楚了。
+
+135
+00:28:28,310 --> 00:28:38,920
+You're right that if we added, oh no, let's, OK, let's think about that. If we added a new parent to the tree, this is not something that we've ever done.
+如果添加新父节点——我们从未做过。
+
+136
+00:28:40,250 --> 00:28:45,280
+But even if we did that, which subtrees change? Only this one.
+即使做了，只有这一个子树变了。
+
+137
+00:28:47,560 --> 00:28:58,860
+This node, it's a totally new subtree. But the subtree of this node is completely unchanged, because subtree's always downward looking. If I added a new root, I didn't change any subtrees except for one.
+这是新子树但它的子树没变——子树向下看。
+
+138
+00:28:59,980 --> 00:29:11,420
+So size is a subtree property. Now there are, I mean, I could completely redraw the tree, and that's an operation that requires everything to be recomputed. So it is limited exactly what I'm allowed to do in the tree.
+size是子树属性。可重画树但那要全部重算。
+
+139
+00:29:11,840 --> 00:29:23,160
+But I claim everything we'll do, last class and today, we can afford this augmentation. So it's a feature not of all binary trees necessarily, but of the ones that we would cover. Yeah? What
+上次和今天的操作都能承担增广。
+
+140
+00:29:24,520 --> 00:29:29,400
+is a min? What is a min? Binary tree. Binary tree. Yeah.
+最小值？二叉树。
+
+141
+00:29:31,700 --> 00:29:37,980
+OK. This will make a little more sense in a moment when I say what we're actually going to do with trees.
+接下来会更清楚。
+
+142
+00:29:46,380 --> 00:29:51,820
+We need a new tool for manipulating a tree.
+需要新工具操作树。
+
+143
+00:29:53,960 --> 00:30:03,680
+What we've done so far, we've done some swapping of items, and we did adding and removing the leaf. That's not enough. We're going to need something else to let us guarantee logarithmic height.
+做了交换元素和增删叶——还不够。
+
+144
+00:30:05,500 --> 00:30:08,060
+And that something else is called a rotation.
+那就是旋转。
+
+145
+00:30:12,180 --> 00:30:24,020
+What does this something else need to do? This is just a tool for rebalancing the tree. So it should not change the data that's represented by the tree. What is the data represented by the tree?
+重新平衡的工具。不应改变树表示的数据。
+
+146
+00:30:24,740 --> 00:30:38,800
+Traversal order. Traversal order is sacrosanct. We're not allowed to touch it. It's already defined two different ways, depending on whether you're using a set or sequence. So we want to modify the tree in a way that doesn't modify the traversal order.
+遍历顺序神圣不可侵犯。要不改变遍历顺序修改树。
+
+147
+00:30:39,560 --> 00:30:52,180
+So we're exploiting redundancy. So if you wrote down the traversal order in an array, there's exactly one representation of a given order. But in a tree, there's many representations. It could be a long line. It could be a balanced thing.
+利用冗余性——数组中一种表示，树中多种。
+
+148
+00:30:52,660 --> 00:31:06,770
+They could represent the exact same order on the nodes if you label them right. In fact, there are exponentially many different representations of the same thing. And we're going to exploit that, the same order, and define this is just a thing you need to know.
+指数多种表示同一顺序。
+
+149
+00:31:20,720 --> 00:31:31,060
+Any label, A, X, B, Y, C. You can tell I've drawn this diagram before many, many times.
+任何标号。我画过很多次。
+
+150
+00:31:31,660 --> 00:31:39,420
+This is a very powerful tool in all tree data structures, which are most of data structures. And they are called right rotate.
+强大工具——右旋。
+
+151
+00:31:48,220 --> 00:31:48,720
+So if
+
+152
+00:31:53,540 --> 00:32:08,780
+I have this tree, which I'm just black boxing some of the subtrees into little triangles, if I have a node and it has a left child, then I'm allowed to right rotate this edge, which means take this edge and go like this, 90 degrees, kind of.
+有左子节点就可右旋这条边。
+
+153
+00:32:09,220 --> 00:32:19,940
+Or you could just think of it as rewriting it this way. Now, you might be thinking, I might also keep in track of the parent pointer. Parent pointer moves around. Before, this was the parent of Y. Now it's the parent of X.
+父指针移动了。
+
+154
+00:32:21,860 --> 00:32:41,240
+So X and Y are switching places. But we couldn't just swap these items around, because that would change traversal order. In this picture, X comes before Y, because X is in the left subtree of Y in traversal order. And over here, now Y is in the right subtree of X. So it comes after X.
+X和Y交换位置但不能直接交换元素。
+
+155
+00:32:41,840 --> 00:32:52,780
+In both cases, X comes before Y. And indeed, in all of these pictures, the traversal order, I mean, not just for X and Y, but also for A, B, and C, the traversal order is consistent.
+两种情况下遍历顺序一致。
+
+156
+00:32:53,380 --> 00:33:04,760
+It is A, X, B, Y, C. Where when I write a triangle, I mean recursively the traversal order of all the things in the triangle.
+顺序A,X,B,Y,C。三角形表示递归遍历顺序。
+
+157
+00:33:05,640 --> 00:33:12,840
+So if you just apply the traversal order algorithm here versus here, you get the same output, which means these operations preserve traversal order.
+得到相同输出——保持遍历顺序。
+
+158
+00:33:18,460 --> 00:33:28,600
+Great. So this is a thing that we can do in a tree that won't affect any of the stuff we've done so far. It's a tool that we can use to rebalance.
+不影响之前工作，是重新平衡的工具。
+
+159
+00:33:29,010 --> 00:33:40,320
+Notice how deep things are in the tree changes. Our problem with this linear tree is that there are some nodes of linear depth. We want to get rid of those.
+深度变化。线性树的问题。
+
+160
+00:33:41,000 --> 00:33:53,060
+How? So if you take these edges and start rotating them up, if you look at depths, in this picture, A and B are deeper than C. And in this picture, B and C are deeper than A.
+旋转后它们交换深度。
+
+161
+00:33:53,520 --> 00:34:15,199
+So there's a trade -off. This one moved up. This one moved down. This one stayed at the same depth. So hopefully, if A is too deep and C is too shallow, they can trade off like this. It may sound difficult, but in fact, there's a pretty simple way which are called AVL trees
+有取舍。有简单方法叫AVL树。
+
+162
+00:34:18,360 --> 00:34:24,840
+that maintain balance in a particular way called height balance.
+通过高度平衡维护平衡。
+
+163
+00:34:33,860 --> 00:34:38,980
+This is if we take the height
+
+164
+00:34:41,360 --> 00:34:41,820
+of the tree
+
+165
+00:34:43,889 --> 00:34:58,160
+node dot left. Actually, I'd prefer to node dot right minus height of node dot left.
+
+166
+00:35:02,380 --> 00:35:08,720
+So this thing is called skew of the node.
+称为偏斜。
+
+167
+00:35:11,840 --> 00:35:14,840
+And it's going to always be minus 1, 0, or plus 1.
+始终在-1,0,+1之间。
+
+168
+00:35:17,840 --> 00:35:30,020
+So this is saying that if I have any node, and I look at its left subtree and its right subtree, I measure their heights. Remember, that's downward distance, maximum distance to a leaf.
+左右子树高度应相近。
+
+169
+00:35:30,820 --> 00:35:41,210
+I measure the height of this tree, maximum height. I measure the maximum height of this subtree. I want these to be within one of each other. Ideally, they're equal. That would be the perfect case.
+理想情况相等。
+
+170
+00:35:41,840 --> 00:35:53,340
+But let's let them differ by 1. So maybe this is k, and this is k plus 1. Or maybe this is k, and this is k minus 1. In this picture, what is the height of this node?
+允许相差1。这个节点的高度？
+
+171
+00:35:53,950 --> 00:35:54,740
+That's good practice.
+好练习。
+
+172
+00:35:57,160 --> 00:36:07,280
+k plus 2. Good. What's the longest path from this node to a leaf? Well, it could go through this subtree. And that would be length k plus 1, because it's k in here plus 1 for this edge.
+k+2。最长路径长度k+1。
+
+173
+00:36:07,700 --> 00:36:10,200
+Or it could be through here, and that's k plus 1 plus 1.
+或k+1+1。
+
+174
+00:36:12,420 --> 00:36:31,220
+So the height, if I told you the height of these subtrees, we can derive the height of this node. We're going to use that a lot in a moment. So first claim is that if I could maintain height balance, then I will guarantee that h equals log n. So in other words, height balance implies balance.
+高度平衡保证h=log n。
+
+175
+00:36:32,420 --> 00:36:41,940
+So let's prove that first quickly. And then the interesting part is, how do we actually prove that?
+先证明。
+
+176
+00:36:45,180 --> 00:36:51,480
+Or how do we actually maintain the balance property? We're going to do that using rotations. But how is a big question.
+如何用旋转维护？
+
+177
+00:37:01,340 --> 00:37:03,940
+OK. So why does height balance
+
+178
+00:37:06,900 --> 00:37:07,610
+imply balance?
+
+179
+00:37:16,740 --> 00:37:30,020
+So what this is saying is that all height balance trees have logarithmic height. So what I'd like to think about is the least balanced height balance tree.
+所有高度平衡树都有对数高度。考虑最不平衡的情况。
+
+180
+00:37:30,760 --> 00:37:40,900
+The least balanced one is going to have, at every node, a mismatch. Let's say the left subtree is shallower than the right subtree by 1.
+每个节点左子树比右子树浅1。
+
+181
+00:37:41,840 --> 00:37:44,800
+So it's going to be inversively all the way down. So every node has a gap,
+
+182
+00:37:46,980 --> 00:37:52,620
+a skew of 1,
+
+183
+00:37:55,100 --> 00:38:03,400
+which I'm going to write. I'm going to introduce some notation. I'll write a descending rightward arrow if this one is higher than the left subtree.
+引入符号。
+
+184
+00:38:06,110 --> 00:38:10,100
+So the easy way to think about this is, this is sort of our worst case.
+这是最坏情况。
+
+185
+00:38:40,440 --> 00:38:54,720
+do data. has height h minus 1. So how many nodes are in here? Well, this is a recurrence I'm going to write. So this will be n sub h minus 2. This will be n sub h minus 1.
+
+186
+00:38:55,460 --> 00:39:05,140
+And then I just count how many nodes are in this picture. It is n sub h minus 1 plus n sub h minus 2 plus 1, or this node.
+节点数：N_{h-1}+N_{h-2}+1。
+
+187
+00:39:05,740 --> 00:39:17,760
+Now, you might ask, what is an NH recurrence for? But it is the number of nodes in this sort of worst case for if the worst case has total height h.
+N_h是高度h的最坏情况节点数。
+
+188
+00:39:18,620 --> 00:39:26,860
+So you can also think of it as, what is the minimum number of nodes I could have in an AVL tree, which is a height balance tree, that has height h?
+高度h的AVL树的最小节点数。
+
+189
+00:39:33,660 --> 00:39:36,010
+In a height balance tree.
+高度平衡树中。
+
+190
+00:39:39,580 --> 00:39:41,960
+So in order to solve this recurrence, does this recurrence look familiar?
+解递推——熟悉吗？
+
+191
+00:39:46,420 --> 00:39:59,440
+Ish. It's like Fibonacci numbers. If I remove the plus 1, it's Fibonacci. And if you happen to know the Fibonacci numbers grow as like a golden ratio to the n, then we know that this is exponential, which is what we want.
+类似斐波那契——去掉+1就是，指数增长。
+
+192
+00:39:59,840 --> 00:40:15,220
+Because if NH is exponential in h, that means h is logarithmic in n, because log is inverse of exponential. But maybe you don't know about Fibonacci numbers. So we can still easily show that this is exponential as follows.
+指数则h对数。不知道斐波那契也能证明。
+
+193
+00:40:16,000 --> 00:40:29,580
+I want to prove that it's at least an exponential, because that gives me that h is at most logarithmic. So we need a lower bound. And so we have these two terms which are hard to compare, n sub h minus 1 and n sub h minus 2. It's kind of ugly.
+证明至少指数级——需要下界。两项难以比较。
+
+194
+00:40:30,100 --> 00:40:37,120
+But if we're allowed to be sloppy, and we'll see if we're not too sloppy and still get an exponential answer, let's just make them equal.
+如果允许粗略，让它们相等。
+
+195
+00:40:39,580 --> 00:40:40,420
+Like so.
+这样。
+
+196
+00:40:44,280 --> 00:40:59,860
+So this is a true statement. In fact, strictly greater than. Why? Because so I removed the plus 1. That should only make something smaller. And I replaced n sub h minus 1 with n sub h minus 2. Here I'm implicitly using a fact which is obvious by induction.
+严格大于——因移除了+1。
+
+197
+00:41:00,400 --> 00:41:11,540
+That this tree on height, if I take this tree versus this tree, this one has more nodes than this one. If I have larger height, this construction is going to build a bigger tree.
+高度越大节点越多。
+
+198
+00:41:12,280 --> 00:41:23,680
+At least as big. It doesn't even need to be strictly bigger. So certainly, n sub h minus 1 is greater than or equal to n sub h minus 2. Now this is 2 times n sub h minus 2.
+N_{h-1} >= N_{h-2}。所以是2倍。
+
+199
+00:41:24,400 --> 00:41:36,900
+And this is an easy recurrence. This is just powers of 2. I keep multiplying by 2 and subtracting 2 from h. So this solves to 2 to the h over 2, maybe with a floor or something.
+简单递推——2的幂。解为2^{h/2}。
+
+200
+00:41:38,000 --> 00:41:48,690
+But it is, I'm using a base case here, which is n sub 0 equals 1. Maybe it's a ceiling then. But the point is, this is exponential.
+这是指数级。
+
+201
+00:41:49,480 --> 00:42:07,320
+So this implies that the height is always at most 2 times log n. This 2 corresponds to this 2. If you just invert this formula, this was number of nodes is going to be at least 2 to the h over 2. And so h is at most 2 log n.
+所以h <= 2 log n。
+
+202
+00:42:07,860 --> 00:42:18,800
+So it's not log n. That would be perfect. But it's within a factor of 2 of log n. So AVL trees are always quite balanced. Number of levels is at most double what you need to store n nodes.
+不正好log n但在2倍以内——足够平衡。
+
+203
+00:42:19,940 --> 00:42:20,180
+Great.
+好。
+
+204
+00:42:24,120 --> 00:42:33,860
+We're left with the main magic. Not domain magic. That's different. And let's see. We're going to use subtree augmentation.
+主要魔法是子树增广。
+
+205
+00:42:37,860 --> 00:42:37,960
+That.
+
+206
+00:42:45,620 --> 00:42:55,440
+Big remaining challenge is, how do we maintain this height balance property using rotations? We have all the ingredients lined up for us. We have subtree augmentation.
+剩余挑战：如何用旋转维护高度平衡。
+
+207
+00:42:56,820 --> 00:42:57,860
+What does that let me do?
+能做什么？
+
+208
+00:43:00,940 --> 00:43:04,900
+It's relevant to AVL trees. Well, it lets me store height.
+存储高度。
+
+209
+00:43:07,860 --> 00:43:19,180
+So to compute the height of a node, that in general, it takes linear time because I have to look at all the downward paths, all the leaves within that subtree. But height is a subtree property.
+计算高度一般需线性时间——但高度是子树属性。
+
+210
+00:43:21,080 --> 00:43:25,120
+So yes, height.
+高度是。
+
+211
+00:43:27,660 --> 00:43:34,640
+Why? Because let me just write it here. Node.height.
+因为node.height = 1 + max(node.left.height, node.right.height)。
+
+212
+00:43:38,450 --> 00:43:44,420
+Equals 1 plus max of node.left.height
+1 + max(左高, 右高)。
+
+213
+00:43:49,300 --> 00:43:51,100
+and node.right.height.
+和右高。
+
+214
+00:43:56,060 --> 00:44:06,260
+End of max. Let me put this in a box. This equation, or I guess it's an assignment operation. This is a 1.
+这个公式——常数时间更新规则。
+
+215
+00:44:08,660 --> 00:44:18,440
+It's the thing we've been doing over and over. When I said, what is the height of this node? You just figured that out. You took the height of the left subtree, maxed with the height of the right subtree, and added 1 to count for these edges.
+一直都在做——左高和右高取最大加1。
+
+216
+00:44:19,180 --> 00:44:40,130
+So this is a general update rule. It matches this subtree property pattern. If I have the property of left and right, I can compute it for node. And this takes constant time to do. And so it's a subtree property. And so I can maintain, through all the things I'm doing, the height of every node. Oh, by the way, whenever I do a rotation, I'm also going to have to update my subtree properties.
+通用更新规则——常数时间。所以能维护每个节点的高度。
+
+217
+00:44:41,300 --> 00:44:51,560
+When I rotate this edge, a does not change. b does not change. c does not change. So that's good. But x's subtree changes. It now has y it didn't before.
+旋转后x的子树变了。
+
+218
+00:44:52,400 --> 00:45:01,670
+So we're going to have to also update the augmentation here in y. And we're going to have to update the augmentation in x.
+要更新y和x的增广。
+
+219
+00:45:02,760 --> 00:45:16,600
+And we're going to have to update the augmentation of all of the ancestors of x. Eventually. So rotation is locally just changing a constant number of pointers. So I usually think of rotations as taking constant time.
+最终更新x的所有祖先——旋转本身是常数时间。
+
+220
+00:45:18,180 --> 00:45:22,420
+But eventually, we will have to do, this is constant time locally.
+局部常数时间。
+
+221
+00:45:24,630 --> 00:45:27,790
+But we will need to update
+需要更新。
+
+222
+00:45:32,020 --> 00:45:40,340
+h ancestors in order to store all of our augmentation operations up to date. We'll worry about that later.
+更新h个祖先以保持增广最新。
+
+223
+00:45:43,620 --> 00:45:57,840
+All right. So great. Now we have the height of all the nodes. We can compute the skew of all the nodes. Cool. We have this rotation operation. And we want to maintain this height balance property.
+有高度就能计算偏斜。现在用旋转维护高度平衡。
+
+224
+00:45:58,560 --> 00:46:03,400
+Height of left node, left and right of every node is plus or minus 1 or 0.
+左右高度差在±1或0。
+
+225
+00:46:06,240 --> 00:46:06,620
+Cool.
+好。
+
+226
+00:46:09,260 --> 00:46:21,580
+So I said over here somewhere, whenever we, so the only things that change the tree are when we insert or delete a new node. And the way that we implemented those so far is to add or remove a leaf.
+唯一改变树的是插入或删除叶节点。
+
+227
+00:46:22,120 --> 00:46:34,860
+So we should still be thinking about adding or removing a leaf. The problem is when I add a new leaf, now maybe this tree is higher than it used to be. So some node here may no longer be height balanced.
+加叶节点后树可能变高，某些节点不再平衡。
+
+228
+00:46:35,420 --> 00:46:45,760
+But because height is a subtree property, the only new nodes we need to check are the ones up this ancestor path. And there's only log n of them. Because now height is log n. That's what we just proved.
+只需检查祖先路径——只有log n个。
+
+229
+00:46:46,540 --> 00:46:57,040
+As long as we have this property. Now we right now don't have it for maybe these few nodes. But it will be, it was log n before. It's at most log n, 2 log n plus 1 right now. Because we just added a node.
+现在是log n或2 log n+1。
+
+230
+00:46:58,220 --> 00:47:07,840
+So what I want to do is check all of these ancestor nodes in sequence from bottom up. And find one that's out of balance. So let's take the,
+从下到上检查所有祖先直到找到不平衡的。
+
+231
+00:47:11,730 --> 00:47:15,700
+lowest out of balance node.
+最低的不平衡节点。
+
+232
+00:47:21,600 --> 00:47:36,240
+And I'm going to call that x. Now because we just insert or deleted a single leaf, it's only out of balance by 1. Because we only changed height, one height went up by 1 or one height went down by 1.
+因为只增删一个叶节点，偏斜只差1。
+
+233
+00:47:36,800 --> 00:47:47,120
+And before, all of our skews were plus or minus 1 or 0. So now, the bad case is when it's plus or minus 2. If it happens to still be in this range for all the nodes, we're happy.
+坏情况是偏斜变成±2。
+
+234
+00:47:47,640 --> 00:47:57,380
+But if it's outside this range, it's only going to be out by 1. So this means the skew is in plus 2 or minus 2.
+偏斜为+2或-2。
+
+235
+00:47:58,680 --> 00:48:11,880
+And let's say that it's 2 by symmetry. So my picture is, I'm going to draw. I'm going to draw a double right arrow to say that
+设为+2。画双右箭头。
+
+236
+00:48:14,620 --> 00:48:24,720
+this subtree is 2 higher than this subtree. So that's bad. And we want to fix it. The obvious thing to do is to rotate this edge.
+这个子树高2——旋转修复。
+
+237
+00:48:25,520 --> 00:48:36,380
+Because that'll make this, this is 2 high and this is 2 low. So if we rotate, this should go down by 1 and this should go up by 1. And that works most of the time.
+旋转后高降低低升高。大多数情况有效。
+
+238
+00:48:38,260 --> 00:48:49,740
+So case 1 is that skew of y. What is y? I want y to be the right child of x.
+情况1：y是x的右子节点。
+
+239
+00:48:50,320 --> 00:49:04,020
+Because we have positive skew, we know there is a right child. Now, because this was the lowest bad node, we know that y is actually good. It's either right heavy or even. The two subtrees have the same height or left heavy.
+偏斜为正必有右子节点。y本身是好的。
+
+240
+00:49:04,840 --> 00:49:07,680
+The easy case is, are
+简单情况。
+
+241
+00:49:12,360 --> 00:49:17,180
+when skew of y is either 1 or 0,
+y的偏斜为1或0时。
+
+242
+00:49:21,780 --> 00:49:22,920
+which I will draw.
+画出来。
+
+243
+00:49:30,240 --> 00:49:34,620
+So double right arrow. Let's say single right arrow.
+双右箭头——单右箭头。
+
+244
+00:49:40,500 --> 00:49:45,640
+So this, I'm just going to add some labels here to make this picture consistent.
+加些标记使图一致。
+
+245
+00:49:48,980 --> 00:50:04,980
+k plus 1, k plus 2. I'm writing the heights. So this is an example where c is taller than b. a and b are the same height. And then if you compute the heights up here, indeed, this one is right leaning. This one is doubly right leaning.
+写高度——右倾和双右倾。
+
+246
+00:50:05,340 --> 00:50:14,220
+Because this one has height k plus 1. This one has height k minus 1. That's bad. But if we do this right rotation on x, we get exactly what we want.
+右旋x后得到所需结果。
+
+247
+00:50:18,040 --> 00:50:28,460
+So I'm just going to copy the labels on a, b, c. We have k minus 1, k minus 1, and k. And then recompute. That means this guy has height k. This one has height k plus 1.
+复制标记重算。
+
+248
+00:50:29,200 --> 00:50:40,960
+And now, all the nodes in this picture that I've highlighted, a, b, and c haven't changed. They were height balanced before. They still are. But now, x and y. x wasn't height balanced before. y was. Now both x and y are height balanced.
+a,b,c没变。x之前不平衡现在平衡了。
+
+249
+00:50:42,100 --> 00:50:51,700
+That's case 1. In case 2, the skew of y is flat, which means that this is a k.
+情况1。情况2：y偏斜为0。
+
+250
+00:50:52,300 --> 00:51:02,460
+And this is a k. And this is a k plus 1. And this is a k plus 2. But still, all the nodes are balanced. Height balanced. They're still plus or minus 1.
+所有节点仍平衡。
+
+251
+00:51:03,260 --> 00:51:11,320
+So those are the easy cases. Unfortunately, there is a hard case. Case 3. But there's only one. And it's not that much harder.
+简单情况。有且仅有一个难的情况3。
+
+252
+00:51:16,580 --> 00:51:19,460
+So it's when skew of y is minus 1.
+y偏斜为-1时。
+
+253
+00:51:21,920 --> 00:51:24,820
+In this case, we need to look at the left child of y.
+查看y的左子节点。
+
+254
+00:51:27,140 --> 00:51:31,800
+And to be alphabetical, I'm going to rename this to z.
+重命名为z。
+
+255
+00:51:33,990 --> 00:51:47,740
+So this one, again, is double right arrow. This one is now left arrow. And this is letter y. And so we have a, b, c, and d.
+双右箭头加左箭头。有a,b,c,d。
+
+256
+00:51:48,420 --> 00:52:01,800
+Potential subtrees hanging off of them. And I'm going to label the heights of these things. These are each k minus 1 or k minus 2. This one's k minus 1. And now compute the insides.
+标记高度。
+
+257
+00:52:02,420 --> 00:52:15,980
+So this is going to be height k for this to be left leaning. So this is k plus 1. And this is k plus 2. But the problem is this is too higher than this. The height of z is too higher than the height of a.
+z的高度比a高太多。
+
+258
+00:52:17,280 --> 00:52:28,420
+In this case, if I do this rotation, things get worse, actually. I'll just tell you the right thing to do is this is the one thing you need to memorize.
+直接旋转会变糟——需要记住正确做法。
+
+259
+00:52:41,740 --> 00:52:51,210
+And let me draw the results. You can also just think of it as redrawing the tree like this. But it's easier from an analysis perspective to think about it as two rotations.
+可以看作两次旋转。
+
+260
+00:52:51,780 --> 00:53:06,780
+Then we can just reduce. As long as we know rotations work, then we know that this thing works. Works meaning it preserves traversal order. And we can maintain all the augmentations. So now if I copy over these labels, the height labels, I have k minus 1. I have for these two guys k minus 1.
+旋转有效意味着保持遍历顺序并能维护增广。
+
+261
+00:53:09,480 --> 00:53:33,360
+And I'm going to do this one. So this is k minus 1. And this is k minus 1. And this is k minus 1. And so this will be k. This will be k. This will be k plus 1. And lo and behold, we have a nice height balance tree in all three cases for this one node. Now this was the lowest node. Once we update this one, it could be that we change the height of the root. Before it was k plus 2.
+三种情况都得到高度平衡树。
+
+262
+00:53:34,220 --> 00:53:51,350
+Now it's k plus 1. Or sometimes we keep it the same, like over in this case. And so now we have to check the parent. Maybe the parent is out of balance. We just keep walking up the node and also maintain all the augmentations as we go. Then we'll keep track of height and subtree size if we want them or any other augmentations.
+现在k+1或不变。检查父节点——继续向上走并维护增广。
+
+263
+00:53:52,120 --> 00:54:01,840
+And after order h operations, we will have restored the height balance property, which means all the way through h equals order log n. And so all of our operations now are magically order log n.
+经过O(h)次操作恢复高度平衡——所有操作变为O(log n)。
+

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="470" viewBox="0 0 680 470" font-family="'Noto Sans CJK SC','WenQuanYi Zen Hei','Microsoft YaHei',sans-serif">
+  <title>判定问题世界：P ⊆ NP ⊆ EXP ⊊ R ⊊ 全体判定问题（P⊊NP、NP⊊EXP 为未证猜想）</title>
+  <!-- 背景：全体判定问题（大多数不可判定） -->
+  <rect x="10" y="10" width="660" height="450" rx="18" fill="#fdf2f2" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="8 5"/>
+  <text x="340" y="38" text-anchor="middle" font-size="17" fill="#c0392b" font-weight="bold">全体判定问题（all decision problems）</text>
+  <text x="340" y="60" text-anchor="middle" font-size="13" fill="#c0392b">不可数无穷 —— 绝大多数不可判定（undecidable）</text>
+
+  <!-- R：可判定 -->
+  <rect x="60" y="85" width="560" height="350" rx="14" fill="#eaf2f8" stroke="#2471a3" stroke-width="2"/>
+  <text x="340" y="112" text-anchor="middle" font-size="16" fill="#2471a3" font-weight="bold">R（可判定 / recursive languages）</text>
+  <text x="340" y="133" text-anchor="middle" font-size="12.5" fill="#2471a3">有限时间内可被程序求解</text>
+
+  <!-- EXP -->
+  <rect x="150" y="165" width="380" height="240" rx="12" fill="#d6eaf8" stroke="#2980b9" stroke-width="2"/>
+  <text x="340" y="192" text-anchor="middle" font-size="15" fill="#154360" font-weight="bold">EXP（指数时间）</text>
+  <text x="340" y="212" text-anchor="middle" font-size="12.5" fill="#154360">可在 2<tspan baseline-shift="super" font-size="9">n<tspan baseline-shift="super" font-size="7">O(1)</tspan></tspan> 时间内判定</text>
+  <text x="340" y="232" text-anchor="middle" font-size="12.5" fill="#154360">我们日常考虑的判定问题大多在此</text>
+
+  <!-- NP（推测与 P 分离，虚线） -->
+  <ellipse cx="300" cy="330" rx="120" ry="60" fill="#aed6f1" stroke="#1a5276" stroke-width="2"/>
+  <text x="300" y="322" text-anchor="middle" font-size="15" fill="#1a5276" font-weight="bold">NP</text>
+  <text x="300" y="344" text-anchor="middle" font-size="12" fill="#1a5276">验证多项式时间</text>
+
+  <!-- P -->
+  <ellipse cx="300" cy="330" rx="58" ry="30" fill="#85c1e9" stroke="#154360" stroke-width="2"/>
+  <text x="300" y="328" text-anchor="middle" font-size="14" fill="#0b2136" font-weight="bold">P</text>
+  <text x="300" y="345" text-anchor="middle" font-size="11" fill="#0b2136">多项式时间</text>
+
+  <!-- NP 边界虚线（P⊊NP、NP⊊EXP 未证） -->
+  <ellipse cx="300" cy="330" rx="120" ry="60" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="438" y="300" font-size="12" fill="#c0392b" font-style="italic">P ⊊ NP ?</text>
+  <text x="438" y="382" font-size="12" fill="#c0392b" font-style="italic">NP ⊊ EXP ?</text>
+
+  <!-- 谱系链标注 -->
+  <text x="340" y="452" text-anchor="middle" font-size="13.5" fill="#1a5276" font-weight="bold">P ⊆ NP ⊆ EXP ⊊ R ⊊ 全体判定问题 —— 虚线为未证猜想（P⊊NP、NP⊊EXP），实线已证（EXP⊊R 等）</text>
+</svg>

@@ -1,0 +1,6038 @@
+﻿1
+00:00:12,550 --> 00:00:18,720
+Right, so today is going to be our first, I believe,
+of two problem sessions covering dynamic programming.
+
+2
+00:00:20,020 --> 00:00:20,020
+I
+
+3
+00:00:21,520 --> 00:00:27,180
+find dynamic programming is one of these interesting parts of an
+algorithms class where, somehow, the people that are really good at it are
+
+4
+00:00:27,180 --> 00:00:30,290
+completely disjoint with the people that are good
+at all the other parts of the algorithms class.
+
+5
+00:00:30,920 --> 00:00:32,900
+So for some of you guys,
+that might be promising.
+
+6
+00:00:33,480 --> 00:00:35,000
+And for others, maybe
+a little bit less so.
+
+7
+00:00:36,020 --> 00:00:41,800
+So maybe we'll spend just a minute or two kind of reviewing the basic ideas
+we're going to apply in these problems because they all follow more or
+
+8
+00:00:41,800 --> 00:00:46,970
+less the same template. Although, of course,
+as usual in 6 .006, we like to put some
+
+9
+00:00:48,220 --> 00:00:51,100
+interesting window dressing around it so that
+it's not totally obvious what you're doing.
+
+10
+00:00:52,010 --> 00:00:53,500
+And then we'll do a
+bunch of sample problems.
+
+11
+00:00:55,160 --> 00:01:00,940
+Right, so let's talk a little bit about
+dynamic programming and the basic idea here.
+
+12
+00:01:02,420 --> 00:01:10,770
+So dynamic programming is kind of a funny outlier in 6 .006 in that,
+for example, in the data structures part of the course, we learned what?
+
+13
+00:01:11,760 --> 00:01:13,260
+No, I'm struggling to
+think of a data structure.
+
+14
+00:01:13,780 --> 00:01:19,800
+Like useful trees and arrays or whatever. And these are
+actually things that you can code. If you look in C++,
+
+15
+00:01:20,980 --> 00:01:26,190
+there are, well, plausibly, it could be an
+implementation of a tree. And there's some way.
+
+16
+00:01:27,020 --> 00:01:32,580
+And so these are useful algorithms that you could maybe even read the
+pseudocode. And there's a universe where you really do translate that
+
+17
+00:01:32,640 --> 00:01:34,740
+pseudocode into something
+inside of your laptop.
+
+18
+00:01:36,100 --> 00:01:41,200
+Dynamic programming is a little bit less so. This is more of like a meta.
+I don't know if you call it a meta algorithm or a problem solving approach
+
+19
+00:01:41,200 --> 00:01:41,680
+or what.
+
+20
+00:01:42,840 --> 00:01:50,240
+But it's not like you somehow say, I'm going to apply the dynamic programming
+algorithm to this problem. But rather, it's sort of this big class of
+
+21
+00:01:50,260 --> 00:01:55,840
+things that all follow a similar template or sort of approach to things.
+And so I think that's kind of what I was thinking about problem solving,
+
+22
+00:01:56,760 --> 00:01:59,860
+which I think sort of explains
+why, actually, in some sense,
+
+23
+00:02:00,680 --> 00:02:07,620
+the last couple lectures that you've seen, and I guess if I'm getting the
+time sequence of our course right, the next couple ones that you will see.
+
+24
+00:02:08,669 --> 00:02:14,140
+And the problem sessions actually start to coincide in the
+sense that when Eric was teaching you guys dynamic programming,
+
+25
+00:02:15,440 --> 00:02:20,620
+how did he do it? Well, he didn't write down, well, he sort of wrote down
+some template for dynamic programming. But then we just did a bunch of
+
+26
+00:02:20,680 --> 00:02:21,160
+sample problems.
+
+27
+00:02:21,840 --> 00:02:23,200
+And that's exactly what
+we're going to do today.
+
+28
+00:02:25,020 --> 00:02:33,220
+All of these things are just going to converge in this part of our course
+because dynamic programming, it's really more of a way of life than any
+
+29
+00:02:33,220 --> 00:02:34,400
+particular algorithm.
+
+30
+00:02:35,480 --> 00:02:37,920
+And this is a pattern that I think
+you see a lot in advanced algorithms.
+
+31
+00:02:38,880 --> 00:02:40,420
+Like, for example, in my
+universe, numerical analysis,
+
+32
+00:02:41,280 --> 00:02:41,280
+when
+
+33
+00:02:41,820 --> 00:02:47,720
+you talk about the ADMM algorithm, it's actually a totally useless
+algorithm. What matters is applying it to a particular problem.
+
+34
+00:02:48,560 --> 00:02:53,620
+And this is sort of, I think, a more mature or grown
+up way to think about a lot of things in algorithms.
+
+35
+00:02:55,020 --> 00:03:03,340
+And this sort of general purpose stuff that's useful all the time, I
+think, starts to disperse a little bit in favor of different patterns and
+
+36
+00:03:03,340 --> 00:03:08,930
+mechanisms that you're used to thinking about. So there's my 10
+seconds sort of philosophical introduction to what we're doing,
+
+37
+00:03:09,460 --> 00:03:13,240
+during which I've managed to
+chase this table across the room.
+
+38
+00:03:14,180 --> 00:03:21,380
+You know, I played, I did college on the West Coast. And I thought I was
+going to be a music major. And there was a piano master class where we
+
+39
+00:03:21,400 --> 00:03:22,500
+forgot to put the little
+
+40
+00:03:23,020 --> 00:03:23,680
+clips on the wheels.
+
+41
+00:03:25,400 --> 00:03:29,860
+And I just thought I was really nervous because
+the piano was literally slipping away from me.
+
+42
+00:03:30,900 --> 00:03:34,460
+And I can never think of that
+Chopin nocturne quite the same way.
+
+43
+00:03:35,180 --> 00:03:35,920
+But in any event,
+
+44
+00:03:36,940 --> 00:03:38,000
+in dynamic programming,
+
+45
+00:03:38,820 --> 00:03:47,700
+Eric laid out for you guys a particular sort of set of steps that are sort
+of a useful problem solving approach in the dynamic programming universe.
+
+46
+00:03:48,420 --> 00:03:52,060
+In today's problem session, I'm going to try
+and help you guys translate a little bit from
+
+47
+00:03:52,800 --> 00:04:00,260
+this template to what it means to actually write code to implement a dynamic
+programming algorithm because I think it's a little easy to forget that
+
+48
+00:04:00,260 --> 00:04:00,560
+here.
+
+49
+00:04:01,760 --> 00:04:09,520
+But on the other hand, on your homework, when you're writing out answers
+to algorithms problems, it's perfectly fine to follow this template, even
+
+50
+00:04:09,520 --> 00:04:11,720
+letter, I guess,
+literally letter for letter,
+
+51
+00:04:12,680 --> 00:04:14,950
+and answer each of these questions.
+And then sort of the remaining
+
+52
+00:04:16,240 --> 00:04:21,220
+glue that you need to actually write the code is not
+terribly exciting from an algorithms theory perspective.
+
+53
+00:04:23,000 --> 00:04:28,620
+So the basic idea here is that this is a lot of different
+problems that can be written recursively in some sense.
+
+54
+00:04:29,940 --> 00:04:30,800
+Certainly, we've
+
+55
+00:04:31,480 --> 00:04:37,080
+encountered many of those in this course. In fact, I think the bias in the
+way that we've presented algorithms that don't have to be recursive is to
+
+56
+00:04:37,080 --> 00:04:38,420
+write them in a recursive way.
+
+57
+00:04:39,620 --> 00:04:44,300
+And the point here is that when you have
+a recursive call and you repeat something,
+
+58
+00:04:45,560 --> 00:04:48,180
+you give the function the
+same input more than one time,
+
+59
+00:04:48,820 --> 00:04:52,060
+you might as well remember what you
+got the last time you saw that input.
+
+60
+00:04:52,580 --> 00:04:53,980
+And then you don't have to
+do that computation again.
+
+61
+00:04:55,020 --> 00:04:59,300
+So in this sentence, I think that's roughly the
+logic behind all these dynamic programming things.
+
+62
+00:05:00,460 --> 00:05:02,300
+So there's no reason to be
+too redundant with lecture.
+
+63
+00:05:03,080 --> 00:05:05,010
+For just sort of the
+10 -second overview,
+
+64
+00:05:05,680 --> 00:05:10,680
+I think that there's an example which is simultaneously
+good and misleading, which is this Fibonacci sequence.
+
+65
+00:05:11,980 --> 00:05:19,040
+It's good in the sense that the logic of dynamic programming is really
+easy. It's bad in that the runtime is kind of weird to think about.
+
+66
+00:05:20,300 --> 00:05:24,610
+But remember that your Fibonacci
+sequence looks something like f of k equals
+
+67
+00:05:25,450 --> 00:05:30,180
+f of k minus 1
+plus f of k minus 2.
+
+68
+00:05:30,920 --> 00:05:36,380
+And if you look at your sort of recursive call
+tree here, like let's say that I do k equals 4,
+
+69
+00:05:37,400 --> 00:05:38,750
+then it's going to call
+
+70
+00:05:39,740 --> 00:05:46,040
+my function f is going to have to evaluate it at 3 and 2.
+And then the 3 is going to evaluate it 2 and 1 and so on.
+
+71
+00:05:47,060 --> 00:05:50,400
+And the thing to notice
+is that when I call f of 4,
+
+72
+00:05:51,260 --> 00:05:53,040
+or rather f of 3 here,
+
+73
+00:05:53,660 --> 00:05:55,760
+if there were 3 somewhere else
+in my tree, I get the same number.
+
+74
+00:05:56,280 --> 00:05:56,710
+So in particular,
+
+75
+00:05:57,760 --> 00:05:59,500
+f of 2 and f of 2,
+
+76
+00:06:00,300 --> 00:06:06,020
+both of these are going to take some amount of algorithmic work. But if
+just the first time I see a 2, I have a little piece of scratch paper and I
+
+77
+00:06:06,020 --> 00:06:11,480
+say, ah, any time I see k equals 2, just return
+this number rather than doing recursive calls,
+
+78
+00:06:12,260 --> 00:06:15,560
+then in effect, if there's any
+subtree underneath this thing,
+
+79
+00:06:16,340 --> 00:06:18,640
+I've just pruned
+it from my tree.
+
+80
+00:06:19,160 --> 00:06:21,540
+And so that's the
+basic logic here.
+
+81
+00:06:22,740 --> 00:06:25,920
+And that's basically the
+paradigm that's going on in this
+
+82
+00:06:26,440 --> 00:06:27,870
+sort bot acronym,
+
+83
+00:06:30,230 --> 00:06:34,410
+which is you first take your
+problem and divide it into subproblems.
+
+84
+00:06:35,120 --> 00:06:37,290
+That is mysterious.
+Why is this board moving?
+
+85
+00:06:40,310 --> 00:06:42,580
+Oh, there's a phone in my
+pocket. I bumped against the wall.
+
+86
+00:06:48,220 --> 00:06:50,040
+I'm not used to this classroom.
+
+87
+00:06:51,120 --> 00:06:51,120
+Right.
+
+88
+00:06:52,380 --> 00:07:00,640
+Yeah, so the first thing I want to do is to write my problem as sort of
+this sort of form. Notice that we've done this a lot in this class. We've
+
+89
+00:07:00,640 --> 00:07:07,500
+written things recursively. The difference here is that the sort of
+argument that goes into recursion is typically maybe a little simpler than
+
+90
+00:07:07,500 --> 00:07:11,340
+putting some giant data structure
+inside of there or something like that.
+
+91
+00:07:12,200 --> 00:07:18,080
+So for instance, merge sort, you could write in this paradigm. I guess we
+covered that. But it's probably not the most natural way to think about
+
+92
+00:07:18,080 --> 00:07:18,320
+merge sort.
+
+93
+00:07:19,520 --> 00:07:26,920
+Then we need to relate our subproblems to each other. So for instance, in
+the Fibonacci sequence problem, I just gave you the relation that sort of
+
+94
+00:07:26,920 --> 00:07:27,970
+what defines the problem.
+
+95
+00:07:28,660 --> 00:07:29,620
+Incidentally, this is what
+
+96
+00:07:30,240 --> 00:07:36,300
+a model for the reproduction of rabbits, I think, if I
+remember reading the history of the Fibonacci sequence.
+
+97
+00:07:39,460 --> 00:07:46,160
+And then I think to me the most, not necessarily unnatural, but I think
+the thing that maybe is hardest to translate to an algorithm if you're
+
+98
+00:07:46,160 --> 00:07:52,780
+thinking about writing code is
+this idea of topological order.
+
+99
+00:07:53,500 --> 00:07:58,800
+The basic idea here is that like, if f of 1
+depended on f of 2 and f of 2 depended on f of 1,
+
+100
+00:08:00,220 --> 00:08:05,640
+I'd be in a lot of trouble because somehow my tree would never
+converge, for one thing, if I made these recursive calls.
+
+101
+00:08:06,380 --> 00:08:10,740
+And I'd never be able to memoize or
+kind of remember a value when I move on.
+
+102
+00:08:11,360 --> 00:08:15,500
+And so the idea here is that there's some ordering
+of my subproblems so that I can build up a solution.
+
+103
+00:08:16,780 --> 00:08:19,500
+And there's sort of two dual ways
+to think about why that's useful.
+
+104
+00:08:20,540 --> 00:08:24,380
+So in the memoization
+universe, what do I do?
+
+105
+00:08:25,180 --> 00:08:28,940
+I can write a statement saying, if
+I've already evaluated f of k, return it.
+
+106
+00:08:29,800 --> 00:08:30,860
+That's perfectly fine.
+
+107
+00:08:31,680 --> 00:08:35,340
+The other thing I can do is if I write
+my subproblems in topological order,
+
+108
+00:08:36,460 --> 00:08:41,530
+then I can sort of go in the reverse direction and
+build up my memoization table. So for instance,
+
+109
+00:08:42,179 --> 00:08:47,730
+for the Fibonacci sequence problem, I could do f
+of 1 and then f of 2 and then f of 3 and f of 4
+
+110
+00:08:48,780 --> 00:08:56,180
+all the way until I get to the k value that I actually wanted. And
+those are just duals of the same coin, exactly the same approach of the
+
+111
+00:08:56,200 --> 00:09:02,320
+memoization version. Sometimes you can prune out some problems that you
+didn't actually need to solve. So for instance, maybe this was f of k minus
+
+112
+00:09:02,320 --> 00:09:02,420
+7.
+
+113
+00:09:03,400 --> 00:09:05,580
+And so I can skip a
+few indices in my array.
+
+114
+00:09:06,600 --> 00:09:14,060
+I don't think typically that has a big effect on runtime for the problems
+that we've seen, but it could plausibly in some universe. So I'd have to
+
+115
+00:09:14,120 --> 00:09:16,190
+think about a problem where
+that makes a difference.
+
+116
+00:09:18,820 --> 00:09:22,220
+Right, and then I think the bot part of
+sort bot is a little easier to think about.
+
+117
+00:09:24,000 --> 00:09:27,460
+Recursion has a base case, like
+when is this thing going to stop?
+
+118
+00:09:27,960 --> 00:09:30,840
+That's exactly the same as
+just any recursive algorithm.
+
+119
+00:09:32,380 --> 00:09:40,280
+The O for original, I think, is a little bit retrofit to make sort bot
+sound nice. But I think the idea here is that you need to go back to your
+
+120
+00:09:40,280 --> 00:09:46,060
+original problem and make sure that it corresponds to one of the
+function calls that you've written and all this complicated stuff.
+
+121
+00:09:46,560 --> 00:09:52,120
+Hopefully, that's a reasonable characterization.
+And then finally, the T is more, these are for
+
+122
+00:09:52,780 --> 00:09:54,940
+describing your
+algorithm. For analyzing it.
+
+123
+00:09:55,520 --> 00:10:01,780
+And again, the bot part of sort bot almost applies to anything
+we've done in 6 .006. You should always analyze your runtime.
+
+124
+00:10:03,260 --> 00:10:08,500
+OK, so in any event, that's my 10 -minute
+version of the last couple lectures.
+
+125
+00:10:09,380 --> 00:10:13,320
+And I think more or less enough to get
+us started with some sample problems here.
+
+126
+00:10:14,140 --> 00:10:16,180
+Sorry, I couldn't help
+it. I like to teach things.
+
+127
+00:10:17,120 --> 00:10:23,860
+OK, so right. So in our problem session, we have a few
+of the homework problems from last year to go over.
+
+128
+00:10:53,960 --> 00:10:58,640
+Tim is MIT backwards, so he
+happens to fit into this goofy
+
+129
+00:10:59,440 --> 00:11:02,620
+game that Jason likes to play in
+writing homework problems anyway.
+
+130
+00:11:03,260 --> 00:11:04,400
+But it's also the MIT mascot.
+
+131
+00:11:05,800 --> 00:11:07,060
+Anyway, I got very excited.
+
+132
+00:11:08,260 --> 00:11:10,040
+Right, so what's going
+on in this problem?
+
+133
+00:11:11,480 --> 00:11:14,870
+So Tim the Beaver has kind
+of an interesting mathematics.
+
+134
+00:11:15,740 --> 00:11:19,940
+I think you would call this a martingale if you flip
+the coin a little bit when you solve this problem.
+
+135
+00:11:20,500 --> 00:11:24,220
+But luckily, Tim the Beaver is
+a deterministic kind of a guy.
+
+136
+00:11:25,100 --> 00:11:26,390
+And he looks at
+the weather outside.
+
+137
+00:11:27,760 --> 00:11:31,240
+And if it's a temperature T, apparently,
+Tim the Beaver is OK with boiling.
+
+138
+00:11:32,060 --> 00:11:37,800
+The higher the temperature, the happier Tim gets.
+So this is a first derivative kind of a phenomenon.
+
+139
+00:11:38,780 --> 00:11:44,250
+In particular, on a given
+day, if I have a temperature T,
+
+140
+00:11:45,420 --> 00:11:49,100
+Tim the Beaver has two things
+that he can do to change his mood.
+
+141
+00:11:50,020 --> 00:11:52,980
+Apparently, Tim the Beaver's mood never
+stays fixed. It always goes up and down.
+
+142
+00:11:54,940 --> 00:11:55,480
+In particular,
+
+143
+00:11:56,040 --> 00:11:59,480
+he can either go outside,
+
+144
+00:12:03,720 --> 00:12:04,100
+in which
+
+145
+00:12:04,700 --> 00:12:13,560
+case the happiness
+increases by T.
+
+146
+00:12:14,700 --> 00:12:17,640
+Or he can stay inside,
+
+147
+00:12:21,600 --> 00:12:23,720
+in which case his happiness
+
+148
+00:12:25,150 --> 00:12:25,600
+decreases
+
+149
+00:12:28,440 --> 00:12:28,760
+by T.
+
+150
+00:12:30,100 --> 00:12:31,960
+OK, so every day,
+Tim the Beaver,
+
+151
+00:12:33,320 --> 00:12:38,940
+he wakes up. I really want to say that he checks
+for his shadow. But that's a gopher, right?
+
+152
+00:12:39,540 --> 00:12:46,220
+In any event, he wakes up in the morning. He checks the weather. And he
+makes a determination, does he want to go outside or not? And if he goes
+
+153
+00:12:46,220 --> 00:12:49,560
+outside, he gets happier by an
+amount that's equal to the temperature.
+
+154
+00:12:50,600 --> 00:12:56,820
+If he stays inside, he gets less happy by an amount that's equal to
+the temperature. By the way, I think our solution is perfectly fine if
+
+155
+00:12:56,820 --> 00:12:59,500
+temperatures are negative
+here, in which case,
+
+156
+00:13:00,100 --> 00:13:02,180
+I guess everything would
+kind of flip intuitively.
+
+157
+00:13:02,720 --> 00:13:05,290
+But there's no reason to
+get too hung up on that.
+
+158
+00:13:06,440 --> 00:13:08,120
+But of course,
+there's a twist here.
+
+159
+00:13:09,640 --> 00:13:10,500
+So Tim,
+
+160
+00:13:11,680 --> 00:13:12,580
+as with many of you,
+
+161
+00:13:13,200 --> 00:13:15,400
+has n days
+
+162
+00:13:16,780 --> 00:13:19,030
+until his final exam.
+
+163
+00:13:25,500 --> 00:13:26,900
+So in particular,
+
+164
+00:13:28,380 --> 00:13:29,460
+he never wants to go.
+
+165
+00:13:30,180 --> 00:13:35,120
+He's come up with a personal resolve to
+never go outside more than two days in a row.
+
+166
+00:13:40,960 --> 00:13:41,760
+And
+
+167
+00:13:47,800 --> 00:13:48,700
+so
+
+168
+00:13:50,440 --> 00:13:55,380
+the question is, because that way, he has to stay inside
+and study at least one out of every three -ish days.
+
+169
+00:13:56,380 --> 00:13:56,380
+OK,
+
+170
+00:13:56,980 --> 00:14:01,280
+so the question is, how can
+Tim maximize his happiness?
+
+171
+00:14:02,840 --> 00:14:03,060
+Incidentally,
+
+172
+00:14:03,840 --> 00:14:10,100
+in machine learning, sometimes they call that minimizing regret, which I
+always found to be a very sad way to think about algorithms when there's a
+
+173
+00:14:10,180 --> 00:14:18,180
+totally dual version. But Tim's an optimistic guy. He wants to maximize his
+happiness, subject to this constraint that he cannot go outside more than
+
+174
+00:14:18,220 --> 00:14:18,860
+two days in a row.
+
+175
+00:14:19,360 --> 00:14:20,960
+So if I go out on
+Monday and Tuesday,
+
+176
+00:14:22,080 --> 00:14:22,640
+I'll go out on Wednesday.
+
+177
+00:14:24,160 --> 00:14:30,590
+Yes? I think there's no effect to his happiness when he stays
+in. There's no effect to his happiness when he stays in.
+
+178
+00:14:31,340 --> 00:14:37,840
+At least that's . No, it says with a
+decrease in happiness when t is negative.
+
+179
+00:14:40,660 --> 00:14:42,500
+That's not actually going
+to affect our problem at all.
+
+180
+00:14:45,900 --> 00:14:48,960
+It's not going to affect it.
+Sure, yeah, I can fix this life.
+
+181
+00:14:52,080 --> 00:14:55,230
+I can do the problem myself before looking at
+the answer and then don't check it closely.
+
+182
+00:14:56,700 --> 00:14:58,260
+Fine, so let's change that.
+
+183
+00:14:59,340 --> 00:15:02,820
+I like this problem better somehow
+psychologically, but that's OK.
+
+184
+00:15:03,940 --> 00:15:11,520
+Right, so Jason correctly points out that if you actually
+read the problem, what's asked there is slightly different,
+
+185
+00:15:12,140 --> 00:15:17,040
+that when he goes outside, his happiness increases
+by t. If he stays inside, his happiness does nothing.
+
+186
+00:15:17,680 --> 00:15:21,860
+So it stays the same.
+
+187
+00:15:23,700 --> 00:15:24,080
+My apologies.
+
+188
+00:15:25,260 --> 00:15:31,900
+So Tim the beaver is a particularly optimistic beaver. His happiness
+can only increase in time, assuming he lives in a climate with positive
+
+189
+00:15:31,900 --> 00:15:32,000
+temperatures.
+
+190
+00:15:33,200 --> 00:15:35,000
+OK, now I think I've
+got it right now.
+
+191
+00:15:35,780 --> 00:15:39,050
+Cool, let's see if
+I can still do this.
+
+192
+00:15:39,820 --> 00:15:41,340
+Yeah, I think basically
+nothing changes.
+
+193
+00:15:42,680 --> 00:15:43,650
+OK, that's great.
+
+194
+00:15:45,920 --> 00:15:46,790
+All right, I'm going to do it.
+
+195
+00:15:51,460 --> 00:15:52,060
+OK,
+
+196
+00:15:52,620 --> 00:15:55,940
+so right, so the question is,
+how do we solve this problem?
+
+197
+00:15:56,660 --> 00:16:01,320
+And thankfully, I think we put the easiest problem
+first. And in particular, if we're following our sort by
+
+198
+00:16:02,580 --> 00:16:10,390
+paradigm here, somehow there's a set of subproblems that
+are staring us in the face. That's the word I'm looking for.
+
+199
+00:16:11,140 --> 00:16:12,400
+In particular,
+
+200
+00:16:14,320 --> 00:16:17,880
+well, there's only one index in
+our problem, which is what day it is.
+
+201
+00:16:18,740 --> 00:16:28,540
+So the obvious thing to do would be to say, can we figure out the maximum
+amount of happiness for days, say, i to the last day? By the way, if I do
+
+202
+00:16:28,540 --> 00:16:30,880
+that, I'm using the prefix
+version of my problem.
+
+203
+00:16:31,920 --> 00:16:36,860
+Suffix version of my problem. I could also do it
+the opposite way and work from the end back in.
+
+204
+00:16:37,880 --> 00:16:41,580
+Maybe if we have time all the way to the end, we'll
+do the second one. But it doesn't really matter.
+
+205
+00:16:42,540 --> 00:16:42,580
+OK,
+
+206
+00:16:43,120 --> 00:16:43,640
+so in particular,
+
+207
+00:16:45,020 --> 00:16:46,240
+just to add a little
+bit of notation,
+
+208
+00:16:46,800 --> 00:16:47,560
+let's say that
+
+209
+00:16:48,300 --> 00:16:51,800
+t of i is equal
+to the temperature
+
+210
+00:16:53,260 --> 00:16:55,740
+on day i.
+
+211
+00:16:57,280 --> 00:17:02,280
+And now we're going to make a new thing, which is
+going to be the actual variable we want to compute.
+
+212
+00:17:02,860 --> 00:17:04,119
+This is going to be x of i,
+
+213
+00:17:04,940 --> 00:17:07,200
+which we'll write is the
+
+214
+00:17:08,359 --> 00:17:09,859
+maximum happiness
+
+215
+00:17:13,060 --> 00:17:18,859
+that you can achieve if you only
+consider the calendar from day i
+
+216
+00:17:19,640 --> 00:17:20,720
+to day n.
+
+217
+00:17:21,260 --> 00:17:21,980
+I guess inclusive.
+
+218
+00:17:24,000 --> 00:17:30,770
+Incidentally, just for convenience, we'll assume that
+xi is equal to 0 if I go past the end of my array.
+
+219
+00:17:31,900 --> 00:17:34,590
+So I think it's kind of a typical
+thing to do in these DP algorithms.
+
+220
+00:17:37,060 --> 00:17:44,740
+OK, so the question is, can we actually come up with
+a recursive algorithm that computes xi using this nice
+
+221
+00:17:46,320 --> 00:17:53,790
+sort of topologically acyclic way of thinking about our
+problem? The answer is obviously yes. I wouldn't be here today.
+
+222
+00:17:55,420 --> 00:18:02,140
+And so in the absence of a smarter idea, let's just
+do the Toucan -Sam approach here and follow our nose
+
+223
+00:18:03,010 --> 00:18:07,020
+and see if we can just write
+our problem in terms of other ones.
+
+224
+00:18:08,140 --> 00:18:11,260
+So in general, let's say that
+Tim the Beaver wakes up on day i.
+
+225
+00:18:12,320 --> 00:18:17,830
+He has basically two decisions that
+he can make. He can either stay inside
+
+226
+00:18:18,560 --> 00:18:20,950
+or he can not stay
+inside. He can go outside.
+
+227
+00:18:22,560 --> 00:18:26,720
+So let's just basically
+handle these three cases.
+
+228
+00:18:27,500 --> 00:18:28,320
+So in case one,
+
+229
+00:18:29,620 --> 00:18:30,480
+he stays inside.
+
+230
+00:18:33,580 --> 00:18:36,000
+Well, now what happens
+to his happiness?
+
+231
+00:18:36,980 --> 00:18:37,160
+Well,
+
+232
+00:18:37,840 --> 00:18:40,240
+according to my revised
+version of this problem, nothing.
+
+233
+00:18:41,340 --> 00:18:42,740
+So in particular,
+
+234
+00:18:44,220 --> 00:18:44,780
+what do we know?
+
+235
+00:18:45,920 --> 00:18:50,670
+If he stays inside, then he has any decision he can make
+tomorrow. It doesn't matter. He can go inside. He can go outside,
+
+236
+00:18:51,360 --> 00:18:57,920
+whatever, because by having stayed inside, he's earned
+himself two free days of going outside if he wants.
+
+237
+00:18:58,560 --> 00:18:59,900
+So in particular, in this case,
+
+238
+00:19:00,900 --> 00:19:03,480
+we can convince ourselves that
+
+239
+00:19:05,340 --> 00:19:06,140
+this is true in our,
+
+240
+00:19:07,260 --> 00:19:07,360
+I think,
+
+241
+00:19:08,340 --> 00:19:08,800
+yes.
+
+242
+00:19:09,860 --> 00:19:15,120
+So in other words, while he gives no utility for today, he
+wakes up tomorrow and he can make whatever decision he wants.
+
+243
+00:19:15,920 --> 00:19:16,020
+OK.
+
+244
+00:19:18,610 --> 00:19:20,860
+The second thing
+he can do is go out.
+
+245
+00:19:25,860 --> 00:19:27,180
+This is where things
+get a little tricky.
+
+246
+00:19:28,780 --> 00:19:34,960
+Can I just do like take ti and
+add it to xi plus 1? What goes wrong?
+
+247
+00:19:37,710 --> 00:19:38,060
+Maybe
+
+248
+00:19:39,540 --> 00:19:42,380
+you go out three days in a row.
+You somehow have to remember that.
+
+249
+00:19:43,860 --> 00:19:46,920
+And so that's where things
+are a little bit of a headache.
+
+250
+00:19:47,840 --> 00:19:53,320
+In particular, if I go out today and
+tomorrow, I can't go out the day after that.
+
+251
+00:19:54,320 --> 00:20:00,880
+And somehow, if we just dealt with this one case as ti plus
+xi plus 1, we wouldn't remember that. And that's a problem.
+
+252
+00:20:02,000 --> 00:20:05,050
+So instead, what we can do is
+think of there being two subcases.
+
+253
+00:20:06,620 --> 00:20:11,920
+So what we're going to assume is that not only does he
+go out today, but that he's free to go out tomorrow.
+
+254
+00:20:13,900 --> 00:20:15,700
+That's a massive assumption
+as we move down our array.
+
+255
+00:20:17,120 --> 00:20:17,750
+So if we do that,
+
+256
+00:20:18,460 --> 00:20:21,220
+well, now we have
+case A and case B.
+
+257
+00:20:22,100 --> 00:20:23,120
+So in case A,
+
+258
+00:20:24,080 --> 00:20:27,020
+he goes out today and
+he stays in tomorrow.
+
+259
+00:20:30,760 --> 00:20:31,200
+OK.
+
+260
+00:20:36,060 --> 00:20:38,020
+So what happens
+in this case? Well,
+
+261
+00:20:38,520 --> 00:20:39,140
+by
+
+262
+00:20:40,920 --> 00:20:46,120
+the way, I'm using this kind of weird arrow notation. I don't know if this
+is good or not. But essentially, the point is that I'm keeping track of
+
+263
+00:20:46,120 --> 00:20:46,480
+cases.
+
+264
+00:20:47,020 --> 00:20:49,880
+And then eventually, I'm going to want to
+have to take the max over all of these things.
+
+265
+00:20:50,960 --> 00:20:53,200
+So I don't like the equal sign because
+somehow that's a little misleading.
+
+266
+00:20:55,100 --> 00:21:00,060
+Right. So in that case, while he gets
+the utility of having gone out today,
+
+267
+00:21:01,760 --> 00:21:03,260
+tomorrow he stays in,
+
+268
+00:21:04,400 --> 00:21:11,460
+which means that the day after tomorrow, he can do whatever
+the heck he wants. He has free reign. So I can write that.
+
+269
+00:21:12,980 --> 00:21:14,120
+Using this recursive call.
+
+270
+00:21:16,440 --> 00:21:16,880
+Similarly,
+
+271
+00:21:22,080 --> 00:21:22,840
+right.
+
+272
+00:21:26,120 --> 00:21:28,400
+So I'm getting the hang of this.
+
+273
+00:21:29,700 --> 00:21:30,220
+Sorry.
+
+274
+00:21:30,900 --> 00:21:33,700
+This is way too entertaining for
+me. I can play with this board all day.
+
+275
+00:21:34,620 --> 00:21:39,680
+OK. So in case 2B, he goes out
+today and he goes out tomorrow.
+
+276
+00:21:43,800 --> 00:21:45,880
+OK.
+
+277
+00:21:46,480 --> 00:21:46,480
+So
+
+278
+00:21:47,600 --> 00:21:48,500
+he's a party animal.
+
+279
+00:21:49,060 --> 00:21:52,920
+He is an animal and he's going out a
+lot. Right. So in that case, what happens?
+
+280
+00:21:53,540 --> 00:21:54,780
+Well, he gets that.
+
+281
+00:21:55,600 --> 00:21:58,420
+He gets today's utility.
+
+282
+00:21:59,220 --> 00:22:01,340
+He gets tomorrow's utility.
+
+283
+00:22:03,950 --> 00:22:07,680
+The day after, he has to stay
+in. So we might as well skip it.
+
+284
+00:22:09,400 --> 00:22:10,960
+And then he can do
+whatever he wants.
+
+285
+00:22:13,640 --> 00:22:14,560
+The day after that.
+
+286
+00:22:15,120 --> 00:22:15,120
+OK.
+
+287
+00:22:16,520 --> 00:22:16,760
+So
+
+288
+00:22:17,320 --> 00:22:18,960
+if we go back, I
+guess technically,
+
+289
+00:22:20,460 --> 00:22:27,700
+we should revise our definition of x a tiny bit. That is not the maximum
+happiness. Well, we can convince ourselves that it's the same thing. But
+
+290
+00:22:27,700 --> 00:22:30,640
+really, it's not the maximum
+happiness for day i through n.
+
+291
+00:22:31,160 --> 00:22:36,360
+It's the maximum happiness for day i through n under the
+assumption that he has permission to go out on day i.
+
+292
+00:22:37,060 --> 00:22:41,680
+Right. And that's really what's going
+on in our recursive set of calls here.
+
+293
+00:22:42,340 --> 00:22:42,440
+OK.
+
+294
+00:22:42,980 --> 00:22:45,330
+Does our recursion
+make sense here?
+
+295
+00:22:47,160 --> 00:22:47,380
+All right.
+
+296
+00:22:48,160 --> 00:22:48,260
+So
+
+297
+00:22:49,140 --> 00:22:55,380
+let's see here. So if we're following our sort bot, I keep reviewing
+papers that use the word paradigm a lot. So I feel like I should do that.
+
+298
+00:22:56,220 --> 00:22:56,380
+So
+
+299
+00:22:57,060 --> 00:22:58,880
+what is t? It's the
+topological order.
+
+300
+00:22:59,700 --> 00:23:05,780
+Notice that xi only depends
+
+301
+00:23:06,780 --> 00:23:07,940
+on larger i's.
+
+302
+00:23:10,800 --> 00:23:14,420
+So in terms of our topological order, the
+dependence graph is really simple. It's just a line.
+
+303
+00:23:15,720 --> 00:23:15,720
+So
+
+304
+00:23:16,500 --> 00:23:22,340
+remember that you can think about topological order, or you can think
+about being acyclic graph. Those are equivalent. We covered that in this
+
+305
+00:23:22,340 --> 00:23:24,480
+course. I kind of like
+thinking about acyclic graph.
+
+306
+00:23:25,880 --> 00:23:31,460
+So x1 depends on x2, depends on x3, depends on
+x4. That graph has no cycles. So we're good.
+
+307
+00:23:35,240 --> 00:23:39,160
+So next, we have to come up with
+our base case for our recursion.
+
+308
+00:23:40,600 --> 00:23:41,920
+Notice that the
+way I have chosen
+
+309
+00:23:42,440 --> 00:23:46,480
+to solve this problem is
+by calling future indices,
+
+310
+00:23:47,280 --> 00:23:56,060
+which means that my base case sits at the end of my array. Because that's
+sort of like the lowest down on the recursion chain is what I'm going for.
+
+311
+00:23:56,140 --> 00:23:57,590
+But I kind of like the
+recursion train better.
+
+312
+00:23:59,340 --> 00:23:59,860
+In particular,
+
+313
+00:24:00,500 --> 00:24:01,440
+on day n,
+
+314
+00:24:02,580 --> 00:24:04,720
+well, if he has permission
+to go out on day n,
+
+315
+00:24:06,610 --> 00:24:09,340
+he can do one of two things. He can
+either go out or not. It doesn't matter.
+
+316
+00:24:10,480 --> 00:24:13,540
+Right. So in particular,
+we can say that that's
+
+317
+00:24:14,420 --> 00:24:15,000
+the max
+
+318
+00:24:15,560 --> 00:24:17,720
+of 0 or t of n.
+
+319
+00:24:18,220 --> 00:24:20,590
+Remember, I didn't tell you that
+temperatures have to be positive.
+
+320
+00:24:21,840 --> 00:24:24,800
+Maybe he's a Celsius
+kind of a beaver.
+
+321
+00:24:25,380 --> 00:24:25,380
+OK.
+
+322
+00:24:26,980 --> 00:24:29,120
+And then in addition to that,
+
+323
+00:24:31,460 --> 00:24:36,960
+for convenience, notice that there's a universe where I
+look beyond the end of my array in my recursive call here.
+
+324
+00:24:37,500 --> 00:24:39,860
+So I should probably
+think about a few extra x's.
+
+325
+00:24:41,000 --> 00:24:44,020
+Obviously, the utility of going
+out a day that doesn't exist is 0.
+
+326
+00:24:44,720 --> 00:24:51,800
+So we can say that xn plus
+1 equals xn plus 2 equals 0.
+
+327
+00:24:52,600 --> 00:24:52,720
+OK.
+
+328
+00:24:53,640 --> 00:24:57,550
+I've managed to use way too much
+space for one simple algorithmic problem.
+
+329
+00:25:00,400 --> 00:25:00,880
+Oh, boy.
+
+330
+00:25:01,580 --> 00:25:01,580
+OK.
+
+331
+00:25:02,940 --> 00:25:02,940
+So.
+
+332
+00:25:06,980 --> 00:25:09,420
+Yeah?
+
+333
+00:25:10,060 --> 00:25:11,720
+Can I get credit for that? OK.
+
+334
+00:25:12,870 --> 00:25:18,260
+Right. So now we need to do the O and
+the t. So what's our original problem?
+
+335
+00:25:20,320 --> 00:25:23,700
+Well, remember that he wants to
+maximize his happiness starting on day 1.
+
+336
+00:25:25,120 --> 00:25:29,540
+So our original
+problem is just x of 1.
+
+337
+00:25:32,680 --> 00:25:33,280
+Or is it?
+
+338
+00:25:33,860 --> 00:25:40,360
+So remember that Tim the beaver, this is, you know, your instructor is very
+sloppy when it comes to actually reading the problems, as you saw at the
+
+339
+00:25:40,360 --> 00:25:40,580
+beginning.
+
+340
+00:25:42,280 --> 00:25:48,500
+And the mistake for which I would have personally lost points where I do
+solve this problem on my homework is that it didn't ask for just the maximum
+
+341
+00:25:48,500 --> 00:25:51,700
+amount of happiness
+that Tim could achieve.
+
+342
+00:25:52,480 --> 00:25:54,760
+That's not very practical
+for your everyday beaver.
+
+343
+00:25:55,700 --> 00:26:00,540
+But rather, he wants to know the actual plan. He wants
+to know what days he can go out and what days he can't.
+
+344
+00:26:01,100 --> 00:26:01,280
+Yeah?
+
+345
+00:26:01,950 --> 00:26:07,600
+And I haven't actually told you how to do that. Right? I've only told
+you how to compute x, which is just the maximum amount of happiness.
+
+346
+00:26:34,440 --> 00:26:35,460
+what's happening between types.
+
+347
+00:26:36,180 --> 00:26:39,520
+And it would be interesting
+to use Win environment solvable
+
+348
+00:26:41,740 --> 00:26:46,780
+And now I can reconstruct my plan very
+easily. So I look at x1. If I took option 1,
+
+349
+00:26:47,400 --> 00:26:50,020
+then I stay in and
+I look at day 2.
+
+350
+00:26:50,740 --> 00:26:52,300
+If I took option 2a,
+
+351
+00:26:53,340 --> 00:26:54,280
+then I can label today,
+
+352
+00:26:55,140 --> 00:26:55,540
+tomorrow,
+
+353
+00:26:56,040 --> 00:26:57,220
+and the day after. Wait.
+
+354
+00:26:59,200 --> 00:27:01,260
+Yeah, that's right. I
+can label today's choice,
+
+355
+00:27:01,760 --> 00:27:04,840
+tomorrow's choice, the days after
+choice, and then look three days later
+
+356
+00:27:05,380 --> 00:27:06,400
+and recurse that way.
+
+357
+00:27:07,700 --> 00:27:09,760
+Or option b is kind of similar.
+
+358
+00:27:10,400 --> 00:27:13,620
+So a reasonable way to
+reconstruct the actual set
+
+359
+00:27:14,180 --> 00:27:19,060
+of what days you go out and what days you go in is just
+to remember as you do your memorization or whatever,
+
+360
+00:27:19,740 --> 00:27:25,920
+whether you did option 1, 2a, or 2b. And then it's pretty easy to
+reconstruct from there. Maybe I'll let you guys convince yourselves of
+
+361
+00:27:26,440 --> 00:27:30,340
+that at home or in the last eight seconds if you
+happen to be the two audience members that I have.
+
+362
+00:27:31,240 --> 00:27:40,740
+And then finally, we need to do our time thing. And most of the time
+arguments here follow more or less the same pattern, which is you count the
+
+363
+00:27:40,740 --> 00:27:46,800
+number of subproblems and the time per subproblem. You multiply those
+two things together, and you get your runtime. We're going to see in one
+
+364
+00:27:46,800 --> 00:27:51,290
+problem on this problem set that's not quite right
+because we have to account for some precomputation.
+
+365
+00:27:52,640 --> 00:27:53,840
+But in this case, it is.
+
+366
+00:27:55,300 --> 00:27:55,300
+Right.
+
+367
+00:27:57,460 --> 00:27:59,740
+So let's see. What are
+our subproblems here?
+
+368
+00:28:00,240 --> 00:28:03,820
+Well, essentially, I guess I didn't actually say it,
+but you have to take the max of these three values.
+
+369
+00:28:06,720 --> 00:28:11,640
+Max of three expressions, which have a constant number of
+plus signs and lookups and memory and all that good stuff.
+
+370
+00:28:12,960 --> 00:28:15,630
+So each subproblem takes
+
+371
+00:28:19,300 --> 00:28:20,660
+order one time.
+
+372
+00:28:21,460 --> 00:28:25,000
+How many subproblems are there?
+Well, there's, I guess, n plus
+
+373
+00:28:25,940 --> 00:28:32,830
+2 max if you want to be conservative about it.
+So in particular, there's order n subproblems.
+
+374
+00:28:34,840 --> 00:28:41,020
+So all I have to do is multiply these two things
+together, and my algorithm takes order n time.
+
+375
+00:28:44,000 --> 00:28:47,100
+And that's our solution
+to problem number one.
+
+376
+00:28:47,940 --> 00:28:48,900
+Any questions so far?
+
+377
+00:28:49,840 --> 00:28:50,460
+Yes. Uh -oh.
+
+378
+00:28:51,380 --> 00:28:56,320
+When I was thinking about the problem beforehand,
+I was wondering, could you use base cases?
+
+379
+00:28:57,560 --> 00:28:59,680
+Right now, we have two
+different kinds of base case,
+
+380
+00:29:00,700 --> 00:29:04,460
+a base case for x of n and
+a base case for things after.
+
+381
+00:29:05,060 --> 00:29:11,520
+Could I remove the first one? And add an x of
+n plus 3 equals 0 as well? What would that do?
+
+382
+00:29:12,560 --> 00:29:15,790
+Could I remove the first
+one and add an x of n plus 3?
+
+383
+00:29:16,960 --> 00:29:17,980
+Yeah, I guess that's fine.
+
+384
+00:29:20,160 --> 00:29:23,400
+I'm sorry. That's not a particularly helpful
+answer for the people watching on video.
+
+385
+00:29:23,940 --> 00:29:26,780
+My answer to this question
+you can't hear is yes.
+
+386
+00:29:27,960 --> 00:29:30,560
+Right. So the
+question, to repeat,
+
+387
+00:29:31,480 --> 00:29:31,740
+was
+
+388
+00:29:32,360 --> 00:29:34,460
+this base case is somehow
+kind of complicated looking.
+
+389
+00:29:35,420 --> 00:29:38,140
+To be fair, it's the one that
+I always think given assignment.
+
+390
+00:29:38,980 --> 00:29:39,760
+But that's OK.
+
+391
+00:29:40,480 --> 00:29:42,740
+But the question is,
+is this truly necessary?
+
+392
+00:29:43,440 --> 00:29:51,700
+In particular, can I get rid of the xn case and instead add
+a third day past the end of time, which also has value 0?
+
+393
+00:29:52,800 --> 00:29:56,280
+And if you kind of
+look at that plus case b,
+
+394
+00:29:57,320 --> 00:29:57,940
+I think you could,
+
+395
+00:29:59,800 --> 00:30:04,800
+or rather case a, I think you could convince you, well, case a and b
+for that matter, you could convince yourself that these are equivalent.
+
+396
+00:30:05,690 --> 00:30:09,900
+That's absolutely right. So I could add
+a third day after the end of this thing,
+
+397
+00:30:11,000 --> 00:30:13,720
+which also has value 0.
+Or by the way, I could just
+
+398
+00:30:14,460 --> 00:30:15,160
+say in my code,
+
+399
+00:30:16,010 --> 00:30:19,670
+if i is bigger than n, return
+0. That's the same thing.
+
+400
+00:30:21,920 --> 00:30:25,320
+Yeah, and then I guess I don't have to worry
+about that xn case. Yeah, these are the same.
+
+401
+00:30:26,800 --> 00:30:27,700
+To each their own.
+
+402
+00:30:28,920 --> 00:30:31,760
+Fabulous question. Any others
+that I can answer while we're at it?
+
+403
+00:30:34,100 --> 00:30:34,360
+Cool.
+
+404
+00:30:35,260 --> 00:30:36,240
+All right, so
+that's problem one.
+
+405
+00:30:38,250 --> 00:30:41,240
+I'm writing too big. I
+don't like this big chalk.
+
+406
+00:30:42,360 --> 00:30:48,700
+OK, so problem two is the one that got me all hot and bothered yesterday.
+So let's see if we do any better in front of people, because that's usually
+
+407
+00:30:48,700 --> 00:30:49,810
+the best way to improve
+
+408
+00:30:50,640 --> 00:30:51,660
+problem solving skill.
+
+409
+00:30:52,580 --> 00:30:52,580
+Right,
+
+410
+00:30:53,360 --> 00:31:03,340
+so in problem two, which annoyingly is also probably the most practical
+problem on this problem set, essentially you have a, I suppose I should write
+
+411
+00:31:03,340 --> 00:31:04,260
+some stuff down. Right,
+
+412
+00:31:06,680 --> 00:31:08,980
+so in problem, oh, I
+used the wrong side,
+
+413
+00:31:10,640 --> 00:31:10,860
+two,
+
+414
+00:31:11,480 --> 00:31:12,700
+you have an operating system,
+
+415
+00:31:14,140 --> 00:31:14,400
+men x,
+
+416
+00:31:16,180 --> 00:31:16,460
+whatever,
+
+417
+00:31:17,660 --> 00:31:18,380
+which is a,
+
+418
+00:31:20,240 --> 00:31:20,740
+apparently it's a very simple.
+
+419
+00:31:21,500 --> 00:31:22,100
+Oh,
+
+420
+00:31:23,040 --> 00:31:23,580
+I get it.
+
+421
+00:31:25,490 --> 00:31:27,190
+Doesn't mean I have to like it.
+
+422
+00:31:28,560 --> 00:31:31,460
+Right, so in men x,
+
+423
+00:31:33,320 --> 00:31:33,800
+yeah.
+
+424
+00:31:35,290 --> 00:31:40,560
+Yeah, apparently the only thing that my operating
+system can do is compute edit distance between files.
+
+425
+00:31:41,620 --> 00:31:42,520
+And it wants to
+do so efficiently.
+
+426
+00:31:43,840 --> 00:31:44,040
+So
+
+427
+00:31:44,960 --> 00:31:46,900
+we have that a file
+
+428
+00:31:48,820 --> 00:31:50,380
+is a sequence of strings.
+
+429
+00:31:54,730 --> 00:31:56,620
+And I believe we
+say their length
+
+430
+00:31:57,840 --> 00:32:01,320
+is less than or equal to k. That's
+going to come into play a little bit later.
+
+431
+00:32:04,160 --> 00:32:07,060
+But basically, it's just
+lines of the different files.
+
+432
+00:32:08,500 --> 00:32:08,500
+So
+
+433
+00:32:09,300 --> 00:32:11,880
+there's three different ways
+that we can change a file.
+
+434
+00:32:13,240 --> 00:32:14,660
+So here are the
+changes we could do.
+
+435
+00:32:18,220 --> 00:32:20,800
+Change number one
+is to add a line.
+
+436
+00:32:23,660 --> 00:32:26,840
+Change number two
+is to remove a line.
+
+437
+00:32:29,940 --> 00:32:31,100
+And change number three
+
+438
+00:32:31,680 --> 00:32:32,880
+is to swap.
+
+439
+00:32:34,760 --> 00:32:37,000
+But a caveat for
+
+440
+00:32:38,610 --> 00:32:48,880
+this interesting model of what's cheap and what's not is that apparently
+swapping two lines is cheap because they exist in memory. Like maybe I'm,
+
+441
+00:32:49,700 --> 00:32:52,790
+I don't know, using like a linked
+list or something to store files.
+
+442
+00:32:53,380 --> 00:32:55,600
+And so swapping two
+pointers isn't so bad.
+
+443
+00:32:56,390 --> 00:33:01,100
+But inserting and removing a line is hard because,
+I don't know, memory allocation is expensive.
+
+444
+00:33:01,900 --> 00:33:05,080
+Like, you know, me nix is actually
+operating on clay. Tablets and
+
+445
+00:33:05,740 --> 00:33:13,920
+I can chop my clay tablets into different slices and just pick them up and
+swap them. And that's fine. But if I want to add a line to my file, I have
+
+446
+00:33:14,600 --> 00:33:23,180
+to go to the Tigris and Euphrates and pull out the, or whatever
+it was, the Eugris and the Typhrates and pull out a stone.
+
+447
+00:33:23,700 --> 00:33:26,200
+It's a lot of work to make
+a new line or to dispose.
+
+448
+00:33:28,020 --> 00:33:29,280
+So these are expensive.
+
+449
+00:33:32,080 --> 00:33:34,140
+And this is cheap.
+
+450
+00:33:35,480 --> 00:33:38,340
+And so the question that
+I'm trying to say, that
+
+451
+00:33:39,060 --> 00:33:40,700
+I'm trying to say and that
+the problem is trying to
+
+452
+00:33:41,440 --> 00:33:42,520
+ask is that you
+
+453
+00:33:43,020 --> 00:33:43,560
+are given
+
+454
+00:33:45,940 --> 00:33:46,540
+files
+
+455
+00:33:47,860 --> 00:33:48,780
+A and
+
+456
+00:33:49,700 --> 00:33:52,660
+B with n lines each.
+
+457
+00:33:57,420 --> 00:34:04,140
+You want to know what the minimum
+number of non -swap operations it'll take.
+
+458
+00:34:05,020 --> 00:34:08,500
+And so in other words, the minimum number
+of times you need to add and remove lines
+
+459
+00:34:09,000 --> 00:34:11,520
+to transform A into B,
+
+460
+00:34:12,179 --> 00:34:12,179
+right?
+
+461
+00:34:19,340 --> 00:34:20,320
+Essentially with low cost.
+
+462
+00:34:23,260 --> 00:34:23,690
+And in fact,
+
+463
+00:34:24,360 --> 00:34:28,940
+just to be nice, I think that's actually
+kind of a critical hint in this problem.
+
+464
+00:34:29,480 --> 00:34:30,159
+We give you the runtime.
+
+465
+00:34:31,989 --> 00:34:37,800
+And I'm going to kind of ignore it in my answer. And notice that I did
+something wrong and then go back and fix it. This is different from the way
+
+466
+00:34:37,800 --> 00:34:43,600
+the answer is written where God came in and said like, oh, we observe that
+we're probably going to need this thing. So we're going to go ahead and do
+
+467
+00:34:43,600 --> 00:34:43,960
+it here.
+
+468
+00:34:44,699 --> 00:34:46,960
+I think that's maybe not
+representative of the logic here.
+
+469
+00:34:47,580 --> 00:34:49,699
+So the runtime here
+
+470
+00:34:50,600 --> 00:34:52,440
+is k n plus n squared.
+
+471
+00:34:53,280 --> 00:34:56,320
+The first thing to
+notice, there is a k here.
+
+472
+00:34:58,080 --> 00:35:00,450
+And so someday, we're going
+to have to compare strings.
+
+473
+00:35:02,180 --> 00:35:03,680
+Because that's what k is.
+
+474
+00:35:04,180 --> 00:35:07,120
+And I think that's sort of the hint that's
+implicit in this problem. It's easy to miss.
+
+475
+00:35:08,400 --> 00:35:12,520
+And so indeed, what we're going to notice is we're going
+to look at our solution and say, well, wait a second. If we
+
+476
+00:35:13,740 --> 00:35:15,980
+didn't incur a factor of k, we
+must have done something wrong.
+
+477
+00:35:17,200 --> 00:35:19,240
+And indeed, that's
+going to be the case. But
+
+478
+00:35:20,880 --> 00:35:26,900
+it's only a minor fix to change it. There's
+another important distinction on swaps.
+
+479
+00:35:27,480 --> 00:35:32,880
+Oh, I'm sorry. Yeah. And right, when I
+swap things, they have to be adjacent.
+
+480
+00:35:34,920 --> 00:35:36,540
+I can't write at the
+bottom of the board.
+
+481
+00:35:38,720 --> 00:35:41,300
+That's supposed to be A, D,
+J for those watching at home.
+
+482
+00:35:42,020 --> 00:35:44,720
+But you can only swap
+lines that are adjacent
+
+483
+00:35:45,420 --> 00:35:47,840
+as they appear in
+their original file.
+
+484
+00:35:48,380 --> 00:35:52,100
+I'll say it out loud rather than try and write it because
+it's going to take the rest of the lecture to do that.
+
+485
+00:35:52,780 --> 00:35:52,780
+OK.
+
+486
+00:35:53,620 --> 00:35:55,520
+Any other things I've forgotten?
+
+487
+00:35:56,580 --> 00:35:58,220
+This is high likelihood
+I'm bad at this.
+
+488
+00:35:59,160 --> 00:35:59,980
+OK. So
+
+489
+00:36:02,120 --> 00:36:02,860
+this one was annoying.
+
+490
+00:36:04,160 --> 00:36:12,140
+Actually, annoying is actually a relatively easy instance of a very well
+-known dynamic program plus a tiny bit of additional stuff, which is called
+
+491
+00:36:12,140 --> 00:36:12,680
+edit distance.
+
+492
+00:36:14,200 --> 00:36:16,620
+In fact, I think if you guys are
+looking for intuition on this problem,
+
+493
+00:36:17,660 --> 00:36:21,520
+you might Google that
+one first as sort of a,
+
+494
+00:36:22,060 --> 00:36:22,460
+what was that?
+
+495
+00:36:23,060 --> 00:36:28,380
+Oh, in fact, you're doing a recitation. Oh, that's why. It's not
+totally unreasonable to come up with the answer here. Even better.
+
+496
+00:36:29,300 --> 00:36:34,140
+But even if you hadn't, this is just another dynamic
+programming problem. That's just like a little bit more.
+
+497
+00:36:35,300 --> 00:36:38,280
+Annoying than your average
+dynamic programming problem.
+
+498
+00:36:38,840 --> 00:36:42,320
+Now, the solution written out
+in the course notes works from
+
+499
+00:36:42,920 --> 00:36:45,860
+sort of the last line of the
+file downward in some sense.
+
+500
+00:36:46,600 --> 00:36:47,740
+Upward?
+
+501
+00:36:49,180 --> 00:36:49,600
+Whatever.
+
+502
+00:36:51,400 --> 00:36:59,480
+I literally lost two hours of my life trying to think about editing files
+from the end up and just getting myself all upset and confused. So here,
+
+503
+00:36:59,480 --> 00:37:03,660
+I'm going to attempt to do it in the other direction and
+probably introduce a bunch of mistakes in the process.
+
+504
+00:37:05,020 --> 00:37:05,420
+So what
+
+505
+00:37:06,120 --> 00:37:11,280
+do we do in dynamic programming if we don't know
+what else to do? We do sort stuff, sort bot.
+
+506
+00:37:12,280 --> 00:37:13,280
+And so let's do that here.
+
+507
+00:37:14,000 --> 00:37:14,410
+So in particular,
+
+508
+00:37:15,400 --> 00:37:18,800
+what are our subproblems?
+This is a little bit funky.
+
+509
+00:37:20,200 --> 00:37:23,260
+Actually, even before we do the S of sort,
+let's think about our problem a little bit.
+
+510
+00:37:26,160 --> 00:37:28,840
+Let's think about what
+it actually means to edit a
+
+511
+00:37:29,720 --> 00:37:37,780
+file because this is what helped me think about the right answer
+here. Which is to say, so what's going on? I have two documents.
+
+512
+00:37:38,700 --> 00:37:41,820
+This is document A.
+This is document B.
+
+513
+00:37:42,880 --> 00:37:44,500
+Each one of them is
+composed of a bunch of lines.
+
+514
+00:37:46,280 --> 00:37:51,080
+And I'm basically trying to turn A into B. And
+the only thing I can do is scribble out a line,
+
+515
+00:37:51,640 --> 00:37:55,040
+insert, just hit the Enter key, or
+do a third thing where I kind of swap
+
+516
+00:37:55,780 --> 00:37:58,680
+two things that are adjacent to one
+another. This is the only thing I can do.
+
+517
+00:38:00,220 --> 00:38:02,110
+And the way that I like
+to think about this problem,
+
+518
+00:38:04,160 --> 00:38:05,000
+what
+
+519
+00:38:33,200 --> 00:38:41,400
+I can't jump all over my document because keeping track of that
+whole edit history is going to be somehow combinatorially ginormous.
+
+520
+00:38:42,040 --> 00:38:44,660
+I'm not the track changes
+button in Microsoft Word.
+
+521
+00:38:45,300 --> 00:38:47,060
+I want the minimum
+number of changes.
+
+522
+00:38:48,100 --> 00:38:52,660
+And if I have to recurse over all possible
+edits to every single line in any order,
+
+523
+00:38:53,280 --> 00:39:00,720
+that's an awful lot of factorials and 2 to the n's floating around that I
+don't want to have. And so that's the sort of crux of the challenge here,
+
+524
+00:39:01,380 --> 00:39:03,880
+is to organize my approach
+
+525
+00:39:04,440 --> 00:39:12,020
+to editing these files in a way that doesn't require me to have to do this
+sort of combinatorial jumping all over the place. And I think it's also
+
+526
+00:39:12,020 --> 00:39:17,020
+the one where the sort of, like I know Jerry Kane at
+Stanford talks a lot about the recursive leap of faith.
+
+527
+00:39:17,860 --> 00:39:24,540
+You know, like somehow dividing your problem into organized
+subproblems. That's really where the challenge lives here.
+
+528
+00:39:25,760 --> 00:39:26,160
+So if
+
+529
+00:39:26,920 --> 00:39:35,020
+I were a more organized PhD advisor, the way that I
+would edit a file or a clay tablet, I guess in this case,
+
+530
+00:39:35,640 --> 00:39:41,340
+would be linearly. That I might as well do whatever the heck
+I'm going to do to line one before I move on to line two.
+
+531
+00:39:42,950 --> 00:39:49,180
+And at the end of the day, even if I did stuff in a different order, you
+can convince yourself that I could always order it in such a way that all
+
+532
+00:39:49,180 --> 00:39:52,940
+the edits that I do to the first line kind
+of happen before lines later in the document.
+
+533
+00:39:54,560 --> 00:39:57,300
+With the possible
+exception of this swap thing.
+
+534
+00:39:58,140 --> 00:40:00,350
+But we'll see. That
+somehow doesn't matter.
+
+535
+00:40:00,940 --> 00:40:01,560
+And moreover,
+
+536
+00:40:02,840 --> 00:40:11,860
+if I do an edit, I might as well do the edit to make things better. There's
+no reason to just start like willy nilly inserting and removing lines. I
+
+537
+00:40:11,860 --> 00:40:13,150
+might as well always
+do an operation
+
+538
+00:40:14,040 --> 00:40:15,440
+that improves stuff.
+
+539
+00:40:16,060 --> 00:40:19,410
+And so thinking about
+that sort of logic leads me
+
+540
+00:40:20,000 --> 00:40:23,820
+to a particular way that
+I might write down my s.
+
+541
+00:40:24,660 --> 00:40:29,220
+My subproblems here, which is to say that I'm going
+to think about editing my document line by line.
+
+542
+00:40:31,120 --> 00:40:38,180
+So in other words, once I've dealt with line one, meaning that I've found
+some way to mess with it and make it match line one of the other guy,
+
+543
+00:40:39,340 --> 00:40:39,720
+I'm just going
+
+544
+00:40:40,500 --> 00:40:43,300
+to kind of think about removing it and then
+thinking about the rest of the document.
+
+545
+00:40:44,320 --> 00:40:46,320
+You start saying, aha, that
+sentence sounds like recursion.
+
+546
+00:40:47,320 --> 00:40:49,430
+And that's right. That's how
+we're going to solve this problem.
+
+547
+00:40:50,300 --> 00:40:51,200
+So in particular,
+
+548
+00:40:52,300 --> 00:40:53,540
+here's going to be our thing.
+
+549
+00:40:54,600 --> 00:40:56,700
+We're going to do a different one in the
+solution. So you guys should all be vigilant.
+
+550
+00:40:57,980 --> 00:40:59,970
+Which is I'm going to write xij
+
+551
+00:41:00,640 --> 00:41:03,340
+to be the min
+
+552
+00:41:04,080 --> 00:41:04,500
+work
+
+553
+00:41:05,740 --> 00:41:06,760
+to convert.
+
+554
+00:41:08,000 --> 00:41:08,000
+I'm
+
+555
+00:41:11,160 --> 00:41:13,620
+not a Python programmer, but
+hopefully I got this right.
+
+556
+00:41:16,040 --> 00:41:19,640
+i colon is going to be everything
+from i to the end of the file.
+
+557
+00:41:20,440 --> 00:41:23,860
+So in other words, this is the
+suffix version of our problem.
+
+558
+00:41:25,320 --> 00:41:31,420
+And the into b
+
+559
+00:41:33,000 --> 00:41:33,800
+j colon.
+
+560
+00:41:35,500 --> 00:41:36,720
+Like that.
+
+561
+00:41:37,430 --> 00:41:40,620
+So in other words, I have a
+little, it's kind of like a video.
+
+562
+00:41:41,220 --> 00:41:47,320
+Think about Tetris. Once you get that full line of blocks, you can just
+throw that line of blocks away and the whole video game moves down.
+
+563
+00:41:47,980 --> 00:41:53,700
+There's somehow something very similar going on here, which is the second
+I've managed to get a match for line one of document into line one of the
+
+564
+00:41:53,700 --> 00:41:54,330
+next document.
+
+565
+00:41:54,860 --> 00:42:00,870
+I'm just going to throw it away and pretend like
+I have two documents with one less line in them.
+
+566
+00:42:01,680 --> 00:42:03,620
+Now, the thing that got
+me all hung up last night.
+
+567
+00:42:05,540 --> 00:42:08,260
+My original problem assumes that both
+of my documents have the same length.
+
+568
+00:42:09,800 --> 00:42:11,530
+But here I'm not
+making that assumption.
+
+569
+00:42:13,340 --> 00:42:16,620
+And essentially, what we're going to figure out
+is that actually doesn't matter a whole lot.
+
+570
+00:42:17,360 --> 00:42:19,720
+If I end up with one
+document of length k,
+
+571
+00:42:20,380 --> 00:42:24,560
+well, I shouldn't use k. One document of
+length l and another document of length 0,
+
+572
+00:42:25,600 --> 00:42:27,570
+what's the amount of work
+that I should do to convert?
+
+573
+00:42:28,440 --> 00:42:28,440
+Well,
+
+574
+00:42:29,300 --> 00:42:32,120
+l. Because my only choice
+is to insert a bunch of lines
+
+575
+00:42:33,500 --> 00:42:33,960
+in one document,
+
+576
+00:42:34,460 --> 00:42:39,640
+by the way. Or delete a bunch of lines from the other.
+Those are dual to one another. They're exactly the same.
+
+577
+00:42:40,500 --> 00:42:44,780
+I'm philosophizing a lot because I'm also convincing
+myself that my answer is OK in the process.
+
+578
+00:42:45,960 --> 00:42:45,960
+OK.
+
+579
+00:42:46,800 --> 00:42:50,100
+So this is going to be our set
+of subproblems. And now we have to
+
+580
+00:42:50,620 --> 00:42:52,770
+do the r.
+
+581
+00:43:02,760 --> 00:43:08,420
+So the first thing I'm going to do is just do all the
+possible edits that I can do to line i and line j.
+
+582
+00:43:08,980 --> 00:43:13,920
+And that's perfectly fine in this problem. I think the problem is a little
+slick and the way that they've written the solution, they've convinced
+
+583
+00:43:13,940 --> 00:43:19,980
+themselves that some things are equivalent to others and removed them. But
+you don't have to. As long as there's a constant number of cases, you're
+
+584
+00:43:19,980 --> 00:43:20,280
+golden,
+
+585
+00:43:21,680 --> 00:43:22,000
+pony boy.
+
+586
+00:43:22,960 --> 00:43:24,900
+In particular, let's
+think about some cases.
+
+587
+00:43:25,920 --> 00:43:26,280
+So first of all,
+
+588
+00:43:27,300 --> 00:43:30,840
+if line i matches
+line j of my document,
+
+589
+00:43:32,120 --> 00:43:37,040
+remember that it's not really line j. It's like making
+a document that just happens to kind of start at line j.
+
+590
+00:43:37,900 --> 00:43:38,540
+It's like taking scissors.
+
+591
+00:43:39,380 --> 00:43:41,400
+Well, then I can match
+them with zero cost
+
+592
+00:43:42,040 --> 00:43:43,920
+because the beginnings
+are in the same place.
+
+593
+00:43:44,760 --> 00:43:46,420
+And I can move my
+Tetris game down one.
+
+594
+00:43:47,000 --> 00:43:47,720
+And that's perfectly fine.
+
+595
+00:43:48,660 --> 00:43:53,400
+So case one, I think, is the
+easiest one, which is if a i
+
+596
+00:43:54,820 --> 00:43:57,100
+equals b j,
+
+597
+00:43:57,880 --> 00:44:04,400
+then I can just remove that line from both documents and
+move forward. In which case, I'll use my same goofy notation.
+
+598
+00:44:04,900 --> 00:44:06,500
+I'm going to get that x i j.
+
+599
+00:44:08,220 --> 00:44:11,100
+Well, I'm going to just
+increment i and j and keep going,
+
+600
+00:44:12,240 --> 00:44:13,480
+like that.
+
+601
+00:44:15,880 --> 00:44:15,880
+Cool?
+
+602
+00:44:17,260 --> 00:44:18,340
+OK. So
+
+603
+00:44:19,120 --> 00:44:21,180
+what's something else I could
+do? I could delete a line.
+
+604
+00:44:22,720 --> 00:44:24,020
+So what happens?
+
+605
+00:44:27,400 --> 00:44:27,480
+OK.
+
+606
+00:44:29,000 --> 00:44:29,020
+So
+
+607
+00:44:30,720 --> 00:44:32,380
+case two is delete
+
+608
+00:44:34,500 --> 00:44:34,920
+a i.
+
+609
+00:44:36,070 --> 00:44:37,610
+That's a different
+thing I can do to line i.
+
+610
+00:44:38,600 --> 00:44:43,400
+Well, now what do I have to do? I have a document on the left -hand side,
+which is one line shorter. And on the right -hand side, nothing changed.
+
+611
+00:44:44,800 --> 00:44:46,640
+But deleting a line cost me $1.
+
+612
+00:44:48,100 --> 00:44:49,860
+So in particular, I have
+
+613
+00:44:50,680 --> 00:44:51,510
+that x i j.
+
+614
+00:44:53,000 --> 00:44:55,940
+Well, what happens? Well,
+I got rid of one line.
+
+615
+00:44:59,860 --> 00:45:02,220
+But I had to pay.
+
+616
+00:45:03,240 --> 00:45:04,260
+OK. Let's think about
+some other things.
+
+617
+00:45:05,960 --> 00:45:07,520
+You could delete b j.
+
+618
+00:45:10,500 --> 00:45:13,540
+This case actually isn't in the solution
+because it turns out to be unnecessary.
+
+619
+00:45:14,940 --> 00:45:16,140
+Well, we're only
+allowed to edit a.
+
+620
+00:45:16,840 --> 00:45:19,780
+Oh, I'm only allowed to edit a? Oh, in
+that case, I don't have to delete b j.
+
+621
+00:45:20,280 --> 00:45:22,640
+I really didn't read these
+problems very closely. That's my bad.
+
+622
+00:45:23,580 --> 00:45:25,950
+This would have made it much easier.
+I really should read these things.
+
+623
+00:45:28,240 --> 00:45:30,180
+Cool. So that eliminates
+half of the cases of my notes.
+
+624
+00:45:31,000 --> 00:45:31,180
+Fabulous.
+
+625
+00:45:32,240 --> 00:45:33,160
+Incidentally, you could
+
+626
+00:45:34,120 --> 00:45:36,960
+do these things on the other direction. And it
+really wouldn't change this problem a whole lot.
+
+627
+00:45:38,780 --> 00:45:45,040
+Sorry. I have this bad habit when I'm reading research papers of reading
+the research paper I wanted to be there instead of the one that's actually
+
+628
+00:45:45,040 --> 00:45:45,580
+on the paper.
+
+629
+00:45:46,380 --> 00:45:48,080
+And somehow, it's a very
+similar phenomenon here.
+
+630
+00:45:49,380 --> 00:45:49,740
+OK. Right.
+
+631
+00:45:50,280 --> 00:45:54,480
+So great. So I can only edit document a, which makes
+this problem way easier than what I was worried about.
+
+632
+00:45:55,780 --> 00:45:56,760
+Fabulous. In that case,
+
+633
+00:45:57,660 --> 00:45:59,040
+bananas.
+
+634
+00:46:00,500 --> 00:46:01,600
+What's our third case here?
+
+635
+00:46:02,740 --> 00:46:02,740
+Well,
+
+636
+00:46:05,320 --> 00:46:06,750
+let's see. I could also insert
+
+637
+00:46:07,900 --> 00:46:08,200
+a line.
+
+638
+00:46:09,800 --> 00:46:14,020
+Let's see. So what ends up happening
+there? So I can only edit document a.
+
+639
+00:46:14,620 --> 00:46:24,660
+So that makes my cases different than
+the ones I wrote down on my notes. Sorry.
+
+640
+00:46:28,040 --> 00:46:30,100
+OK.
+
+641
+00:46:36,800 --> 00:46:37,640
+So if I insert
+
+642
+00:46:39,040 --> 00:46:41,520
+a line at line i,
+
+643
+00:46:42,960 --> 00:46:45,740
+I might as well make it match
+b j. There's no reason not to.
+
+644
+00:46:46,580 --> 00:46:49,600
+Right? I might as well kill off
+one element of b while I'm at it.
+
+645
+00:46:50,360 --> 00:46:52,400
+Yeah? So if I do that,
+what ends up happening?
+
+646
+00:46:53,600 --> 00:46:57,200
+Well, I still have to match line i. I've
+just kind of moved it lower in my file.
+
+647
+00:46:57,760 --> 00:46:59,000
+But I've, in essence,
+
+648
+00:46:59,760 --> 00:47:01,360
+killed one line in file b
+
+649
+00:47:01,860 --> 00:47:03,820
+by making it match this
+new line that I inserted.
+
+650
+00:47:04,760 --> 00:47:10,120
+In my notes, because I thought I could edit b, I said, OK, I can just
+delete the line in b instead. And somehow, logically, that's a lot easier to
+
+651
+00:47:10,120 --> 00:47:12,960
+think about. But these are
+exactly dual to one another.
+
+652
+00:47:13,780 --> 00:47:16,070
+So in that case, I have xij.
+
+653
+00:47:17,700 --> 00:47:21,700
+Well, I still have to deal with ai. I haven't
+gotten rid of it. But I've matched line j.
+
+654
+00:47:22,400 --> 00:47:26,480
+So I paid $1 for
+inserting a line.
+
+655
+00:47:28,000 --> 00:47:32,440
+And now I have that, because I've
+gotten rid of a line in the other file.
+
+656
+00:47:34,360 --> 00:47:36,440
+If I stopped here, by the
+way, I would have edit distance.
+
+657
+00:47:37,280 --> 00:47:40,260
+But unfortunately for me, I
+have one additional case, which
+
+658
+00:47:42,700 --> 00:47:44,500
+is mild irritant, as they say,
+
+659
+00:47:45,130 --> 00:47:46,460
+which is that I can swap.
+
+660
+00:48:17,720 --> 00:48:20,240
+So if I have a,
+
+661
+00:48:20,980 --> 00:48:25,520
+now you have to be a little bit careful, because
+I'm swapping. So if the next guy in a equals b,
+
+662
+00:48:26,100 --> 00:48:27,700
+the current guy in b,
+
+663
+00:48:28,320 --> 00:48:32,780
+and the current guy in a
+equals the next guy in b,
+
+664
+00:48:35,400 --> 00:48:44,290
+well, now I can swap this guy and kill off two lines in
+my files while I'm at it. So in this case, I get that xij.
+
+665
+00:48:47,000 --> 00:48:47,600
+Doesn't cost me anything.
+
+666
+00:48:48,240 --> 00:48:49,140
+And I killed off two things.
+
+667
+00:48:50,600 --> 00:48:50,600
+So
+
+668
+00:48:54,660 --> 00:49:01,620
+that's the recursive. So if I were to write this out on my homework, what
+should I do? Well, I shouldn't. I mean, probably if you use this error
+
+669
+00:49:01,620 --> 00:49:08,040
+notation, I don't think it would be a big deal. But really, you should add
+a line at the bottom saying that I can choose to do any of these things.
+
+670
+00:49:08,120 --> 00:49:10,920
+So really, my recursive
+call is xij gets
+
+671
+00:49:11,560 --> 00:49:16,160
+the min of all of these 1, 2, 3, 4
+expressions that I've written here.
+
+672
+00:49:17,000 --> 00:49:17,100
+OK.
+
+673
+00:49:19,780 --> 00:49:25,620
+What if you have the first condition but not the second one?
+What if I have the first condition but not the second one? Ah,
+
+674
+00:49:26,220 --> 00:49:26,780
+so
+
+675
+00:49:27,540 --> 00:49:35,100
+that's a great question. Yeah, so the question was like, OK,
+well, what if I can match the next line but not the current one?
+
+676
+00:49:36,320 --> 00:49:41,740
+Well, there's two different things you could do. You could either make
+another case for that. That's perfectly fine. In fact, you could do that. You
+
+677
+00:49:41,740 --> 00:49:46,860
+could do that I match the second condition, not the first one. Whatever,
+you can just enumerate as many things you want as long as they're all true.
+
+678
+00:49:46,920 --> 00:49:47,660
+And there's a constant number.
+
+679
+00:49:49,400 --> 00:49:52,400
+Alternatively, you convince yourself that
+that actually is unnecessary here because
+
+680
+00:49:52,900 --> 00:49:54,840
+a different, so
+that's like swapping.
+
+681
+00:49:56,040 --> 00:49:59,840
+But then one of those two lines is still a mismatch. So
+you're going to have to delete something in the next step.
+
+682
+00:50:00,880 --> 00:50:04,840
+So you might as well just delete
+first rather than swap and then delete.
+
+683
+00:50:05,960 --> 00:50:07,680
+And so that's why that
+case isn't necessary.
+
+684
+00:50:08,280 --> 00:50:08,340
+Yeah?
+
+685
+00:50:10,220 --> 00:50:10,220
+Exactly.
+
+686
+00:50:11,800 --> 00:50:16,140
+Exactly. So if you swapped and you killed a line, then in
+effect, I think it's a combination of case 1 and case 2 here.
+
+687
+00:50:17,100 --> 00:50:22,680
+If you kind of expand your recursion out. But if you're having trouble
+convincing yourself of that, that's fine. Just add a case here.
+
+688
+00:50:23,740 --> 00:50:23,740
+Yeah?
+
+689
+00:50:25,340 --> 00:50:28,420
+Any other questions? I'm going to ask quickly
+because this problem makes me nervous.
+
+690
+00:50:30,420 --> 00:50:37,280
+Sure, yeah. OK, in the worst case, if we've done
+something wrong, you can certainly add another case here.
+
+691
+00:50:38,820 --> 00:50:40,260
+I'll think about it at home.
+
+692
+00:50:41,120 --> 00:50:45,020
+OK, so since I've managed to pontificate
+too long, let's keep moving here.
+
+693
+00:50:46,920 --> 00:50:47,020
+Oh,
+
+694
+00:50:49,020 --> 00:50:50,420
+yeah, the problem
+might have been.
+
+695
+00:50:52,320 --> 00:50:55,980
+So if you make the swap and
+match one of them and not the other,
+
+696
+00:50:56,560 --> 00:50:58,720
+then that's not OK.
+
+697
+00:50:59,240 --> 00:51:02,880
+Yeah, because at the end of the day, the
+files have to agree. Like, you have to match
+
+698
+00:51:03,380 --> 00:51:11,840
+B to A. Swap and delete is cheaper than doing two deletes and two inserts.
+No, no, no, but the swap and delete is illegal because you have to use
+
+699
+00:51:11,840 --> 00:51:19,920
+both lines. That's a condition in the problem. Oh, I'm sorry. That's a
+better answer. So Jason points out that if I swap thing, I can't delete it
+
+700
+00:51:20,100 --> 00:51:25,200
+because of the way the problem is written. So that effectively
+removes this case. Otherwise, I think, I guess Eric is.
+
+701
+00:51:26,660 --> 00:51:29,760
+Ah, sorry. I've managed to totally
+botch this, which is totally unsurprising.
+
+702
+00:51:31,320 --> 00:51:36,260
+Yeah, so I think the problem also states
+that if you swap, the swap has to be useful.
+
+703
+00:51:37,020 --> 00:51:41,280
+And that's why this additional case
+that Eric is asking about where you swap
+
+704
+00:51:41,820 --> 00:51:44,820
+and then you match one line
+but not the other is unnecessary.
+
+705
+00:51:46,000 --> 00:51:50,420
+I might be able to relax that by just adding a case here. But
+since the problem doesn't ask it, I'm not going to think about it.
+
+706
+00:51:51,340 --> 00:51:51,940
+OK, great.
+
+707
+00:51:53,040 --> 00:51:57,600
+So under all the assumptions of this problem that I didn't
+read but are very important to solving this problem correctly,
+
+708
+00:51:58,110 --> 00:52:03,190
+I believe we really have written
+down all of our cases here.
+
+709
+00:52:04,300 --> 00:52:07,100
+OK, so let's continue
+with our sort bot paradigm.
+
+710
+00:52:09,120 --> 00:52:11,510
+So now we have all
+of our recursion.
+
+711
+00:52:12,580 --> 00:52:15,230
+The topological order here
+is a little bit trickier
+
+712
+00:52:16,000 --> 00:52:18,580
+than normal because now you've
+got a two -dimensional array.
+
+713
+00:52:19,500 --> 00:52:27,910
+But it follows a pattern that's pretty
+typical here, which is that xij only depends
+
+714
+00:52:28,860 --> 00:52:33,980
+on other xijs with higher
+
+715
+00:52:36,220 --> 00:52:39,800
+i plus j. So I think about
+my graph of subproblems.
+
+716
+00:52:41,080 --> 00:52:44,960
+If I wrote this in a 2D matrix, it always
+kind of points down and to the right maybe,
+
+717
+00:52:45,880 --> 00:52:51,640
+which is what's making it acyclic. This is a very typical pattern
+in these sort of two -dimensional dynamic programming problems.
+
+718
+00:52:53,100 --> 00:52:56,660
+All right, so let's see here.
+Sort bot, so we need our base case.
+
+719
+00:52:58,020 --> 00:53:04,360
+This isn't too bad because essentially when you have boring
+documents, they're very easy to match to one another.
+
+720
+00:53:05,460 --> 00:53:06,880
+So in particular,
+
+721
+00:53:07,880 --> 00:53:09,960
+for any i,
+
+722
+00:53:11,780 --> 00:53:15,480
+if I'm at line n plus 1, in other words, I
+have a blank document that I'm matching to
+
+723
+00:53:16,000 --> 00:53:17,120
+a document i, well,
+
+724
+00:53:17,880 --> 00:53:19,300
+how much work do I have to do?
+
+725
+00:53:20,820 --> 00:53:26,340
+You'd be a little bit careful. This is where the suffix version of this
+problem is a little bit more annoying than the prefix one, however I managed
+
+726
+00:53:26,340 --> 00:53:27,200
+to swap those backward again.
+
+727
+00:53:29,200 --> 00:53:35,420
+That in particular, the remaining number
+of lines looks like n plus 1 minus i,
+
+728
+00:53:36,560 --> 00:53:37,060
+which
+
+729
+00:53:38,400 --> 00:53:41,220
+is different than in the problem, it's just i
+because they're working in the other direction,
+
+730
+00:53:42,100 --> 00:53:42,780
+in the solution rather.
+
+731
+00:53:43,860 --> 00:53:48,860
+And similarly, you need a second
+case for those two here. So you have x
+
+732
+00:53:49,800 --> 00:53:53,760
+n plus 1 j is going to be
+
+733
+00:53:55,360 --> 00:53:56,630
+n plus 1 minus j.
+
+734
+00:53:58,740 --> 00:53:58,880
+Cool.
+
+735
+00:54:00,080 --> 00:54:00,140
+OK,
+
+736
+00:54:01,220 --> 00:54:01,420
+so
+
+737
+00:54:02,080 --> 00:54:03,580
+we're going to continue
+with sort bot here.
+
+738
+00:54:05,560 --> 00:54:08,500
+So what is our original
+case by definition?
+
+739
+00:54:10,380 --> 00:54:14,380
+Is x 1 1 or 0 0,
+depending on how you index.
+
+740
+00:54:15,980 --> 00:54:16,640
+And then finally,
+
+741
+00:54:17,920 --> 00:54:18,700
+what's our runtime?
+
+742
+00:54:19,920 --> 00:54:21,260
+Well, let's see,
+
+743
+00:54:21,800 --> 00:54:22,930
+there's n plus 1
+
+744
+00:54:24,460 --> 00:54:25,520
+squared subproblems.
+
+745
+00:54:26,940 --> 00:54:29,910
+And of course, that's
+equal to order n squared.
+
+746
+00:54:31,080 --> 00:54:33,220
+The subproblems are just
+a constant amount of work.
+
+747
+00:54:34,200 --> 00:54:35,640
+So they're each
+
+748
+00:54:37,280 --> 00:54:37,540
+with
+
+749
+00:54:38,100 --> 00:54:38,760
+constant work.
+
+750
+00:54:41,860 --> 00:54:43,040
+So our entire runtime
+
+751
+00:54:43,800 --> 00:54:45,160
+is order n squared.
+
+752
+00:54:46,460 --> 00:54:53,580
+And hopefully, by watching me be confused in front of you and think
+through this problem, you too will see how the problem solving procedure
+
+753
+00:54:54,880 --> 00:54:57,240
+can happen in your
+own disorganized brain.
+
+754
+00:54:58,320 --> 00:55:02,070
+OK, so that concludes our
+treatment of this problem here.
+
+755
+00:55:03,800 --> 00:55:08,420
+That, I think, is the hardest one. So the other
+two, thankfully, are much easier to think about,
+
+756
+00:55:09,020 --> 00:55:09,280
+I thought.
+
+757
+00:55:10,260 --> 00:55:13,780
+But I never liked that at distance. I remember seeing
+that in undergrad algorithms, getting confused.
+
+758
+00:55:15,060 --> 00:55:18,160
+OK, so the next problem,
+problem three here,
+
+759
+00:55:19,340 --> 00:55:22,180
+deals with Saggy Mimson.
+
+760
+00:55:22,940 --> 00:55:23,900
+And she has a bunch of blocks.
+
+761
+00:55:24,980 --> 00:55:28,820
+And she wants to stack them on
+top of each other, as one does. And
+
+762
+00:55:29,600 --> 00:55:34,760
+as a young structural engineer,
+she has a few criteria on her problem.
+
+763
+00:55:37,700 --> 00:55:40,040
+Let me go to the right
+page in my notes here.
+
+764
+00:56:10,400 --> 00:56:15,300
+But it doesn't really matter, because she's happy
+to rotate her cubes any way that she pleases.
+
+765
+00:56:16,660 --> 00:56:20,220
+There's a key detail, which I did
+remember to actually read in this problem,
+
+766
+00:56:21,060 --> 00:56:24,920
+which is that she
+has at least three of
+
+767
+00:56:26,380 --> 00:56:27,320
+each type.
+
+768
+00:56:29,640 --> 00:56:34,560
+Where type here means that I can permute these three numbers any
+way that I want, because that's the same as just rotating a block.
+
+769
+00:56:35,340 --> 00:56:37,820
+But any time she has one
+block, that's like 1 by 2 by 3,
+
+770
+00:56:38,320 --> 00:56:40,360
+she has at least two
+more in her bag. OK?
+
+771
+00:56:44,040 --> 00:56:47,900
+Oh, 1 times 2 times 3 is equal
+to 6. Thank you, Apple Watch.
+
+772
+00:56:49,080 --> 00:56:58,480
+OK, so that's odd. So she can orient her block any way that she
+wants, meaning she can rotate it in any fashion that she'd like.
+
+773
+00:56:59,380 --> 00:57:01,740
+And so what we're trying
+to do, what we want,
+
+774
+00:57:03,100 --> 00:57:03,380
+is
+
+775
+00:57:04,300 --> 00:57:05,560
+the max height
+
+776
+00:57:07,520 --> 00:57:10,140
+where she's stacking
+her n blocks.
+
+777
+00:57:10,800 --> 00:57:13,000
+I suppose I should
+say their n blocks.
+
+778
+00:57:15,620 --> 00:57:19,640
+So she wants the max height that she can
+achieve. But just to be kind of annoying,
+
+779
+00:57:21,620 --> 00:57:25,280
+or because, again, she's very concerned with
+structural stability. She lives in an earthquake zone.
+
+780
+00:57:25,820 --> 00:57:32,010
+She would like, with the condition
+that each block is strictly supported
+
+781
+00:57:32,980 --> 00:57:34,160
+on the block beneath it.
+
+782
+00:57:40,520 --> 00:57:42,780
+So in other words,
+if this is the base
+
+783
+00:57:43,620 --> 00:57:50,640
+of one block, then the next block that's stacked on top of
+it has to be strictly contained within the block below it.
+
+784
+00:57:53,160 --> 00:57:55,620
+So the problem makes
+sense. Have I omitted any
+
+785
+00:57:56,360 --> 00:57:58,490
+critical details? I don't think I have
+this time. This one's a little easier.
+
+786
+00:57:59,400 --> 00:58:08,640
+So you can rotate that multiple to 90? Oh, yeah. And she can't do anything
+crazy. She can't do a weird balance it on its edge kind of thing, which
+
+787
+00:58:08,640 --> 00:58:16,600
+is, Eric is absolutely right, could actually give her a taller tower than
+you could get if you're only allowed to rotate blocks 90 degrees. I don't
+
+788
+00:58:16,600 --> 00:58:21,500
+think the problem states that explicitly, but this isn't
+a trigonometry class. So I think we're in good shape.
+
+789
+00:58:22,300 --> 00:58:26,500
+OK, right. So that's
+our basic problem here.
+
+790
+00:58:27,620 --> 00:58:31,520
+This is one of these problems that, like, it's going
+to be a dynamic programming problem. But again,
+
+791
+00:58:32,140 --> 00:58:35,440
+similar to many of the things that we saw
+in lecture, it's not totally obvious how,
+
+792
+00:58:36,120 --> 00:58:36,420
+right? Because somehow,
+
+793
+00:58:37,020 --> 00:58:38,100
+she has this big disorganized
+
+794
+00:58:39,460 --> 00:58:43,200
+bag of blocks. You could imagine
+a universe where there's 2 to the n
+
+795
+00:58:44,020 --> 00:58:50,200
+different things she could do, right? For every single block, she could
+decide whether or not to put it in her stack. And then she has to do a bunch
+
+796
+00:58:50,200 --> 00:58:55,520
+of other work to verify whether she can stack them
+while supporting the strict support condition or not.
+
+797
+00:58:56,620 --> 00:58:58,360
+So initially, that
+seems kind of annoying.
+
+798
+00:58:59,320 --> 00:59:02,740
+So what we have to do, which again is
+pretty common to a lot of these problems,
+
+799
+00:59:03,720 --> 00:59:08,640
+is place some order on it. I mean that both in the entropy
+sense and also, like, literally, we're going to order stuff.
+
+800
+00:59:10,140 --> 00:59:16,760
+And in particular, we'll see that this problem has a lot in common
+with that longest common subsequence problem that we saw in lecture,
+
+801
+00:59:17,420 --> 00:59:18,320
+increasing subsequence.
+
+802
+00:59:18,980 --> 00:59:19,180
+Sorry.
+
+803
+00:59:20,820 --> 00:59:20,980
+Right.
+
+804
+00:59:21,960 --> 00:59:24,820
+So here's some observations
+
+805
+00:59:26,220 --> 00:59:27,720
+about our problem
+which are going to help.
+
+806
+00:59:28,460 --> 00:59:29,020
+First of all,
+
+807
+00:59:31,000 --> 00:59:32,160
+when we stack our blocks,
+
+808
+00:59:33,380 --> 00:59:39,220
+we might as well always align the shorter side of the block
+on top to the shorter side of the block underneath it.
+
+809
+00:59:40,820 --> 00:59:40,960
+Right?
+
+810
+00:59:42,240 --> 00:59:42,240
+Let
+
+811
+00:59:44,100 --> 00:59:50,180
+me draw a picture
+of what I mean.
+
+812
+00:59:50,960 --> 00:59:54,440
+So let's say I have a really block
+whose base kind of looks like that.
+
+813
+00:59:54,960 --> 00:59:57,060
+And then another block,
+which is also rectangular,
+
+814
+00:59:58,460 --> 00:59:59,880
+that I sit on top
+of it like that.
+
+815
+01:00:01,540 --> 01:00:08,820
+Then notice I could, so in this case, the shorter edge of one block is
+aligned to the longer edge of the other. Notice I could rotate it 90 degrees,
+
+816
+01:00:09,280 --> 01:00:12,880
+and it still supports on one
+another. So there's never a case,
+
+817
+01:00:13,380 --> 01:00:14,640
+you can convince yourself
+with just a few inequalities,
+
+818
+01:00:15,910 --> 01:00:22,120
+where I don't kind of always put the long side parallel to the long side
+of the guy underneath it and the short side parallel to the short guy
+
+819
+01:00:22,120 --> 01:00:23,680
+underneath it. Does
+that make sense?
+
+820
+01:00:24,920 --> 01:00:25,080
+Cool.
+
+821
+01:00:25,660 --> 01:00:26,560
+So that's observation one.
+
+822
+01:00:30,340 --> 01:00:31,600
+Observation two. Can
+
+823
+01:00:32,440 --> 01:00:35,200
+I ever, like let's say
+that Maggie actually, sorry,
+
+824
+01:00:36,820 --> 01:00:39,200
+Saggy actually had not
+
+825
+01:00:39,800 --> 01:00:41,760
+just three blocks of
+a type, but like 25.
+
+826
+01:00:42,860 --> 01:00:44,300
+So she just like
+has hella blocks.
+
+827
+01:00:45,360 --> 01:00:46,100
+Right? My
+
+828
+01:00:46,770 --> 01:00:47,440
+question is, does it matter?
+
+829
+01:00:49,220 --> 01:00:50,840
+The answer is no, because
+
+830
+01:00:51,820 --> 01:00:53,500
+this word here
+
+831
+01:00:54,200 --> 01:00:54,620
+is really critical,
+
+832
+01:00:55,140 --> 01:00:57,980
+which is that there's strict support.
+So your block only has so many faces.
+
+833
+01:00:59,400 --> 01:01:00,420
+Right? And in fact,
+
+834
+01:01:01,540 --> 01:01:02,540
+by observation one,
+
+835
+01:01:03,540 --> 01:01:05,520
+really all that matters is which
+
+836
+01:01:06,080 --> 01:01:07,920
+of the three types of
+faces is sitting on top.
+
+837
+01:01:08,540 --> 01:01:10,100
+Because we can
+just always rotate.
+
+838
+01:01:11,020 --> 01:01:12,740
+So there's three
+configurations of every block.
+
+839
+01:01:15,600 --> 01:01:16,430
+So at most,
+
+840
+01:01:17,600 --> 01:01:22,320
+can any one configuration appear more than one
+time? No, because of the strict support condition.
+
+841
+01:01:23,000 --> 01:01:26,420
+Right? Otherwise, the rectangles would match
+up, and that's against the rules. Yeah?
+
+842
+01:01:27,720 --> 01:01:28,380
+So in particular,
+
+843
+01:01:30,480 --> 01:01:31,800
+oops. The number after two is,
+
+844
+01:01:32,560 --> 01:01:34,200
+the number after one is two,
+
+845
+01:01:35,440 --> 01:01:36,310
+which looks like that.
+
+846
+01:01:37,740 --> 01:01:37,740
+OK.
+
+847
+01:01:39,200 --> 01:01:40,450
+Right. So in particular,
+
+848
+01:01:41,280 --> 01:01:43,300
+there are only
+three orientations.
+
+849
+01:01:47,140 --> 01:01:56,120
+Right? This is just which of the three edges of the block is the one that's
+going away from the floor, the normal to the ground. And moreover, each
+
+850
+01:01:57,040 --> 01:01:58,140
+can appear
+
+851
+01:01:59,180 --> 01:02:00,840
+less than or equal to one time.
+
+852
+01:02:01,790 --> 01:02:03,600
+That's good, because it
+limits the size of our problem.
+
+853
+01:02:05,420 --> 01:02:06,000
+And finally,
+
+854
+01:02:08,220 --> 01:02:08,220
+oops.
+
+855
+01:02:11,260 --> 01:02:11,700
+Well, I collapsed
+
+856
+01:02:12,540 --> 01:02:15,620
+two of the cases in my notes
+into one case here. But that's OK.
+
+857
+01:02:16,520 --> 01:02:21,000
+And in fact, notice that the problem tells us that
+she has at least three of each type. So in a sense,
+
+858
+01:02:22,520 --> 01:02:30,260
+if the problem, if you observe one of a block, you might as well just throw
+away the rest. Because you know that you can use it at most three times,
+
+859
+01:02:30,280 --> 01:02:34,820
+and she has three of that block. We can't use it more than
+three times. So in a sense, that's just surplus information.
+
+860
+01:02:36,600 --> 01:02:36,600
+OK.
+
+861
+01:02:37,640 --> 01:02:45,660
+Right. So this allows us to put a little bit of order here.
+Because notice that when I look at the stack of blocks here,
+
+862
+01:02:46,660 --> 01:02:47,720
+what do we know? If I look
+
+863
+01:02:48,280 --> 01:02:51,620
+at the length of the long side
+and the length of the short side
+
+864
+01:02:52,140 --> 01:02:53,250
+in the plane of the ground,
+
+865
+01:02:54,180 --> 01:02:57,020
+those numbers have to decrease
+on every level of my block.
+
+866
+01:02:57,620 --> 01:03:04,040
+Right? They can never increase. That's what the strict support condition
+says. So combined with observation one, actually even without observation
+
+867
+01:03:04,040 --> 01:03:04,740
+one,
+
+868
+01:03:05,320 --> 01:03:06,420
+which is good news.
+
+869
+01:03:07,180 --> 01:03:11,640
+Right? So this is what's going to allow us to impose order
+on our problem, namely that we can sort by the edge lengths,
+
+870
+01:03:12,200 --> 01:03:14,680
+because we know that we
+have this support condition.
+
+871
+01:03:15,200 --> 01:03:17,520
+OK. So let's fill in some
+details of our algorithm.
+
+872
+01:03:21,060 --> 01:03:21,060
+OK.
+
+873
+01:03:24,060 --> 01:03:26,260
+So right.
+
+874
+01:03:27,500 --> 01:03:34,760
+So originally, already we can see that our list of blocks is kind of
+useless, because the width, length, and height values are sorted in ways that
+
+875
+01:03:34,760 --> 01:03:35,560
+don't matter.
+
+876
+01:03:36,680 --> 01:03:40,740
+Moreover, if we have more than three of a
+given block, that's somehow not super useful.
+
+877
+01:03:42,580 --> 01:03:43,320
+So instead of that,
+
+878
+01:03:45,900 --> 01:03:55,860
+without loss of generality, let's assume, so w, l,
+o, g here. We can always take our block and assume,
+
+879
+01:03:56,820 --> 01:03:59,060
+I'm going to do this slightly
+different from my notes, that the width
+
+880
+01:04:00,480 --> 01:04:02,860
+is less than or
+equal to the height.
+
+881
+01:04:06,600 --> 01:04:09,140
+Is less than or equal to the
+length. OK. So every block,
+
+882
+01:04:09,840 --> 01:04:15,120
+if this isn't the case, I could go down my array of blocks and
+sort. And sorting a list of three numbers is constant time.
+
+883
+01:04:16,120 --> 01:04:16,120
+OK.
+
+884
+01:04:17,880 --> 01:04:18,460
+Right.
+
+885
+01:04:19,020 --> 01:04:29,120
+So what does this allow me to do? Well, I'm going to say that a block type
+actually is an ordered set, where the third number is going to be the axis
+
+886
+01:04:29,220 --> 01:04:29,920
+that points up.
+
+887
+01:04:31,100 --> 01:04:35,140
+And the reason to do that is that we know that we can
+never use that more than once for any type of a block.
+
+888
+01:04:35,780 --> 01:04:36,800
+Yeah. So now,
+
+889
+01:04:37,640 --> 01:04:39,920
+I'm going to make
+a new list of blocks
+
+890
+01:04:43,060 --> 01:04:43,340
+with
+
+891
+01:04:46,860 --> 01:04:48,100
+a capital B, because
+I like blocks.
+
+892
+01:04:50,450 --> 01:04:54,080
+And it's going to look like
+the following. So if width,
+
+893
+01:04:54,700 --> 01:04:57,140
+so if w is less than
+h is less than l,
+
+894
+01:04:57,820 --> 01:05:00,000
+then I'm going to take
+every block and duplicate it
+
+895
+01:05:00,720 --> 01:05:00,940
+three times.
+
+896
+01:05:02,700 --> 01:05:06,680
+Notice that I might end up with a list with like
+nine times of every block, but we'll fix that later.
+
+897
+01:05:08,720 --> 01:05:11,110
+Right. And it's going to
+look like the following,
+
+898
+01:05:12,520 --> 01:05:13,560
+which is that, OK,
+
+899
+01:05:14,060 --> 01:05:23,120
+I'm going to have w, i, h, i, l, i. This is like describing a way to
+stack my block, right? Because it's saying, this is the short side,
+
+900
+01:05:23,800 --> 01:05:24,820
+this is the long side,
+
+901
+01:05:25,380 --> 01:05:26,420
+this is the vertical side.
+
+902
+01:05:27,200 --> 01:05:27,580
+Yeah.
+
+903
+01:05:28,420 --> 01:05:33,720
+And there are three cases where any one of these guys
+can be the vertical side. So there's one, let's say that
+
+904
+01:05:34,520 --> 01:05:40,120
+the h is the vertical side, then w
+has to go before l. So it would be w, i,
+
+905
+01:05:40,640 --> 01:05:41,240
+l, i,
+
+906
+01:05:41,920 --> 01:05:42,460
+h, i.
+
+907
+01:05:43,320 --> 01:05:47,520
+And a third one, where
+the third guy is w,
+
+908
+01:05:48,240 --> 01:05:52,080
+h is less than l. So it
+would be h, i, l, i, w, i.
+
+909
+01:05:52,640 --> 01:05:54,540
+And those are all the
+different ways that I can sort
+
+910
+01:05:55,300 --> 01:06:03,120
+of orient these blocks in my stacking, assuming that
+I impose condition one for convenience here. OK.
+
+911
+01:06:04,080 --> 01:06:10,400
+I'm going to make a new list of blocks where I take every block in my
+original set and I just duplicate it three times this way after I sort its
+
+912
+01:06:10,400 --> 01:06:10,760
+coordinates.
+
+913
+01:06:12,920 --> 01:06:18,780
+And now, well, what do I need to do? Well, for one thing, this thing may
+have too many blocks. I might have a block that's repeated more than one
+
+914
+01:06:18,780 --> 01:06:19,970
+time, and I know
+I can't do that.
+
+915
+01:06:20,680 --> 01:06:24,620
+And moreover, it's going to be convenient to have this
+sorted because I got to stack these guys eventually.
+
+916
+01:06:25,240 --> 01:06:25,440
+Yeah.
+
+917
+01:06:26,000 --> 01:06:27,840
+So I'm going to sort
+
+918
+01:06:29,080 --> 01:06:29,940
+that list.
+
+919
+01:06:30,500 --> 01:06:34,060
+And I want to do it, I can never
+say this word, lexicographically,
+
+920
+01:06:35,060 --> 01:06:35,640
+meaning that
+
+921
+01:06:36,320 --> 01:06:38,450
+I'm going to sort on the first coordinate,
+and then the second, and the third,
+
+922
+01:06:43,480 --> 01:06:43,920
+lexicographically.
+
+923
+01:06:45,180 --> 01:06:46,300
+Notice this length
+
+924
+01:06:46,880 --> 01:06:48,910
+is 3n if I had n
+blocks to start with.
+
+925
+01:06:49,420 --> 01:06:52,580
+So this entire thing
+takes order n log
+
+926
+01:06:53,340 --> 01:06:56,380
+n time, which is
+important to account for.
+
+927
+01:06:57,640 --> 01:06:58,890
+And then I can
+remove duplicates.
+
+928
+01:07:30,440 --> 01:07:32,780
+What's going on in this thing?
+
+929
+01:07:33,340 --> 01:07:36,100
+OK. So now, finally,
+we can do our sort bot.
+
+930
+01:07:37,140 --> 01:07:43,000
+And I might do s and r and t and then allow you guys to
+think about the rest because, as usual, I'm talking too much.
+
+931
+01:07:43,860 --> 01:07:46,340
+OK. So now,
+
+932
+01:07:46,950 --> 01:07:55,120
+this is starting to look like a subsequence problem because, essentially,
+when I stack my blocks, if I use this block here, again, if I'm stacking
+
+933
+01:07:55,120 --> 01:07:56,820
+from my tower from the top down,
+
+934
+01:07:57,720 --> 01:08:04,200
+all the blocks that can sit underneath this one have to be
+farther to the right in my array because of the way that I sorted.
+
+935
+01:08:06,340 --> 01:08:13,300
+Now, that doesn't mean that I can put anything on the right underneath this
+guy. But it does mean that I know nothing to the left can go underneath
+
+936
+01:08:13,300 --> 01:08:15,310
+this guy. That's the
+way to think about it.
+
+937
+01:08:15,840 --> 01:08:18,880
+OK. So here's going
+to be sort bot. So s,
+
+938
+01:08:19,740 --> 01:08:25,720
+what I'm going to say is that xi here is
+equal to the maximum height of my tower.
+
+939
+01:08:28,380 --> 01:08:30,920
+And so, to get a little bit of inspiration from
+our subsequence problem that we've already seen,
+
+940
+01:08:31,960 --> 01:08:38,859
+I'm going to force myself to use
+block i. We'll see that's convenient.
+
+941
+01:08:46,840 --> 01:08:49,040
+i and possibly,
+
+942
+01:08:52,319 --> 01:08:52,319
+just
+
+943
+01:08:53,620 --> 01:08:57,399
+for fun, maybe we'll do the prefix
+version of this problem this time.
+
+944
+01:08:58,560 --> 01:08:59,000
+So now,
+
+945
+01:09:01,460 --> 01:09:02,930
+I can use any of
+the previous blocks.
+
+946
+01:09:04,200 --> 01:09:11,340
+So I can use the first i blocks to make a tower. But I'm forced to use
+block i. By the way, from now on, when I use indices, it's into this sorted
+
+947
+01:09:11,340 --> 01:09:11,560
+array.
+
+948
+01:09:12,819 --> 01:09:12,819
+OK.
+
+949
+01:09:14,319 --> 01:09:22,520
+So this is a problem. Obviously, if I could solve for x, I would be done
+because I could get the maximum height by just iterating over all the x's
+
+950
+01:09:22,520 --> 01:09:23,800
+and choosing the
+biggest possible
+
+951
+01:09:24,399 --> 01:09:27,520
+value here. And the question
+is, how do I do this recursively?
+
+952
+01:09:28,380 --> 01:09:36,479
+OK. So here's our
+recursive step.
+
+953
+01:09:37,819 --> 01:09:37,960
+So
+
+954
+01:09:38,779 --> 01:09:40,939
+let's say that I use block i.
+
+955
+01:09:41,939 --> 01:09:42,300
+Well, because
+
+956
+01:09:42,979 --> 01:09:43,580
+we know we have to.
+
+957
+01:09:44,620 --> 01:09:46,240
+So in particular,
+
+958
+01:09:47,779 --> 01:09:51,240
+we have a now I'm seeing why
+they didn't use this notation
+
+959
+01:09:51,939 --> 01:09:53,060
+in their answer. But that's OK.
+
+960
+01:10:00,560 --> 01:10:02,480
+Let's use another letter to
+refer to the third coordinate.
+
+961
+01:10:08,320 --> 01:10:13,880
+Yeah. Let's say vi is always the third coordinate. So if I were to use wh
+and l, and I'm afraid if I reuse them after sorting, it's going to confuse
+
+962
+01:10:13,880 --> 01:10:14,530
+people.
+
+963
+01:10:16,280 --> 01:10:16,580
+So vi
+
+964
+01:10:17,100 --> 01:10:18,920
+is the third
+
+965
+01:10:19,520 --> 01:10:23,040
+coordinate of the is
+element of my sorted array.
+
+966
+01:10:23,920 --> 01:10:24,980
+That's fine. OK.
+
+967
+01:10:26,580 --> 01:10:33,840
+Right. So what is my height? If I use
+xi here, well, I get some height from vi.
+
+968
+01:10:34,660 --> 01:10:38,200
+And in addition to that, I get
+whatever I stack underneath that guy.
+
+969
+01:10:38,940 --> 01:10:46,400
+So in particular, I get that xi. Well, I get the
+height of the block that I just decided to use.
+
+970
+01:10:47,240 --> 01:10:48,280
+And now,
+
+971
+01:10:48,980 --> 01:10:49,660
+what are all my cases?
+
+972
+01:10:51,100 --> 01:10:56,360
+Well, I could decide to do nothing else, like just
+not use any other blocks. That gives me a height of 0.
+
+973
+01:10:58,380 --> 01:10:58,380
+Here,
+
+974
+01:10:59,920 --> 01:11:01,340
+well, let's see here.
+
+975
+01:11:02,840 --> 01:11:06,200
+I could use the x's, but I have to be
+careful that I can actually stack them.
+
+976
+01:11:07,280 --> 01:11:07,780
+So in particular,
+
+977
+01:11:10,420 --> 01:11:10,760
+well,
+
+978
+01:11:11,860 --> 01:11:12,500
+I need,
+
+979
+01:11:15,300 --> 01:11:16,620
+yeah, I
+
+980
+01:11:17,360 --> 01:11:21,760
+can take an xj value, but I got to be
+careful that I can stack it underneath.
+
+981
+01:11:22,420 --> 01:11:23,620
+So in particular,
+
+982
+01:11:24,300 --> 01:11:25,120
+what
+
+983
+01:11:26,100 --> 01:11:29,480
+do we know? Well, I can do
+
+984
+01:11:29,980 --> 01:11:32,740
+anything from 1 to i minus 1,
+
+985
+01:11:34,240 --> 01:11:36,580
+right? Because that's sort
+of the definition of xi.
+
+986
+01:11:37,960 --> 01:11:38,660
+But in particular,
+
+987
+01:11:42,120 --> 01:11:43,100
+I can stack it on top.
+
+988
+01:11:45,780 --> 01:11:50,080
+So one easy way to do this
+is I iterate through the
+
+989
+01:11:50,640 --> 01:11:57,180
+first i minus 1 elements of my array, and I just check my stacking condition
+for every single one of them relative to block j. So in other words,
+
+990
+01:11:57,680 --> 01:12:04,100
+that the width and the height, or rather the first and the
+second coordinate satisfy the strict inequalities that I need.
+
+991
+01:12:04,640 --> 01:12:05,800
+I'm phrasing this sentence
+
+992
+01:12:06,460 --> 01:12:09,320
+neutrally because I forget whether
+this is increasing or decreasing.
+
+993
+01:12:10,300 --> 01:12:10,900
+But in any event,
+
+994
+01:12:11,560 --> 01:12:18,380
+so what do I do? I check all of the blocks that I could possibly stack
+from the index of the array perspective. I make sure that I could actually
+
+995
+01:12:18,380 --> 01:12:23,180
+stack them thanks to the size of the current
+block that I just decided to add to my stack.
+
+996
+01:12:23,740 --> 01:12:25,770
+And I move recursively.
+
+997
+01:12:26,360 --> 01:12:26,460
+OK.
+
+998
+01:12:27,580 --> 01:12:28,040
+Right, so
+
+999
+01:12:28,740 --> 01:12:37,500
+this is great because now we're in exactly the recursive scenario we wanted
+to be in, right? Because xi only depends on xj where j is smaller than i.
+
+1000
+01:12:37,740 --> 01:12:41,760
+And that is exactly our
+topological ordering that we need.
+
+1001
+01:12:43,290 --> 01:12:46,740
+If you do that on your homework,
+you get minus n for large N.
+
+1002
+01:12:47,460 --> 01:12:47,560
+OK.
+
+1003
+01:12:48,660 --> 01:12:50,500
+Similarly, what's our base case?
+
+1004
+01:12:51,120 --> 01:12:51,420
+Well,
+
+1005
+01:12:52,540 --> 01:12:53,060
+obviously,
+
+1006
+01:12:54,140 --> 01:12:55,530
+if I only have one block,
+
+1007
+01:12:56,080 --> 01:12:56,800
+I might as well use it.
+
+1008
+01:12:57,800 --> 01:13:03,680
+Yeah. So in that case, we have x1 is equal
+to, I guess, in our notation here, like that.
+
+1009
+01:13:05,560 --> 01:13:06,580
+Our original one,
+
+1010
+01:13:07,100 --> 01:13:09,840
+we have to do it a little bit careful
+because of the way that I've defined x.
+
+1011
+01:13:10,960 --> 01:13:14,420
+Because x assumes that
+I've used a particular block,
+
+1012
+01:13:15,560 --> 01:13:20,680
+right? So I have to say, well, I might not have actually
+chosen the very last block as the one I want to keep.
+
+1013
+01:13:21,690 --> 01:13:22,800
+So I have to iterate.
+
+1014
+01:13:29,250 --> 01:13:32,180
+And then
+
+1015
+01:13:33,460 --> 01:13:35,580
+our final thing to
+do is the runtime,
+
+1016
+01:13:36,540 --> 01:13:36,540
+t.
+
+1017
+01:13:39,000 --> 01:13:44,260
+This one is mildly trickier than the previous runtimes
+that we've done so far in our example problem.
+
+1018
+01:13:45,540 --> 01:13:46,340
+In particular,
+
+1019
+01:13:47,800 --> 01:13:49,360
+how many subproblems are there?
+
+1020
+01:13:50,100 --> 01:13:51,720
+Well, there's n subproblems.
+
+1021
+01:13:52,540 --> 01:13:54,600
+Or I'll say order n
+because I'm always off by 1.
+
+1022
+01:14:26,240 --> 01:14:27,610
+Order n work
+
+1023
+01:14:29,080 --> 01:14:30,550
+per subproblem.
+
+1024
+01:14:32,640 --> 01:14:33,570
+So at the end of the day,
+
+1025
+01:14:34,620 --> 01:14:35,110
+my algorithm
+
+1026
+01:14:36,020 --> 01:14:37,460
+is going to be order
+n squared times.
+
+1027
+01:14:38,840 --> 01:14:43,860
+And of course, again, I guess I promised it and then I
+didn't actually do it. To actually implement this algorithm,
+
+1028
+01:14:44,470 --> 01:14:46,460
+there's sort of two different
+ways to do it. I could
+
+1029
+01:14:46,980 --> 01:14:49,000
+write a recursive
+call plus a table.
+
+1030
+01:14:49,520 --> 01:14:58,020
+The table is maybe initialized to a bunch of nans. And then I implement this
+function recursively. But before I do that, I say, if the table does not
+
+1031
+01:14:58,020 --> 01:15:00,450
+equal nan, just return the
+value in the table and otherwise
+
+1032
+01:15:01,160 --> 01:15:02,480
+call this recursion.
+
+1033
+01:15:03,180 --> 01:15:05,900
+Or I could just have
+a for loop from 1 to n
+
+1034
+01:15:06,480 --> 01:15:12,450
+and build up the table one element at a time. And both
+of those are exactly the same from a runtime perspective.
+
+1035
+01:15:13,960 --> 01:15:20,340
+OK, so I think I've managed to botch that much more than my notes or the
+written solution. But the problem itself is actually pretty straightforward.
+
+1036
+01:15:20,600 --> 01:15:26,500
+So if you guys read through the answer on some of the, I think actually
+the hard parts of this problem were not the dynamic programming. It was all
+
+1037
+01:15:26,500 --> 01:15:29,690
+the observations you need to get there. So
+that's why I spent a little more time there.
+
+1038
+01:15:31,680 --> 01:15:39,340
+OK, so as usual, I haven't left myself enough time for the last problem.
+But we have a few minutes. And that'll be sufficient to set up the parts.
+
+1039
+01:15:40,300 --> 01:15:45,380
+I actually found the last problem to be easier, even though
+it technically is sort of two dynamic programs in one.
+
+1040
+01:15:46,080 --> 01:15:47,740
+Somehow I think the
+logic is a little easier.
+
+1041
+01:15:48,820 --> 01:15:48,820
+OK,
+
+1042
+01:15:49,360 --> 01:15:49,660
+so.
+
+1043
+01:15:55,740 --> 01:16:01,490
+I think this is the backboard. Yeah, I was just realizing
+that this room doesn't work the same way as the other one.
+
+1044
+01:16:02,820 --> 01:16:06,180
+Yeah, this is embarrassing. I spent
+all day thinking about topology. And
+
+1045
+01:16:06,740 --> 01:16:07,980
+it's like a classic kind
+
+1046
+01:16:08,840 --> 01:16:10,600
+of problem in that universe.
+
+1047
+01:16:14,220 --> 01:16:22,460
+OK, well, we'll just erase one board at a time. And I'll try not to write
+three feet wide this time. Oh, this is probably the one board I shouldn't
+
+1048
+01:16:22,460 --> 01:16:22,580
+use.
+
+1049
+01:16:26,060 --> 01:16:28,100
+I don't think I
+like this classroom.
+
+1050
+01:16:29,480 --> 01:16:29,960
+OK, so.
+
+1051
+01:16:31,600 --> 01:16:35,060
+Right, and our final problem,
+we're given an n by n grid.
+
+1052
+01:16:36,580 --> 01:16:38,120
+And on our n by n grid,
+
+1053
+01:16:39,200 --> 01:16:40,440
+Princess Apple,
+
+1054
+01:16:41,160 --> 01:16:41,320
+Banana,
+
+1055
+01:16:42,600 --> 01:16:43,500
+Plum. Princess Plum.
+
+1056
+01:16:46,200 --> 01:16:50,640
+Right, so here's our basic
+setup. There's a big grid of stuff.
+
+1057
+01:16:53,280 --> 01:16:54,980
+Or maybe a small grid, because
+I don't feel like drawing.
+
+1058
+01:16:55,520 --> 01:16:59,300
+And every grid square can have one of
+three things. We can have a mushroom.
+
+1059
+01:16:59,980 --> 01:17:00,760
+We can have a tree.
+
+1060
+01:17:01,480 --> 01:17:02,800
+Or it can have nothing at all.
+
+1061
+01:17:03,740 --> 01:17:06,980
+And our princess starts here.
+
+1062
+01:17:07,980 --> 01:17:08,760
+And she wants
+
+1063
+01:17:09,340 --> 01:17:10,260
+to go there.
+
+1064
+01:17:12,620 --> 01:17:19,360
+And moreover, there's a couple of things that are
+worth noting here. So first of all, her path is quick,
+
+1065
+01:17:23,680 --> 01:17:23,800
+meaning
+
+1066
+01:17:24,890 --> 01:17:30,340
+that she can only traverse
+2n minus 1 grid squares
+
+1067
+01:17:32,400 --> 01:17:32,960
+to
+
+1068
+01:17:35,880 --> 01:17:37,390
+get from one
+corner to the other.
+
+1069
+01:17:39,040 --> 01:17:39,160
+And apparently,
+
+1070
+01:17:39,920 --> 01:17:46,240
+she's very into mushrooms. And she'd like to accumulate as
+many as possible along her path. That's the basic setup here.
+
+1071
+01:17:46,760 --> 01:17:48,260
+So she wants to get
+from the upper left
+
+1072
+01:17:48,880 --> 01:17:49,400
+to the lower right.
+
+1073
+01:17:50,660 --> 01:17:54,160
+And in order to do so, she
+wants to take a quick path.
+
+1074
+01:17:54,780 --> 01:17:56,120
+So her main priority
+is to be efficient.
+
+1075
+01:17:56,780 --> 01:17:58,180
+But among the
+different quick paths,
+
+1076
+01:17:59,260 --> 01:18:00,800
+she wants to pick up
+a lot of mushrooms.
+
+1077
+01:18:01,620 --> 01:18:01,900
+It's understandable.
+
+1078
+01:18:02,980 --> 01:18:03,040
+And
+
+1079
+01:18:03,880 --> 01:18:10,040
+not walk through trees. Thank you. So maybe there's some grid squares
+that are marked with a tree, meaning that you just can't go there.
+
+1080
+01:18:10,940 --> 01:18:11,700
+That's a tree.
+
+1081
+01:18:13,620 --> 01:18:22,560
+OK, right, so that's our basic setup here. But the problem is, it takes a
+bit of a twist. It's not saying just compute the shortest path, which would
+
+1082
+01:18:22,580 --> 01:18:25,540
+be very much like the last
+kind of unit. And 6 ,006.
+
+1083
+01:18:26,340 --> 01:18:27,060
+But rather,
+
+1084
+01:18:28,020 --> 01:18:31,020
+the question is, what
+is the number of paths
+
+1085
+01:18:31,540 --> 01:18:33,980
+that she can take from
+one side to the other?
+
+1086
+01:18:35,760 --> 01:18:37,460
+And what is the maximum
+number of mushrooms
+
+1087
+01:18:37,960 --> 01:18:46,420
+is roughly the question asking, at least what I remember from reading it
+last night. The number of paths that maximize same number. That's right. So
+
+1088
+01:18:46,480 --> 01:18:53,360
+she has to take the most number of mushrooms she can. But there may be
+more than one path that gets you there that is quick, that satisfies this
+
+1089
+01:18:53,360 --> 01:18:53,640
+condition,
+
+1090
+01:18:54,420 --> 01:18:58,960
+in which case she wants the count of the total number of ways
+she could get from one corner to the other. Why, you might ask?
+
+1091
+01:18:59,540 --> 01:18:59,800
+Why not?
+
+1092
+01:19:02,120 --> 01:19:03,040
+OK, so right.
+
+1093
+01:19:04,280 --> 01:19:07,240
+So for instance, maybe
+there's a mushroom here.
+
+1094
+01:19:10,220 --> 01:19:17,570
+Now there's a quick path that gets her there and collects one mushroom.
+So there's exactly one. But maybe if there's a mushroom there,
+
+1095
+01:19:20,360 --> 01:19:24,920
+well, initially, it feels like maybe she
+could get two mushrooms. She could go there,
+
+1096
+01:19:25,700 --> 01:19:27,730
+go up, pick up the second
+mushroom, and get back.
+
+1097
+01:19:28,640 --> 01:19:33,740
+But we're going to see that this quick
+condition actually doesn't allow you to do that.
+
+1098
+01:19:34,600 --> 01:19:42,940
+So in fact, it'll turn out that quick paths can only collect one
+mushroom in this 3 by 3 case. So there's at least two different paths.
+
+1099
+01:19:44,020 --> 01:19:46,630
+Well, there's one, two,
+
+1100
+01:19:47,920 --> 01:19:51,870
+three different ways that she could
+collect one mushroom and have a quick path.
+
+1101
+01:19:55,140 --> 01:19:56,290
+So the first thing to notice,
+
+1102
+01:19:57,040 --> 01:19:58,400
+your structure is
+a little bit sneaky
+
+1103
+01:19:59,280 --> 01:20:03,860
+by defining quick paths basically
+by giving her no slack at all.
+
+1104
+01:20:04,460 --> 01:20:04,740
+And
+
+1105
+01:20:05,500 --> 01:20:06,480
+here's the basic observation.
+
+1106
+01:20:08,460 --> 01:20:12,100
+Notice that in order to get from the upper left to the bottom
+right, she's going to have to go down and to the right.
+
+1107
+01:20:13,740 --> 01:20:16,040
+Plausibly, she could also go up.
+She could try and go around a tree.
+
+1108
+01:20:18,140 --> 01:20:19,140
+But only plausibly.
+
+1109
+01:20:20,060 --> 01:20:22,700
+And in particular, the question is,
+how many times does she have to go down,
+
+1110
+01:20:23,300 --> 01:20:24,400
+and how many times does
+she have to go to the right?
+
+1111
+01:20:25,640 --> 01:20:27,320
+Well, she has to get to
+the bottom of the grid.
+
+1112
+01:20:28,060 --> 01:20:29,440
+So she's on grid
+square number 1.
+
+1113
+01:20:30,240 --> 01:20:30,860
+She has to go down,
+
+1114
+01:20:31,360 --> 01:20:34,060
+in this case, at least two more
+times. So in general, n minus 1 times.
+
+1115
+01:20:34,860 --> 01:20:35,700
+She has to go to the right,
+
+1116
+01:20:36,500 --> 01:20:37,700
+n minus 1 times.
+
+1117
+01:20:39,060 --> 01:20:41,220
+So what does that mean? She
+has to make 2n minus 2 moves.
+
+1118
+01:20:43,280 --> 01:20:47,560
+And that's a lower bound. So if she goes up, she's going to
+have to go down again. So it's only going to make it bigger.
+
+1119
+01:20:48,900 --> 01:20:53,910
+So at the very least, she
+has to do 2n minus 2 moves.
+
+1120
+01:20:54,830 --> 01:21:00,080
+You know, down and right to get
+from the upper left to the lower right.
+
+1121
+01:21:00,880 --> 01:21:00,880
+How
+
+1122
+01:21:01,480 --> 01:21:08,160
+many squares does she touch when she's doing that? Well, this is a fence
+post problem. So she made 2n minus 2 moves, and she had a place where she
+
+1123
+01:21:08,160 --> 01:21:08,510
+started.
+
+1124
+01:21:09,520 --> 01:21:09,980
+That
+
+1125
+01:21:10,620 --> 01:21:15,900
+implies that just by moving down and to
+the right, she makes 2n minus 1 squares.
+
+1126
+01:21:17,360 --> 01:21:17,560
+She touches,
+
+1127
+01:21:18,280 --> 01:21:18,820
+rather.
+
+1128
+01:21:20,220 --> 01:21:21,160
+So can she ever move up?
+
+1129
+01:21:22,640 --> 01:21:24,520
+No. Can she ever
+move to the left? No.
+
+1130
+01:21:26,600 --> 01:21:32,800
+And that, basically, is all you need to solve this problem. The rest of it's
+actually pretty easy. So the basic observation here is she can only move
+
+1131
+01:21:32,920 --> 01:21:38,370
+down and to the right. Because if she moved up or to the left, her
+path would no longer be called quick. And that would be a problem.
+
+1132
+01:21:39,020 --> 01:21:42,340
+Moreover, every path that moves
+down and to the right is a quick path,
+
+1133
+01:21:43,960 --> 01:21:46,660
+assuming she reaches her
+target and doesn't hit a tree.
+
+1134
+01:21:47,200 --> 01:21:55,460
+So that's the basic observation. And notice that that already basically
+suggests it's screaming out to you. How did you do dynamic programming?
+
+1135
+01:21:55,900 --> 01:21:57,860
+Because literally,
+you have a table
+
+1136
+01:21:59,500 --> 01:22:05,920
+looking at you on the blackboard right now. And you
+have an ordering down and to the right that is acyclic.
+
+1137
+01:22:06,640 --> 01:22:06,720
+Yeah?
+
+1138
+01:22:07,740 --> 01:22:14,980
+OK. Have I slammed on the board enough times? The first time I taught at
+Stanford, I got negative course feedback that I had too much coffee and was
+
+1139
+01:22:14,980 --> 01:22:16,160
+slamming on the board
+a lot, apparently.
+
+1140
+01:22:18,220 --> 01:22:20,540
+I watched the video later.
+And indeed, that was not wrong.
+
+1141
+01:22:21,480 --> 01:22:21,480
+OK.
+
+1142
+01:22:22,400 --> 01:22:23,370
+So right.
+
+1143
+01:22:24,980 --> 01:22:26,460
+So we're going to call k.
+
+1144
+01:22:27,380 --> 01:22:28,900
+This is going to be the max
+
+1145
+01:22:30,280 --> 01:22:31,140
+mushrooms
+
+1146
+01:22:33,740 --> 01:22:40,220
+she can get going on the entire path from the upper left to the lower
+right. So we want to know the number of quick paths that can achieve this
+
+1147
+01:22:40,220 --> 01:22:40,580
+number, k.
+
+1148
+01:22:42,460 --> 01:22:44,100
+OK. So let's do sort by.
+
+1149
+01:22:45,520 --> 01:22:45,760
+Really fast,
+
+1150
+01:22:46,420 --> 01:22:47,080
+because I've got four minutes.
+
+1151
+01:22:48,420 --> 01:22:50,540
+Actually, a tiny bit more than
+that, because we started late.
+
+1152
+01:22:51,440 --> 01:22:51,600
+OK.
+
+1153
+01:22:54,420 --> 01:22:54,520
+Now,
+
+1154
+01:22:56,480 --> 01:23:00,240
+the kind of annoyance here is that there's
+two different numbers that we don't know.
+
+1155
+01:23:01,060 --> 01:23:07,760
+One of them is k, and the other is the number of paths. The problem didn't
+tell you how many mushrooms she can pick up. It does tell you that there's
+
+1156
+01:23:07,800 --> 01:23:12,230
+some path to get from the upper left to the bottom
+right, that there's not just a row of trees somewhere,
+
+1157
+01:23:14,410 --> 01:23:16,540
+which I feel on my
+commute sometimes.
+
+1158
+01:23:18,020 --> 01:23:18,120
+But
+
+1159
+01:23:19,680 --> 01:23:22,670
+it doesn't tell you the number
+that she has to accomplish.
+
+1160
+01:23:24,420 --> 01:23:31,900
+Actually, that's kind of annoying. So maybe the first thing that we do is
+just compute k, like the maximum number of mushrooms that she can collect
+
+1161
+01:23:31,900 --> 01:23:33,180
+on any quick path.
+
+1162
+01:23:34,820 --> 01:23:39,760
+And then we go back and compute that other count. Yeah, that would be
+one problem solving approach that we could think about a little bit.
+
+1163
+01:23:41,840 --> 01:23:43,940
+So in particular, let's define
+
+1164
+01:23:45,480 --> 01:23:47,460
+our kij
+
+1165
+01:23:48,780 --> 01:23:56,360
+to be equal to. Well, we can generalize our problem slightly and say,
+what is the number of mushrooms that I can get on any kind of rectangle
+
+1166
+01:23:56,460 --> 01:23:58,360
+embedded inside
+of my full problem?
+
+1167
+01:23:58,970 --> 01:24:01,220
+So in other words,
+this is the max
+
+1168
+01:24:02,500 --> 01:24:03,680
+number of mushrooms,
+
+1169
+01:24:04,760 --> 01:24:06,020
+or m's for short,
+
+1170
+01:24:06,680 --> 01:24:10,160
+on a quick
+
+1171
+01:24:10,940 --> 01:24:12,100
+path
+
+1172
+01:24:13,740 --> 01:24:19,750
+to ij. So in other words, she always starts in the
+upper left, but now she stops at any other grid cell.
+
+1173
+01:24:20,320 --> 01:24:20,520
+OK.
+
+1174
+01:24:24,420 --> 01:24:24,860
+So I'm low on time.
+
+1175
+01:24:26,340 --> 01:24:29,440
+No, I'm going to do this the way I want to do
+this. No. So we're just going to think about k.
+
+1176
+01:24:30,780 --> 01:24:36,040
+So the question is, could we compute just this
+value k, which certainly seems convenient?
+
+1177
+01:24:37,380 --> 01:24:45,140
+Like Princess Plum, really, she might as well know her enemy. She might
+as well know the number of mushrooms she's targeting if she can get it.
+
+1178
+01:24:47,560 --> 01:24:47,960
+So
+
+1179
+01:24:48,620 --> 01:24:51,580
+how could we do
+this recursively?
+
+1180
+01:24:54,000 --> 01:24:55,260
+Well, she has to get
+
+1181
+01:24:55,980 --> 01:24:56,940
+to position ij.
+
+1182
+01:24:58,240 --> 01:24:59,780
+And from our argument up there,
+
+1183
+01:25:00,300 --> 01:25:02,820
+she has to get there by either
+coming from up or to the left,
+
+1184
+01:25:04,300 --> 01:25:06,240
+the way we've chosen to
+write down this problem.
+
+1185
+01:25:07,240 --> 01:25:07,680
+So
+
+1186
+01:25:08,720 --> 01:25:09,580
+what are our different cases?
+
+1187
+01:25:10,160 --> 01:25:11,060
+Well, first of all,
+if there's a tree,
+
+1188
+01:25:11,800 --> 01:25:18,860
+you can't do a damn thing. She shouldn't even be able to get there. And
+for convenience, we're going to find, you could argue that it's 0. We're
+
+1189
+01:25:18,860 --> 01:25:22,590
+going to mark this with a special number, and we'll
+see that that makes our notation a little convenient.
+
+1190
+01:25:23,720 --> 01:25:27,420
+So 1 is if there exists a tree,
+
+1191
+01:25:28,640 --> 01:25:37,220
+then we're going to say kij is minus infinity. Again, there's a
+philosophical question there. Does she get minus infinity mushrooms if she is
+
+1192
+01:25:37,240 --> 01:25:42,700
+standing on top of a tree? I don't know, because she shouldn't stand on
+top of a tree. But at least it's going to let us know that something went
+
+1193
+01:25:42,700 --> 01:25:45,700
+wrong in this grid square in
+the other parts of our recursion.
+
+1194
+01:25:46,500 --> 01:25:46,500
+OK.
+
+1195
+01:25:47,820 --> 01:25:49,340
+And otherwise,
+
+1196
+01:25:51,550 --> 01:25:53,100
+well, what are our different
+
+1197
+01:25:54,400 --> 01:25:55,180
+cases here?
+
+1198
+01:25:55,920 --> 01:25:56,100
+Well,
+
+1199
+01:25:56,840 --> 01:25:59,740
+she always picks up a mushroom if it's
+there. She might as well. She's maximizing.
+
+1200
+01:26:00,260 --> 01:26:04,060
+In fact, I think the problem even says that she's
+really new mushrooms. She collects them automatically.
+
+1201
+01:26:06,180 --> 01:26:07,660
+So what do we get?
+
+1202
+01:26:10,240 --> 01:26:17,720
+I'll use unnecessarily fancy notation. This is
+an indicator of whether there exists a mushroom
+
+1203
+01:26:19,340 --> 01:26:19,620
+at
+
+1204
+01:26:20,140 --> 01:26:21,030
+position ij.
+
+1205
+01:26:23,720 --> 01:26:23,820
+Right?
+
+1206
+01:26:25,570 --> 01:26:28,230
+Meaning this is a 1 if there
+is, and there's a 0 if there's not.
+
+1207
+01:26:29,440 --> 01:26:33,200
+Sometimes this is indicated with a 1
+with a little subscript, but whatever.
+
+1208
+01:26:34,740 --> 01:26:42,720
+And in addition to that, she might have picked up mushrooms along paths.
+And we know that her path to position ij either came from up or to the left.
+
+1209
+01:26:44,140 --> 01:26:47,320
+Right? So in other
+words, we know
+
+1210
+01:26:50,220 --> 01:26:54,860
+that she could have gotten the max from any path
+ending above her or any path to the left of her.
+
+1211
+01:26:55,520 --> 01:26:59,100
+So that's ki minus 1j,
+
+1212
+01:26:59,960 --> 01:27:01,000
+which I guess is to the left,
+
+1213
+01:27:01,660 --> 01:27:05,240
+and ki j minus 1, like that.
+
+1214
+01:27:07,300 --> 01:27:10,660
+And this can be used to fill
+in our whole table of k values.
+
+1215
+01:27:11,820 --> 01:27:15,720
+In fact, since I'm low on
+time, I'll let you do the t bot
+
+1216
+01:27:17,160 --> 01:27:20,880
+for the remainder of this problem. Right?
+Essentially, I think the key observation is this one.
+
+1217
+01:27:21,700 --> 01:27:26,470
+Right? Obviously, when she starts in the upper left, zero mushrooms
+because she's not standing on top of one. The problem says that.
+
+1218
+01:27:27,840 --> 01:27:29,360
+And this allows us to
+fill in our whole table k.
+
+1219
+01:27:30,480 --> 01:27:39,100
+So in particular, this gives us our enemy now. We now know how many mushrooms
+she should have at every step of her journey. In fact, it tells us a
+
+1220
+01:27:39,140 --> 01:27:40,040
+tiny bit more than that.
+
+1221
+01:27:40,760 --> 01:27:45,160
+Right? Because it says, if I'm at this grid square,
+at this particular grid square during my path,
+
+1222
+01:27:46,160 --> 01:27:49,060
+I should have this many mushrooms.
+If I didn't, then something went wrong.
+
+1223
+01:27:50,140 --> 01:27:50,340
+Yeah?
+
+1224
+01:27:51,760 --> 01:27:58,020
+So the way that the solution is written, they do two pieces of the recursion
+at once. You actually could have just solved for this k matrix first and
+
+1225
+01:27:58,020 --> 01:27:59,980
+then gone back and done the
+second half of this problem.
+
+1226
+01:28:00,500 --> 01:28:02,300
+And those are exactly the same.
+
+1227
+01:28:02,820 --> 01:28:08,340
+Yeah? And when I was writing my solution, this is the way I thought about
+it because somehow I kind of thought, like, she might as well know how many
+
+1228
+01:28:08,340 --> 01:28:11,790
+mushrooms she wants to collect before she starts
+counting paths. That's like a secondary question.
+
+1229
+01:28:13,580 --> 01:28:17,920
+And so this is one way to do it. So
+in our remaining negative two minutes,
+
+1230
+01:28:18,440 --> 01:28:23,300
+let's think about the recursion for computing.
+Remember that we want to know the number of paths
+
+1231
+01:28:24,060 --> 01:28:26,600
+needed to collect
+that many mushrooms,
+
+1232
+01:28:27,720 --> 01:28:29,240
+the maximum number of mushrooms.
+
+1233
+01:28:31,920 --> 01:28:33,840
+Please let there not be a
+whole lot of stuff on this board.
+
+1234
+01:28:34,500 --> 01:28:37,060
+Ah, there's not any stuff on
+this board. That's great. OK.
+
+1235
+01:28:38,420 --> 01:28:39,010
+So in particular,
+
+1236
+01:28:40,820 --> 01:28:47,920
+now I'm going to define a second thing that I also am going
+to do dynamic programming on. Yeah? I'm going to say that xij
+
+1237
+01:28:50,280 --> 01:28:53,170
+is equal to, and I'm going to
+make kind of a sneaky definition.
+
+1238
+01:28:54,410 --> 01:28:58,480
+Here, which is the
+number of quick paths
+
+1239
+01:29:02,100 --> 01:29:10,290
+that end at ij with,
+
+1240
+01:29:12,480 --> 01:29:15,520
+now let's anticipate
+our problem a little bit.
+
+1241
+01:29:16,040 --> 01:29:20,800
+So at the end of the day, we're going to do like x of n comma
+n because she wants to end up all the way down to the right.
+
+1242
+01:29:21,420 --> 01:29:26,940
+And how many mushrooms does she want to have now that we
+know k? She wants to have k of n comma n mushrooms. Along
+
+1243
+01:29:27,900 --> 01:29:28,720
+the way,
+
+1244
+01:29:29,960 --> 01:29:34,000
+it would be kind of ambitious if she wanted to
+have k of n comma n mushrooms the entire path.
+
+1245
+01:29:34,710 --> 01:29:46,200
+But it would be slightly less ambitious to have k of ij mushrooms because
+somehow that's exactly what we just constructed in the previous thing was
+
+1246
+01:29:46,200 --> 01:29:46,520
+path.
+
+1247
+01:29:48,120 --> 01:29:48,660
+So well,
+
+1248
+01:29:49,320 --> 01:29:55,100
+the last guy looks like max. Now we're going to expect to see some
+plus signs here because we're like adding up how many paths we have.
+
+1249
+01:29:55,860 --> 01:30:00,640
+And now let's come up with our recursive rule
+for this array x, and then we'll call it a day.
+
+1250
+01:30:01,560 --> 01:30:02,140
+So in particular,
+
+1251
+01:30:04,360 --> 01:30:06,540
+go ahead. One,
+if there's a tree,
+
+1252
+01:30:11,040 --> 01:30:12,160
+how many paths are there?
+
+1253
+01:30:12,920 --> 01:30:17,540
+There are no paths because I
+can't get there. Yeah? So then ij
+
+1254
+01:30:18,480 --> 01:30:18,680
+equals 0.
+
+1255
+01:30:19,960 --> 01:30:21,500
+OK? Otherwise,
+there ain't a tree.
+
+1256
+01:30:23,620 --> 01:30:24,760
+And now I have to
+be a little careful.
+
+1257
+01:30:27,980 --> 01:30:30,220
+So I'm going to write this
+like a little piece of code.
+
+1258
+01:30:31,000 --> 01:30:36,780
+You could have written this as a giant max
+instead and a bunch of cases and whatever.
+
+1259
+01:30:37,640 --> 01:30:45,220
+So let's think about it like a piece of code. So initially, I think
+there are no paths that get me k, ij, mushrooms. That's perfectly fine.
+
+1260
+01:30:46,280 --> 01:30:51,300
+And remember, we're going to keep applying the same piece of
+logic, which is that a path can only come from to the left and up.
+
+1261
+01:30:52,160 --> 01:30:54,530
+And let's think
+about those two cases.
+
+1262
+01:30:56,800 --> 01:31:03,520
+And by the way, we're going to use chi to equal this
+chi of stuff that we had in the previous expression.
+
+1263
+01:31:04,720 --> 01:31:09,130
+So chi is 1 if there's a mushroom
+at this place and 0 if there is not.
+
+1264
+01:31:09,860 --> 01:31:09,960
+OK.
+
+1265
+01:31:12,480 --> 01:31:14,940
+So my path can come
+from the left or up.
+
+1266
+01:31:15,800 --> 01:31:24,900
+I know that it can't come from up if the number of mushrooms that I got
+from up plus potentially the one that I got here doesn't align with the
+
+1267
+01:31:24,900 --> 01:31:30,330
+number of mushrooms that I should have by the
+k, ij standard that I have set for myself.
+
+1268
+01:31:30,920 --> 01:31:32,970
+Yeah? So if I want to
+write that out in code,
+
+1269
+01:31:33,540 --> 01:31:39,340
+the way I do that is I say if k of,
+so let's say I look to the left first.
+
+1270
+01:31:41,020 --> 01:31:43,560
+This is like look to your left,
+look to your right. One of you will
+
+1271
+01:31:44,120 --> 01:31:45,640
+pass this exam kind of scenario.
+
+1272
+01:31:46,320 --> 01:31:50,400
+And I potentially add a mushroom at
+my current position if there is one.
+
+1273
+01:31:52,240 --> 01:31:59,440
+If that is equal to k, ij, well, what does that mean? That means that paths
+that went to the left were able to collect the number of mushrooms I need
+
+1274
+01:31:59,440 --> 01:32:01,100
+to get to the position I am now.
+
+1275
+01:32:01,720 --> 01:32:04,230
+So now I can add what?
+
+1276
+01:32:07,020 --> 01:32:09,750
+Well, all of the different
+ways. Maybe I'll do a plus equals
+
+1277
+01:32:11,220 --> 01:32:13,460
+x of i minus 1j,
+
+1278
+01:32:14,460 --> 01:32:20,500
+right? Because any path that got to the previous guy and collected the
+right number of mushrooms can now reach me and get the right number of
+
+1279
+01:32:20,500 --> 01:32:20,500
+mushrooms.
+
+1280
+01:32:21,380 --> 01:32:32,080
+And similarly, I can look up and do exactly the same logic.
+So if k of ij minus 1 plus this number is equal to k, ij,
+
+1281
+01:32:33,240 --> 01:32:33,660
+then x,
+
+1282
+01:32:34,420 --> 01:32:35,820
+ij
+
+1283
+01:32:37,080 --> 01:32:37,900
+gets an additional
+
+1284
+01:32:38,980 --> 01:32:43,960
+number of paths like that.
+
+1285
+01:32:44,460 --> 01:32:47,960
+And now I do think it's worth spending
+8 seconds thinking about our base cases.
+
+1286
+01:32:48,600 --> 01:32:54,800
+Here, because initially when I first saw this, I panicked a little bit
+because it kind of looks like this would just end up giving you a bunch of
+
+1287
+01:32:54,800 --> 01:32:54,800
+zeros,
+
+1288
+01:32:55,720 --> 01:32:59,500
+right? Because I'm just adding values of x's to
+themselves. I don't have a 1 plus anything anywhere,
+
+1289
+01:33:00,700 --> 01:33:02,140
+which is kind of weird
+if you think about it.
+
+1290
+01:33:02,660 --> 01:33:07,940
+So all of the reason why the positive numbers appear in this
+problem is from the base case, which is kind of cool, I think.
+
+1291
+01:33:08,620 --> 01:33:13,800
+I think one of these things where if you anticipated a problem, then it's
+cool. And if you didn't anticipate the problem to begin with, you just
+
+1292
+01:33:13,840 --> 01:33:16,720
+wrote down these formulas, you probably
+wouldn't even think that it's interesting.
+
+1293
+01:33:17,900 --> 01:33:18,540
+But in any event,
+
+1294
+01:33:19,480 --> 01:33:23,320
+what is our base case? So
+we'll do the B in sort bot.
+
+1295
+01:33:24,600 --> 01:33:25,730
+So first of all,
+
+1296
+01:33:27,040 --> 01:33:27,040
+what
+
+1297
+01:33:27,600 --> 01:33:34,240
+is k of 1, 1? Remember, that's the number of mushrooms you
+can collect by starting at the left square and going nowhere.
+
+1298
+01:33:34,820 --> 01:33:35,180
+And
+
+1299
+01:33:36,280 --> 01:33:38,520
+that's 0 because the problem says
+there's no mushrooms in the upper left.
+
+1300
+01:33:41,440 --> 01:33:47,140
+What's x of 1, 1? Well, this is the number of
+paths from 1, 1 to itself that collect 0 mushrooms.
+
+1301
+01:33:47,640 --> 01:33:48,220
+So that's 1.
+
+1302
+01:33:50,460 --> 01:33:58,840
+And I think that the rest of the sort bot table here isn't terribly
+difficult to fill in. So notice that in a kind of a funny way, all of these
+
+1303
+01:33:58,840 --> 01:34:01,300
+recursive steps are just adding
+1 to itself a bunch of times.
+
+1304
+01:34:02,860 --> 01:34:07,820
+But of course, the way you do that, the reason why you get a number that's
+interesting is because of all these if statements and the fact that you
+
+1305
+01:34:07,820 --> 01:34:11,120
+can add two different pluses
+coming from two different sources.
+
+1306
+01:34:12,100 --> 01:34:19,380
+So I actually do encourage you guys to look at the code in the problem
+solution because I think it's a nice example of thinking this recursive
+
+1307
+01:34:19,380 --> 01:34:22,260
+formula and then unrolling
+it into iterating over a table.
+
+1308
+01:34:23,000 --> 01:34:27,020
+And that's a useful skill that I intended to do
+today and then didn't actually do very carefully.
+
+1309
+01:34:28,040 --> 01:34:32,400
+But with that, as usual, we've gone over time here.
+So we'll call it for the day. And I will see you guys
+
+1310
+01:34:33,260 --> 01:34:33,800
+when I see you guys.
+
+1311
+01:34:34,880 --> 01:34:35,120
+All right.
+

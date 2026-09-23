@@ -1,0 +1,3155 @@
+1
+00:00:12,720 --> 00:00:18,300
+All right, welcome to the grand finale of
+dynamic programming in 6 .006, four of
+
+2
+00:00:18,300 --> 00:00:25,140
+four. Today we are going to focus in on a
+particular type of subproblem that we saw
+
+3
+00:00:25,140 --> 00:00:30,460
+at the very beginning with Fibonacci, which
+is when you have an integer input. And a
+
+4
+00:00:30,460 --> 00:00:33,940
+natural thing to do with that integer
+input is look at smaller versions of that
+
+5
+00:00:33,940 --> 00:00:39,140
+integer. And this is going to lead us to a
+new notion called pseudopolynomial time.
+
+6
+00:00:39,600 --> 00:00:42,800
+We've talked a lot in this class about
+polynomial time being a good running time.
+
+7
+00:00:43,320 --> 00:00:47,600
+But pseudopolynomial is a pretty good
+running time. And we'll talk about that.
+
+8
+00:00:47,680 --> 00:00:52,680
+And it relates to these integers. We'll
+only look at two new examples, rod cutting
+
+9
+00:00:52,680 --> 00:00:57,000
+and subset sum. But then we're going to
+review all the examples we've seen from a
+
+10
+00:00:57,000 --> 00:01:04,220
+kind of diagonal perspective. So as usual,
+we're applying our sort bot framework with
+
+11
+00:01:04,220 --> 00:01:09,660
+subproblems, relations, topological order,
+base cases, original problem, and time.
+
+12
+00:01:11,460 --> 00:01:12,260
+Quick review.
+
+13
+00:01:14,500 --> 00:01:19,300
+So the hardest part is getting the right
+set of subproblems. And there are some
+
+14
+00:01:19,300 --> 00:01:23,800
+natural choices for sequences. We
+try prefixes, suffixes, substrings. For
+
+15
+00:01:23,800 --> 00:01:28,420
+integers, like in Fibonacci, there's a
+given number n. You want to compute that at
+
+16
+00:01:28,420 --> 00:01:34,260
+the nth Fibonacci number. What we ended up
+doing was solving Fibonacci numbers for all
+
+17
+00:01:34,520 --> 00:01:41,220
+input numbers, input integers between 0 and
+that number n, or in this case, capital K.
+
+18
+00:01:41,880 --> 00:01:45,120
+And that's a general technique. And
+we'll see two more examples of that today.
+
+19
+00:01:46,400 --> 00:01:51,340
+Otherwise, we take products of these.
+And often, that's enough. But sometimes, we
+
+20
+00:01:51,340 --> 00:01:55,540
+need to add more subproblems in what we
+call subproblem expansion, often with extra
+
+21
+00:01:55,620 --> 00:02:01,380
+constraints that let us remember some state
+about the past. My canonical example of
+
+22
+00:02:01,380 --> 00:02:05,100
+that is the piano fingering, where we had
+to remember what our fingering assignment
+
+23
+00:02:05,100 --> 00:02:09,060
+was, in some sense, from the previous step
+in order to compute the transition cost.
+
+24
+00:02:09,960 --> 00:02:14,060
+And this is a very powerful technique.
+You can also use it to play Super Mario
+
+25
+00:02:14,060 --> 00:02:17,180
+Brothers optimally if you have a constant
+size screen. And all you need to remember
+
+26
+00:02:17,180 --> 00:02:21,400
+is what's in the constant size screen. If
+everything outside that screen resets, you
+
+27
+00:02:21,460 --> 00:02:26,800
+can just add that state as a parameter
+to your subproblem. And you'll be able to
+
+28
+00:02:26,800 --> 00:02:27,780
+solve Super Mario Brothers.
+
+29
+00:02:29,840 --> 00:02:32,920
+Anyway, very useful. And that was sort
+of the focus of last lecture. We won't talk
+
+30
+00:02:32,920 --> 00:02:38,640
+about it much here today. And then we
+relate these subproblems recursively. And
+
+31
+00:02:38,640 --> 00:02:42,000
+this is basically the test of whether your
+subproblem definition was correct, is can
+
+32
+00:02:42,000 --> 00:02:47,600
+you write down a recurrence relation, which
+is just a recursive algorithm. And there's
+
+33
+00:02:47,600 --> 00:02:51,100
+a nice general procedure for how to come
+up with these relations, which is to just
+
+34
+00:02:51,240 --> 00:02:54,960
+think up some question about the subproblem
+solution that if you knew the answer,
+
+35
+00:02:55,060 --> 00:02:58,940
+reduced to smaller subproblems. And
+then you just locally brute force all the
+
+36
+00:02:58,940 --> 00:03:03,080
+answers to that question, which I like to
+think of as guessing the answer correctly
+
+37
+00:03:03,080 --> 00:03:08,000
+and then just directly calling the
+recursive things. But then at the end, you
+
+38
+00:03:08,000 --> 00:03:12,760
+have to pay for that guess by looping over
+all possible guesses in order to guarantee
+
+39
+00:03:12,760 --> 00:03:14,260
+that you actually
+find the right one.
+
+40
+00:03:17,240 --> 00:03:22,060
+So once you identify this question, it's
+very easy. DP is all about just brute force
+
+41
+00:03:22,060 --> 00:03:25,980
+anything you want. And usually, that leads
+to a pretty good running time as long as
+
+42
+00:03:25,980 --> 00:03:31,340
+the number of possible answers to that
+question is polynomial. Then we need to
+
+43
+00:03:31,340 --> 00:03:38,020
+check this relation is acyclic. And then
+it often reduces to finding a path, like a
+
+44
+00:03:38,040 --> 00:03:42,420
+shortest path or something in a DAG, the
+subproblem DAG. We need some base cases. We
+
+45
+00:03:42,420 --> 00:03:45,880
+need to make sure we can solve the original
+problem using one or more subproblems. And
+
+46
+00:03:45,880 --> 00:03:49,680
+then we analyze the running time as usually
+a number of subproblems times the amount
+
+47
+00:03:49,680 --> 00:03:54,440
+of non -recursive work in the relation plus
+however much time it took us to solve the
+
+48
+00:03:54,440 --> 00:03:59,560
+original problem. So that was our
+framework. We've seen it four times now.
+
+49
+00:04:00,320 --> 00:04:04,860
+Slightly refined each time. We've
+mostly added some general techniques for
+
+50
+00:04:04,860 --> 00:04:08,420
+subproblem definition
+and how to write relations.
+
+51
+00:04:11,750 --> 00:04:15,880
+So let's do a new example,
+which is rod cutting.
+
+52
+00:04:18,800 --> 00:04:22,800
+This will be pretty straightforward,
+but it will serve as a contrast to the next
+
+53
+00:04:22,800 --> 00:04:29,660
+example we talk about, subset sum. So what
+is the problem? The name rod coming comes
+
+54
+00:04:29,660 --> 00:04:37,760
+from the book CLRS. But it's actually a
+pretty practical problem, maybe not for
+
+55
+00:04:37,760 --> 00:04:43,740
+cutting rods. But you could imagine
+you have some resource of a given length. I
+
+56
+00:04:43,740 --> 00:04:50,420
+like to think, because I have been hardwood
+shelf shopping recently, I like to think
+
+57
+00:04:50,420 --> 00:04:54,540
+of you have a big plank of hardwood.
+You could have a sum price for selling that
+
+58
+00:04:54,540 --> 00:05:00,120
+length. But you could also cut that plank
+into multiple pieces of various lengths
+
+59
+00:05:00,360 --> 00:05:04,360
+that sum to L. And you could sell them
+individually. Maybe you make more money
+
+60
+00:05:04,400 --> 00:05:09,360
+that way. And that's what this problem
+is all about. So you're given the value of
+
+61
+00:05:09,400 --> 00:05:13,500
+every possible length you could cut. We're
+going to assume all lengths have to be
+
+62
+00:05:13,500 --> 00:05:17,720
+integers. Scale
+so that that's true.
+
+63
+00:05:53,320 --> 00:05:58,240
+And we want to know what is the best way
+to split up our big rod of length capital L
+
+64
+00:05:58,240 --> 00:06:04,300
+into various rods of small l length,
+potentially different lengths. So I'll call
+
+65
+00:06:04,300 --> 00:06:08,960
+this the max value partition. In
+mathematics, this is called partition, a
+
+66
+00:06:08,960 --> 00:06:10,840
+bunch of numbers that
+sum to a given number.
+
+67
+00:06:14,680 --> 00:06:14,680
+And
+
+68
+00:06:19,660 --> 00:06:28,540
+we want to maximize the total value,
+naturally. So here's an example. Let's say
+
+69
+00:06:28,540 --> 00:06:33,300
+our original length is
+7. And we have this table
+
+70
+00:06:36,020 --> 00:06:43,260
+for lengths 1, 2, 3, 4, 5, 6, 7. All the
+different lengths. I'm going to write down
+
+71
+00:06:43,820 --> 00:06:51,100
+a value that's an integer for cutting off
+a rod of that length and selling it. It's
+
+72
+00:06:51,100 --> 00:06:51,780
+like the sell price.
+
+73
+00:06:54,310 --> 00:06:59,420
+It's presumably monotonic, but it doesn't
+have to be. Maybe people really like buying
+
+74
+00:06:59,540 --> 00:07:02,860
+powers of 2 length or something. And so
+those sell higher. So this doesn't have to
+
+75
+00:07:03,520 --> 00:07:10,740
+be monotonic. But in this example, it is.
+And so I have this rod of length 7. And I
+
+76
+00:07:10,740 --> 00:07:18,920
+could sell it directly for $32, let's
+say. But I could also split it into, say, a
+
+77
+00:07:18,960 --> 00:07:25,960
+length 1 rod and a length 6, or a length 1
+rod and two length 3s, or a length 3 and a
+
+78
+00:07:25,960 --> 00:07:32,780
+4, anything that sums to 7. And probably
+the most natural thing to do for this
+
+79
+00:07:32,820 --> 00:07:38,000
+problem as a heuristic, this would be a
+greedy bang for buck heuristic is what it's
+
+80
+00:07:38,000 --> 00:07:41,580
+usually called, is to take the ratio, how
+much money do I get for a given length,
+
+81
+00:07:41,780 --> 00:07:46,680
+divide V of L by L, and try to maximize
+that. That would be, if I had to pick a
+
+82
+00:07:46,680 --> 00:07:52,000
+single item and sell many of that type,
+that would be the optimal thing to do. So
+
+83
+00:07:52,000 --> 00:07:57,260
+this has a ratio of 1. That's bad. This has
+a ratio of 5. That's better. And you stare
+
+84
+00:07:57,260 --> 00:08:04,560
+at it long enough, I believe 6 is the best,
+has the highest ratio. Slightly more than,
+
+85
+00:08:05,660 --> 00:08:07,400
+I can't divide.
+
+86
+00:08:10,240 --> 00:08:17,280
+Slightly better than, let's see. Slightly
+worse than 4. Slightly worse than 4. Or is
+
+87
+00:08:17,340 --> 00:08:17,880
+4 the best?
+
+88
+00:08:21,210 --> 00:08:30,600
+Slightly worse than 4? What do you mean?
+31 over 6 is slightly less than 4. Oh,
+
+89
+00:08:30,840 --> 00:08:35,720
+slightly. I see. The ratio is slightly less
+than 4. Thank you. Yeah. Which all of
+
+90
+00:08:35,720 --> 00:08:42,740
+these others are somewhat worse. For
+example, if I double the 3 value, I get 26,
+
+91
+00:08:42,820 --> 00:08:44,280
+which is quite a
+bit less than 31.
+
+92
+00:08:46,300 --> 00:08:51,320
+And I guess the closest competitor, I
+think, is 2. Because if you multiply this
+
+93
+00:08:51,360 --> 00:08:56,720
+by 3, you get 30. So if I sold three 2's, I
+get $30. But if I sell one 6, which is the
+
+94
+00:08:56,720 --> 00:09:04,020
+same quantity, I get $31. So slight
+improvement. And so this item maximizes
+
+95
+00:09:04,020 --> 00:09:10,180
+bang for buck, that ratio. And so one
+natural partition is 6 plus 1. I sell one
+
+96
+00:09:10,180 --> 00:09:17,920
+rod of length 6, and that leaves a rod of
+length 1. And this will give me 31 for the
+
+97
+00:09:17,920 --> 00:09:25,860
+6 and $1, which gives me $32. But
+this turns out to not be the best, which is
+
+98
+00:09:25,860 --> 00:09:30,660
+actually the same as if you just sold it
+outright. But in fact, you can do better by
+
+99
+00:09:30,660 --> 00:09:38,150
+selling. This is not obvious. Stare at it
+for a while. A 3 and a 4 also sums to 7.
+
+100
+00:09:38,600 --> 00:09:50,760
+Then we get 13 plus 18, which is hopefully
+bigger. 33. 30. Get this right. Nope, I did
+
+101
+00:09:50,760 --> 00:09:51,320
+not get it right.
+
+102
+00:09:53,580 --> 00:10:03,120
+That's too small. We're going to take these
+two and sell 3 plus 2 plus 2. Then I get
+
+103
+00:10:03,780 --> 00:10:09,620
+13 plus 10 plus 10. Remember, 2 was a close
+competitor for the ratio for 6. So it's a
+
+104
+00:10:09,620 --> 00:10:15,420
+little better to sell two 2's and then a 3,
+because then we get $33. And that turns
+
+105
+00:10:15,420 --> 00:10:19,400
+out to be the best for this problem. And it
+seems really tricky to figure this out. In
+
+106
+00:10:19,400 --> 00:10:24,740
+general, there are exponentially many
+different partitions. Can't afford to try
+
+107
+00:10:24,740 --> 00:10:30,960
+them all. Question? Can I have negative
+values? Can I have negative values in here?
+
+108
+00:10:31,400 --> 00:10:36,360
+I think that will work fine. I'm not
+allowed to have negative lengths or 0
+
+109
+00:10:36,360 --> 00:10:39,460
+lengths. I don't want 0 lengths to actually
+give you something, because then I just
+
+110
+00:10:39,460 --> 00:10:44,960
+cut infinitely many 0's. But the V of L, I
+think, could be negative. Do I have to use
+
+111
+00:10:44,960 --> 00:10:45,420
+the whole bar?
+
+112
+00:10:47,520 --> 00:10:53,520
+Sorry. In this problem, yes. I think it
+wouldn't change much if you didn't have to
+
+113
+00:10:53,520 --> 00:11:02,000
+use the whole bar. We can think about those
+after we write the DP. So let's solve this
+
+114
+00:11:02,220 --> 00:11:02,720
+with sort bot.
+
+115
+00:11:05,600 --> 00:11:12,040
+So what's the input to this problem?
+Well, we have, I didn't mention this is an
+
+116
+00:11:12,060 --> 00:11:12,740
+integer length.
+
+117
+00:11:16,310 --> 00:11:17,860
+Positive integer length.
+
+118
+00:11:21,520 --> 00:11:27,200
+So we have one input, which is an integer
+L. And we have another input, which is, I
+
+119
+00:11:27,200 --> 00:11:34,780
+guess, it's like an array of integers. So
+this is a sequence. And this is an integer.
+
+120
+00:11:35,480 --> 00:11:41,760
+So if we look at our list of nice
+subproblems, we could try prefixes or
+
+121
+00:11:42,040 --> 00:11:49,700
+suffixes or substrings of the value
+structure. Or we could try for that integer
+
+122
+00:11:49,960 --> 00:11:54,420
+smaller integers. And that's actually what
+I prefer. I think the way to think about
+
+123
+00:11:54,420 --> 00:11:59,420
+this is to jump ahead to what do we want
+to, what feature of the solution do we want
+
+124
+00:11:59,460 --> 00:12:07,000
+to guess? And presumably, we should think
+about what is some length of rod that we
+
+125
+00:12:07,000 --> 00:12:12,660
+will cut and sell. This big rod, maybe I
+sell the whole thing. Maybe I cut off a
+
+126
+00:12:12,660 --> 00:12:17,700
+thing of size 1 and sell it. Maybe I cut
+off a thing of size 2 and sell it. But I
+
+127
+00:12:17,700 --> 00:12:26,620
+have to sell something, unless I'm not
+selling anything. And so there's only L
+
+128
+00:12:26,620 --> 00:12:32,800
+different choices for what rod lengths
+to cut off first. And so we can just brute
+
+129
+00:12:32,800 --> 00:12:39,640
+force that in order L time. So what problem
+do we get if we cut off an integer of some
+
+130
+00:12:40,220 --> 00:12:45,400
+small l length? Well, we just get the
+same problem with a rod of length capital L
+
+131
+00:12:45,400 --> 00:12:53,120
+minus small l. The values don't change. It
+happens that I won't use the big values if
+
+132
+00:12:53,120 --> 00:12:57,440
+I cut off some amount of the problem. But
+I like to think of this as we're just, all
+
+133
+00:12:57,440 --> 00:13:05,360
+we're doing is decreasing big L. And so my
+subproblems are going to be for each small
+
+134
+00:13:05,360 --> 00:13:13,770
+l less than or equal to big L, solve that
+problem. So x of L is max value partition
+
+135
+00:13:20,140 --> 00:13:34,380
+of length L, little l, for little l equals
+0, 1, up to big L. So just the same
+
+136
+00:13:34,380 --> 00:13:38,920
+problem, but with different choices
+for big L. So this is using this integer
+
+137
+00:13:38,920 --> 00:13:44,430
+subproblem. This example that happens
+to correspond to prefixes of the V array,
+
+138
+00:13:44,500 --> 00:13:49,320
+because if I only have length up to little
+l, then I really only need the prefix of
+
+139
+00:13:49,320 --> 00:13:53,480
+the value array up to little l. So you
+could think of it that way. That's also
+
+140
+00:13:53,480 --> 00:13:56,250
+fine. But I think this way is
+a little more generalizable.
+
+141
+00:13:59,220 --> 00:14:04,560
+OK. So I claim this is a good set of
+subproblems because I can write a
+
+142
+00:14:04,640 --> 00:14:07,940
+recurrence relation, which
+is actually pretty simple.
+
+143
+00:14:11,340 --> 00:14:13,060
+Like I said,
+
+144
+00:14:15,680 --> 00:14:17,080
+we want to choose
+
+145
+00:14:21,460 --> 00:14:27,780
+some piece. So we're given a rod of length
+little l. I want to choose how much of that
+
+146
+00:14:27,780 --> 00:14:32,780
+rod to sell in the next piece. So I could
+cut off something of length 1, or I could
+
+147
+00:14:32,780 --> 00:14:38,560
+sell the whole thing, or cut off any piece
+size in between. And the money I will get
+
+148
+00:14:38,620 --> 00:14:44,580
+for that is whatever the value of that
+piece is, plus recursively the maximum I
+
+149
+00:14:44,580 --> 00:14:49,900
+can get from all the remaining pieces.
+Sorry, from the remaining length, which is
+
+150
+00:14:49,900 --> 00:14:50,840
+little l minus p.
+
+151
+00:14:53,020 --> 00:14:57,320
+OK. So very simple inside the formula,
+just the value for the first piece. We're
+
+152
+00:14:57,320 --> 00:15:01,240
+guessing what is the first piece we'll
+cut off and sell. We get the value for that
+
+153
+00:15:01,240 --> 00:15:05,720
+piece. And then recursively, we see what's
+the best we can do with the remainder. Now,
+
+154
+00:15:05,720 --> 00:15:09,840
+we don't know what size the first piece
+should be. So we reverse it. We try all
+
+155
+00:15:09,840 --> 00:15:15,580
+possible choices for p and take the max
+that we get out of this formula over that
+
+156
+00:15:15,580 --> 00:15:18,700
+choice. And that's guaranteed
+to find the best overall
+
+157
+00:15:21,420 --> 00:15:26,200
+because we must cut off some piece. Now, if
+you wanted to allow not selling anything,
+
+158
+00:15:26,200 --> 00:15:33,100
+in the case of negative numbers, you could
+just add a 0 to this max. And then you
+
+159
+00:15:33,100 --> 00:15:35,940
+might stop early if there's
+nothing left that's worth selling.
+
+160
+00:15:39,060 --> 00:15:46,760
+OK. Topological order is very simple.
+We just have these capital L different
+
+161
+00:15:46,760 --> 00:15:55,400
+problems. And if you look at, oh, yeah. So
+we're looking at l minus p. p is always at
+
+162
+00:15:55,400 --> 00:16:00,120
+least 1. So we're always strictly
+decreasing l in this recursive call. And so
+
+163
+00:16:00,140 --> 00:16:07,480
+as long as I solve the problems in order
+of increasing little l, I'll guarantee that
+
+164
+00:16:07,480 --> 00:16:11,860
+whenever I'm solving x of little l, I'll
+have already solved all the things I need
+
+165
+00:16:11,860 --> 00:16:16,420
+to call. So if you're writing a bottom
+-up DP, this would just be the for loop l
+
+166
+00:16:16,480 --> 00:16:20,000
+equals 0 up to
+big L in that order.
+
+167
+00:16:22,030 --> 00:16:29,180
+This is equivalent to statement. But
+the key is to check that this is acyclic
+
+168
+00:16:29,820 --> 00:16:33,960
+because we're always referring to
+smaller l. And so increasing l is a valid
+
+169
+00:16:34,020 --> 00:16:44,040
+topological order in this. Subproblem
+DAG defined here. There's an edge from an
+
+170
+00:16:44,040 --> 00:16:46,100
+earlier thing to evaluate
+to a later thing to evaluate.
+
+171
+00:16:48,360 --> 00:16:55,480
+OK. Base case would be x of 0.
+
+172
+00:16:58,000 --> 00:17:01,540
+That's the first thing we'll want to
+compute here. And indeed, this formula
+
+173
+00:17:01,760 --> 00:17:06,960
+doesn't make much sense if I have x of 0
+because I can't choose a number p between 1
+
+174
+00:17:07,060 --> 00:17:12,280
+and 0, even non -strictly. And so what does
+it mean? Well, if I have a rod of length
+
+175
+00:17:12,280 --> 00:17:16,920
+0, I can't get any money
+out of it. So that's it. It's just 0.
+
+176
+00:17:19,160 --> 00:17:22,760
+That's an assumption, but a reasonable
+assumption. You don't get something for
+
+177
+00:17:22,760 --> 00:17:30,290
+nothing. OK. Then we have the original
+problem, which is just the length l rod.
+
+178
+00:17:31,200 --> 00:17:37,060
+And then the time to compute this thing.
+How many subproblems are there? Capital L
+
+179
+00:17:37,060 --> 00:17:40,360
+plus 1. So we'll say
+theta l subproblems.
+
+180
+00:17:44,460 --> 00:17:50,840
+And we'll multiply by the amount of time to
+evaluate this max, just a constant number
+
+181
+00:17:50,840 --> 00:17:55,620
+of things in here, not counting the
+recursive call. And so it takes little l
+
+182
+00:17:55,620 --> 00:18:03,480
+time. Little l is certainly at most big L.
+And so we'll say big O of big L time. It's
+
+183
+00:18:03,660 --> 00:18:07,280
+actually a triangular number, but it will
+only affect things by a constant factor. So
+
+184
+00:18:07,280 --> 00:18:08,560
+we get l squared time.
+
+185
+00:18:13,640 --> 00:18:19,120
+And we're done. So very simple,
+straightforward DP. At this point, we've
+
+186
+00:18:19,160 --> 00:18:24,460
+seen much more complicated examples than
+this. But it highlights a question, which
+
+187
+00:18:24,460 --> 00:18:34,760
+is, is theta l squared
+polynomial time?
+
+188
+00:18:43,820 --> 00:18:49,660
+So is this a reasonable running time?
+And I claim the answer is yes. This is a
+
+189
+00:18:49,660 --> 00:18:51,740
+reasonable polynomial running time.
+You might say, well, of course it's a
+
+190
+00:18:51,740 --> 00:18:56,800
+polynomial. Look, this is a polynomial, l
+squared. That's a quadratic polynomial. But
+
+191
+00:18:56,800 --> 00:19:01,220
+it's a quadratic polynomial in l. And we
+haven't really thought about this too hard.
+
+192
+00:19:01,280 --> 00:19:07,760
+But what does it mean to be polynomial
+time? And this is a notion that's properly
+
+193
+00:19:07,760 --> 00:19:13,800
+called strongly polynomial time. We won't
+worry about that strongly too much in this
+
+194
+00:19:13,800 --> 00:19:19,400
+class. But if you look this up online,
+you'll see the difference. Polynomial time
+
+195
+00:19:19,400 --> 00:19:24,200
+means that the running
+time is polynomial
+
+196
+00:19:26,660 --> 00:19:28,740
+in the size of the input.
+
+197
+00:19:31,940 --> 00:19:37,660
+And the size of the input is, for
+our model, measured in words,
+
+198
+00:19:40,640 --> 00:19:45,060
+machine words. Remember our good old word
+RAM, w -bit words? It's been very useful
+
+199
+00:19:45,060 --> 00:19:49,780
+because it lets us assume things like
+adding two numbers constant time, as long
+
+200
+00:19:49,780 --> 00:19:53,760
+as these numbers fit in a word, as long as
+they're at most w bits. And generally, we
+
+201
+00:19:53,760 --> 00:19:57,500
+assume all the things we're manipulating
+fit in a machine word because that's the
+
+202
+00:19:57,580 --> 00:19:59,180
+case where we normally work.
+
+203
+00:20:01,400 --> 00:20:06,300
+And so the natural way to measure the
+size of an input, so in this example, this
+
+204
+00:20:06,300 --> 00:20:12,620
+problem, rod cutting, the input is a single
+number l and this value array V of l,
+
+205
+00:20:13,320 --> 00:20:20,180
+which is capital L numbers. So I would say
+integers. And we've generally assumed, I
+
+206
+00:20:20,180 --> 00:20:22,700
+didn't mention
+integer value here,
+
+207
+00:20:24,940 --> 00:20:28,260
+as in throughout this class, we assume
+that all the integers, unless otherwise
+
+208
+00:20:28,260 --> 00:20:33,720
+specified, fit in a word. So we've got one
+word here and l words here. So the total
+
+209
+00:20:33,720 --> 00:20:41,520
+size of the input to this problem is l plus
+1 integers. And this problem input size
+
+210
+00:20:43,720 --> 00:20:50,160
+is l plus 1, which we can think of as just
+l, I mean, state of l. OK, so I explicitly
+
+211
+00:20:50,160 --> 00:20:54,320
+didn't want to use n in this problem
+because usually we use the letter n for the
+
+212
+00:20:54,340 --> 00:20:59,340
+problem size, not quite always. But input
+size always means input size. And so here
+
+213
+00:20:59,340 --> 00:21:04,740
+we can compute it in terms of this
+specification. It involves l plus 1 word
+
+214
+00:21:04,740 --> 00:21:10,980
+inputs. And so polynomial time should be
+polynomial in that input size, in l plus 1
+
+215
+00:21:10,980 --> 00:21:17,040
+in our example. So of course, l
+squared is polynomial in l plus 1. So good.
+
+216
+00:21:20,460 --> 00:21:24,400
+OK, the next example I'm going to show
+is going to be very similar, but the answer
+
+217
+00:21:24,400 --> 00:21:30,660
+will be no. Make it more interesting.
+But it'll still seem pretty reasonable. So
+
+218
+00:21:30,660 --> 00:21:38,700
+we'll come back to that issue in a moment.
+Let me first show you what the subproblem
+
+219
+00:21:38,940 --> 00:21:44,000
+DP looks like for this problem. Again, it
+took me a while to draw, so please admire.
+
+220
+00:21:45,440 --> 00:21:53,020
+So this is the same example of these
+values, 1, 10, 13, 18, 20, 30, 1, 32, drawn
+
+221
+00:21:53,020 --> 00:21:59,340
+here on a graph. It's the complete graph
+oriented in this increasing way. I think
+
+222
+00:21:59,340 --> 00:22:04,020
+this is called a tournament in graph
+theory. So we have the base case over here.
+
+223
+00:22:04,520 --> 00:22:08,880
+This corresponds to a length 0 rod where
+we get no money. And over here, we have our
+
+224
+00:22:08,920 --> 00:22:15,880
+full rod of length 7. And I claim the best
+that we can do is 33. And what's happening
+
+225
+00:22:15,880 --> 00:22:22,300
+here is for every value, like 3, that I
+could sell a rod of length 3 for $13,
+
+226
+00:22:23,140 --> 00:22:31,260
+there's an edge that goes from each vertex
+to one 3 higher. And those all have a
+
+227
+00:22:31,260 --> 00:22:32,300
+weight of 13 on them.
+
+228
+00:22:34,540 --> 00:22:39,260
+And then what we're essentially trying
+to do is find a longest path from here to
+
+229
+00:22:39,260 --> 00:22:44,000
+here, longest because we want to maximize
+the sum of values that we get. And we know
+
+230
+00:22:44,020 --> 00:22:46,840
+if we negate all the weights, that's the
+shortest path problem. So we could solve
+
+231
+00:22:46,840 --> 00:22:52,600
+that with shortest paths in a DAG. But I've
+drawn here the shortest path tree from the
+
+232
+00:22:52,600 --> 00:22:59,480
+base case. So it actually tells us that if
+we had a rod of length 7, the best thing to
+
+233
+00:22:59,480 --> 00:23:05,260
+do is to sell it directly for 31. The bold
+lines here are the shortest path tree, or
+
+234
+00:23:05,260 --> 00:23:10,040
+the longest path tree, I guess. And if we
+had something of length 10, we should sell
+
+235
+00:23:10,040 --> 00:23:14,940
+it directly. If we have something of length
+20, we should sell one thing of length 2
+
+236
+00:23:14,940 --> 00:23:16,160
+and another thing of length 4.
+
+237
+00:23:18,380 --> 00:23:23,780
+Then we should sell one thing of length
+2 and one of length 2. We get 2 times 10
+
+238
+00:23:23,780 --> 00:23:29,960
+points. And for the 33 case, we sell one
+thing of length 2, one thing of length 2,
+
+239
+00:23:29,960 --> 00:23:34,920
+and then one thing of length 3 is optimal.
+So you can read lots of information from
+
+240
+00:23:34,920 --> 00:23:38,760
+this. And if you write down the DP code,
+this is effectively what it's computing
+
+241
+00:23:39,220 --> 00:23:39,880
+from left to right.
+
+242
+00:23:43,420 --> 00:23:50,680
+OK. Let's move on to our second
+problem of the day. Which is subset sum.
+
+243
+00:24:02,720 --> 00:24:08,260
+So here we are
+given, say, a multi -set.
+
+244
+00:24:16,470 --> 00:24:22,240
+Multi -set means that I can repeat numbers.
+So this is just a sequence of numbers. But
+
+245
+00:24:22,240 --> 00:24:26,800
+I'd like to use set notation because I want
+to use subsets, because it's subset sum.
+
+246
+00:24:27,880 --> 00:24:30,380
+So this is of n integers.
+
+247
+00:25:00,400 --> 00:25:05,220
+For rod cutting, we also had to split up
+our number L into different values that
+
+248
+00:25:05,220 --> 00:25:11,190
+summed to capital L. So capital T here is
+playing the role of capital L. But before,
+
+249
+00:25:11,240 --> 00:25:15,760
+we were allowed to cut into any lengths.
+And so it was easy. In particular, L sums
+
+250
+00:25:15,760 --> 00:25:21,900
+to L. Here, presumably, T is not in
+this multi -set. And we need to find a
+
+251
+00:25:21,960 --> 00:25:26,140
+combination of numbers here that add
+up exactly to T. Sometimes that's possible.
+
+252
+00:25:26,420 --> 00:25:30,760
+Sometimes it's not. We're only allowed
+to use each number once. But we're only
+
+253
+00:25:30,760 --> 00:25:38,300
+allowed to use it as many times as it
+appears in the subset. OK. So here's an
+
+254
+00:25:38,300 --> 00:25:51,520
+example. Say A equals 2, 5, 7, 8, 9. And
+two examples are T equals 21 and T equals
+
+255
+00:25:51,660 --> 00:26:04,200
+25 for that same set. So can I get 21 out
+of these? Sick. That's hard. I think, let's
+
+256
+00:26:04,200 --> 00:26:09,230
+see. If I add 7 and 8, I get 15.
+
+257
+00:26:11,550 --> 00:26:19,060
+Not quite what I want. Cheat. Look
+at my answer. Yeah, close. 5, 7, 9.
+
+258
+00:26:23,660 --> 00:26:29,580
+So this is a yes answer to the question,
+does there exist any subset? Because 5, 7,
+
+259
+00:26:29,580 --> 00:26:38,380
+and 9 sum to exactly 21. And T equals 25, I
+don't know a good way to prove to you that
+
+260
+00:26:38,380 --> 00:26:42,640
+there's no way to write 25 with these
+numbers other than I wrote a program that
+
+261
+00:26:42,780 --> 00:26:48,480
+tried all subsets. Or you could write a
+program that runs the DP that we're about
+
+262
+00:26:48,540 --> 00:26:53,260
+to give. And I'll put no. There's no
+succinct way, as far as we know, to prove
+
+263
+00:26:53,260 --> 00:26:57,700
+to someone that the answer is no for a
+given target sum. There is a nice, succinct
+
+264
+00:26:57,760 --> 00:27:01,140
+way to prove the answer is yes. I just give
+you a subset. We'll talk more about that
+
+265
+00:27:01,140 --> 00:27:01,690
+next lecture.
+
+266
+00:27:04,260 --> 00:27:09,300
+But these are some examples of the question
+you might ask and the answer that we're
+
+267
+00:27:09,300 --> 00:27:14,540
+looking for. This is what we call a
+decision problem. In its original form,
+
+268
+00:27:15,140 --> 00:27:18,020
+we're just interested
+in a yes or no answer.
+
+269
+00:27:21,740 --> 00:27:23,040
+It's a single bit.
+
+270
+00:27:27,120 --> 00:27:30,320
+Of course, in the yes case, we might
+actually want to find the set. And we can
+
+271
+00:27:30,320 --> 00:27:34,900
+do that, as usual, with parent pointers,
+just like in the bold lines over here.
+
+272
+00:27:34,980 --> 00:27:39,780
+We'll get to that in a moment. But this
+is a little bit different from most of the
+
+273
+00:27:39,780 --> 00:27:43,320
+problems we've been seeing with dynamic
+programming or optimization problems. And
+
+274
+00:27:43,320 --> 00:27:46,820
+we're trying to minimize or maximize
+something. And so we always put a min or a
+
+275
+00:27:46,820 --> 00:27:50,860
+max on the outside in the relation. Here,
+we're going to have to do something that
+
+276
+00:27:50,860 --> 00:27:53,710
+involves Boolean values,
+yes or no, true or false.
+
+277
+00:27:57,380 --> 00:28:02,420
+And let's solve it. This is actually also
+going to be pretty straightforward, in that
+
+278
+00:28:02,420 --> 00:28:09,180
+we can just use our standard sets of
+subproblems. So just like the previous
+
+279
+00:28:09,180 --> 00:28:14,420
+problem, we have, on the one hand, a
+sequence of integers. And on the other
+
+280
+00:28:14,420 --> 00:28:21,420
+hand, we're given a single integer t.
+And what turns out to be right is to use
+
+281
+00:28:21,460 --> 00:28:31,120
+prefixes or suffixes on this sequence.
+And integers less than or equal to t. Let's
+
+282
+00:28:31,140 --> 00:28:31,840
+think about why.
+
+283
+00:28:38,560 --> 00:28:48,140
+So that was sort bot for rod cutting.
+This is sort bot for subset sum. Again,
+
+284
+00:28:52,120 --> 00:29:00,040
+I'll look ahead to what feature of the
+solution should I guess. Well, I have these
+
+285
+00:29:00,040 --> 00:29:05,740
+n numbers. Each of them could be in my
+subset or not. So I have this binary choice
+
+286
+00:29:05,740 --> 00:29:07,780
+for each ai. Is it in s or not?
+
+287
+00:29:09,990 --> 00:29:13,620
+That's a lot of questions to answer. I
+can't answer them all at once. But I could
+
+288
+00:29:13,620 --> 00:29:18,760
+just start with the first one and say,
+well, is a0 in s? Yes or no? There's two
+
+289
+00:29:18,760 --> 00:29:25,280
+answers, locally brute force. If I do that,
+what happens to my problem? What new
+
+290
+00:29:25,280 --> 00:29:29,640
+subproblems do I run into? What do I want
+to recurse on? Well, I've eliminated a0.
+
+291
+00:29:29,700 --> 00:29:34,860
+That will leave a suffix of the ai's. So
+suffixes on capital A seem like a good
+
+292
+00:29:34,860 --> 00:29:44,000
+idea. And what about my target sum? Well,
+it depends. If I put a0 in my set s, then
+
+293
+00:29:44,120 --> 00:29:52,540
+the target sum for the remainder is t minus
+a0. So t went down. And so I need in my
+
+294
+00:29:52,540 --> 00:29:57,360
+subproblems to represent smaller target
+sums also. So this is how you figure out
+
+295
+00:29:57,360 --> 00:30:02,340
+what subproblems you should use. I
+mean, you could just try prefixes on this,
+
+296
+00:30:02,640 --> 00:30:07,500
+suffixes on this, substrings on this. And
+yes or no, do I include smaller versions of
+
+297
+00:30:07,500 --> 00:30:11,200
+t here? But you can also just think about,
+try to write a recurrence relation first.
+
+298
+00:30:11,280 --> 00:30:17,980
+See what things you are naturally recursing
+on. Simulate the subproblems that way. So
+
+299
+00:30:17,980 --> 00:30:18,740
+that's what I like to do.
+
+300
+00:30:24,000 --> 00:30:31,820
+So I'm going to have a subproblem for
+each suffix. So that's x of i. And for each
+
+301
+00:30:31,860 --> 00:30:36,700
+target sum, and I use these capital letters
+for the actual target sum so that I can
+
+302
+00:30:36,700 --> 00:30:44,160
+use lowercase letters for smaller versions
+of them. So this is going to be, does any
+
+303
+00:30:44,160 --> 00:30:44,740
+subset,
+
+304
+00:30:46,920 --> 00:30:51,360
+remember, don't first, most important thing
+is to define what your subproblems are.
+
+305
+00:30:51,740 --> 00:30:56,400
+Don't just say, it's the same problem, but
+where I replace blah with blah. It can be
+
+306
+00:30:56,400 --> 00:31:07,540
+very ambiguous. And so does any subset s of
+the suffix a from i onwards sum to little
+
+307
+00:31:07,540 --> 00:31:07,960
+t?
+
+308
+00:31:11,240 --> 00:31:14,740
+We're going to have this subproblem. The
+other important thing is to say how many
+
+309
+00:31:14,740 --> 00:31:23,960
+subproblems there are and what your indices
+can vary over. So i is going to be between
+
+310
+00:31:23,960 --> 00:31:34,060
+0 and n. And t is going
+to be between 0 and big T.
+
+311
+00:31:36,420 --> 00:31:41,360
+OK? So number of subproblems is n plus
+1 times t plus 1, or theta n times 1. Times
+
+312
+00:31:41,360 --> 00:31:48,860
+t. Cool. Now I claim I can write a
+relation, like I said, by, so we have this
+
+313
+00:31:48,860 --> 00:31:56,840
+suffix from i onwards in a. And so I'm just
+going to, because I'm looking at suffixes,
+
+314
+00:31:57,020 --> 00:32:00,600
+I want to keep with suffixes. So I
+should try to guess what happens to a of i,
+
+315
+00:32:00,770 --> 00:32:05,960
+because then what will remain is a of i
+plus 1 onwards. And a of i can either be in
+
+316
+00:32:05,960 --> 00:32:13,320
+my subset s or not. So there's two choices.
+So x of i t is going to involve two
+
+317
+00:32:13,320 --> 00:32:21,640
+things. So there's an operator here. And
+then I have a set of two items, which is I
+
+318
+00:32:21,820 --> 00:32:29,180
+could choose to not put a of i in my
+subset. In that case, I've eliminated a of
+
+319
+00:32:29,180 --> 00:32:35,180
+i. And what remains is a of i plus 1
+onwards. And I didn't change my target sum.
+
+320
+00:32:35,760 --> 00:32:40,340
+I haven't put anything in s, so I still
+want to achieve the same sum. So this is
+
+321
+00:32:40,340 --> 00:32:52,860
+the case where a i is not in s. And then
+the other case is I put a of i in s. In
+
+322
+00:32:52,860 --> 00:32:56,540
+that case, again, I've eliminated a of i.
+And so what remains to figure out is what
+
+323
+00:32:56,540 --> 00:33:02,780
+happens to a of i plus 1 onwards. But now
+my target sum is different, because I put a
+
+324
+00:33:02,780 --> 00:33:07,920
+number in my set. And so among these
+items, they should sum up to not little t
+
+325
+00:33:08,120 --> 00:33:14,960
+anymore, but now little t minus what I just
+added, which is a i. So then if in this
+
+326
+00:33:14,960 --> 00:33:19,820
+subproblem I get something that sums to t
+minus a i, and then I add a i to that set,
+
+327
+00:33:20,060 --> 00:33:24,140
+I will get something that sums to exactly
+t. And so that's a valid solution to this
+
+328
+00:33:24,140 --> 00:33:32,020
+problem. And because we have brute forced
+all possibilities, there were only two, if
+
+329
+00:33:32,080 --> 00:33:38,040
+we combine these in the suitable way, then
+we will have considered all options. Now,
+
+330
+00:33:40,140 --> 00:33:45,200
+what do we want here? So this is normally
+I'd write max or min. But this is a
+
+331
+00:33:45,200 --> 00:33:49,160
+decision problem. The output is just yes or
+no. So this is a yes or no answer. This is
+
+332
+00:33:49,160 --> 00:33:54,430
+a yes or no answer. This is a yes or
+no answer. And so what I want is or.
+
+333
+00:33:57,360 --> 00:34:02,760
+In Python, this would be called any. Just
+are any of these things true? Because if
+
+334
+00:34:02,760 --> 00:34:09,320
+there's any way to construct a set that
+sums to t, then the answer to this is yes.
+
+335
+00:34:10,100 --> 00:34:14,980
+Cool. So very simple, actually. Just it's
+one of the simplest recurrences. But we're
+
+336
+00:34:14,980 --> 00:34:20,040
+solving what I think is a really impressive
+problem. We're asking, is there any
+
+337
+00:34:20,040 --> 00:34:26,380
+subset? There are exactly 2 to the n
+subsets of a here. And we're in some sense
+
+338
+00:34:26,400 --> 00:34:32,080
+considering all 2 to the n of them. But
+because we split it up into n local choices
+
+339
+00:34:32,080 --> 00:34:38,060
+that are binary and do them only one
+at a time, sort of, this is the local brute
+
+340
+00:34:38,100 --> 00:34:41,679
+force versus global brute force. Global
+brute force would be trial subsets, sum
+
+341
+00:34:41,679 --> 00:34:47,100
+them, see which ones add up. But we're,
+in some sense, collapsing a lot of these
+
+342
+00:34:47,100 --> 00:34:51,219
+choices and reusing subproblems. That's the
+whole point of dynamic programming. We're
+
+343
+00:34:51,219 --> 00:34:58,040
+looking at, for the rest of the sequence
+from i plus 1 onwards, I don't really care
+
+344
+00:34:58,040 --> 00:35:02,860
+exactly which subset you choose. I only
+care what it sums to. And that collapses a
+
+345
+00:35:02,860 --> 00:35:06,500
+lot of different options in the same thing.
+I really just want to know, is there any
+
+346
+00:35:06,500 --> 00:35:11,740
+way to do it with exactly this sum? So I
+don't have to think. I don't need to keep
+
+347
+00:35:11,740 --> 00:35:15,940
+track. If I said, give me all of the
+different subsets that sum to t, that would
+
+348
+00:35:15,940 --> 00:35:20,780
+be exponential time. But because I'm just
+asking a yes or no question, this choice
+
+349
+00:35:20,780 --> 00:35:26,300
+only takes constant time. And we get to sum
+them instead of product them because we're
+
+350
+00:35:26,300 --> 00:35:32,440
+using memoization. That is the beauty of
+dynamic programming and this time analysis
+
+351
+00:35:32,440 --> 00:35:36,380
+rule that we only have to sum over
+subproblems because we only compute each
+
+352
+00:35:36,380 --> 00:35:41,680
+subproblem once. So without memoization,
+this would take exponential time, just like
+
+353
+00:35:41,680 --> 00:35:47,700
+Fibonacci with memoization magic. I just
+think this is beautiful. So even though
+
+354
+00:35:47,700 --> 00:35:51,640
+this is one of our simpler DPs,
+I think it's an impressive one.
+
+355
+00:35:55,180 --> 00:36:00,680
+OK, topological order. Well, let's just
+look at these function calls. So here, we
+
+356
+00:36:00,680 --> 00:36:01,580
+have to be a little bit careful.
+
+357
+00:36:04,620 --> 00:36:09,600
+If we write x recursively, we always
+increment i. But sometimes we don't
+
+358
+00:36:09,600 --> 00:36:15,260
+decrement t. Sometimes t doesn't go down.
+So if I wrote decreasing t here, that would
+
+359
+00:36:15,260 --> 00:36:21,800
+be bad because sometimes I call with the
+same value of t. And I don't want to get
+
+360
+00:36:21,800 --> 00:36:25,840
+into, I want to ensure that this has
+already been computed when I try to compute
+
+361
+00:36:25,840 --> 00:36:32,260
+this. So i is the right thing. And
+we should say decreasing i. It doesn't
+
+362
+00:36:32,260 --> 00:36:38,900
+actually matter how we order with respect
+to t, just any order that is decreasing i
+
+363
+00:36:38,900 --> 00:36:42,540
+will be good because these
+function calls always increase i.
+
+364
+00:36:45,200 --> 00:36:46,770
+OK, we need a base case.
+
+365
+00:36:49,520 --> 00:36:57,140
+Base cases. Let's see. Given this aspect, I
+think the natural thing is to have a base
+
+366
+00:36:57,140 --> 00:37:01,940
+case when my suffix is
+empty, which is when i equals n.
+
+367
+00:37:04,240 --> 00:37:14,460
+So I'm going to have a base of n comma t
+for any little t. So we don't have a lot of
+
+368
+00:37:14,620 --> 00:37:19,780
+control of how t is changing. But this is
+easy. So this is saying, if I give you no
+
+369
+00:37:19,780 --> 00:37:27,670
+numbers, what sums can you represent? The
+only sum I can represent is 0. OK, so if
+
+370
+00:37:29,960 --> 00:37:36,680
+t equals 0, then the answer is yes.
+And otherwise, the answer is no.
+
+371
+00:37:39,480 --> 00:37:44,960
+So that's my base case. And that's enough.
+And we needed this base case because if we
+
+372
+00:37:44,960 --> 00:37:48,580
+wrote x of n comma t, this would try
+to call x of n plus 1, which doesn't make
+
+373
+00:37:48,580 --> 00:37:56,020
+sense. But x of n colon is a natural
+suffix, which we only allowed i to go up to
+
+374
+00:37:56,020 --> 00:38:01,880
+n. And that's the empty suffix. So this is
+enough. We need the original problem.
+
+375
+00:38:08,020 --> 00:38:15,540
+Which is the entire string from 0 onwards
+and capital T for little t. That's our
+
+376
+00:38:15,540 --> 00:38:17,720
+target sum. And
+then the running time.
+
+377
+00:38:20,420 --> 00:38:22,800
+As I said, there are n
+times t subproblems,
+
+378
+00:38:24,980 --> 00:38:30,180
+theta. And the amount of work we spend for
+each one that isn't recursion is constant.
+
+379
+00:38:30,400 --> 00:38:36,380
+We just do a couple subtractions,
+additions, do an OR and recursive calls, so
+
+380
+00:38:36,400 --> 00:38:45,940
+constant time. So n times t is the running
+time of this algorithm. Let me show you an
+
+381
+00:38:45,980 --> 00:38:48,680
+example as a subproblem DAG.
+
+382
+00:38:51,020 --> 00:38:56,540
+Really helpful to see. These are hard
+to draw, but they're easy to read. I think
+
+383
+00:38:56,560 --> 00:39:01,020
+they're helpful to show what's really going
+on in this DP. Remember, every node here
+
+384
+00:39:01,020 --> 00:39:04,980
+corresponds to a possible subproblem we
+could have. The choice is for little t on
+
+385
+00:39:04,980 --> 00:39:10,060
+the top. The choice is for little i on the
+left. So the original problem we care about
+
+386
+00:39:10,060 --> 00:39:19,040
+is i equals 0, t equals 6. This is the same
+example that I showed you before, where we
+
+387
+00:39:19,040 --> 00:39:25,500
+have three. Oh, no. This is a different
+example. Sorry. My new set A is 3, 4, 3, 1.
+
+388
+00:39:26,380 --> 00:39:30,640
+Four numbers here. My target value is
+6. This is definitely possible. I can add 3
+
+389
+00:39:30,640 --> 00:39:34,840
+and 3. This shows that A doesn't have to be
+sorted. We're not assuming anything about
+
+390
+00:39:34,860 --> 00:39:39,760
+the order of A. And we're allowed duplicate
+values. And we see, indeed, there's a y
+
+391
+00:39:39,760 --> 00:39:46,700
+here for yes, it is possible. And how did I
+compute that? Well, I just drew a bunch of
+
+392
+00:39:46,700 --> 00:39:52,200
+arrows. So there's vertical arrows here,
+always going from each problem to the next
+
+393
+00:39:52,300 --> 00:39:58,680
+one above it, because we have this
+dependency xi of t calls x of i plus 1
+
+394
+00:39:58,780 --> 00:39:59,000
+comma t.
+
+395
+00:40:03,880 --> 00:40:06,980
+The calls are going in this direction. So
+the dependency order is you have to compute
+
+396
+00:40:07,000 --> 00:40:09,640
+things lower down before
+you compute things up here.
+
+397
+00:40:12,020 --> 00:40:16,640
+And indeed, down here is the base case,
+where we write yes for the first problem
+
+398
+00:40:16,960 --> 00:40:19,680
+and no for all the others, because we
+don't have any numbers. We can't represent
+
+399
+00:40:19,680 --> 00:40:25,420
+anything above 0. And then we have these
+blue lines. I just drew them a different
+
+400
+00:40:25,460 --> 00:40:32,060
+color so they stand out, hopefully. And
+they correspond to the numbers here. So our
+
+401
+00:40:32,120 --> 00:40:39,540
+first choice is, do we include 0, which is
+3? So that's only possible if we're trying
+
+402
+00:40:39,540 --> 00:40:43,620
+to represent a number that's greater than
+or equal to 3, which reminds me, I forgot
+
+403
+00:40:43,620 --> 00:40:55,420
+to write down. In this DP, I need to say
+this option is only an option if Ai is less
+
+404
+00:40:55,420 --> 00:41:05,380
+than or equal to t. I just moved my
+comments here. Those are the same. So this
+
+405
+00:41:05,380 --> 00:41:10,440
+notation means I put this item in
+this set that we take an or of only if this
+
+406
+00:41:10,540 --> 00:41:15,140
+condition holds. Otherwise, I omit it,
+because it's not a choice. Why is that
+
+407
+00:41:15,140 --> 00:41:20,380
+important? Because I don't want to call
+x on a negative value of t. We only are
+
+408
+00:41:20,380 --> 00:41:26,300
+allowed to call x here when t is between
+0 and capital T. So that's subtlety, but
+
+409
+00:41:26,300 --> 00:41:27,920
+important for a correct DP.
+
+410
+00:41:59,040 --> 00:42:03,360
+And then what's happening in here at each
+stage, let's take an interesting one, maybe
+
+411
+00:42:03,360 --> 00:42:09,160
+this vertex, is we look at each of the
+incoming neighbors, and we take the or. So
+
+412
+00:42:09,160 --> 00:42:14,340
+the incoming neighbor here has a no. The
+incoming neighbor here has a yes. And so we
+
+413
+00:42:14,340 --> 00:42:19,740
+write a yes here, which means that
+given just these numbers, 3 and 1, we can
+
+414
+00:42:19,740 --> 00:42:24,910
+represent the number 3, namely
+by taking this edge of length 3
+
+415
+00:42:28,120 --> 00:42:32,460
+and then just going straight down to a base
+case. That's yes. That's representing 0.
+
+416
+00:42:33,480 --> 00:42:38,040
+So in this case, this example, I didn't
+draw the parent pointers here, but they're
+
+417
+00:42:38,040 --> 00:42:43,240
+in the notes. This yes is possible not from
+going this way, but from going this way.
+
+418
+00:42:43,540 --> 00:42:49,620
+So we take the number 3. Then we go down,
+which means we skip the number 4. And then
+
+419
+00:42:49,620 --> 00:42:53,940
+we go left, which means we take the number
+3. And then we go down, which means we skip
+
+420
+00:42:53,940 --> 00:43:02,160
+the number 1. So we can represent 6 as
+3 plus 3. Cool. So subset sum, not only can
+
+421
+00:43:02,160 --> 00:43:05,080
+we solve the decision problem, but
+by following parent pointers in the yes
+
+422
+00:43:05,080 --> 00:43:09,160
+instances, we can actually find a valid
+subset. Question? Can we add in that
+
+423
+00:43:09,240 --> 00:43:13,700
+condition to the relation? Yeah. Is it
+possible to deal with that by spending the
+
+424
+00:43:13,700 --> 00:43:23,480
+number of base cases? Good question. So
+it's a generally useful technique to add if
+
+425
+00:43:23,500 --> 00:43:27,980
+conditions to the cases to only when they
+apply. You can write a lot of DPs that way.
+
+426
+00:43:27,980 --> 00:43:32,920
+And that's why I wanted to stress it.
+You could instead of adding this condition
+
+427
+00:43:32,920 --> 00:43:37,100
+allow the case that little t is negative.
+But you have to think about how negative
+
+428
+00:43:37,100 --> 00:43:43,020
+would it be. You might say, well, maybe
+t between minus big T and plus big T is
+
+429
+00:43:43,020 --> 00:43:45,240
+enough. I don't
+think so. It should be
+
+430
+00:43:47,420 --> 00:43:50,000
+we're at some value t,
+and we subtract some ai.
+
+431
+00:43:52,240 --> 00:43:57,020
+Compare it to big T. Probably they're less
+than or equal to big T, because they're not
+
+432
+00:43:57,020 --> 00:44:00,280
+useful if they're bigger than big T. So
+you could first prune the ai's to guarantee
+
+433
+00:44:00,280 --> 00:44:05,160
+all the ai's are less than big T. Then
+minus big T to big T would work. Otherwise,
+
+434
+00:44:05,300 --> 00:44:12,220
+it's like minus the maximum ai up to big T
+would be enough, I think. Yeah? Does this
+
+435
+00:44:12,220 --> 00:44:19,360
+restrict to only positive integers in the
+input? Ah. I am implicitly assuming here
+
+436
+00:44:19,360 --> 00:44:20,850
+that all the ai's are positive.
+
+437
+00:44:22,980 --> 00:44:27,640
+I think you can solve it with negative
+numbers, but it's not. And maybe we'll do
+
+438
+00:44:27,640 --> 00:44:32,880
+it in recitation. It's not a trivial change
+to this DP. I've definitely thought about
+
+439
+00:44:32,880 --> 00:44:45,540
+it before. Yeah. So I should have said
+positive integers. Thank you. Cool. All
+
+440
+00:44:45,540 --> 00:44:51,440
+right. So that's subset sum. But we come
+back to this question of, is this a good
+
+441
+00:44:51,440 --> 00:44:57,400
+algorithm? Is polynomial time? So we
+have this running time, n times t. So a new
+
+442
+00:44:57,400 --> 00:45:02,120
+question is, is n times
+big T polynomial?
+
+443
+00:45:08,480 --> 00:45:18,040
+And the answer is no. Why? Because for this
+problem, what is the input size? How many
+
+444
+00:45:18,040 --> 00:45:25,000
+words of input do I have? Well, I have
+these n integers. And then I also have the
+
+445
+00:45:25,000 --> 00:45:32,020
+target sum. So similar to up above, our
+input size is n plus 1. But now the labels
+
+446
+00:45:32,020 --> 00:45:39,060
+really matter. Before, it was l plus 1. And
+our running time was a function of l. Now
+
+447
+00:45:39,060 --> 00:45:43,740
+our input size is just n plus 1. But our
+running time is a function of both n and t.
+
+448
+00:45:46,850 --> 00:45:52,260
+Not polynomial in input size
+
+449
+00:45:54,740 --> 00:46:01,140
+n plus 1. You cannot write that n times
+capital T is less than or equal to n plus 1
+
+450
+00:46:01,160 --> 00:46:06,700
+to the 27th power. Because you just don't
+know how n and t relate. Maybe t is at most
+
+451
+00:46:06,700 --> 00:46:11,640
+n. Then we're happy. But maybe it's not.
+Maybe t is 2 to the n. Why could it be 2 to
+
+452
+00:46:11,640 --> 00:46:11,900
+the n?
+
+453
+00:46:15,380 --> 00:46:20,420
+Because what do we know about capital T? We
+assume, implicitly throughout the course,
+
+454
+00:46:20,840 --> 00:46:26,640
+that t fits in a word. That means it's a w
+-bit number. So that means it's at most 2
+
+455
+00:46:26,640 --> 00:46:32,580
+to the w. And you might think, well, we
+know about a relation between w and n. So
+
+456
+00:46:32,580 --> 00:46:40,120
+we know t is at most
+2 to the w, if it's w bits.
+
+457
+00:46:43,900 --> 00:46:48,720
+We know that our assumption is always that
+w is at least log n. That's the word -ram
+
+458
+00:46:48,720 --> 00:46:53,700
+trans -dichotomous assumption. But notice,
+we don't know anything about an upper bound
+
+459
+00:46:53,860 --> 00:46:58,540
+on w. In order to upper bound t in terms
+of n, I'd need to say that w is at most log
+
+460
+00:46:58,540 --> 00:47:01,600
+n. Then this would be at most n, and we'd
+be done. But that's not very interesting.
+
+461
+00:47:03,220 --> 00:47:07,040
+And generally, we allow w to be arbitrarily
+large with respect to log n. It just has
+
+462
+00:47:07,040 --> 00:47:09,330
+to be at least log n, just
+to be able to index stuff.
+
+463
+00:47:14,160 --> 00:47:20,840
+It could be really big, much bigger than
+log n. For example, w equals n is not a
+
+464
+00:47:20,840 --> 00:47:26,040
+crazy idea. I mean, if I have a machine
+that can represent n numbers, why not
+
+465
+00:47:26,040 --> 00:47:30,380
+represent n numbers, each of which is n
+bits long? And maybe it takes a little more
+
+466
+00:47:30,480 --> 00:47:33,860
+time to compute on those. You might want
+to scale your running times. But it's quite
+
+467
+00:47:33,860 --> 00:47:40,240
+reasonable to think about n -bit numbers.
+And then this is like n times 2 to the n.
+
+468
+00:47:40,280 --> 00:47:47,300
+So this would actually be exponential
+time. If w is 2 to the n, n times t is
+
+469
+00:47:47,340 --> 00:47:48,020
+exponential
+
+470
+00:47:50,040 --> 00:47:57,960
+in the problem size, which is n plus 1. And
+that's just an example. w could be bigger.
+
+471
+00:48:00,080 --> 00:48:04,100
+So this is not what we call a polynomial
+algorithm or strongly polynomial algorithm.
+
+472
+00:48:04,620 --> 00:48:10,780
+But it's still pretty good. As long as we
+know that capital T is not ginormous, then
+
+473
+00:48:10,820 --> 00:48:11,600
+this is a great algorithm.
+
+474
+00:48:13,900 --> 00:48:18,340
+And we capture that notion with a
+concept called pseudo polynomial.
+
+475
+00:48:24,550 --> 00:48:28,900
+It's not the best term, but it's the
+established term. It's like polynomial, but
+
+476
+00:48:28,900 --> 00:48:34,240
+not quite. And the definition of this
+term, so we have the definition of strongly
+
+477
+00:48:34,240 --> 00:48:41,680
+polynomial time. Now, pseudo polynomial
+time, sorry, time here. You can measure
+
+478
+00:48:41,680 --> 00:48:47,370
+other things with pseudo
+polynomial, is that we're polynomial in
+
+479
+00:48:51,340 --> 00:48:53,720
+the input size,
+just like before,
+
+480
+00:48:56,860 --> 00:49:02,120
+and the input
+numbers, input integers.
+
+481
+00:49:06,000 --> 00:49:16,780
+OK? So in this problem, the input integers
+capital T and a0, a1 up to an minus 1. So
+
+482
+00:49:16,780 --> 00:49:22,160
+what we want now is a polynomial, or what
+some people call a multinomial, where our
+
+483
+00:49:22,160 --> 00:49:27,280
+variables are all of these integers. And
+we want to be polynomial in them. So we're
+
+484
+00:49:27,280 --> 00:49:33,600
+allowed to take some constant power of
+capital T and some constant number of the
+
+485
+00:49:33,600 --> 00:49:36,820
+ai's. We can't just take the product
+of all of them. That would be big.
+
+486
+00:49:39,880 --> 00:49:43,080
+So it's a, I guess I should say,
+constant degree polynomial.
+
+487
+00:49:46,680 --> 00:49:52,280
+And indeed, this is a, you might call it a
+quadratic polynomial in the input size and
+
+488
+00:49:52,300 --> 00:49:58,180
+one of the numbers. So this running
+time is pseudo poly, but not poly.
+
+489
+00:50:07,080 --> 00:50:10,560
+And so while normally we think a polynomial
+time is good, exponential time is bad,
+
+490
+00:50:10,720 --> 00:50:16,360
+pseudo polynomial is what we
+normally call pretty good, to be informal.
+
+491
+00:50:19,840 --> 00:50:28,400
+Yeah. So in particular, pseudo polynomial
+implies polynomial in the special case
+
+492
+00:50:30,740 --> 00:50:34,060
+if the input integers are
+
+493
+00:50:37,150 --> 00:50:44,000
+all at most polynomial
+in the input size.
+
+494
+00:50:50,210 --> 00:50:54,960
+This should sound familiar. This is a
+constraint we've seen before. This is the
+
+495
+00:50:55,040 --> 00:50:59,800
+condition when radix sort runs in
+linear time. Radix sort runs in linear time
+
+496
+00:51:00,000 --> 00:51:06,180
+exactly when all the input integers are
+polynomially bounded in n, which is the
+
+497
+00:51:06,180 --> 00:51:12,280
+size of the array, which is the input size.
+So same condition is appearing again. So
+
+498
+00:51:12,280 --> 00:51:21,040
+this is sort of a fundamental setting
+to think about. And let's see. So in
+
+499
+00:51:21,040 --> 00:51:27,100
+particular, other structures
+we've seen, like counting sort
+
+500
+00:51:29,220 --> 00:51:33,500
+and direct access arrays,
+are also pseudo polynomial.
+
+501
+00:51:36,340 --> 00:51:36,840
+Any others?
+
+502
+00:51:39,360 --> 00:51:51,620
+Fibonacci. Sorry? Radix sort. Yes.
+Technically, also radix sort are all,
+
+503
+00:51:52,400 --> 00:51:58,680
+they're not strongly polynomial, but they
+are pseudo polynomial. Here, we thought
+
+504
+00:51:58,680 --> 00:52:03,940
+about this as a dependence on u, which we
+got rid of using hashing. But if you just
+
+505
+00:52:04,220 --> 00:52:11,220
+use the order u running time for, say,
+build, that u is like, are bound on the
+
+506
+00:52:11,220 --> 00:52:15,340
+input integers. And that's only good when
+this is polynomial. In general, it's pseudo
+
+507
+00:52:15,340 --> 00:52:20,360
+polynomial. Same with counting sort. We had
+an order u. Now, we improved this in radix
+
+508
+00:52:20,360 --> 00:52:26,230
+sort to this running time that
+was n times log base n of u
+
+509
+00:52:28,340 --> 00:52:32,330
+plus n, if you
+want to be careful.
+
+510
+00:52:36,120 --> 00:52:42,060
+Or put a ceiling. Now, this is a running
+time that's a little bit better. And this
+
+511
+00:52:42,060 --> 00:52:45,900
+is usually called weakly polynomial.
+Don't want to spend much time on this.
+
+512
+00:52:48,000 --> 00:52:52,700
+But weakly polynomial is just like pseudo
+polynomial. But instead of being polynomial
+
+513
+00:52:52,700 --> 00:52:56,580
+in the input size and the input integers,
+you're polynomial in the log of the
+
+514
+00:52:56,580 --> 00:52:56,920
+integers.
+
+515
+00:53:00,520 --> 00:53:07,800
+So this is better. And it's almost as good
+as polynomial, as strongly polynomial. We
+
+516
+00:53:07,800 --> 00:53:10,920
+won't really use this notion. The only
+place it appears in this class is in radix
+
+517
+00:53:10,920 --> 00:53:17,040
+sort. But future classes, you might care
+about. So the nesting is the best thing you
+
+518
+00:53:17,060 --> 00:53:23,460
+can be is strongly polynomial. We just
+call this polynomial in this class. Then we
+
+519
+00:53:23,460 --> 00:53:27,840
+have weakly polynomial, which is almost
+as good. But you have this logarithmic
+
+520
+00:53:28,060 --> 00:53:33,140
+dependence on the numbers. And then the
+next level is pseudo polynomial. This is
+
+521
+00:53:33,260 --> 00:53:39,000
+not as good. Here, this really only works
+well if the numbers are small. Logarithmic
+
+522
+00:53:39,000 --> 00:53:42,700
+dependence is pretty good, because even
+if they're exponential, this is polynomial.
+
+523
+00:53:44,280 --> 00:53:50,440
+Sounds funny. But log of an exponential is
+polynomial. All right. Enough about pseudo
+
+524
+00:53:50,440 --> 00:53:57,120
+poly. The last thing I want to talk
+about is reflecting on all of the dynamic
+
+525
+00:53:57,120 --> 00:54:02,400
+programs we've seen so far and
+characterizing them according to the big
+
+526
+00:54:02,500 --> 00:54:07,600
+techniques that we used in sort of the
+first big technique was, how do we define
+
+527
+00:54:07,600 --> 00:54:14,380
+our subproblems? Did we take prefixes and
+suffixes or substrings of a sequence? Did
+
+528
+00:54:14,380 --> 00:54:18,100
+we have multiple sequences and have to
+take products of those spaces? Did we have
+
+529
+00:54:18,100 --> 00:54:22,120
+integers and have to take smaller versions
+of those integers? Sometimes that leads to
+
+530
+00:54:22,120 --> 00:54:26,560
+pseudo polynomial algorithms, sometimes
+not. And sometimes we also had subproblems
+
+531
+00:54:26,560 --> 00:54:29,100
+that were defined in terms of vertices.
+This just happened in shortest path
+
+532
+00:54:29,100 --> 00:54:34,420
+problems, because that's the only setting
+where we saw DP over graphs. Let me
+
+533
+00:54:34,460 --> 00:54:39,120
+characterize all the DPs we've seen in
+lecture, not the recitation ones for now,
+
+534
+00:54:40,460 --> 00:54:42,720
+in red.
+
+535
+00:54:45,680 --> 00:54:50,380
+So for example, with the bowling problem,
+with bowling pins, we only had to deal with
+
+536
+00:54:50,380 --> 00:54:58,820
+prefixes or suffixes, because we could just
+think about what happened for the first
+
+537
+00:54:59,120 --> 00:55:07,360
+couple of pins, for example. Also for LCS,
+we had to take two different sequences. But
+
+538
+00:55:07,360 --> 00:55:14,340
+then we just guessed what happened with the
+first two items of each sequence. And so
+
+539
+00:55:14,360 --> 00:55:21,300
+that only left us with suffixes. With
+longest increasing subsequence, again, we
+
+540
+00:55:21,300 --> 00:55:28,480
+just guessed whether the first, or maybe
+we assumed that the first item was in the
+
+541
+00:55:28,480 --> 00:55:32,360
+longest increasing subsequence. And then we
+tried to guess what the next item was. But
+
+542
+00:55:32,360 --> 00:55:35,440
+that, again, eliminated everything in
+between. So we were just left with a
+
+543
+00:55:35,440 --> 00:55:41,780
+suffix. This leads me to another
+characterization of the dynamic programming
+
+544
+00:55:41,780 --> 00:55:46,780
+techniques, which is for, in addition to
+these basic subproblems, we often added
+
+545
+00:55:47,040 --> 00:55:51,280
+constraints and expansion. And LIS is an
+example of what we call non -expansive
+
+546
+00:55:51,280 --> 00:55:55,320
+constraint, where we just added a
+constraint to the problem, which was I'd
+
+547
+00:55:55,320 --> 00:55:59,400
+want this first item to be in my longest
+increasing subsequence. But that didn't
+
+548
+00:55:59,400 --> 00:56:03,360
+actually change the number of subproblems.
+So it didn't expand the number of
+
+549
+00:56:03,360 --> 00:56:08,800
+subproblems. This is, I think, the only
+example we saw with this feature. Most of
+
+550
+00:56:08,800 --> 00:56:12,260
+the other times when we added a
+constraint, we also increased the number of
+
+551
+00:56:12,260 --> 00:56:13,440
+subproblems, which we'll get to.
+
+552
+00:56:16,020 --> 00:56:21,560
+OK. Also, in a certain sense, there's
+multiple ways to think about this. One,
+
+553
+00:56:21,860 --> 00:56:29,260
+Floyd -Warshall is a problem where we
+define subproblems based on prefixes of the
+
+554
+00:56:29,260 --> 00:56:34,960
+vertices. Vertices 1 through n, we said, is
+there a shortest path using vertices just
+
+555
+00:56:35,240 --> 00:56:40,700
+1 to i? So that's a prefix of the vertex
+set in a particular order. So you can think
+
+556
+00:56:40,700 --> 00:56:46,380
+of Floyd -Warshall as involving a prefix.
+You can also think of it as you're given an
+
+557
+00:56:46,380 --> 00:56:49,440
+integer i, and you're only allowed to use
+vertices less than or equal to i. And so
+
+558
+00:56:49,440 --> 00:56:54,600
+it's also kind of an integer subproblem.
+But I will leave it up there. Also, the two
+
+559
+00:56:54,600 --> 00:56:59,180
+examples we saw today,
+rod cutting, kind of.
+
+560
+00:57:01,800 --> 00:57:07,380
+You could think of it as either a prefix on
+the values, or I would prefer to think of
+
+561
+00:57:07,380 --> 00:57:08,060
+it down here,
+
+562
+00:57:10,880 --> 00:57:18,000
+where we had an integer and we were
+considering smaller integers also. But
+
+563
+00:57:18,000 --> 00:57:23,980
+subset sum definitely had a suffix. In
+addition to having an integer subproblem,
+
+564
+00:57:27,400 --> 00:57:30,600
+so rod cutting you can put down here
+because we looked at smaller integers, or
+
+565
+00:57:30,600 --> 00:57:36,000
+up here. But subset sum really is up here
+and down here, because we both looked at
+
+566
+00:57:36,000 --> 00:57:44,640
+suffixes and smaller values of t. OK.
+Fibonacci also fits down here. Fibonacci
+
+567
+00:57:44,640 --> 00:57:48,880
+was another case where we had a number n,
+and we looked at integers smaller than n.
+
+568
+00:57:50,900 --> 00:57:54,360
+Good. I think I've done these. Now, what
+problems involve substrings? We saw two of
+
+569
+00:57:54,360 --> 00:58:00,020
+them. One was the alternating coin game,
+because we were taking from left or right.
+
+570
+00:58:01,240 --> 00:58:06,080
+We had substrings in between. And the other
+is parenthesization, where we had to guess
+
+571
+00:58:06,240 --> 00:58:09,900
+something in the middle, and that left the
+prefix before it and the suffix after. Both
+
+572
+00:58:09,900 --> 00:58:12,140
+of those are typical ways where
+you get substring problems.
+
+573
+00:58:15,480 --> 00:58:16,800
+OK. So pseudopoly,
+
+574
+00:58:18,840 --> 00:58:20,560
+both of these are pseudopoly.
+
+575
+00:58:22,680 --> 00:58:27,700
+And those are the ones that we've seen that
+are dynamic program pseudopoly. And then
+
+576
+00:58:27,700 --> 00:58:33,240
+with vertices, it's all the shortest path
+problems, where we also had a parameter
+
+577
+00:58:33,240 --> 00:58:37,040
+which was a vertex. These are natural,
+because the goal of single shortest paths
+
+578
+00:58:37,040 --> 00:58:40,900
+is distance to each vertex. And so
+naturally, we had a subproblem for each
+
+579
+00:58:40,900 --> 00:58:45,620
+vertex, for Dagg shortest paths, for
+Bellman -Ford, and for Floyd -Warshall. OK.
+
+580
+00:58:45,620 --> 00:58:50,580
+Back to subproblem expansion, we saw a
+couple of examples, alternating coin game
+
+581
+00:58:51,080 --> 00:58:56,700
+and parenthesization. Sorry, not
+parenthesization. Yeah, parenthesization.
+
+582
+00:58:57,020 --> 00:59:01,360
+Sorry. Arithmetic parenthesization. So
+here, we considered two different versions
+
+583
+00:59:01,360 --> 00:59:04,400
+of each subproblem, one where I go first
+and one where you go first. And that was
+
+584
+00:59:04,500 --> 00:59:08,380
+really handy, though not necessary. For
+parenthesization, it turned out we needed
+
+585
+00:59:08,380 --> 00:59:12,160
+both min and max in order to solve max.
+So we really only cared about max, so we
+
+586
+00:59:12,160 --> 00:59:18,740
+doubled the number of subproblems
+to make it solvable. For piano and guitar
+
+587
+00:59:18,740 --> 00:59:23,400
+fingering, we increased the number of
+subproblems by a constant, or f, or some f
+
+588
+00:59:23,440 --> 00:59:29,860
+to the f. For five fingers, this is a
+reasonable constant. For some amount of
+
+589
+00:59:29,860 --> 00:59:35,100
+state that we wanted to keep track of of
+the past. And one example where we had
+
+590
+00:59:35,200 --> 00:59:43,100
+linear expansion, sort of, is Bellman
+-Ford. So here, we were expanding by how
+
+591
+00:59:43,100 --> 00:59:47,100
+many edges are in the shortest path. So
+we really only cared about finding shortest
+
+592
+00:59:47,100 --> 00:59:51,540
+paths. We said, oh, what about at most i
+edges? So you can think of that as adding a
+
+593
+00:59:51,540 --> 00:59:55,840
+constraint. And then there's n different
+variations of these subproblems, which
+
+594
+00:59:55,840 --> 00:59:59,500
+leads to expansion. You could also think
+of it as just adding a single constraint,
+
+595
+00:59:59,720 --> 01:00:04,700
+which is I care about the number of edges.
+And that input is an integer. And then
+
+596
+01:00:04,700 --> 01:00:08,180
+we're looking at the natural subproblem
+for integers, which is we care about up to
+
+597
+01:00:08,180 --> 01:00:14,180
+length n minus 1. And now let's consider
+all lengths smaller than n minus 1. And
+
+598
+01:00:14,180 --> 01:00:22,020
+finally, the other main feature we had is
+in the recurrence relation. And all these
+
+599
+01:00:22,020 --> 01:00:26,560
+shortest path DAGs, how many incoming edges
+did we have? How many different branches
+
+600
+01:00:26,560 --> 01:00:27,720
+did we have to consider?
+
+601
+01:00:29,760 --> 01:00:33,130
+Combined in some way. So we saw a
+lot of examples with constant branching.
+
+602
+01:00:33,760 --> 01:00:37,280
+Fibonacci, where we just, there's the
+obvious two -way branching. Bolling, where
+
+603
+01:00:37,280 --> 01:00:42,080
+we had a couple of choices at the
+beginning. LCS, longest common subsequence,
+
+604
+01:00:42,280 --> 01:00:45,960
+where we had a couple of choices what to
+do at the beginning. Alternating coin game.
+
+605
+01:00:47,060 --> 01:00:51,900
+Similarly, do we take from the left
+or the right? So just two choices. Floyd
+
+606
+01:00:51,900 --> 01:00:56,220
+-Warshall, just two choices. Do we use that
+vertex or not? Subset sum, do we include
+
+607
+01:00:56,220 --> 01:01:01,320
+this item in the subset or not? OK. So that
+was all constant branching. In a lot of
+
+608
+01:01:01,320 --> 01:01:04,680
+the graph problems, we got order degree
+branching, which leads to an order e term
+
+609
+01:01:04,680 --> 01:01:11,400
+in the final running time, namely DAG
+shortest paths and Bellman -Ford. And then
+
+610
+01:01:11,400 --> 01:01:16,660
+a lot of examples had linear branching. In
+particular, longest increasing subsequence,
+
+611
+01:01:17,060 --> 01:01:19,540
+where we didn't know what the
+next increasing item was. So there are n
+
+612
+01:01:19,540 --> 01:01:23,640
+possible choices for it. Parenthesization,
+where we had to choose anybody in the
+
+613
+01:01:23,640 --> 01:01:28,860
+middle as the last operator. And rod
+cutting that we saw today, we could cut the
+
+614
+01:01:28,860 --> 01:01:30,260
+first rod we cut
+could be any length.
+
+615
+01:01:32,600 --> 01:01:36,600
+And then finally, once you've considered
+all, recursed on all these subproblems, you
+
+616
+01:01:36,600 --> 01:01:42,420
+have to combine them somehow. And in a lot
+of the problems, we actually just take the
+
+617
+01:01:42,420 --> 01:01:48,580
+one best choice. And that is our final
+solution. And in those problems, the final
+
+618
+01:01:48,580 --> 01:01:52,700
+solution ends up being finding some kind
+of shortest path in a DAG. But there are a
+
+619
+01:01:52,740 --> 01:01:56,640
+few cases where we actually took multiple
+solutions and combined them together to get
+
+620
+01:01:56,640 --> 01:02:02,460
+the overall solution. And this includes
+Fibonacci, which is we added them. Not too
+
+621
+01:02:02,460 --> 01:02:06,060
+interesting. Floyd -Warshall,
+we concatenated two paths. And
+
+622
+01:02:06,100 --> 01:02:09,920
+parenthesization is maybe the most
+interesting, where we had to take two
+
+623
+01:02:09,920 --> 01:02:13,600
+parts, the prefix and the suffix, how to
+solve them, and then multiply or add them
+
+624
+01:02:13,600 --> 01:02:19,320
+together. And so these problems are not
+well represented by shortest path in a DAG.
+
+625
+01:02:19,680 --> 01:02:25,260
+Still a DAG involved, but it's like a
+multi -path thing. And then finally, the
+
+626
+01:02:25,260 --> 01:02:29,940
+original problem often is just a single
+subproblem is the original problem. And
+
+627
+01:02:29,940 --> 01:02:34,640
+there are a few examples, namely DAG
+shortest paths and longest increasing
+
+628
+01:02:34,640 --> 01:02:39,000
+subsequence and Bellman -Ford and Floyd
+-Warshall. These were the order that we
+
+629
+01:02:39,000 --> 01:02:43,880
+covered them. So the three shortest paths
+and then longest increasing subsequence,
+
+630
+01:02:44,020 --> 01:02:48,340
+where here, because we added this
+condition, we had to try all the possible
+
+631
+01:02:48,420 --> 01:02:58,160
+choices for this condition. I think, do we
+also have one here today? No. OK. So in
+
+632
+01:02:58,160 --> 01:03:01,780
+fact, in retrospect, or I mean, we knew
+this from the beginning, but for you in
+
+633
+01:03:01,780 --> 01:03:07,440
+retrospect, these four DP lectures were all
+about showing you these main techniques of
+
+634
+01:03:07,440 --> 01:03:11,530
+dynamic programming, from how to set
+up simple subproblems to different types of
+
+635
+01:03:11,760 --> 01:03:16,420
+basic subproblems to constraining or
+expanding those subproblems and having
+
+636
+01:03:16,560 --> 01:03:20,620
+initially very simple branching and then
+getting to bigger branching and different
+
+637
+01:03:20,620 --> 01:03:24,580
+kinds of combination. We wanted to show you
+all these ideas in some order. And if you
+
+638
+01:03:24,580 --> 01:03:29,180
+look back at the sequence that we covered
+problems, we're kind of slowly adding these
+
+639
+01:03:29,180 --> 01:03:35,000
+different main techniques to DP. And that's
+why we chose the examples we did. There
+
+640
+01:03:35,000 --> 01:03:38,580
+are, of course, many more examples of
+DP, very powerful technique. But that's the
+
+641
+01:03:38,580 --> 01:03:38,860
+end.
+

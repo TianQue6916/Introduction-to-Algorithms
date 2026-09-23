@@ -1,0 +1,2949 @@
+﻿1
+00:00:00,000 --> 00:00:17,500
+Okay, well, welcome back to another problem session.
+It's great to see everybody's smiling faces again.
+
+2
+00:00:19,080 --> 00:00:23,040
+Right, so today we're going to continue our discussion of graph theory problems,
+
+3
+00:00:23,280 --> 00:00:29,360
+this time focusing on, well, a little bit of this, a little bit
+of that, some shortest path problems, all-pairs shortest path,
+
+4
+00:00:29,360 --> 00:00:34,480
+and then a modification of the Dijkstra algorithm to finish us off for the day.
+
+5
+00:00:35,800 --> 00:00:42,640
+So, as always, we'll go through our problem session problems in order
+for no reason other than that's the way they were presented to me.
+
+6
+00:00:43,980 --> 00:00:47,140
+And I think roughly isomorphic to how most of the homeworks in this class go anyway.
+
+7
+00:00:47,840 --> 00:00:58,980
+But in any event, let's get started here. So, in problem session problem
+7-1 here, as always, our first problem is sort of a warm-up to make sure
+
+8
+00:00:58,980 --> 00:01:02,860
+that we understand the problem. We understand all these
+sort of definitions, techniques that we use in 6.006.
+
+9
+00:01:03,740 --> 00:01:06,380
+Today, we're going to go over Dijkstra's algorithm.
+
+10
+00:01:07,340 --> 00:01:13,620
+So, if you all recall, Dijkstra's algorithm is a technique for
+computing shortest path from a single source to your rest of your graph.
+
+11
+00:01:14,120 --> 00:01:20,740
+There's about a million different ways to explain, understand Dijkstra's
+algorithm. So, I'll undoubtedly revert upon the one that I remember,
+
+12
+00:01:21,100 --> 00:01:24,380
+which is probably not the one that Jason just
+covered in lecture, but we'll make it work.
+
+13
+00:01:24,460 --> 00:01:27,700
+And, of course, if there are any questions, we'll address those along the way here.
+
+14
+00:01:28,280 --> 00:01:32,240
+I'm going to switch to it. This is a piece
+of chalk that isn't an eighth of an inch.
+
+15
+00:01:33,240 --> 00:01:33,980
+And get started.
+
+16
+00:01:35,120 --> 00:01:43,740
+Right. So, in problem 1-A of our homework here, we were
+asked to run Dijkstra's algorithm from vertex S here.
+
+17
+00:01:44,000 --> 00:01:51,000
+By the way, just sort of a standard terminology in graph theory that I
+think we'll see a lot in the homework is we typically use S for the sort
+
+18
+00:01:51,000 --> 00:01:57,140
+of starting point of a path or sometimes the source if we're talking
+about network flows, but I don't think we do those in this class.
+
+19
+00:01:57,620 --> 00:01:58,980
+And then T is usually the starting point. So, we're going to start with the
+starting point of a path, and then we're going to start with the source.
+
+20
+00:01:58,980 --> 00:02:00,280
+And then D is usually the destination.
+
+21
+00:02:01,620 --> 00:02:04,080
+Why T, you might ask? Because
+it's the letter after S.
+
+22
+00:02:05,760 --> 00:02:13,760
+Right. So, our first task here is to compute the single
+source shortest path from S to everything else in our graph.
+
+23
+00:02:14,100 --> 00:02:16,220
+Initially, this looks painful, but it's not.
+
+24
+00:02:16,860 --> 00:02:17,820
+So, you're going to forgive me.
+
+25
+00:02:17,820 --> 00:02:23,360
+I'm going to write a sort of shorthand version of Dijkstra's algorithm because I'm talking to you as I solve this problem,
+
+26
+00:02:23,520 --> 00:02:26,980
+which, of course, would be much more annoying for you guys to do on paper.
+
+27
+00:02:27,540 --> 00:02:34,679
+But that's life in the city. So, there. That's my, in the words
+of Britney Spears, it's my prerogative as your instructor here.
+
+28
+00:02:35,299 --> 00:02:43,200
+Okay. So, in Dijkstra's algorithm, what do we do? We initially
+label all of our vertices as having distance infinity to the source,
+
+29
+00:02:44,120 --> 00:02:50,100
+and we insert them into our priority Q, except for one vertex, which, of course, is our source vertex.
+
+30
+00:02:50,640 --> 00:02:57,260
+And he or she has distance zero for an obvious reason, which is that if my path starts at the source,
+
+31
+00:02:57,859 --> 00:03:00,980
+it has distance zero. So, that's my priority.
+So, that's my priority. So, as our shorthand...
+
+32
+00:03:01,679 --> 00:03:03,980
+What was that? Do
+I want to use red?
+
+33
+00:03:04,780 --> 00:03:05,739
+Yes, of course I do.
+
+34
+00:03:09,079 --> 00:03:10,899
+But it's this fat chalk, man.
+
+35
+00:03:11,459 --> 00:03:11,880
+Okay.
+
+36
+00:03:13,260 --> 00:03:14,980
+Zero. I can make this work.
+
+37
+00:03:15,660 --> 00:03:22,760
+Okay. So, our convention for today is going to be if a
+vertex does not have a label on it, it is distance infinity.
+
+38
+00:03:23,780 --> 00:03:23,980
+Okay?
+
+39
+00:03:24,720 --> 00:03:26,880
+So, what does Dijkstra's algorithm do?
+
+40
+00:03:27,380 --> 00:03:31,980
+Dijkstra's algorithm grabs... the closest
+vertex that I haven't yet processed,
+
+41
+00:03:31,980 --> 00:03:36,980
+and closest in terms of the distance value that I've stored at that vertex,
+
+42
+00:03:36,980 --> 00:03:42,980
+and then updates all of its neighbors using sort of a triangle
+inequality style construction. So, let's see what that looks like.
+
+43
+00:03:42,980 --> 00:03:50,679
+So, so far, everything is distance infinity away, except
+for one vertex, which is vertex S, which is distance zero.
+
+44
+00:03:50,679 --> 00:03:53,480
+So, obviously, that should be our first iteration of Dijkstra's algorithm.
+
+45
+00:03:53,480 --> 00:03:58,679
+And now, what vertex S is going to do is look at all of S's neighbors and update them using the same algorithm.
+
+46
+00:03:58,680 --> 00:04:00,680
+So, I'm going to update them using the triangle inequality.
+
+47
+00:04:00,680 --> 00:04:06,680
+And if they're closer by having a path through S to the neighbor,
+then I update the distance. And if it's not, then I don't.
+
+48
+00:04:07,680 --> 00:04:09,680
+In this case, everything is infinity.
+
+49
+00:04:09,680 --> 00:04:15,680
+So, it's pretty clear that I should route my path through S, because any distance less than infinity is smaller than infinity.
+
+50
+00:04:16,680 --> 00:04:20,680
+So, in particular, notice that there's an edge of length eight from S to A.
+
+51
+00:04:20,680 --> 00:04:41,640
+So, now, rather than being distance infinity away, I can
+see that vertex A is really distance eight away. Oh, this
+
+52
+00:04:41,680 --> 00:04:46,640
+The kind of nice thing about the way Dijkstra's algorithm works, which I guess is a little bit implicit
+
+53
+00:04:46,680 --> 00:04:54,680
+in the construction we saw yesterday, but that's OK, is that once
+I visit a vertex, I never touch it again. It gets frozen in time.
+
+54
+00:04:54,680 --> 00:05:01,860
+In distance, I suppose. But in any event, what that means, I'm
+going to put a little box around it, meaning I'm done with this guy.
+
+55
+00:05:01,860 --> 00:05:08,920
+He's no longer in my queue. OK. Hopefully, our pictorial system
+makes some sense here. Again, on your homework problem, you
+
+56
+00:05:08,920 --> 00:05:15,080
+actually have to write this stuff out. And I'm sorry, that sucks.
+But I don't have to because I'm talking to you all today. OK.
+
+57
+00:05:15,080 --> 00:05:20,580
+So remember Dijkstra's algorithm. We're going to look at our list
+of vertices we haven't seen yet. So it's everything except for s.
+
+58
+00:05:20,580 --> 00:05:28,240
+Find the one that's closest and process that one next. So in this case,
+that's the 7 here. OK. So let's take a look. What are the neighbors of 7?
+
+59
+00:05:28,240 --> 00:05:39,520
+Well, I've got s and that's oh, and d here. OK. So first of all, let's
+take a look at s. Obviously, if I have a path that goes through c,
+
+60
+00:05:39,520 --> 00:05:47,840
+back through this vertical edge to s, that path will have length
+8, right? 7 plus 1. 8 is bigger than 0. So I do not update s.
+
+61
+00:05:47,840 --> 00:05:55,320
+But we actually already knew that because s was frozen here. So I didn't
+even have to look at that edge. I could have removed it if I wanted to. OK.
+
+62
+00:05:55,320 --> 00:06:04,640
+But there's another edge coming out of c, which is pointing toward d that
+has length 4. 7 plus 4 is, wait for it, 11. And that's less than infinity.
+
+63
+00:06:04,640 --> 00:06:16,000
+So I update d's distance to 11. And I don't think I've managed to
+make a mistake yet. OK. So now we looked at all the edges out of c.
+
+64
+00:06:16,000 --> 00:06:26,620
+And c is frozen. And we move on. OK. Next, let's see. Among our vertices,
+we have infinity, 8 and 11. So the smallest of those three numbers is 8.
+
+65
+00:06:26,620 --> 00:06:32,660
+And we're going to update all of the neighbors of the
+8. Which thankfully, although this graph looks big,
+
+66
+00:06:32,660 --> 00:06:39,380
+they had some mercy on your section instructor today. And really,
+there aren't that many edges. So this isn't too hard to process.
+
+67
+00:06:39,380 --> 00:06:46,620
+But here's the thing. There's an edge of length 0
+from a to d here. I can get to the a in 8 units.
+
+68
+00:06:46,620 --> 00:06:55,000
+So I can also get to the d in 8 units by traversing that edge. 8 is
+less than 11. That's good news. Do I want to erase it or scratch it out?
+
+69
+00:06:55,000 --> 00:07:05,400
+What's going to be better? No. I'll scratch it out just
+to be missed. OK. So now d is a distance 8 from vertex s.
+
+70
+00:07:05,400 --> 00:07:07,240
+And I believe that's all the edges out of a.
+
+71
+00:07:10,260 --> 00:07:19,800
+So a is set. OK. This fun or what? So now we look at all the edges out
+of, well, oh, sorry. We step back and we look at all of our vertices.
+
+72
+00:07:19,800 --> 00:07:25,900
+We find the closest one. That's d. And now we've got to update
+all of d's neighbors. So thankfully, all the remaining vertices
+
+73
+00:07:25,900 --> 00:07:36,700
+have distance infinity. So what do we know? There's an edge of length
+1 here. So we get a 9. There's an edge of length 2. So I get a 10.
+
+74
+00:07:36,700 --> 00:07:46,060
+And I believe those are all the outgoing edges from d. And now d is
+set. I'm going to start moving faster because this is hella boring. OK.
+
+75
+00:07:46,060 --> 00:07:55,620
+Now the next closest edge is the 9. Notice that the 9 only, or
+rather b, I suppose, is the vertex, which is currently at distance 9.
+
+76
+00:07:55,620 --> 00:08:04,600
+It only has one neighbor that hasn't yet been processed,
+which is e. So we know that that's 9 to 11, 12 distance away.
+
+77
+00:08:04,600 --> 00:08:15,360
+I'm going to check my scrap paper and make sure I haven't made any
+mistakes yet. 7, 8. Cool. OK. So now our next closest vertex is vertex h,
+
+78
+00:08:15,360 --> 00:08:25,620
+which is distance 10. And aha, if I traverse the edge
+upward from h to e, I can get a path of length 11. And 11.
+
+79
+00:08:25,620 --> 00:08:32,060
+According to most mathematicians, is less than
+12. And hence, we should update the value here.
+
+80
+00:08:32,060 --> 00:08:44,020
+In addition to that, there is an edge of length 2 out of h pointing
+into g. 10 plus 2 is 12. And I believe that's it. Getting there. OK.
+
+81
+00:08:44,020 --> 00:08:50,300
+So the next closest vertex is e. e
+has no outgoing edges. So e is all set.
+
+82
+00:08:52,960 --> 00:09:02,360
+After that, we've got g. g has an outgoing edge. And g has an outgoing
+edge of length 1 into d. 12 plus 1 is 13, which is larger than 8.
+
+83
+00:09:02,360 --> 00:09:09,760
+So we don't update. And similarly, 12 plus 0 is bigger than 7.
+So we don't update. But again, the edges that point into vertices
+
+84
+00:09:09,760 --> 00:09:15,140
+that we've already processed, we really don't have to even
+consider just by the way that Dijkstra's algorithm works.
+
+85
+00:09:15,140 --> 00:09:20,860
+Notice that if there were a negative weight edge, we're going
+to come back to, then that assumption will be problematic.
+
+86
+00:09:20,860 --> 00:09:28,800
+So the takeaway here is that this guy is frozen in
+stone. And now, notice that our q is actually empty.
+
+87
+00:09:28,800 --> 00:09:37,000
+Yeah, so depending on how we set up our, well, it's not empty.
+But it only contains one vertex. And it's at distance infinity.
+
+88
+00:09:37,000 --> 00:09:50,240
+Infinity plus 0 is still infinity. So that's this guy's distance here. And
+now our q is empty. Sorry. OK, so I believe I managed to do that right.
+
+89
+00:09:50,240 --> 00:09:57,000
+Excellent. So the problem asks for two things. It asks for the single
+source shortest path distance. It also asks for the traversal order,
+
+90
+00:09:57,000 --> 00:10:04,240
+which I forgot to do while I was doing this problem. But you could
+retrace it pretty easily. OK, so that's part A. Then in part B,
+
+91
+00:10:04,240 --> 00:10:16,479
+they say change the weight of the edge from g to c to minus 6. So we
+have g to c. And now, instead of 0, we're going to make it minus 6.
+
+92
+00:10:16,479 --> 00:10:23,219
+And the question is, if I ran Dijkstra's algorithm, essentially,
+what would break? And I think it's pretty easy to eyeball.
+
+93
+00:10:23,219 --> 00:10:30,100
+Remember that g was essentially the last interesting vertex that we
+touched in our algorithm here. The only one that we looked at was f.
+
+94
+00:10:30,100 --> 00:10:37,380
+And so this outgoing edge from g actually wouldn't even be seen by Dijkstra's
+algorithm, thankfully, until we've touched all these other vertices
+
+95
+00:10:37,380 --> 00:10:43,660
+in an identical fashion to our previous traversal. And
+then we finally get to g. And now what's going to happen?
+
+96
+00:10:43,660 --> 00:10:54,760
+Well, if I have this edge of length negative 6, what's 12 minus 6?
+That's 6. And notice that that's less than 7, which is the label.
+
+97
+00:10:54,880 --> 00:11:01,320
+That's the label of vertex c. But that breaks our assumption, which
+is that as soon as I visit a vertex, I never have to touch it again.
+
+98
+00:11:01,320 --> 00:11:10,040
+Because now I've identified a path through g back to c that has a
+smaller distance than the path that c had when it was visited in the q.
+
+99
+00:11:10,040 --> 00:11:17,300
+So somehow spiritually, I should add c back to the q. But that's against
+the rules in Dijkstra's algorithm. So for instance, if I did that, I
+
+100
+00:11:17,300 --> 00:11:22,180
+would have to convince myself that the runtime
+doesn't explode and this algorithm terminates,
+
+101
+00:11:22,180 --> 00:11:27,340
+which could be a problem if you have a negative weight cycle.
+Thankfully, we have algorithms for detecting negative weight
+
+102
+00:11:27,340 --> 00:11:34,240
+cycles, but that's a different matter. OK, so I think this is pretty
+straightforward. It's just essentially asking you to walk through Dijkstra's
+
+103
+00:11:34,240 --> 00:11:42,500
+algorithm, make sure you understand what's going on. Any questions about
+that one? Cool, I think this is one of the easier problem sessions.
+
+104
+00:11:42,500 --> 00:11:54,500
+So we'll finish early. Except I always say that. I talk too
+much. Sorry. Not sorry. OK, so right. So in problem 7-2.
+
+105
+00:11:54,500 --> 00:12:01,360
+This is an extension of a problem that we considered, I believe,
+two problem sessions ago. And it looks something like this.
+
+106
+00:12:01,360 --> 00:12:08,160
+I'm going to go back into my notes. So remember, in two problem
+sessions ago, we defined the radius of a graph for an unweighted graph.
+
+107
+00:12:08,160 --> 00:12:12,280
+We came up with an algorithm for computing
+it and approximating it, all that good stuff.
+
+108
+00:12:12,280 --> 00:12:18,480
+Now in this problem, we're going to do basically
+the same thing. But now we're on a weighted graph.
+
+109
+00:12:18,480 --> 00:12:23,460
+So in particular, we're going to define a
+quantity. This is problem 2. Called weighted.
+
+110
+00:12:24,500 --> 00:12:25,340
+Eccentricity.
+
+111
+00:12:32,580 --> 00:12:41,340
+Which is associated to a vertex in a weighted graph. And it looks
+like this. So the weighted eccentricity associated to vertex u
+
+112
+00:12:41,340 --> 00:12:52,260
+is equal to the max over all vertices in my graph
+of the shortest path distance from u to that vertex.
+
+113
+00:12:52,260 --> 00:12:56,380
+Again, hopefully our audience will catch if I accidently, I'm going
+to do this. I'm going to finally swap the argument to shortest path.
+
+114
+00:12:56,380 --> 00:13:03,580
+I'm used to thinking of that as symmetric. But it's not because our
+graphs are directed. Actually, in this problem, I don't think the graph is
+
+115
+00:13:03,580 --> 00:13:09,740
+directed. So I forget. It's directed. OK.
+Good. Yeah. Then good. I'll try to be accurate.
+
+116
+00:13:12,140 --> 00:13:18,800
+OK. And just like the problem we had two problem sessions
+ago, so the eccentricity is associated with a vertex.
+
+117
+00:13:18,800 --> 00:13:22,580
+It's sort of like the distance to the farthest away thing in my
+graph. And now the radius of my graph tries to find the most,
+
+118
+00:13:22,580 --> 00:13:22,860
+the most vertical distance. So I'm going to write it in the middle
+of my graph. And now the radius of my graph tries to find the most,
+
+119
+00:13:22,860 --> 00:13:29,760
+because I can't find the most vertical distance. So my graph tries to find
+the most central vertex, which is the minimizer of weighted eccentricity.
+
+120
+00:13:29,760 --> 00:13:31,339
+And we call that the weighted radius.
+
+121
+00:13:35,319 --> 00:13:47,540
+And so the weighted radius is a measurement which is
+associated not with the vertex, but rather with the graph.
+
+122
+00:13:47,540 --> 00:14:00,380
+And it's equal to the min over all possible vertices u, of the
+weighted eccentricity of u. And so the problem here is that we're
+
+123
+00:14:00,380 --> 00:14:07,040
+given a weighted directed graph with no negative weight cycle. So
+it may have negative weights, but they can't have a negative cycle.
+
+124
+00:14:07,040 --> 00:14:24,940
+And the question, I touched my face. The question is, what is the, can I
+find the radius of my graph in time that looks like order mod v, v cubed?
+
+125
+00:14:24,940 --> 00:14:33,500
+OK. Now, if you recall from our previous problem session when
+we considered computing the radius of a graph, what did we do?
+
+126
+00:14:33,500 --> 00:14:39,420
+Well, we tried to come up with a clever algorithm. And then
+we realized that that was actually kind of unnecessary.
+
+127
+00:14:39,420 --> 00:14:47,660
+That it turned out that the kind of brain dead thing where you just
+look at the definitions and just make it work was actually good enough.
+
+128
+00:14:47,660 --> 00:14:50,760
+And that actually turns out to be the case here. This is a good reminder
+for us all that, before we're going to do this, we're going to do this.
+
+129
+00:14:50,760 --> 00:14:52,040
+And we're going to do this. We're going to do this. We're going to do this.
+We're going to do this. We're going to do this. We're going to do this.
+
+130
+00:14:52,040 --> 00:14:56,040
+We're going to do this. We're going to do this. And
+before we go crazy, 6.006 is a fun algorithms class.
+
+131
+00:14:56,040 --> 00:15:01,819
+We get to learn about cute references to TV shows and
+all that. Before we go crazy with that, of course,
+
+132
+00:15:01,819 --> 00:15:06,920
+if there's an obvious algorithm staring us in
+the face to solve a given algorithms problem,
+
+133
+00:15:06,920 --> 00:15:16,120
+we should try that first before we try something more clever. And
+indeed, in this case, that works. So what are the sort of ingredients
+
+134
+00:15:16,120 --> 00:15:23,300
+that we need to compute the radius? Well, the radius is the minimum
+eccentricity. So what would be the smartest? Or the simplest thing to do, rather,
+
+135
+00:15:23,300 --> 00:15:30,480
+would be compute the eccentricity for every vertex and take the
+smallest. How do I compute the eccentricity for every vertex?
+
+136
+00:15:30,480 --> 00:15:37,320
+Well, I have to have the max distance away from that vertex. So what
+would be a simple thing to do would be to compute distances between all
+
+137
+00:15:37,320 --> 00:15:45,220
+the possible vertices. And conveniently, in lecture some day or
+another, I'm a little confused about the time ordering of this class
+
+138
+00:15:45,220 --> 00:15:51,600
+because of the way we're filming it. We covered an algorithm
+that computes the distance between every pair of vertices.
+
+139
+00:15:51,600 --> 00:16:02,140
+And that's called Johnson's algorithm. So if we were to do a totally
+brain-dead version of solving this problem, maybe for convenience,
+
+140
+00:16:02,140 --> 00:16:09,360
+the first thing we do is compute delta uv for every possible uv
+pair. And because our graph doesn't have a negative weight cycle,
+
+141
+00:16:09,360 --> 00:16:17,520
+we can do that with Johnson's algorithm. So step one is to use Johnson's
+algorithm for all pairs, short, and long. So we're going to do that.
+
+142
+00:16:17,520 --> 00:16:21,360
+So step one is to use Johnson's algorithm for all pairs short, and long.
+So step two is to use Johnson's algorithm for all pairs short, and long.
+
+143
+00:16:21,600 --> 00:16:26,920
+So step three is to use Johnson's algorithm for all pairs short,
+and long. And I'll refer you guys to lecture for how to do that.
+
+144
+00:16:26,920 --> 00:16:33,840
+But the important thing is the runtime of this step of our
+algorithm. So Johnson's algorithm, generically speaking,
+
+145
+00:16:33,840 --> 00:16:48,340
+has ve plus v squared log v. Hopefully, I got that
+right, runtime. And what do we know about our problem?
+
+146
+00:16:48,340 --> 00:16:50,760
+Well, I believe we're given that the graph is connected.
+
+147
+00:16:51,600 --> 00:16:57,680
+And so one thing that we can do is notice that e is upper bounded
+by v squared. I guess even if it's not connected, I'm sorry,
+
+148
+00:16:57,680 --> 00:17:06,099
+that was a dumb thing to say. Just generically speaking, our graph
+is simple. So we know that e at most is, I guess, 2v squared,
+
+149
+00:17:06,099 --> 00:17:15,280
+which means that this term is upper bounded by v cubed. So we have v cubed
+plus order v squared log v. So at the end of the day, the first term wins.
+
+150
+00:17:15,280 --> 00:17:23,220
+And we have that this is v cubed time. Notice that we're given that
+budget in the statement of our problem. So this is perfectly fine.
+
+151
+00:17:23,220 --> 00:17:30,360
+In other words, this is a long-winded way of saying it's kosher to
+compute all pairs shortest paths in the constraints of our problem here.
+
+152
+00:17:30,360 --> 00:17:41,160
+So that's convenient because now in step 2, well, maybe now we just
+keep, we do the Toucan-Sam approach again. We follow our noses.
+
+153
+00:17:41,160 --> 00:17:46,940
+And well, now that we have our pairwise distances,
+we can now compute the eccentricity for every vertex.
+
+154
+00:17:51,280 --> 00:18:00,280
+So we can compute the eccentricity for all u just directly. Of
+course, in your homework, you should write out what that means.
+
+155
+00:18:00,280 --> 00:18:07,520
+But here, directly just means that for every u, I loop
+over every v. And I take whatever value is biggest.
+
+156
+00:18:07,520 --> 00:18:18,540
+So notice that I have two loops, one over u, one over v. So this is
+order mod v squared time. So already, the first term is dominating here.
+
+157
+00:18:18,540 --> 00:18:33,200
+So that's a good thing, I guess. And then finally. We have to take the
+smallest eccentricity of any u, which just requires one more for loop.
+
+158
+00:18:33,200 --> 00:18:42,920
+So this time, I for loop over this array. And I just take the smallest
+value. So this is just one for loop. So that takes order v time.
+
+159
+00:18:42,920 --> 00:18:49,860
+And we're done. So that's our technique for computing the radius. And
+notice that all I did was translate the definition into an algorithm.
+
+160
+00:18:49,860 --> 00:18:56,200
+I didn't do anything. I wasn't really smart in this problem at
+all. And then we should really quickly double check our runtime.
+
+161
+00:18:56,200 --> 00:19:03,980
+So step one takes v cubed time. Step two takes v squared time. Step three
+takes v time. So I add them all together. And of course, the v cubed wins.
+
+162
+00:19:03,980 --> 00:19:13,540
+And that is what was given in our problem as our budget. OK, so I think
+the first two problems in this problem session are fairly straightforward.
+
+163
+00:19:13,540 --> 00:19:21,080
+Are there any questions so far? I'm talking fast.
+Cool. All right, so now we're going to move on
+
+164
+00:19:21,080 --> 00:19:39,419
+to problem three involving Atmus Kevardine, who is probably playing
+the Gunger games. Unger games. That was close. Sorry, under whatever.
+
+165
+00:19:39,419 --> 00:19:50,860
+You get the point. Yeah, so before I get carried away trying to read Jason's
+jokes here, what's going on in this problem? So this is problem three.
+
+166
+00:19:51,080 --> 00:19:56,320
+There's an underground sewer network. I suppose
+we also could have written this problem about MIT.
+
+167
+00:19:56,320 --> 00:20:02,840
+There's all kinds of crazy underground tunnels here. I
+remember when I was looking at MIT as a potential undergrad,
+
+168
+00:20:02,840 --> 00:20:08,600
+they had us schlepping around the tunnels. And I thought they were
+very dirty. And I didn't get the point. So I went to Stanford.
+
+169
+00:20:08,600 --> 00:20:13,199
+But in any event, right, so what I'm given is a map.
+
+170
+00:20:15,740 --> 00:20:19,720
+And this thing has n bidirectional pipes.
+
+171
+00:20:21,080 --> 00:20:31,199
+I'm not going to write it down. But the problem tells you that
+they're all connected. You can get from your source to your target
+
+172
+00:20:31,199 --> 00:20:39,040
+moving through the pipes. And right,
+and they're connected at junctions.
+
+173
+00:20:47,199 --> 00:20:54,080
+But at every junction, there's less than or equal to 4 things. There
+are things that come together. So just like in our last problem session,
+
+174
+00:20:54,080 --> 00:20:59,780
+every time you see a phrase like that, it's like screaming
+out, there's a degree bound hiding inside of your graph.
+
+175
+00:20:59,780 --> 00:21:16,600
+And moreover, every junction is reachable from every other junction, I
+believe. OK. In addition to this, we're given a positive integer length
+
+176
+00:21:16,600 --> 00:21:28,840
+for each pipe. So it's starting to smell like a shortest path problem. But
+is it? That's our question. But just to make things a little bit worse,
+
+177
+00:21:28,840 --> 00:21:36,060
+Atnas Keverdine here is trying to escape through
+the pipes. And she doesn't want to be detected.
+
+178
+00:21:36,060 --> 00:21:50,080
+And in particular, there exists junctions with motion
+sensors. And apparently, Atnas's Intel is pretty good here.
+
+179
+00:21:50,080 --> 00:22:04,000
+And she knows which of the junctions in her pipe network actually
+have motion sensors that can detect people moving around. OK.
+
+180
+00:22:04,000 --> 00:22:09,419
+Now, what this problem is asking her to do is to say,
+maybe apparently she knows where the motion sensors are.
+
+181
+00:22:09,419 --> 00:22:16,120
+But maybe she doesn't know if they're like, what kind of brand they
+are. You know? A Microsoft sensor or an Apple sensor or something.
+
+182
+00:22:16,120 --> 00:22:24,760
+And of course, the sensors have different ranges. So Atnas Keverdine
+here, she wants to be as conservative as possible when she traverses
+
+183
+00:22:24,760 --> 00:22:43,220
+this pipe network. In particular, what we're looking for, what she wants,
+is in n log n time here, find the path that maximizes the distance.
+
+184
+00:22:43,220 --> 00:22:45,840
+This is the distance to the sensors.
+
+185
+00:22:52,940 --> 00:23:01,980
+So hopefully, this problem makes sense. So we've got some grid graph.
+Well, not necessarily a grid graph, but a bunch of vertices of valence 4,
+
+186
+00:23:01,980 --> 00:23:08,860
+maybe something like that. It makes sense. She's living in a
+city somewhere. And she has some source that she's starting at,
+
+187
+00:23:08,860 --> 00:23:16,940
+some destination she wants to go. And then a few of these
+vertices, which are marked as having motion sensors at them.
+
+188
+00:23:16,940 --> 00:23:25,280
+And rather than giving you a radius or something like that, instead,
+what we're saying is that she wants to go from the source to the target.
+
+189
+00:23:25,280 --> 00:23:31,040
+She's willing to walk a long distance. The length of the
+path doesn't matter. What matters is that she never wants
+
+190
+00:23:31,040 --> 00:23:40,820
+to get closer to any motion sensor. Maybe there's a second one like here.
+Then she has to. OK? So in this case, I guess if I were to eyeball it,
+
+191
+00:23:40,820 --> 00:23:48,480
+looks like you can't do better than one edge, right? So she
+would go like that. And of course, in an extreme scenario,
+
+192
+00:23:48,480 --> 00:23:57,180
+it might be the case that there's a sensor at every junction, in
+which case she's hosed. But we'd like to let her know that before she
+
+193
+00:23:57,180 --> 00:24:11,400
+embarks upon her journey here. OK, so does our problem make enough
+sense? Excellent. OK. So right. So unfortunately for us, again, it
+
+194
+00:24:11,400 --> 00:24:21,000
+doesn't look like a shortest path problem. And the reason is because
+it's not. But rather, it's sort of a reachability problem in disguise.
+
+195
+00:24:21,000 --> 00:24:31,480
+And let's think about what I mean here. So right. So there's an
+obvious graph here. We'll call it g out of lack of creativity.
+
+196
+00:24:34,980 --> 00:24:40,660
+Where what I'm going to do is give a vertex per junction.
+
+197
+00:24:42,480 --> 00:24:53,700
+And I'll have an undirected edge for
+each pipe whose weight is the length.
+
+198
+00:25:00,480 --> 00:25:08,440
+OK. By the way, I think the length I didn't even mention in the problem
+description. But I believe she wants to find the shortest path that
+
+199
+00:25:08,440 --> 00:25:14,560
+maximizes the radius. So if there are multiple different paths that
+she could take that both have the same radius from the sensors,
+
+200
+00:25:14,560 --> 00:25:19,639
+then she'd like to be lazy and not walk too far. So
+that's where this is going to come into play. OK.
+
+201
+00:25:19,639 --> 00:25:28,500
+That's sort of a secondary concern, I would imagine, on Agnes'
+behalf here. OK. And moreover, I'm not going to even attempt
+
+202
+00:25:28,500 --> 00:25:37,560
+to remember the details of this problem. But rather, there's a
+source, which I'm sure has some cute Hunger Games name attached to it
+
+203
+00:25:37,560 --> 00:25:41,399
+and some other target. And these are the two that we're going to use. And
+we're going to use the same thing. And we're going to use the same thing.
+
+204
+00:25:41,399 --> 00:25:48,360
+And we're going to use the same thing. And these are just two nodes
+in the network of pipes. And she wants a path from s to t. OK.
+
+205
+00:25:48,360 --> 00:25:54,639
+So first of all, let's just count and make sure that
+we know. So there's a how many vertices are there?
+
+206
+00:25:54,639 --> 00:26:00,800
+Well, the problem actually gives a name to that.
+There's order n vertices because that's just
+
+207
+00:26:00,800 --> 00:26:08,040
+the number of junctions, which is what we define to be n. I
+forgot to write that there. And because we have a degree bound,
+
+208
+00:26:08,040 --> 00:26:17,200
+our favorite argument in this class, we know that
+there's order n edges as well. So that's good news.
+
+209
+00:26:19,780 --> 00:26:26,940
+Why can't I use this graph directly? Like, let's say that I computed
+the shortest path from s to t. Notice that that completely ignores
+
+210
+00:26:26,940 --> 00:26:33,920
+the point of the problem. The point of the problem is that Atlas
+wants to avoid these starred vertices on our graph up here.
+
+211
+00:26:33,920 --> 00:26:40,780
+But the shortest path may not do that. In other words, she may have to
+walk like a really indirect path to avoid being detected by the sensors.
+
+212
+00:26:41,420 --> 00:26:49,880
+That's a problem. So we need to be a little more clever than
+that. We do have to think on this problem a bit. But not too much.
+
+213
+00:26:49,880 --> 00:26:58,020
+And so here's the basic trick. Like, let's say that let's solve a slightly
+different problem first, which is let's say that I give you a radius k.
+
+214
+00:26:58,020 --> 00:27:08,280
+And I want to know, does there exist a path that can get me from
+s to t without coming more than distance k away from the sensors?
+
+215
+00:27:08,280 --> 00:27:13,580
+Notice that if I have a tool that can answer that yes
+or no problem. I could come up with an algorithm that
+
+216
+00:27:13,580 --> 00:27:19,420
+finds my number of sensors by looping over k or
+something. It may not be fast enough, but I could do that.
+
+217
+00:27:19,420 --> 00:27:25,700
+So that problem is actually not terribly difficult.
+Because essentially, what I could do conceptually
+
+218
+00:27:25,700 --> 00:27:30,840
+is just remove the vertices that are too close to
+the sensors and then solve a reachability problem.
+
+219
+00:27:30,840 --> 00:27:37,120
+Like, can I get from s to t without getting distance k
+away from any one of the sensors? Well, what do I do?
+
+220
+00:27:37,120 --> 00:27:44,740
+I just remove any vertex that's distance k away from the sensors. And then
+I compute reachability. So conceptually, I think this isn't a huge leap,
+
+221
+00:27:44,740 --> 00:27:54,840
+intuitively speaking. But there's a lot of details to fill in.
+So unraveling just a little bit more, we might define a graph gk.
+
+222
+00:27:54,840 --> 00:28:16,800
+And gk is going to be the subgraph of vertices whose distance with
+distance bigger than k. So gk is going to be the distance k to any sensor.
+
+223
+00:28:16,800 --> 00:28:25,740
+And somehow, reachability in this thing can answer yes or no,
+can I get from s to t without coming distance k to a sensor.
+
+224
+00:28:25,740 --> 00:28:31,200
+Do we know this term subgraph in this class? Essentially,
+it's pretty clear what it is just from the word.
+
+225
+00:28:31,200 --> 00:28:38,880
+Essentially, I'm just going to remove vertices inside of
+our larger graph and any edges that touch those vertices.
+
+226
+00:28:38,880 --> 00:28:48,020
+And obviously, if my original graph had order n, then the subgraph
+has big O of n size. It might have less, but it's an upper bound.
+
+227
+00:28:48,020 --> 00:28:55,720
+OK, so we unravel a little bit more. Somehow, this seems like a
+convenient structure, but I haven't told you how to compute it.
+
+228
+00:28:55,720 --> 00:29:04,260
+And in particular, the sort of annoying thing is this piece. I
+need to be able to figure out if I'm distance k from any sensor.
+
+229
+00:29:04,260 --> 00:29:10,980
+Or more generically speaking, it might be kind of
+handy to compute distance from the set of sensors
+
+230
+00:29:10,980 --> 00:29:20,520
+to every other vertex in my graph, every other junction in my pipe
+network. OK? Well, we already covered a trick in our problem session
+
+231
+00:29:20,520 --> 00:29:27,700
+that's going to help us do that. Because OK, what would be a very
+simple algorithm for doing that? Would be to loop over every sensor,
+
+232
+00:29:27,700 --> 00:29:34,520
+call Dijkstra's algorithm for each one. So that gives me the
+distance to sensor number one, and the distance to sensor number two,
+
+233
+00:29:34,520 --> 00:29:40,260
+the distance to sensor number three. Then I take the min over
+all those, and that function gives me the distance to any sensor.
+
+234
+00:29:40,260 --> 00:29:44,280
+That's going to be pretty easy. That's going to be a problem,
+right? Because Dijkstra's algorithm runs in n log n time.
+
+235
+00:29:44,280 --> 00:29:51,520
+But now I've incurred another factor because I have to loop over all
+the sensors. And we didn't give you a bound on how many there are.
+
+236
+00:29:51,520 --> 00:29:56,760
+So more generically, this is actually a problem that shows up
+all the time in my everyday life, which is that we don't just
+
+237
+00:29:56,760 --> 00:30:01,199
+want shortest paths to a single point. Sometimes
+we want shortest paths to a bunch of stuff.
+
+238
+00:30:01,199 --> 00:30:09,459
+Like in other words, I don't care which sensor is close to me. I don't want
+to get close to any sensor. Yeah? This shows up in geometry all the time.
+
+239
+00:30:09,459 --> 00:30:16,540
+Maybe I want to know the closest closest, you know, like I want to find
+the closest point on the highway. So the highway is driving past my house.
+
+240
+00:30:16,540 --> 00:30:24,340
+The highway is a whole bunch of points on some network. And I just want to
+get on the highway and start driving. I don't care about the closest path
+
+241
+00:30:24,340 --> 00:30:31,120
+to every single point on the highway. I just want whatever is
+closest to me. So this is a pretty practical thing to think about.
+
+242
+00:30:31,120 --> 00:30:39,940
+So how do we solve that? So let's say this is our pipe network.
+I feel like I draw this network a lot. Maybe I'll spice it up.
+
+243
+00:30:40,660 --> 00:30:53,780
+I'll add an extra edge. OK. And maybe for board drawing purposes, these
+two vertices have sensors. So I'm trying to find the shortest path distance
+
+244
+00:30:53,780 --> 00:31:03,540
+to either one of these two vertices from every other vertex on
+the graph or vice versa. It doesn't matter. It's undirected.
+
+245
+00:31:03,540 --> 00:31:10,460
+And I don't want to loop over all these sensors. That's the basic
+headache here. So one thing that I can do is kind of a sneaky trick.
+
+246
+00:31:10,460 --> 00:31:19,980
+And it's exactly the same trick that we've applied a few times in the
+problem sessions here, is to add a new vertex that's kind of like a source
+
+247
+00:31:19,980 --> 00:31:31,580
+and make that vertex distance 0 to every one of my sensors.
+And now what I'm going to do is do single source shortest path
+
+248
+00:31:31,580 --> 00:31:38,120
+from this new extra vertex that I added to all
+the rest of my graph. Now why do I do that?
+
+249
+00:31:38,120 --> 00:31:42,960
+Well, if you think about it, well, there's an edge of length 0.
+There's an edge of length 0. There's an edge of length 0 to any sensor.
+
+250
+00:31:42,960 --> 00:31:50,580
+Topologically, I can think of it like I glued all the sensors
+into one vertex if I wanted. But that doesn't really matter.
+
+251
+00:31:50,580 --> 00:31:54,640
+In fact, that would be a different way to solve this
+problem, I guess, would be to take all the sensor vertices,
+
+252
+00:31:54,640 --> 00:32:01,880
+glue them together into one, and then solve this problem.
+But I digress. Right, so the shortest path distance
+
+253
+00:32:01,880 --> 00:32:06,500
+from our new source vertex to all the other ones is
+going to be just the shortest path to any sensor.
+
+254
+00:32:06,500 --> 00:32:14,260
+Because notice that any path coming out of S necessarily has
+to pass through a starred vertex. OK, so let's write that down.
+
+255
+00:32:14,260 --> 00:32:27,240
+Basically, what I'm trying to do here is in step one of my algorithm,
+I want to label each junction with its distance to a sensor.
+
+256
+00:32:30,360 --> 00:32:37,440
+That's the high level goal here. And the way that I'm going to do that
+is I'm going to make, oops, in the problem solution, we call it x,
+
+257
+00:32:37,440 --> 00:32:42,180
+so I'll be consistent. I'm going to make a function. I'm going to make
+a function. I'm going to make a new vertex, or a new graph, rather,
+
+258
+00:32:42,180 --> 00:32:55,880
+g prime, which is equal to my original graph g, which is
+coming from the pipe network with one extra vertex, which
+
+259
+00:32:55,880 --> 00:33:08,960
+we're going to call x, which is connected
+to every motion sensor with weight 0.
+
+260
+00:33:09,940 --> 00:33:29,940
+OK. And now I'm going to do Dijkstra starting at x, which takes n
+log n time, because I just gave you the size of our graph up here,
+
+261
+00:33:29,940 --> 00:33:37,180
+and gives me essentially the shortest distance to any motion
+sensor from all the vertices in my graph. So that's a good thing.
+
+262
+00:33:37,180 --> 00:33:39,240
+That's sort of like a convenient piece of information.
+
+263
+00:33:39,940 --> 00:33:43,460
+But then when we're solving these kinds of
+algorithms problems, notice that I've done sort
+
+264
+00:33:43,460 --> 00:33:50,060
+of a similar reasoning in both of the last two problems,
+which you can do. And actually, it's a pretty practical way
+
+265
+00:33:50,060 --> 00:33:56,520
+of thinking about algorithms, where this problem tells me, at
+the end of the day, my algorithm has to run n log n time, right?
+
+266
+00:33:56,520 --> 00:34:04,920
+Or like in the previous problem, it had to run an n cubed time, like a
+v cubed time. So one thing I can do is say, what is all the information
+
+267
+00:34:04,920 --> 00:34:09,460
+that I can gather out of my graph in n log n time? And I might
+as well compute it, right? So for instance, the distance.
+
+268
+00:34:09,460 --> 00:34:16,900
+The distance to the closest sensor, I just gave you an n log n
+algorithm for computing it. It seems like a useful piece of information.
+
+269
+00:34:16,900 --> 00:34:23,740
+So what the heck? I might as well compute it in step one and
+just have it around. Obviously, you could do breadth-first search
+
+270
+00:34:23,740 --> 00:34:29,720
+on all the computable numbers, and this might not be the most efficient
+way to solve a problem. But I think for graphs, there's only so many things
+
+271
+00:34:29,720 --> 00:34:37,620
+that we typically want to compute. So it's worth kind of going down your
+checklist. Similarly here, notice that we gave you a budget of v cubed time.
+
+272
+00:34:37,620 --> 00:34:43,900
+So like, you might as well. I'll compute all pairs shortest path because
+we can do it in v cubed time. And why not have that information around?
+
+273
+00:34:43,900 --> 00:34:54,940
+It seems useful for computing radius. OK, so in any event, now in
+step one, we now know how close every junction is to every sensor.
+
+274
+00:34:54,940 --> 00:35:03,640
+So now I can argue. I'm numbering these like steps, but they're
+not really steps. These are more just like thought bubbles.
+
+275
+00:35:03,640 --> 00:35:08,760
+So thought bubble number two is going
+to be, how do I actually construct GK?
+
+276
+00:35:09,460 --> 00:35:17,780
+Right? And notice I have a nice piece of information here. I now know
+what vertices are inside of GK and which ones aren't because I can just
+
+277
+00:35:17,780 --> 00:35:27,080
+loop over all the vertices. If the distance is bigger than K, I keep it.
+If it's not, I don't. Yeah, so that gives me an algorithm for computing GK.
+
+278
+00:35:27,080 --> 00:35:39,460
+So we can construct. Construct starts with a C. Construct
+GK from our original graph G. And that's really easy.
+
+279
+00:35:39,460 --> 00:35:54,340
+To do just by looping over the vertices and remove
+any whose distance is too big or too small, rather.
+
+280
+00:36:00,680 --> 00:36:09,380
+V. Does that make sense? Because those are the ones that
+are dangerous. If the radius of my sensor is K, any vertex,
+
+281
+00:36:09,460 --> 00:36:15,960
+which this is less than or equal to K, I want to throw away. And how
+much time does this take? Well, there's just a loop over the vertices.
+
+282
+00:36:15,960 --> 00:36:22,700
+I guess I need to account for the storage of my graph
+also. But of course, this graph takes less space than G.
+
+283
+00:36:22,700 --> 00:36:38,680
+And so overall, this takes order n time, Tim, time and space.
+But there's a catch, which is this is per K. OK? So every time.
+
+284
+00:36:38,680 --> 00:36:51,100
+I want to make a new GK, I incur an expensive order n. But this is
+already getting us pretty close to our problem. Because what can we do?
+
+285
+00:36:51,100 --> 00:37:13,160
+If I have GK, I can say that BFS on GK establishes
+reachability from. I can make that a few millimeters away.
+
+286
+00:37:13,160 --> 00:37:25,379
+So I need a 17, a 10, a 20 measure out of time. So I'll
+give a 10. I can write GK off time off without error.
+
+287
+00:37:25,379 --> 00:37:42,620
+And if I get it wrong, then it's going to 부 After t. Right? Which is
+what we care about. ish. So at the end of the day, this takes order n.
+
+288
+00:37:42,620 --> 00:37:52,360
+So if our problem were written slightly differently, we would
+be done. If the problem said, given a radius k and a graph,
+
+289
+00:37:52,360 --> 00:37:59,820
+tell me yes or no, does there exist a path that stays outside of radius
+k of the sensors, this is how we would do that. Hopefully, we all agree.
+
+290
+00:37:59,820 --> 00:38:01,280
+And we can do that in order n time.
+
+291
+00:38:04,220 --> 00:38:14,160
+Oh, just kidding. Order n log n time, because I had to do Dexter's
+algorithm first. Thanks. OK. But sadly for us, we're not quite done,
+
+292
+00:38:14,160 --> 00:38:19,620
+because we want to find the largest possible k. We
+want to find the biggest radius that we can stay away
+
+293
+00:38:19,620 --> 00:38:31,819
+from the sensors and still get successfully from s to t. So let's say
+that I want to find this number. So this is going to define k star,
+
+294
+00:38:31,819 --> 00:38:34,460
+like at a moving target to write on, is the largest.
+
+295
+00:38:35,180 --> 00:38:50,100
+So I'm going to write k where gk is connected. Oh, that's not
+quite right. From s to t. This is a weird way to phrase it.
+
+296
+00:38:50,100 --> 00:38:54,120
+Really, this should say where there
+exists a path from s to t in gk. I'm sorry.
+
+297
+00:38:57,100 --> 00:39:14,540
+Yeah, where gk, I've just phrased this in a funny way, has path from s
+to t. There we go. All right. So our question is, how do we find that?
+
+298
+00:39:14,540 --> 00:39:25,040
+Well, here's a dumb algorithm. I could loop over all k's,
+construct gk, and then if my answer is yes is reachable,
+
+299
+00:39:25,040 --> 00:39:30,120
+then go to the next k, increment by 1,
+and start over. So this is the dumb answer.
+
+300
+00:39:33,480 --> 00:39:40,280
+When I say dumb. I mean the answer that your instructor
+wrote down on his notes and then realized was dumb, which
+
+301
+00:39:40,280 --> 00:39:50,940
+is loop over k until you get to k star, I guess plus 1,
+right? Because once I get there, then I get a thumbs down.
+
+302
+00:39:50,940 --> 00:39:55,900
+Obviously, getting any bigger than that is only going to
+make my graph smaller. This is called a filtration, right?
+
+303
+00:39:55,900 --> 00:40:04,180
+Because each graph is contained inside of a different one.
+Actually, a filtration would be the other way. I'll think about it.
+
+304
+00:40:04,180 --> 00:40:11,620
+I'll think about it for later because this is not a topological data
+analysis class. But in any event, if I did that, how much time will it take?
+
+305
+00:40:11,620 --> 00:40:19,839
+Well, remember, OK, so for one thing, I have n log n from Dijkstra's
+algorithm. I don't get around that. So I always have to account for that.
+
+306
+00:40:22,600 --> 00:40:29,839
+But now, every time I try a new k, I incur
+cost n, right? That's what we argued up here.
+
+307
+00:40:29,839 --> 00:40:33,520
+And so at the end of the day, this algorithm takes order k star.
+
+308
+00:40:34,180 --> 00:40:44,419
+And time like that. Of course, it's a little weird to have the answer of
+your problem in the runtime. But k star here, we don't have any bound here.
+
+309
+00:40:44,419 --> 00:40:53,060
+It could be the number of vertices or anything like that. And
+so if we have a budget of n log n time, this doesn't quite work.
+
+310
+00:40:53,060 --> 00:41:02,600
+And so the question is, can we rescue this strategy here? And the
+answer, of course, is yes or else I wouldn't be standing here today.
+
+311
+00:41:02,600 --> 00:41:06,839
+One way that you might do that, so there's the way
+that you would do that as a real algorithms person.
+
+312
+00:41:06,839 --> 00:41:12,399
+And there's a way you could do it by psychologically
+diagnosing your instructors. Let's talk about both of those.
+
+313
+00:41:12,399 --> 00:41:19,419
+Let's actually do the second one first, because I think that's the most
+practical if you want to get your homework done quickly. Which is as follows.
+
+314
+00:41:19,419 --> 00:41:27,839
+This problem tells you that you have an n log n budget of time
+in order to run the algorithm. And so what does that mean?
+
+315
+00:41:27,839 --> 00:41:33,279
+Well, when we loop over potential g
+k's that we can try, we have a budget.
+
+316
+00:41:34,180 --> 00:41:44,359
+Of log n tries before we're done. Yeah? So we kind of know that any
+algorithm that constructs a g k and tries it can only do it log n times.
+
+317
+00:41:44,359 --> 00:41:50,419
+And to my knowledge, we only have one algorithm that
+runs in log n time in this class, which is binary search.
+
+318
+00:41:50,419 --> 00:41:56,359
+And so we might be thinking very critically about how we
+could use that tool. But more generally than that, I think
+
+319
+00:41:56,359 --> 00:42:03,879
+this is actually a strategy that shows up a lot both in algorithms and
+actually in numerical analysis a lot. Which is you have some like yes or no,
+
+320
+00:42:03,880 --> 00:42:13,180
+answer and you want to find the point on the interface where yes flips
+to no. And so one way to do it is to sort of bound it on two ends,
+
+321
+00:42:13,180 --> 00:42:20,640
+then keep dividing in half. And as long as your relationship is a bunch of
+yeses and then a bunch of nos, you can keep doing that by binary search.
+
+322
+00:42:20,640 --> 00:42:29,620
+So let's think about it this way. So we have a long interval of
+k values. By the way, obviously, there's an upper bound here,
+
+323
+00:42:29,620 --> 00:42:37,480
+which is like the biggest distance to any vertex in my graph or
+something like that. Yeah, like the sum of all distances or some.
+
+324
+00:42:37,480 --> 00:42:47,900
+That would be a very large number compared to that. But you can afford a
+lot. You could, if you took the sum of every edge, here's a way to do it.
+
+325
+00:42:47,900 --> 00:42:55,680
+If you took this to be the sum of every possible edge length. It
+might not be bounded in n, polynomial. Polynomially bounded in n.
+
+326
+00:42:55,680 --> 00:42:56,940
+Difference between u and n.
+
+327
+00:42:59,980 --> 00:43:10,500
+Sure. So very large numbers in the year. Space. OK.
+I'm not sure that that's quite right. But that's OK.
+
+328
+00:43:10,500 --> 00:43:19,020
+In any event, let's say that we have an upper bound for k for now.
+Then what do we know? We know that here's the k star that I want.
+
+329
+00:43:19,020 --> 00:43:27,500
+And to the left, my algorithm will return yes. This algorithm up here.
+Up here, it'll say no. So one thing I can do, one thing I should do,
+
+330
+00:43:27,500 --> 00:43:36,580
+is put k star, not right at the center of my interval, for illustration
+purposes. But now I can binary search, because I could query here.
+
+331
+00:43:36,580 --> 00:43:44,260
+And now I'm going to get a no. And maybe I subdivide. That's the midpoint
+for some reason. Now I get a yes. And I can triangulate in on what I want.
+
+332
+00:43:44,260 --> 00:43:53,960
+Right? So that's our basic strategy, is binary search
+here. But we have to figure out how to do that exactly. OK.
+
+333
+00:43:53,960 --> 00:44:02,900
+So first of all, there is an obvious upper bound here, which is just
+the biggest distance from any vertex to any sensor. Yeah. Right.
+
+334
+00:44:02,900 --> 00:44:09,140
+So we could probably do that. We could probably come up with a conservative
+one if we didn't feel like it. But conveniently, in step one, remember
+
+335
+00:44:09,140 --> 00:44:17,120
+that computing convenient numbers is always a convenient
+thing to do. Clearly, if Katniss wants to, sorry, sorry,
+
+336
+00:44:17,120 --> 00:44:25,380
+Atniss wants to go within a radius that's bigger than the
+distance of any vertex to any sensor, she's in trouble.
+
+337
+00:44:25,380 --> 00:44:39,580
+Because that covers the entire graph. Yeah? So right. So we actually
+do have an upper bound here, which is the biggest distance to a sensor.
+
+338
+00:44:42,339 --> 00:44:47,899
+And now we want a binary search. But we have to be a little bit
+careful how to do it, because we want to be logarithmic in n, which
+
+339
+00:44:47,899 --> 00:44:53,720
+is like the number of vertices in our graph. And of
+course, the way that I've drawn this interval here,
+
+340
+00:44:53,720 --> 00:45:01,220
+as Jason points out, I don't at least immediately have a bound on this
+number in terms of n. It could be that my edge weights are really ginormous.
+
+341
+00:45:01,220 --> 00:45:09,120
+Yeah. Yeah. Yeah. Yeah. Yeah. OK. So right. So how can we
+get around that? Well, essentially, what we want to be doing
+
+342
+00:45:09,120 --> 00:45:15,339
+is binary search in an array that scales like the
+vertices. OK? And here's the solution that I came up with,
+
+343
+00:45:15,339 --> 00:45:21,540
+which I'm pretty sure is the same as the one in the answer.
+I should really check that before teaching this thing,
+
+344
+00:45:21,540 --> 00:45:33,020
+which is to do the following, which is a. Remember, again, we have a budget
+at n log n. And so we can do a constant number of things that take n log
+
+345
+00:45:33,020 --> 00:45:46,340
+n time. We just might as well keep doing it. Yeah. And so another kind
+of convenient thing we might do is sort my vertices by the distance
+
+346
+00:45:46,340 --> 00:45:51,680
+to x, which of course, remember, is exactly the
+distance to their closest sensor. Why would you do that?
+
+347
+00:45:51,680 --> 00:45:59,480
+Well, in some sense, as I move along that array, that's the sort
+of order in which I'm going to remove vertices from my graph
+
+348
+00:45:59,480 --> 00:46:06,040
+and make the radius get bigger and bigger and bigger. Does that make
+sense? Because the first couple ones are the ones right next to the sensor.
+
+349
+00:46:06,040 --> 00:46:14,100
+As I move along this array, they get farther and farther away.
+OK? So we're going to say, and of course, why can we do that?
+
+350
+00:46:14,100 --> 00:46:22,080
+Because sorting, I think this is one that all computer science students
+everywhere know, takes n log n time using whatever your favorite sorting.
+
+351
+00:46:22,080 --> 00:46:32,820
+Well, that's not true. Whatever my favorite sorting algorithm is. OK. And
+we're going to take d i to be the distance, the i-th largest, d i. OK.
+
+352
+00:46:32,820 --> 00:46:44,440
+Actually, I think in my notes I got this wrong. The i-th smallest, I'm
+diverging from my notes. So there is a high likelihood of a sign mistake
+
+353
+00:46:44,440 --> 00:46:59,940
+that's about to happen. OK. And now what I'm going to do is I'm going to
+binary search on i. In other words, on the index into my distance array.
+
+354
+00:46:59,940 --> 00:47:06,380
+Is there a reason to do that? Is there a reason? Like,
+let's say that. My distances are like 1, 2, 5, 7.
+
+355
+00:47:06,380 --> 00:47:14,460
+So these are the distance of some vertex to a sensor. And
+let's say that I test 3. And I notice that 3 is admissible.
+
+356
+00:47:14,460 --> 00:47:22,460
+In other words, she can get from one vertex to another, never
+getting within a radius of 3. Should I try a radius of 4?
+
+357
+00:47:22,460 --> 00:47:27,799
+Well, no, because I'm going to remove vertices
+only when I pass an element in this array.
+
+358
+00:47:27,799 --> 00:47:34,480
+So it makes sense to do binary search not in distance space, but rather
+in array index space. Because those are the sort of place junctures
+
+359
+00:47:34,480 --> 00:47:45,360
+that determine when I'm going to remove stuff. OK. So right.
+So remember, how big is this array? It's got length n.
+
+360
+00:47:45,360 --> 00:47:56,560
+So overall, this binary search takes log n time. And that's good
+because our whole algorithm now, what do we do? We binary search on d.
+
+361
+00:47:56,560 --> 00:48:05,080
+Or rather, we binary search on i. And then we take di and plug it into
+our algorithm up there, too. We construct our subgraph. We test yes or no.
+
+362
+00:48:05,080 --> 00:48:13,740
+And that tells us the left or the right interval in our binary
+search. And we recurse. And so overall, this takes log n time.
+
+363
+00:48:13,740 --> 00:48:31,960
+But rather, log n steps of binary search. And of course, each one of
+these steps, as I argued up there, takes order n time. So overall.
+
+364
+00:48:31,960 --> 00:48:43,780
+Our algorithm takes order n log. Oh no, I made an accidental
+theta. n log n time. And that was the bound we wanted to achieve.
+
+365
+00:48:43,780 --> 00:48:50,780
+As usual, there's a lot of detritus that we need to clean up at the end of
+our problem here. One of them is that we actually want to return a path.
+
+366
+00:48:50,780 --> 00:48:58,540
+But that's not so bad. So now we've essentially determined
+that we can compute k star in n log n time. Well, that's good.
+
+367
+00:48:58,540 --> 00:49:05,460
+So now we actually want the path. We can. Construct. Construct our
+graph one more time right at k star. I suppose we already have it around
+
+368
+00:49:05,460 --> 00:49:14,220
+from the end of binary search. And then use whatever your favorite
+reachability algorithm is to go from s to t and give Katniss the path
+
+369
+00:49:14,220 --> 00:49:21,600
+that she wants. Or specifically, Dijkstra's algorithm if you want the
+shortest path. Which is courteous because she doesn't want to walk too far.
+
+370
+00:49:21,600 --> 00:49:28,640
+She doesn't have to. Moreover, let's see. There are a couple of
+boundary cases that are probably worth mentioning in your problem.
+
+371
+00:49:28,640 --> 00:49:35,460
+So for instance, if k star equals 0, in other words, I do my binary
+search. I get all the way back to the first element of my array.
+
+372
+00:49:35,460 --> 00:49:43,740
+And it's still saying I can't do it. What does that mean?
+That means that I cannot go from my source to my target node
+
+373
+00:49:43,740 --> 00:49:52,319
+without passing through a vertex that has a sensor at it. Yep.
+And in which case, what do you do? Well, you can return any path.
+
+374
+00:49:52,319 --> 00:50:00,299
+Or you might as well return the shortest path so that she
+can run. OK. And that, I believe, concludes our problem.
+
+375
+00:50:01,620 --> 00:50:08,740
+Any questions about that one? Thumbs up. Cool. How are we
+doing on time? As usual, I think I'm going to end early.
+
+376
+00:50:08,740 --> 00:50:20,799
+And we're at precisely the same time I've always had at problem four.
+OK. So problem four, we move from one fictional universe to another here.
+
+377
+00:50:20,799 --> 00:50:24,839
+So now we're playing like OK Pond or something like that.
+
+378
+00:50:31,620 --> 00:50:36,240
+Sorry, if I didn't write so big, I wouldn't have
+to waste half of class erasing. But that's OK.
+
+379
+00:50:39,620 --> 00:50:40,120
+Right.
+
+380
+00:50:43,779 --> 00:50:52,839
+Cool. So now we have Ashley Gidham. And Ashley Gidham
+is trying to go from Twinkle Town to Blue Bluff.
+
+381
+00:50:52,839 --> 00:51:00,200
+And these are both two clearings in the Tenko region. I'm sure if I
+played Pokemon, this would have meaning to me. Or whatever this is.
+
+382
+00:51:00,200 --> 00:51:09,819
+But in any case, I'm going to go with this. OK. So in any event, we have
+a map of a bunch of clearings. Not liking the erasing on this board.
+
+383
+00:51:09,819 --> 00:51:12,100
+So maybe we'll start up here.
+
+384
+00:51:14,740 --> 00:51:17,900
+OK. So we have n clearings.
+
+385
+00:51:22,240 --> 00:51:26,900
+And they're connected by two-way trails.
+
+386
+00:51:30,299 --> 00:51:35,080
+And thankfully, there's a map. There's less than or
+equal to five trails connecting in every clearing.
+
+387
+00:51:35,080 --> 00:51:51,480
+This is like our favorite detail to add to 6.006 problems, is the
+degree bound. Yeah. OK. Now with every trail, we associate a length,
+
+388
+00:51:51,480 --> 00:52:00,120
+which we're going to call L sub t for a trail t. But in addition to
+that, we're going to have another piece of information, which is that it
+
+389
+00:52:00,120 --> 00:52:09,980
+has a set of critical points. So we're going to have critters on a c
+sub t. So now every trail, our character here is walking along the path.
+
+390
+00:52:09,980 --> 00:52:19,120
+And what does she want to do? Any time that she walks along a path,
+she collects a critter. Or however many critters are on that path.
+
+391
+00:52:19,120 --> 00:52:25,440
+In fact, she feels a very similar way to how I feel at TJ Maxx.
+She's walking down the aisles, and she can't help herself.
+
+392
+00:52:25,440 --> 00:52:30,660
+She's got to catch every critter that she goes past on the
+path. There's no option here. She can't leave it behind.
+
+393
+00:52:30,660 --> 00:52:39,160
+Because if she does, then she'll be sad. And the reason why
+our character might not be able to pick up one of the critters
+
+394
+00:52:39,160 --> 00:52:46,899
+would be if she ran out of her tools for picking up these critters,
+which are apparently pocket spheres. And she has k spheres.
+
+395
+00:52:50,480 --> 00:52:57,899
+In other words, she has a backpack. And the backpack can hold
+that many spheres at a time. OK. There are a few details here.
+
+396
+00:52:57,899 --> 00:53:04,040
+One is that every time she walks along a path, she collects
+all the critters. But then if she walks down that path again,
+
+397
+00:53:04,040 --> 00:53:09,980
+she'll collect the same set of critters. Apparently,
+they respawn. They're very prolific, these critters.
+
+398
+00:53:09,980 --> 00:53:18,259
+And moreover, there are stores at some of the clearings.
+
+399
+00:53:22,060 --> 00:53:30,580
+And at these stores, she can get rid of the critters she currently
+has and drop them off and pick up empty spheres. Instead.
+
+400
+00:53:30,580 --> 00:53:38,380
+So essentially, every time she does that, she empties her backpack and
+gets a new set of material where she can keep picking up the critters.
+
+401
+00:53:38,380 --> 00:53:45,640
+I have many questions about this character. Does she just leave them there?
+Does she come back for them later? What does she do with the critters?
+
+402
+00:53:45,640 --> 00:53:52,779
+There's a lot of questions. Does she have a bigger bag she can go
+back around to the store? But in this fictional universe, we're
+
+403
+00:53:52,779 --> 00:54:05,200
+not going to worry about these problems. OK. And so essentially, the
+question here, is that there are two locations. I don't remember the name.
+
+404
+00:54:05,200 --> 00:54:15,340
+Trundle Trown to Blue Bluff. But she's trying to travel in between.
+And she gets sad if she comes across a critter that she can't collect.
+
+405
+00:54:15,340 --> 00:54:35,120
+So the question is, can you find the shortest path without
+being sad? And in kind of a da-da twist in this problem,
+
+406
+00:54:35,120 --> 00:54:42,060
+if no such path exists, in other words, it's like she has to walk
+along some long trail with a bunch of critters, more than k critters,
+
+407
+00:54:42,060 --> 00:54:52,940
+I guess, in the worst case, then sadness is unavoidable, is what your
+code is apparently supposed to return, which is really defeatist.
+
+408
+00:54:52,940 --> 00:55:01,380
+I don't know who wrote this problem set. OK. The question is, how
+do we solve this? OK. So it looks like a shortest path problem.
+
+409
+00:55:01,380 --> 00:55:08,340
+But as with all problems in 6.006, there's a slight twist,
+right? In this case, the twist is that it's the shortest path
+
+410
+00:55:08,340 --> 00:55:14,260
+without becoming sad, where sadness means that
+you ran out of spheres to collect your critters.
+
+411
+00:55:17,520 --> 00:55:28,920
+Now, notice that we're given a budget, by the way, of, I
+believe, nk log nk times. Is that right? Like that. OK.
+
+412
+00:55:29,420 --> 00:55:39,780
+Notice that this is a little suspicious. Somehow, it makes us think
+that the size of our problem really is nk rather than just n or k. OK.
+
+413
+00:55:39,780 --> 00:55:48,740
+So how could we do this? Let's think back to a problem that we solved
+yesterday under the assumption that you guys are binge watching your 6.006
+
+414
+00:55:48,740 --> 00:55:54,680
+problem sessions here. And remember, the problem
+yesterday, we had this dude that was walking along paths.
+
+415
+00:55:54,680 --> 00:55:59,220
+And every third path, he had to drink a beer. And he had to drink
+a beer. And he had to drink a beer. And he had to drink a beer.
+
+416
+00:55:59,220 --> 00:56:06,819
+And he had to drink a beer. I've tried this on my commute home. And it
+doesn't work terribly well. But in any event, we have a similar scenario
+
+417
+00:56:06,819 --> 00:56:12,220
+here, where there's some number that we need to keep
+track of. In this case, it's the number of critters
+
+418
+00:56:12,220 --> 00:56:20,740
+that our character has remaining that she can pick up. So she starts with
+an empty bag. As she collects them, the amount of capacity in her bag
+
+419
+00:56:20,740 --> 00:56:28,379
+decreases until she gets to a store. And then it goes back again. But the
+good news is that our runtime bound includes k in it. So it's actually OK.
+
+420
+00:56:28,380 --> 00:56:37,440
+To make an algorithm that scales in the number of critters that she can
+carry around. It's kind of atypical, but an interesting choice here.
+
+421
+00:56:37,440 --> 00:56:44,800
+So remember, the term I introduced last time for this kind of universe is
+that it's kind of a state machine. In addition to walking along the graph,
+
+422
+00:56:44,800 --> 00:56:54,300
+she needs to know how much capacity she has for critters. And so
+here's a way to do it. So I think actually this problem isn't too bad,
+
+423
+00:56:54,300 --> 00:57:01,560
+given that you saw the problem where you do every third vertex in our
+last problem. Session somehow it's just like a same church, different pew
+
+424
+00:57:01,560 --> 00:57:09,540
+kind of scenario here. So in this case, one thing we can do
+is we're going to make a graph. We're going to call it g.
+
+425
+00:57:09,540 --> 00:57:24,680
+It's got vertices v, edges e, just for fun. But what we're
+going to do is have k plus 1 vertices for every clearing.
+
+426
+00:57:24,680 --> 00:57:30,300
+And the reason is that what we're going to do is we're going
+to walk along the graph. And as we traverse our edges, we're
+
+427
+00:57:30,300 --> 00:57:38,040
+not only going to keep track of the costs, like the distance that
+she's walking, but also the number of critters that she has remaining
+
+428
+00:57:38,040 --> 00:57:43,680
+in her bag that she can store. And the way that we can
+do that is by keeping a bunch of copies of our graph
+
+429
+00:57:43,680 --> 00:57:52,540
+and ascending every time that we collect a new critter. Does
+that make sense? OK, so let's add a little bit more detail here.
+
+430
+00:57:52,540 --> 00:58:02,799
+So in particular, I can define v, c, i is going to be the vertex
+per clearing comma critter space. And the way that I can view it is
+
+431
+00:58:02,799 --> 00:58:24,600
+that this is sort of representing that I'm at clearing, oops,
+this should be a c. And I have i pocket spheres that are empty.
+
+432
+00:58:28,160 --> 00:58:41,020
+So initially, I'm going to start at v, s comma 0 and go from there. OK?
+K. I guess it depends whether you're decreasing it or increasing it.
+
+433
+00:58:41,020 --> 00:58:48,319
+And t pocket spheres is i. Oh, you're right. Yeah, I'm sorry. So in that
+case, I guess it would be k. We'll see if I manage to do that consistently
+
+434
+00:58:48,319 --> 00:58:55,339
+throughout my answer here. OK, so now I need to tell you how
+to make the edges in our graph. And so let's do that next.
+
+435
+00:58:55,339 --> 00:59:17,080
+So in particular, for our graph, we're going to do this. OK. OK. So
+we're all trails between a and b with length l. And critter c, right?
+
+436
+00:59:17,080 --> 00:59:28,120
+So she picks up c critters. She traverses distance l. She gets
+from a to b or vice versa. And our trails are bidirectional here.
+
+437
+00:59:28,120 --> 00:59:29,359
+We need to define edges.
+
+438
+00:59:35,120 --> 00:59:42,359
+And they look like this. So we sort of have two different cases.
+One is where you have a store. And one is when you don't, right?
+
+439
+00:59:42,359 --> 00:59:44,740
+Because that's going to affect how your state changes.
+
+440
+00:59:48,799 --> 01:00:00,000
+Right, so the first one would be, oh, did I get this whole thing
+backward? Oh, don't tell me that. No, I did. OK, good. Great.
+
+441
+01:00:00,000 --> 01:00:03,900
+So the first case would be a does not have a store.
+
+442
+01:00:12,299 --> 01:00:19,840
+Right, so in this case, she leaves with the same number of critters
+she had in her bag minus whatever critters she picks up along the way.
+
+443
+01:00:19,840 --> 01:00:44,260
+Right, so now I'm going to have an edge of length. L.
+And I'm going to go from v, a, i to v, b, i minus c.
+
+444
+01:00:44,260 --> 01:00:52,660
+Right, so the idea is that I go from a to b. And in the process, I
+lose c critters. Right, but I have to do this for all the possible i's
+
+445
+01:00:52,660 --> 01:01:00,400
+that I could see in my state. So that
+goes from ct. Right. To k. Oops. To k.
+
+446
+01:01:05,400 --> 01:01:15,920
+C. Associated with the trail t, which I decided not to use. OK, right,
+so the basic point here is that there are a bunch of different states
+
+447
+01:01:15,920 --> 01:01:24,020
+where I can traverse this trail. But I have to have at least c critters in
+my bag if I'm allowed to traverse this trail, or else I will be sad. OK?
+
+448
+01:01:24,020 --> 01:01:29,900
+And so I kind of copy this edge a bunch of different times
+to represent all the possible transitions I can make.
+
+449
+01:01:29,900 --> 01:01:32,759
+And similarly, let's say that a does have a store.
+
+450
+01:01:38,340 --> 01:01:45,259
+Well, I still want to add an edge, but now I have the luxury of
+clearing out all the stuff in my bag before collecting the critters.
+
+451
+01:01:45,259 --> 01:01:55,700
+Yeah, so now I still want an edge of length l. But now I get to
+connect more vertices and reset my state in the process. Right.
+
+452
+01:01:55,700 --> 01:02:10,460
+So now I'm going to go from v a comma i to v b. And where am I
+going to end up? Well, how many critters are going to be in my bag?
+
+453
+01:02:10,460 --> 01:02:23,379
+I have a bag of capacity k. And I just traversed the edge from a
+to b, which contains c critters. So I get an v k minus c like that.
+
+454
+01:02:23,379 --> 01:02:37,220
+And of course, I can't do this. I can do that
+for all i from oh, yeah. I have to be careful.
+
+455
+01:02:39,980 --> 01:02:46,780
+Well, no. Actually, just for all i is fine. Yeah. I think there might
+be a mistake in how I copied it down or a mistake in the problem.
+
+456
+01:02:46,780 --> 01:02:56,379
+A mistake in the problem. You still need? Yeah, I think this is right.
+Yeah. So I think there's. we wrote for all i. And some interval.
+
+457
+01:02:56,379 --> 01:03:04,319
+But we didn't have to. OK. Right. So those are our different
+cases. So essentially, in this case, we clear out our q here.
+
+458
+01:03:04,319 --> 01:03:09,819
+Well, not even a q, just our set of spheres. We reset. We
+go back here. Notice that the second vertex doesn't even
+
+459
+01:03:09,819 --> 01:03:18,660
+have an i in its index because it doesn't matter.
+OK. And then similarly, so that gets me from a to b.
+
+460
+01:03:18,660 --> 01:03:20,879
+I also have to do the symmetric thing to go from b to a.
+
+461
+01:03:25,220 --> 01:03:38,399
+OK. So now I have a graph. And first of all, we should reason and make sure
+that we can actually construct this graph in a reasonable amount of time.
+
+462
+01:03:38,399 --> 01:03:39,600
+So let's do that really fast.
+
+463
+01:03:49,879 --> 01:03:57,760
+Right. So the number of vertices in our graph, well, we're going to
+have to do that. OK. Well, I basically have k plus 1 copies of my graph.
+
+464
+01:03:57,760 --> 01:04:14,660
+So it's equal to k plus 1 times n. That's good. So that's
+order k n space, I suppose. And similarly, there's k edges that
+
+465
+01:04:14,660 --> 01:04:24,420
+are associated with every trail. And there's order n trails
+because I have a degree bound. So overall, there's order k n edges.
+
+466
+01:04:24,880 --> 01:04:40,060
+And I have a degree bound in my graph. OK. Great. So now my problem is
+not so bad. I have a source, which is the place where our walker starts.
+
+467
+01:04:40,060 --> 01:04:53,880
+I have t, which is the destination where she wants to go. So what
+do I need? Well, I just need any path that starts at vsk. Right.
+
+468
+01:04:53,880 --> 01:05:05,520
+In other words, she starts it at. s and has a full bag
+with k capacity and ends up at 2v t, i for any i, right?
+
+469
+01:05:05,520 --> 01:05:13,060
+Because it doesn't matter how much capacity she has in her
+bag when she meets her destination. So this is for all i.
+
+470
+01:05:13,060 --> 01:05:23,920
+Any path avoids sadness in the way this problem is written. Right.
+So how could I do that? Well, she wants the shortest path. Right.
+
+471
+01:05:23,920 --> 01:05:34,060
+So I can do that. So I can just do Dijkstra's
+algorithm from vsk. And do a bit of cleanup afterward
+
+472
+01:05:34,060 --> 01:05:39,380
+to check all the different i's and find this
+closest one. And how much time does that take?
+
+473
+01:05:39,380 --> 01:05:54,620
+Well, my graph takes k n space because it has k n vertices and order
+k n edges. So overall, this is going to take order k n log k n time.
+
+474
+01:05:54,620 --> 01:06:07,080
+Which is a good thing because that's exactly the problem I asked for.
+And of course, if the shortest path is infinity, then what do we know?
+
+475
+01:06:07,080 --> 01:06:09,520
+Can you say it with me?
+Sadness is unavoidable.
+
+476
+01:06:18,180 --> 01:06:25,800
+Which is a weird thing to write on a blackboard. OK. And
+so that's our problem. That's our basic problem here.
+
+477
+01:06:25,800 --> 01:06:31,740
+So what was our strategy if we step back 10 feet? Essentially,
+we took our graph. And rather than just making our graph,
+
+478
+01:06:31,740 --> 01:06:39,640
+we made k copies of it with edges that kind of point upstairs,
+meaning that you give away spheres in the process of traversing
+
+479
+01:06:39,640 --> 01:06:46,020
+these different edges, except when you hit the stores, which
+brings you back to level 0. So that was our basic graph structure.
+
+480
+01:06:46,020 --> 01:06:53,640
+And then we just need to do shortest path on that thing. Any
+questions about that? Yes. Last time we did graph duplication,
+
+481
+01:06:54,480 --> 01:07:03,780
+we made a layered graph. And you kept making these transitions.
+And it was a DAG. So can't we do this in linear time?
+
+482
+01:07:03,780 --> 01:07:10,080
+Can't we do this in linear time? So in other words,
+why is our graph not a DAG in this particular case?
+
+483
+01:07:12,480 --> 01:07:14,140
+Let me think about that for a second.
+
+484
+01:07:17,140 --> 01:07:24,380
+There's nothing about this problem that says that the graph has to be a
+DAG. In particular, I guess you could keep walking. If you had a path. Yeah.
+
+485
+01:07:24,480 --> 01:07:30,760
+With a store that were exactly the same as the number of
+critters, you could keep walking back and forth along that path.
+
+486
+01:07:30,760 --> 01:07:39,320
+And so there's a little cycle there, which would be enough to not
+be able to do it in linear time. Well, the edges that we constructed
+
+487
+01:07:39,320 --> 01:07:45,640
+don't necessarily correspond to the edges in the original
+trails. That's not the problem. Sure. That's absolutely right.
+
+488
+01:07:45,640 --> 01:07:54,220
+So we constructed a directed graph out of our original one. But that
+directed graph also can contain cycles. Right? So yeah. So I think.
+
+489
+01:07:54,480 --> 01:08:03,280
+I'm giving you work. So I have a graph with two vertices. Maybe there's
+other graph stuff going on. But whatever. I have two vertices here.
+
+490
+01:08:03,280 --> 01:08:13,560
+And I have some number of critters here. And I have a store on
+either end of my edge just because I'm boring and conservative.
+
+491
+01:08:13,560 --> 01:08:21,640
+And now, well, assuming that c is less than k, I can just keep going back
+and forth along this edge as many times I want. And this is for free.
+
+492
+01:08:21,640 --> 01:08:27,840
+Right? Because every time I get to the end of the edge, I throw
+all my critters away. So that's an example of a cycle in my graph.
+
+493
+01:08:27,840 --> 01:08:36,319
+And because there's a cycle, I'm not in the DAG case anymore.
+So it's a cycle in the constructed graph. Sorry. Yeah.
+
+494
+01:08:36,319 --> 01:08:45,000
+It is a cycle here and also a cycle in the constructed
+graph. Yeah. Sorry. I guess that's true. All right.
+
+495
+01:08:45,000 --> 01:08:53,680
+Any other questions I can make a hash of here? Excellent. So am I out
+of time? Ah, shucks. No. OK. In that case, we'll do the last problem.
+
+496
+01:08:53,880 --> 01:09:01,760
+Actually, the last problem I think is the most interesting
+one. So as usual, I've left myself with not enough time. OK.
+
+497
+01:09:01,760 --> 01:09:14,200
+Which of these boards is the tidiest? The answer is none
+of the above. So let's use the backs here. OK. Right.
+
+498
+01:09:14,200 --> 01:09:23,240
+So our last problem is a shipping problem, not a transshipment
+problem, which happens to be my area of research, but rather just
+
+499
+01:09:23,880 --> 01:09:35,819
+a good old shipping thing. So here, strangely, I did not
+give myself my complete notes. So this will be fun. Right.
+
+500
+01:09:35,819 --> 01:09:42,460
+So I'm trying to ship servers from San Francisco to Cambridge
+by truck. And I have all these bunch of third party companies
+
+501
+01:09:42,460 --> 01:09:48,560
+that all have pairs of cities that they can ship between and only so
+much. These companies are kind of divas. They have a weight limit.
+
+502
+01:09:48,560 --> 01:09:53,760
+They only have cities. They're directed edges. I can't
+like, they don't drive their trucks back apparently.
+
+503
+01:09:53,760 --> 01:10:00,040
+Or maybe they pick up somebody else's stuff and they're just
+picking your stuff up in the boring direction or whatever.
+
+504
+01:10:00,040 --> 01:10:03,120
+So I have a bunch of n trucking routes.
+
+505
+01:10:07,740 --> 01:10:23,200
+And each route, r sub i, is a tuple with si, ti, w, i, ci.
+And what are all these things? So here, this is the source.
+
+506
+01:10:23,760 --> 01:10:31,500
+This is the target of every shipping route, every trucking route
+here. This is the target. So this is where the truck starts.
+
+507
+01:10:31,500 --> 01:10:46,780
+This is where the truck ends. This is the max weight that the truck can
+handle. So the truck only has so much space in it. The tires are only so big.
+
+508
+01:10:46,780 --> 01:10:56,800
+If I put something of weight bigger than w, then my truck is going to die.
+So that's the most that I can put on this truck. And this is the cost.
+
+509
+01:10:56,800 --> 01:11:03,480
+And I have n routes that look like this. And I'm trying to ship
+servers. And of course, some of my servers are too darn busy.
+
+510
+01:11:03,480 --> 01:11:10,880
+But we make an assumption here, which is that our trucking routes form
+a continuous network. I can get from s to t and ship at the very least
+
+511
+01:11:10,880 --> 01:11:19,160
+like a pencil eraser, like some minimal amount of
+weight. And so the basic endpoint of this problem
+
+512
+01:11:19,160 --> 01:11:28,940
+is going to be to sort of figure out the heaviest thing that
+I can ship. And we give you a problem on the path toward that
+
+513
+01:11:28,940 --> 01:11:36,960
+to help prove a little bit about this. This is a very typical kind
+of setup. So again, I've got a bunch of trucking routes, each one of
+
+514
+01:11:36,960 --> 01:11:41,980
+which has a max weight. And I'm going to want to know, first
+of all, what's the maximum amount of weight I can ship?
+
+515
+01:11:41,980 --> 01:11:51,400
+And then what is the minimum cost I can ship that weight?
+So in problem A, which is marked as useful digression,
+
+516
+01:11:51,400 --> 01:11:58,840
+we're first going to prove kind of a handy, but not really a handy
+inequality. I decided to go off book with my proof ever so slightly of this.
+
+517
+01:11:58,840 --> 01:12:05,740
+So get excited for this to be slightly wrong
+in a subtle way, which is what I specialize in.
+
+518
+01:12:05,740 --> 01:12:19,340
+But in particular, we're going to make a definition here. So let's
+say that pi is a weighted path. OK? Then the bottleneck of pi.
+
+519
+01:12:23,500 --> 01:12:33,960
+And pi is going to be the minimum
+edge weight of any edge in pi.
+
+520
+01:12:39,880 --> 01:12:44,560
+And to make sure that we see how this is connected
+to the problem, if I'm trying to ship a server and I
+
+521
+01:12:44,560 --> 01:12:50,640
+have to put it on truck 1 and truck 2 and truck 3 and
+truck 4 and truck 5, obviously of those five trucks,
+
+522
+01:12:50,640 --> 01:12:58,660
+the one whose capacity for weight is this small, OK? The smallest is the
+only one that matters in terms of the heaviest thing that I can ship. OK.
+
+523
+01:12:58,660 --> 01:13:11,640
+So right now, given a directed graph and two vertices s
+and t, we're going to define a quantity called b of s, t.
+
+524
+01:13:11,640 --> 01:13:21,520
+And we're going to say that this is the max
+over any path pi from s to t of the bottleneck.
+
+525
+01:13:23,500 --> 01:13:29,760
+And we're going to say that this is the max over any path
+pi of pi. OK? So the sanity, check this quantity here.
+
+526
+01:13:29,760 --> 01:13:35,560
+Essentially what it's saying is at the end of the day, I have this big
+network of trucking routes. I just want to go from one city to another.
+
+527
+01:13:35,560 --> 01:13:41,500
+And I don't care which series of trucks I want to use. I
+just want to maximize the weight that I could ship. Right?
+
+528
+01:13:41,500 --> 01:13:46,120
+And so this is saying I'm going to look at
+all the different paths that I could take.
+
+529
+01:13:46,120 --> 01:13:51,580
+Each path is band limited by the one truck
+that has the lightest weight that it can carry.
+
+530
+01:13:51,580 --> 01:13:57,380
+And I'm going to find the path that has the lightest weight.
+That has the best bottleneck as measured by this quantity.
+
+531
+01:13:57,380 --> 01:14:09,280
+Using the word best because I tend to make sign mistakes.
+That's a vague term. OK. And then, right. So writing too big.
+
+532
+01:14:09,280 --> 01:14:23,320
+Hopefully, I won't run out of space. We're going to make one additional
+definition, which is i of t is the incoming neighbors of t. OK.
+
+533
+01:14:23,320 --> 01:14:39,000
+And then the problem is asking you to prove a particular inequality
+here. Claim, which is that b of st is bigger than or equal to the min
+
+534
+01:14:39,000 --> 01:14:52,200
+of two values, b of sv or w of vt for all vt.
+
+535
+01:14:52,820 --> 01:14:59,000
+So I'm going to write this as a So let's see what this
+is saying. So remember that this is like the capacity
+
+536
+01:14:59,000 --> 01:15:10,099
+that I can ship from s to t using any root. And that upper bounds the
+minimum of two things. Either the capacity of shipping to one of my neighbors
+
+537
+01:15:10,099 --> 01:15:19,820
+with an incoming edge or the weight of basically shipping from that
+neighbor to me. Notice this is kind of similar to a triangle inequality,
+
+538
+01:15:19,820 --> 01:15:27,320
+which is why we're going to kind of know how to
+solve part b of this problem pretty easily. OK.
+
+539
+01:15:27,320 --> 01:15:50,980
+And moreover, with equality for some v star in i of t. OK. Guess
+what that v star is going to be. It's going to be the vertex that's
+
+540
+01:15:50,980 --> 01:15:59,440
+sort of the previous one on the path of trucks that I actually
+take to ship stuff. Right? OK. So how can we prove this?
+
+541
+01:15:59,440 --> 01:16:06,700
+So the intuition here is that the path that's actually giving you this
+bottleneck, this bs comma t, has to include one of my incoming edges.
+
+542
+01:16:06,700 --> 01:16:11,820
+And I'm just trying to find it. That's roughly what's going
+on in this inequality. And by the way, whenever a problem
+
+543
+01:16:11,820 --> 01:16:17,120
+asks you to prove an inequality, you should step back. I
+feel like I spend like 85% of my day with research students
+
+544
+01:16:17,120 --> 01:16:26,320
+sort of saying like, OK, but what is it really telling me about life? And
+this is a good. Example. OK. So to that end, I'm going to make a definition
+
+545
+01:16:26,320 --> 01:16:35,019
+which I found to be convenient when I was solving this problem,
+which is the following. I'm going to say that pi s comma t
+
+546
+01:16:35,019 --> 01:16:46,480
+is going to be the actual path that gives me the bottleneck. So this is
+kind of like the arg max over all pi. I'm going to use really bad notation.
+
+547
+01:16:46,480 --> 01:16:51,700
+Pi is the connect s to t. That's how we're
+going to think of that. Of the bottleneck.
+
+548
+01:16:56,960 --> 01:17:08,920
+So in other words, this is the path that actually realizes this
+quantity b. So in other words, b of s t is equal to bottleneck.
+
+549
+01:17:13,460 --> 01:17:19,440
+Pi only has two lines. This is convenient for me
+because the reasoning about that path makes some sense.
+
+550
+01:17:20,740 --> 01:17:31,179
+OK. So now we're going to prove the inequality first. And then we may
+or may not choose prove the equality case depending on how I feel. OK.
+
+551
+01:17:31,179 --> 01:17:41,800
+So right. So let's section this off and try and use my
+board a little more conservatively here. OK. So right.
+
+552
+01:17:41,800 --> 01:17:54,280
+So now let's take the vertex v from the incoming edges here.
+OK. OK. So right. So now we have a path that goes from s to t,
+
+553
+01:17:54,280 --> 01:18:01,620
+and we're going to call this the bin of t, right? Because that's what we
+need to prove this. And we're going to prove the inequality directly here.
+
+554
+01:18:01,620 --> 01:18:16,860
+In particular, we can define a path that goes from s to t as
+follows. I could take the pi s v, and then concatenate onto the end
+
+555
+01:18:16,860 --> 01:18:20,720
+of this guy, t. Right? Because we know that it's going to be a
+lot of time. Right? Right. OK. Right. OK. OK. OK. OK. OK. OK.
+
+556
+01:18:20,720 --> 01:18:29,640
+that there's a directed edge from v to t by definition of
+what this i is. OK? Right. And so this is kind of convenient
+
+557
+01:18:29,640 --> 01:18:35,100
+because this is like the bottleneck path for one of my
+neighbors. And now I'm just kind of sticking an edge on there.
+
+558
+01:18:35,100 --> 01:18:44,980
+And we know that, of course, this is a candidate path to get from s to t.
+But it may not be the one that actually achieves the bottleneck. OK? Right.
+
+559
+01:18:44,980 --> 01:18:56,620
+So yeah. And let's define that to be pi. It's a twiddle just
+for fun. I like to give things names. OK. So what do we know?
+
+560
+01:18:56,620 --> 01:19:18,260
+We know that b of s comma t, well, this by definition is the max bottleneck
+of any incoming path going from s to t. This is a path from s to t. Yeah?
+
+561
+01:19:18,260 --> 01:19:29,200
+So because this is the max, it is bigger than or equal to. Or equal
+to bottleneck of pi twiddle. Right? That's the nice thing about maxes.
+
+562
+01:19:29,200 --> 01:19:39,099
+They tend to be bigger than other stuff. OK. Well, what is the bottleneck
+of pi twiddle? Well, remember our definition of bottleneck here. Right?
+
+563
+01:19:39,099 --> 01:19:50,160
+It's the min edge weight over my entire path. Well, I have two options.
+Either that edge weight is the edge from v to t, or it's the edge weight.
+
+564
+01:19:50,160 --> 01:20:07,260
+That's associated to the rest of this stuff. Yeah? So either this is
+the min of the bottleneck of the first segment of our path, pi sv.
+
+565
+01:20:07,260 --> 01:20:13,019
+By the way, that may be empty. And that's like, OK. That's just
+like a one edge path. You can dispense with that case pretty easily.
+
+566
+01:20:13,019 --> 01:20:25,860
+Or the weight of vt. Cool? Yeah. Yeah. Yeah. Yeah. Yeah. Yeah. By
+definition, bottleneck of pi sv is exactly this quantity. Right?
+
+567
+01:20:25,860 --> 01:20:37,200
+Because that's what I chose it to be over here. Yeah? So this is
+exactly min of bs comma v. That was supposed to be a v, but I wrote a t.
+
+568
+01:20:37,200 --> 01:20:50,040
+Or w of v comma t. And that is exactly what we wanted to prove. Yeah? So
+that takes care of our inequality case. Do I want to do the equality case?
+
+569
+01:20:50,040 --> 01:20:59,040
+I don't think I do. Yeah. So it's not too hard to check the equality
+case. Essentially, you can make a pretty easy contradiction. Right?
+
+570
+01:20:59,040 --> 01:21:04,940
+Because if it's strictly larger, then what does that mean?
+That means that every single incoming edge, none of them
+
+571
+01:21:04,940 --> 01:21:10,580
+can be the edge where your bottleneck path comes in.
+And obviously, there's something wrong with that. OK.
+
+572
+01:21:10,580 --> 01:21:21,360
+So I'll refer you guys to the notes for that one. And finally,
+the problem says, assuming that, oh, I'm going to do this.
+
+573
+01:21:21,360 --> 01:21:25,540
+So now we have kind of a funny constant in here,
+just to make your life a little bit annoying.
+
+574
+01:21:25,540 --> 01:21:39,420
+We have, at most, three square root n cities that
+we care about. Again, why three? Why not, I think.
+
+575
+01:21:39,420 --> 01:21:49,920
+And what we want is the weight of the single largest server and the minimum
+cost to ship that thing. So we want one, the largest weight we can ship.
+
+576
+01:21:49,920 --> 01:22:14,700
+And we'll call that w star to ship. And two is the smallest cost to
+ship that weight, w star. OK? So let's do two first, because it's easy.
+
+577
+01:22:14,700 --> 01:22:24,240
+So let's say that I was able to compute w star. So now what? What
+can I do? Well, I can construct a graph where I only keep around
+
+578
+01:22:24,240 --> 01:22:33,380
+the trucks that can ship at least this amount of weight, because
+the other ships are, I really want them to be boats in this problem.
+
+579
+01:22:33,380 --> 01:22:46,660
+But the other trucks are useless. If they can't cover w star, then they're
+not pulling their weight. Yeah? So to do part two here, what can I do?
+
+580
+01:22:46,660 --> 01:23:17,720
+I can make a new graph g. So c with a vertex for every city and
+an edge, a directed edge, sorry, per shipping route with, this
+
+581
+01:23:17,720 --> 01:23:23,400
+is going to be an unfortunate class. I'm going to say,
+edge weight to refer to the edge weight in my graph.
+
+582
+01:23:28,820 --> 01:23:31,200
+And that's going to be equal to the cost of the edge.
+
+583
+01:23:34,440 --> 01:23:47,820
+And only keep around, but only for routes that
+can carry at least w star amount of weight.
+
+584
+01:23:48,960 --> 01:23:56,720
+And now what do we do? Well, it's the shortest path. At this point,
+shortest path, which is really the minimum cost in this case,
+
+585
+01:23:56,720 --> 01:24:02,640
+because that's what we're associating to the edges, is
+going to give me the cost of shipping w star in my network.
+
+586
+01:24:02,640 --> 01:24:15,700
+I think that's pretty obvious from this construction. So that's Dijkstra,
+D-I-J-K-S-T-R-A. And now the only question is, how much time does it take?
+
+587
+01:24:15,700 --> 01:24:22,000
+So let's say that I do the brain dead version of Dijkstra,
+where I just use a direct access array to do my priority queue.
+
+588
+01:24:22,000 --> 01:24:35,840
+So if you recall, that'll take big O of mod v cubed here, squared,
+squared. Yep, you're right. Sorry. I was thinking Johnson's algorithm. OK.
+
+589
+01:24:35,840 --> 01:24:48,160
+Well, in this case, how big is v? Well, it's square root of n, 3 times
+square root of n at most. So of course, v squared is really big O of n.
+
+590
+01:24:48,300 --> 01:24:57,720
+And that part is solved. So really, our only remaining problem
+here is to do part one. And I don't have nearly enough time.
+
+591
+01:24:57,720 --> 01:25:06,180
+In fact, I'm completely out of time. So maybe we'll just talk through it
+really briefly. Sorry about that. Essentially, the basic observation here
+
+592
+01:25:06,180 --> 01:25:15,600
+is that the inequality that we proved in part A of our problem is kind
+of like the triangle inequality of the bottleneck world in some sense.
+
+593
+01:25:15,600 --> 01:25:22,960
+Essentially, what it's giving you is some, or update formula that looks
+kind of like the update formula that we'd apply in Dijkstra's algorithm
+
+594
+01:25:22,960 --> 01:25:30,940
+for shortest path. The basic assumption here being that, well, my shortest
+path has to come from somewhere. So if I look over all of my neighbors,
+
+595
+01:25:30,940 --> 01:25:39,680
+and then I kind of add in my closest edge, or rather,
+the sum of the path length to the previous vertex
+
+596
+01:25:39,680 --> 01:25:47,460
+plus the edge to me, it gives the shortest path to me. Here, instead
+of that, we're saying the biggest bottleneck path. So what do I do?
+
+597
+01:25:47,460 --> 01:25:54,280
+I look at all of my incoming neighbors. I find the one with the biggest
+bottleneck, which is band limited by their bottleneck plus the bottleneck
+
+598
+01:25:54,280 --> 01:26:03,220
+of the incoming edge. And then I update myself. The only thing
+remaining here is to basically do exactly Dijkstra's algorithm.
+
+599
+01:26:03,220 --> 01:26:10,920
+But rather than updating by summing edge length, we update by using
+this formula. And essentially, everything else remains the same.
+
+600
+01:26:10,920 --> 01:26:17,380
+So conveniently, I've run out of time. So I won't even have to
+jumble this one on the board. I'll let you guys do that one at home.
+
+601
+01:26:17,380 --> 01:26:24,080
+But I actually think the explanation of the written material is
+pretty self-evident for this problem. So that's probably just as well.
+

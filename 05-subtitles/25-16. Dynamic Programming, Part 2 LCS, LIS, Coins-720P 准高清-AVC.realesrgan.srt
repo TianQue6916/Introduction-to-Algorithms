@@ -1,0 +1,3551 @@
+﻿1
+00:00:13,020 --> 00:00:16,840
+All right, welcome back to 006
+Dynamic Programming. We're now
+
+2
+00:00:17,700 --> 00:00:18,980
+in step two out of four.
+
+3
+00:00:19,540 --> 00:00:26,240
+Going to see a bunch more examples, three more examples of that dynamic
+programming. Longest common subsequence, longest increasing subsequence, and
+
+4
+00:00:26,240 --> 00:00:30,100
+kind of a made up problem
+from 006, alternating coin game.
+
+5
+00:00:31,200 --> 00:00:39,800
+And through those examples, we're going to explore a few new ideas, things
+we haven't seen in action before yet. Dealing with multiple sequences
+
+6
+00:00:39,800 --> 00:00:44,440
+instead of just one, dealing with substrings
+of sequences instead of prefixes and suffixes,
+
+7
+00:00:45,160 --> 00:00:48,160
+parent pointers so we can recover
+solutions, like in shortest paths.
+
+8
+00:00:48,900 --> 00:00:53,980
+And a big one, which will mostly be fleshed out in the
+next lecture, is subproblem constraint and expansion.
+
+9
+00:00:54,820 --> 00:00:57,980
+This is all part of
+the sort bot paradigm.
+
+10
+00:00:59,280 --> 00:01:00,720
+Remember, subproblems,
+
+11
+00:01:01,300 --> 00:01:02,020
+relations,
+
+12
+00:01:04,160 --> 00:01:07,060
+topological order, base case,
+original problem, and time.
+
+13
+00:01:08,000 --> 00:01:15,320
+Here is subproblems and relations. I've written down both what these things
+are and the sort of key lessons we got from the first dynamic programming
+
+14
+00:01:15,320 --> 00:01:22,520
+lecture. Namely, we want to split up our problem into multiple subproblems.
+And if your input is a sequence, that's the main case we've seen so far,
+
+15
+00:01:23,060 --> 00:01:26,800
+like the bowling
+problem, for example,
+
+16
+00:01:27,300 --> 00:01:31,720
+then the natural subproblems we're going to
+try are prefixes, suffixes, or substrings.
+
+17
+00:01:32,500 --> 00:01:38,600
+Prefixes and suffixes are nice because there's few of them. There's
+only a linear number of them. In general, we want a polynomial number.
+
+18
+00:01:39,620 --> 00:01:42,420
+Sometimes you can get away with one of
+these. They're usually about the same.
+
+19
+00:01:44,420 --> 00:01:47,840
+Sometimes you need substrings.
+There's quadratically many of those.
+
+20
+00:01:49,200 --> 00:01:51,460
+Then once you set up
+the subproblems, which
+
+21
+00:01:52,890 --> 00:01:54,280
+it's easy to set up subproblems,
+
+22
+00:01:55,080 --> 00:02:01,180
+but hard to do it right. To test whether you did it
+right is, can I write a recurrence relation that relates
+
+23
+00:02:01,720 --> 00:02:05,220
+one subproblem solution to
+smaller subproblem solutions?
+
+24
+00:02:05,780 --> 00:02:13,530
+And the general trick for doing this is to identify some feature of the
+solution you're looking for. So you're trying to solve some subproblem.
+
+25
+00:02:14,220 --> 00:02:21,420
+And you try to ask a question whose answer would let you reduce to a
+smaller subproblem. So if you can figure out what that question is, and that
+
+26
+00:02:21,440 --> 00:02:27,380
+question only has a polynomial number of answers, then boom. And you've
+only got polynomial number of subproblems, then you will get a polynomial
+
+27
+00:02:27,380 --> 00:02:27,960
+running time.
+
+28
+00:02:29,180 --> 00:02:29,860
+I think another
+
+29
+00:02:30,560 --> 00:02:37,810
+way to say this, we just locally brute force all possible answers to
+whatever question we come up with, as long as there's polynomially many.
+
+30
+00:02:38,900 --> 00:02:41,280
+And then each of them is
+going to recursively call
+
+31
+00:02:42,060 --> 00:02:49,980
+the smaller subproblems. But because we memoize, we'll only solve each
+subproblem once. And so in the end, the running time will be at most the
+
+32
+00:02:49,980 --> 00:02:53,700
+number of subproblems times the non
+-recursive work done in that relation.
+
+33
+00:02:54,640 --> 00:02:59,140
+For that to work, of course, the relations
+between subproblems must be acyclic.
+
+34
+00:02:59,720 --> 00:03:03,680
+So we'd like to give an explicit topological
+order. Usually it's a couple of for loops.
+
+35
+00:03:04,410 --> 00:03:07,900
+But this is a topological
+order in the subproblem DAG,
+
+36
+00:03:08,420 --> 00:03:16,680
+which I defined somewhat informally last time. But the vertices are
+subproblems. And I want to draw an edge from a smaller problem to a bigger
+
+37
+00:03:16,680 --> 00:03:17,380
+problem, meaning
+
+38
+00:03:18,040 --> 00:03:18,360
+that if
+
+39
+00:03:19,060 --> 00:03:27,760
+evaluating B in this relation calls A, then I'll draw an arrow from A
+to B, from the things I need to do first to the things I'll do later.
+
+40
+00:03:29,280 --> 00:03:30,300
+And the topological order
+
+41
+00:03:30,900 --> 00:03:35,400
+will be ready by the time I try to
+compute B. I will have already computed A.
+
+42
+00:03:37,340 --> 00:03:39,580
+And of course, the relation
+also needs base cases.
+
+43
+00:03:40,160 --> 00:03:44,990
+And then sometimes the original problem we
+want to solve is just one of those subproblems.
+
+44
+00:03:45,700 --> 00:03:50,640
+Sometimes we need to combine multiple. We'll see
+that today. So that's review of this framework.
+
+45
+00:03:51,540 --> 00:03:53,420
+And let's dive into
+
+46
+00:03:53,980 --> 00:03:54,940
+longest common subsequence.
+
+47
+00:04:07,420 --> 00:04:14,460
+It even has applications to things like computational biology. You
+have two DNA sequences. You want to measure how in common they are.
+
+48
+00:04:15,180 --> 00:04:18,440
+One version of that, you might
+see other versions in recitation,
+
+49
+00:04:19,420 --> 00:04:25,620
+called edit distance. This is sort of a simplest,
+cleanest version where I give you two sequences. I have an
+
+50
+00:04:26,420 --> 00:04:27,020
+example here.
+
+51
+00:04:29,000 --> 00:04:31,300
+So for example, it could
+be a sequence of letters.
+
+52
+00:04:35,400 --> 00:04:41,160
+So my first sequence
+spells hieroglyphology,
+
+53
+00:04:42,180 --> 00:04:42,750
+study of hieroglyphs.
+
+54
+00:04:43,660 --> 00:04:47,880
+And second sequence
+spells Michelangelo.
+
+55
+00:04:52,540 --> 00:04:58,800
+And what I'd like is a subsequence. So remember,
+substring has to be some continuous range,
+
+56
+00:04:59,550 --> 00:05:00,100
+some interval.
+
+57
+00:05:00,800 --> 00:05:03,700
+Subsequence, you can take
+any subset of the letters
+
+58
+00:05:04,300 --> 00:05:10,460
+in your sequence or any subset of the items in your sequence.
+So you can have blanks in between. You can skip over items.
+
+59
+00:05:11,260 --> 00:05:14,080
+And so what we want
+is the longest sequence
+
+60
+00:05:14,580 --> 00:05:23,280
+that is a subsequence of both the first string, the first sequence, and
+the second string. And if you stare at this long enough, the longest common
+
+61
+00:05:23,280 --> 00:05:27,360
+subsequence, I don't think it's unique, but
+there is a longest common subsequence, which
+
+62
+00:05:30,360 --> 00:05:32,880
+is hello, hiding in there.
+
+63
+00:05:35,140 --> 00:05:37,900
+And that is a longest
+common subsequence.
+
+64
+00:05:38,580 --> 00:05:41,490
+So given that
+input, the goal is to
+
+65
+00:05:43,420 --> 00:05:48,890
+compute hello, or whatever the longest common subsequence
+is. So we're given, write this down carefully,
+
+66
+00:05:49,540 --> 00:05:53,320
+given two sequences,
+let me name them, A and B.
+
+67
+00:05:57,760 --> 00:06:04,320
+We want to find the
+longest sequence L
+
+68
+00:06:07,980 --> 00:06:11,160
+that's a subsequence
+of both A and B.
+
+69
+00:06:16,260 --> 00:06:17,780
+So that's the
+problem definition.
+
+70
+00:06:19,300 --> 00:06:21,820
+And we're going to see how to
+solve it using dynamic programming.
+
+71
+00:06:23,840 --> 00:06:24,280
+And
+
+72
+00:06:24,860 --> 00:06:27,550
+whereas in the bowling
+problem, we just had a single,
+
+73
+00:06:28,120 --> 00:06:28,730
+sequence of numbers,
+
+74
+00:06:29,600 --> 00:06:33,180
+the values of the bowling
+pins, here we have two sequences.
+
+75
+00:06:33,920 --> 00:06:35,000
+And so we need a new trick.
+
+76
+00:06:36,580 --> 00:06:37,280
+Before we said, OK,
+
+77
+00:06:38,590 --> 00:06:42,800
+if our input consists of a single sequence,
+we'll try prefixes, suffixes, or substrings.
+
+78
+00:06:43,480 --> 00:06:50,990
+Now we've got two sequences. So somehow we
+need to combine multiple inputs together.
+
+79
+00:06:53,200 --> 00:06:54,300
+And so
+
+80
+00:06:55,760 --> 00:06:56,760
+here's a general trick.
+
+81
+00:06:58,040 --> 00:06:59,900
+Some problems for
+
+82
+00:07:00,600 --> 00:07:02,840
+multiple inputs.
+
+83
+00:07:04,880 --> 00:07:05,780
+It's a very simple trick.
+
+84
+00:07:06,980 --> 00:07:10,620
+We just take the product,
+
+85
+00:07:11,620 --> 00:07:12,260
+multiply
+
+86
+00:07:14,700 --> 00:07:16,340
+the subproblem spaces.
+
+87
+00:07:21,010 --> 00:07:23,560
+In the sense of
+cross product of sets,
+
+88
+00:07:24,940 --> 00:07:27,000
+and in particular from an
+accommodatorial perspective,
+
+89
+00:07:27,560 --> 00:07:31,080
+so we have sort of two inputs, the
+first sequence A and the second sequence B.
+
+90
+00:07:31,680 --> 00:07:39,440
+For each of them, there's a natural choice, or there's three natural choices.
+We could do one of these. I will choose suffixes for A and suffixes for
+
+91
+00:07:39,440 --> 00:07:42,800
+B. You could do some other combination,
+but that would be enough for here.
+
+92
+00:07:43,480 --> 00:07:51,360
+And then I want to multiply these spaces, meaning the number of subproblems
+is going to be the product of the number of suffixes here times the
+
+93
+00:07:51,360 --> 00:07:52,530
+number of suffixes here.
+
+94
+00:07:54,020 --> 00:07:59,880
+And in other words, every subproblem
+in LCS is going to be a pair of suffixes.
+
+95
+00:08:00,380 --> 00:08:03,320
+So let me write that down.
+
+96
+00:08:04,760 --> 00:08:06,440
+So for LCS,
+
+97
+00:08:09,300 --> 00:08:16,760
+our subproblems are
+
+98
+00:08:17,500 --> 00:08:19,640
+L of ij.
+
+99
+00:08:20,470 --> 00:08:30,300
+This is going to be the longest common subsequence of the
+suffix of A starting at i and the suffix of B starting at j.
+
+100
+00:08:31,380 --> 00:08:33,039
+And just to be clear
+
+101
+00:08:34,100 --> 00:08:35,059
+how many there are,
+
+102
+00:08:35,760 --> 00:08:38,980
+I'll give the
+ranges for i and j.
+
+103
+00:08:41,980 --> 00:08:44,980
+Not going to assume the sequences are
+the same length, like in the example.
+
+104
+00:08:47,100 --> 00:08:55,980
+So I'll write lengths of A and lengths of B. I like to include the empty
+suffix. So when j equals the length of B, that's zero items in it, because
+
+105
+00:08:55,980 --> 00:08:59,680
+that makes for really easy base cases. So
+I'd like to include those in my subproblems.
+
+106
+00:09:01,040 --> 00:09:04,480
+So that was the S in sort bot.
+
+107
+00:09:05,260 --> 00:09:10,460
+Now I claim that that set of
+subproblems is enough to do a relation,
+
+108
+00:09:13,070 --> 00:09:14,560
+recursive relation among them.
+
+109
+00:09:15,540 --> 00:09:17,980
+So I'd like to solve
+every subproblem Lij.
+
+110
+00:09:20,060 --> 00:09:28,200
+And relation is actually pretty simple, but
+it's maybe not so obvious. So the idea is
+
+111
+00:09:29,480 --> 00:09:34,360
+because we're looking at suffixes, we should always
+think about what happens in the first letter.
+
+112
+00:09:36,160 --> 00:09:38,820
+Because if we remove that first
+letter, then we get a smaller suffix.
+
+113
+00:09:39,620 --> 00:09:43,460
+If you're doing prefixes, you should always look at the
+last letter. Either one would work for this problem.
+
+114
+00:09:44,880 --> 00:09:49,500
+So we're doing suffixes. So we
+look at A of i, and we look at B of j.
+
+115
+00:09:54,440 --> 00:10:00,060
+That's the first letter in the suffix A
+starting at i and the suffix B starting at j.
+
+116
+00:10:01,140 --> 00:10:05,450
+And there are two cases. They
+could be equal or different.
+
+117
+00:10:08,550 --> 00:10:12,380
+I think the easier case to think
+about is when they're different.
+
+118
+00:10:13,140 --> 00:10:20,760
+So like in hieroglyphology and Michelangelo, if we look at the whole
+string, say, the first letter in the top one is H. The first letter in the
+
+119
+00:10:20,760 --> 00:10:22,860
+second one is M. Those
+are different letters.
+
+120
+00:10:24,400 --> 00:10:28,320
+And one of those letters is
+not in the common subsequence
+
+121
+00:10:28,880 --> 00:10:29,500
+because they don't match.
+
+122
+00:10:30,140 --> 00:10:36,200
+I can't start with an H. Well, I can start with
+an H. I could start with an M, but I can't start
+
+123
+00:10:36,720 --> 00:10:37,300
+with both.
+
+124
+00:10:37,940 --> 00:10:40,300
+One of those letters is not
+in the output. In this example,
+
+125
+00:10:40,980 --> 00:10:41,360
+it's M.
+
+126
+00:10:42,620 --> 00:10:44,500
+But I don't know which one.
+
+127
+00:10:45,040 --> 00:10:46,270
+So I have this question.
+
+128
+00:10:47,180 --> 00:10:48,760
+I want to identify
+some question.
+
+129
+00:10:49,400 --> 00:10:58,480
+And the question is, do I know that the H is not in the answer, or do I
+know that M is not in the answer, the final longest common subsequence?
+
+130
+00:10:59,180 --> 00:11:01,460
+We don't know which,
+so we'll just try both.
+
+131
+00:11:02,360 --> 00:11:07,400
+And then we're trying to maximize the length of
+our common subsequence. So we'll take the max
+
+132
+00:11:08,300 --> 00:11:16,760
+of Li plus 1j and Li
+
+133
+00:11:17,760 --> 00:11:18,780
+j minus 1.
+
+134
+00:11:21,460 --> 00:11:23,050
+So the intuition here is
+
+135
+00:11:24,320 --> 00:11:25,140
+one of,
+
+136
+00:11:28,460 --> 00:11:28,940
+at least one,
+
+137
+00:11:30,080 --> 00:11:36,850
+of Ai and Bj is not in the LCS.
+
+138
+00:11:38,840 --> 00:11:44,840
+Get this wrong. j plus 1. Sorry.
+
+139
+00:11:45,820 --> 00:11:46,620
+Thinking about
+substrings already.
+
+140
+00:11:47,120 --> 00:11:54,360
+Yeah, these are the beginning points. So I want to exclude the i -th letter.
+So if Ai is not in, then I want to look at the suffix starting at i plus
+
+141
+00:11:54,360 --> 00:11:58,060
+1. If Bj is not in, then I want to
+look at the suffix starting at j plus 1.
+
+142
+00:11:58,580 --> 00:12:01,300
+So the indices are always
+increasing in the function calls.
+
+143
+00:12:03,580 --> 00:12:05,180
+And the other case
+is that they're equal.
+
+144
+00:12:06,120 --> 00:12:08,790
+So this one, I have a little
+bit harder time arguing.
+
+145
+00:12:09,400 --> 00:12:11,940
+I'm going to write the answer and
+then prove that the answer is correct.
+
+146
+00:12:14,440 --> 00:12:16,900
+Here, I claim you don't
+need to make any choices.
+
+147
+00:12:17,540 --> 00:12:19,560
+There's no question
+you need to answer.
+
+148
+00:12:20,180 --> 00:12:26,590
+You can actually guarantee that Ai and Bj might
+as well be in the longest common subsequence.
+
+149
+00:12:27,500 --> 00:12:29,760
+And so I get one point for that.
+
+150
+00:12:30,280 --> 00:12:34,900
+And then I recurse on all the remaining letters.
+So from i plus 1 on and from j plus 1 on.
+
+151
+00:12:35,600 --> 00:12:36,360
+Why is this OK?
+
+152
+00:12:37,000 --> 00:12:39,180
+Well, we have a, b.
+
+153
+00:12:39,800 --> 00:12:44,180
+We're starting at position i
+and starting at position j for b.
+
+154
+00:12:46,020 --> 00:12:46,360
+And
+
+155
+00:12:47,580 --> 00:12:52,100
+think of some optimal solution, some longest
+common subsequence. So it pairs up letters
+
+156
+00:12:52,620 --> 00:12:52,720
+in
+
+157
+00:12:53,720 --> 00:12:57,940
+some way. This would be some non
+-crossing pairing between equal letters.
+
+158
+00:13:00,060 --> 00:13:00,080
+And
+
+159
+00:13:00,760 --> 00:13:07,600
+let's say, so first case is that maybe i and j aren't paired with anything.
+Well, that's silly. Because if they're not paired with anything, you have
+
+160
+00:13:07,600 --> 00:13:12,420
+some pairing on the rest of the items. You can add this pair. And
+that would be a longer subsequence. So that would be a contradiction.
+
+161
+00:13:13,240 --> 00:13:16,080
+If we're imagining some
+hypothetical optimal solution,
+
+162
+00:13:16,620 --> 00:13:22,280
+it has to pair one of these with something.
+Maybe it pairs i with something else, though.
+
+163
+00:13:23,200 --> 00:13:28,760
+Well, if we have a longest common subsequence
+that looks like that, I can just instead pair i
+
+164
+00:13:29,280 --> 00:13:29,900
+with Bj.
+
+165
+00:13:30,760 --> 00:13:33,840
+That's still, if
+I had this pairing,
+
+166
+00:13:34,400 --> 00:13:38,010
+I'm actually not using any of these letters.
+So why don't I just use this letter instead?
+
+167
+00:13:38,520 --> 00:13:42,040
+So you can argue there is a longest
+common subsequence that matches Ai with Bj.
+
+168
+00:13:42,540 --> 00:13:45,640
+And so then we can guarantee,
+by that little proof,
+
+169
+00:13:46,370 --> 00:13:48,800
+that we get one point
+for matching them up.
+
+170
+00:13:50,340 --> 00:13:51,650
+That we don't have to
+max this with anything.
+
+171
+00:13:53,220 --> 00:13:53,560
+So
+
+172
+00:13:54,300 --> 00:13:56,300
+two cases, pretty
+simple formula.
+
+173
+00:13:57,280 --> 00:14:00,820
+And then we're basically done. We just
+need to fill in the rest of sort bot.
+
+174
+00:14:01,640 --> 00:14:03,880
+So next is topological order.
+
+175
+00:14:08,900 --> 00:14:11,840
+So this I'll write as for loops.
+
+176
+00:14:20,700 --> 00:14:26,980
+Because I'm dealing with suffixes, we want to start with the empty suffixes
+and then work our way to larger and larger suffixes. So this might seem
+
+177
+00:14:26,980 --> 00:14:27,900
+backwards. If you're
+doing prefixes,
+
+178
+00:14:28,440 --> 00:14:29,470
+it would be an increasing order.
+
+179
+00:14:30,080 --> 00:14:36,620
+There's all sorts of orders. You could flip the i and j. It's very symmetric,
+so it doesn't really matter. But anything that's generally decreasing
+
+180
+00:14:36,740 --> 00:14:38,200
+in i and j is good.
+
+181
+00:14:39,620 --> 00:14:41,320
+Then we have base cases.
+
+182
+00:14:43,680 --> 00:14:45,920
+These are when one of
+the sequences is empty.
+
+183
+00:14:46,820 --> 00:14:51,680
+I don't care how many items are in B. But if A has
+no items, there's no common subsequence. I mean,
+
+184
+00:14:52,300 --> 00:14:52,500
+it's empty.
+
+185
+00:14:53,660 --> 00:14:57,240
+And same for no
+matter how big A is,
+
+186
+00:14:57,880 --> 00:14:58,820
+if I've exhausted
+
+187
+00:14:59,340 --> 00:15:01,720
+the B string, I start
+from beyond the last item,
+
+188
+00:15:02,420 --> 00:15:03,520
+then I should get 0.
+
+189
+00:15:04,760 --> 00:15:07,600
+Then the original
+problem we want to solve
+
+190
+00:15:09,900 --> 00:15:12,020
+is L0, 0.
+
+191
+00:15:12,900 --> 00:15:15,040
+That's just longest
+common subsequence
+
+192
+00:15:15,580 --> 00:15:17,320
+of the entire A
+and the entire B.
+
+193
+00:15:18,520 --> 00:15:19,570
+And time.
+
+194
+00:15:50,100 --> 00:15:54,220
+Because they are smaller subproblems, they're already
+dealt with when I multiply by the number of subproblems.
+
+195
+00:15:54,900 --> 00:15:58,160
+So I just care about this max
+computation and this equality check.
+
+196
+00:15:59,000 --> 00:16:01,320
+And we'll say those
+each cost constant time.
+
+197
+00:16:02,880 --> 00:16:03,960
+So this is
+
+198
+00:16:07,960 --> 00:16:08,400
+quadratic time.
+
+199
+00:16:09,140 --> 00:16:13,960
+If the two strings are size n, this is n squared. In
+general, it's the product of the two string sizes.
+
+200
+00:16:14,640 --> 00:16:16,960
+And that's longest
+common substring.
+
+201
+00:16:18,240 --> 00:16:20,080
+So pretty straightforward.
+
+202
+00:16:21,430 --> 00:16:25,380
+Other than this little argument and
+understanding the case when they're equal,
+
+203
+00:16:25,980 --> 00:16:33,940
+the easy case when they're unequal, we just try the only two things we
+could do. One of A i and B j is not in the longest common subsequence.
+
+204
+00:16:34,820 --> 00:16:43,280
+So what I like to say is we guess which of those is the correct one that
+is not in the longest common subsequence. And if we guess that it's in A,
+
+205
+00:16:43,700 --> 00:16:49,220
+then we'll recurse on that side. If we guess that
+it's in j, then we'll recurse by increasing j.
+
+206
+00:16:50,910 --> 00:17:00,100
+And then I'd like to assume, not really, that we always make the correct
+guess, that we made the correct choice whether it's i or j. Now, we don't
+
+207
+00:17:00,120 --> 00:17:06,300
+actually know how to do that. So instead, we brute force. We try both
+of them. And then because we're trying to maximize, we take the max.
+
+208
+00:17:07,220 --> 00:17:09,000
+Just another way of
+thinking about it.
+
+209
+00:17:09,960 --> 00:17:13,960
+But overall, very straightforward. The only
+added complication here is we had to deal with
+
+210
+00:17:14,720 --> 00:17:19,020
+two sequences simultaneously. And we just
+took the product of those. Pretty easy.
+
+211
+00:17:21,230 --> 00:17:25,940
+In general, if you have some constant number of sequences,
+you can afford to do this. You'll still get polynomial.
+
+212
+00:17:26,619 --> 00:17:30,400
+But of course, once you go to n sequences, you can't
+afford this. You would get like an n to the n behavior.
+
+213
+00:17:31,840 --> 00:17:33,940
+So that's kind of a limit
+to how far you could go.
+
+214
+00:17:34,780 --> 00:17:37,340
+Two sequences is fine. Three
+sequences is fine. But n sequences,
+
+215
+00:17:38,320 --> 00:17:42,340
+there probably is no polynomial
+time algorithm for this problem.
+
+216
+00:17:43,820 --> 00:17:45,030
+Cool. I wanted to
+show you an example.
+
+217
+00:17:47,640 --> 00:17:48,940
+I have an example here.
+
+218
+00:17:50,140 --> 00:17:54,060
+I didn't want to draw
+hieroglyphology versus Michelangelo.
+
+219
+00:17:54,900 --> 00:17:56,400
+So I came up with
+another example.
+
+220
+00:17:56,900 --> 00:18:03,140
+Their habit is to say hi. So the longest
+common subsequence of their and habit is hi.
+
+221
+00:18:04,800 --> 00:18:08,960
+And I mean, it's a giant. Well, not that
+giant. It looks kind of like a grid graph.
+
+222
+00:18:09,960 --> 00:18:13,490
+The base cases are out here
+because those correspond.
+
+223
+00:18:14,040 --> 00:18:20,080
+So when I say this, each of these nodes is a subproblem.
+And this corresponds to what is the longest common
+
+224
+00:18:20,580 --> 00:18:24,700
+subsequence between
+EIR and abit.
+
+225
+00:18:25,940 --> 00:18:32,700
+And it should be i. It's the only letter they have in common. And that's
+why there's a 1 here to say that the longest common subsequence has a 1, has
+
+226
+00:18:32,740 --> 00:18:33,160
+size 1.
+
+227
+00:18:33,800 --> 00:18:40,700
+The base cases are when either their has been emptied or when
+habit has been emptied. So those all have zeros on the outside.
+
+228
+00:18:41,200 --> 00:18:44,720
+And then the problem we care about
+is this one. It's their versus habit.
+
+229
+00:18:45,480 --> 00:18:46,800
+Claim is the length is 2.
+
+230
+00:18:47,300 --> 00:18:48,680
+And what I've drawn in here
+
+231
+00:18:50,100 --> 00:18:57,540
+is what I'll call parent pointers, like we talked
+about with BFS and shortest paths and so on.
+
+232
+00:18:59,130 --> 00:19:00,880
+So we had this choice.
+
+233
+00:19:02,720 --> 00:19:08,980
+Sometimes we had a choice on whether we recursed
+here or recursed here was the best thing to do.
+
+234
+00:19:09,900 --> 00:19:19,340
+And so I'll just draw in red the arrow from LIJ, sorry, to LIJ from
+one of these in this case. And in this case, there was no choice.
+
+235
+00:19:20,100 --> 00:19:20,880
+I just draw in red that arrow.
+
+236
+00:19:23,940 --> 00:19:28,560
+So these diagonal edges are exactly the cases
+where the letters match. Here, h equals h.
+
+237
+00:19:29,680 --> 00:19:37,060
+i equals i here. So I draw this diagonal edge. That's that first case
+where the letters are equal. And so I recurse by increasing i and j.
+
+238
+00:19:37,900 --> 00:19:42,660
+That's why I get a diagonal edge. There's
+also one over here where t equals t.
+
+239
+00:19:44,270 --> 00:19:51,760
+So for those, we're getting a 1 plus. You see this 1 is 1 larger than
+the 0. This 2 is 1 larger than the 1. This 1 is 1 larger than the 0.
+
+240
+00:19:52,340 --> 00:19:53,480
+And for every other vertex,
+
+241
+00:19:54,160 --> 00:19:57,200
+we are recursing
+this way and this way.
+
+242
+00:19:57,780 --> 00:20:00,560
+We see what those two numbers
+are, and we take the max.
+
+243
+00:20:01,440 --> 00:20:03,390
+So this whole diagram
+is just filled in
+
+244
+00:20:04,160 --> 00:20:13,540
+for each position where they're not equal. We look at the guy below. We
+look at the guy to the right. Those are the slightly smaller substrings. We
+
+245
+00:20:13,540 --> 00:20:15,160
+look at those values.
+We take the max.
+
+246
+00:20:15,960 --> 00:20:18,100
+And as long as you compute
+this in a generally right
+
+247
+00:20:18,800 --> 00:20:20,380
+left and bottom up fashion,
+
+248
+00:20:20,980 --> 00:20:27,260
+whenever you're trying to compute a guy, you will have its predecessors
+already computed. That's the topological order of this graph.
+
+249
+00:20:28,320 --> 00:20:35,700
+And then at the end, we get our answer, which is 2. And now if we pay
+attention to where we came from, for example, this vertex had to come from this
+
+250
+00:20:35,700 --> 00:20:38,540
+direction. 2 is
+the max of 2 and 1.
+
+251
+00:20:39,140 --> 00:20:40,480
+So I highlight the 2 edge.
+
+252
+00:20:41,660 --> 00:20:43,360
+And if I follow this path,
+
+253
+00:20:44,240 --> 00:20:47,620
+there should be a unique
+path to some base case.
+
+254
+00:20:49,450 --> 00:20:55,020
+And in this case, the diagonal edges correspond
+to my matching letters. So there's the h
+
+255
+00:20:55,540 --> 00:21:03,960
+here followed by the i here. And so hi is our longest common
+substring. In general, we just follow these pointers backwards,
+
+256
+00:21:04,900 --> 00:21:13,320
+the red pointers, and we get our answer. So not only do we compute
+the length of the LCS, but we actually can find the LCS using
+
+257
+00:21:14,220 --> 00:21:14,960
+parent pointers.
+
+258
+00:21:30,150 --> 00:21:35,330
+And this is a concept you can use in most dynamic
+programs, including all the ones from today.
+
+259
+00:21:36,680 --> 00:21:38,120
+Any questions about LCS?
+
+260
+00:21:42,580 --> 00:21:42,860
+All right.
+
+261
+00:21:44,000 --> 00:21:45,900
+It's perfectly clear to
+everyone in the audience.
+
+262
+00:21:46,900 --> 00:21:48,440
+So we move. Oh, yeah.
+
+263
+00:21:48,980 --> 00:21:53,440
+Now we move on to longest
+increasing subsequence, which did
+
+264
+00:21:54,560 --> 00:21:55,620
+I lose a page here?
+
+265
+00:21:56,800 --> 00:21:57,440
+I just
+
+266
+00:21:58,220 --> 00:21:59,250
+disordered them.
+
+267
+00:22:01,340 --> 00:22:04,800
+This problem has almost the same name,
+but it's quite different in behavior.
+
+268
+00:22:06,320 --> 00:22:07,840
+Longest
+
+269
+00:22:08,620 --> 00:22:11,160
+increasing subsequence.
+
+270
+00:22:16,500 --> 00:22:18,160
+LIS instead of LCS.
+
+271
+00:22:21,780 --> 00:22:24,000
+Both famous problems,
+examples of dynamic programming.
+
+272
+00:22:25,260 --> 00:22:27,360
+Here we're just
+given one sequence,
+
+273
+00:22:28,480 --> 00:22:31,770
+like carbohydrate.
+
+274
+00:22:37,770 --> 00:22:46,720
+So this is a sequence of letters. And I want to find the longest subsequence
+of this sequence that is increasing, strictly increasing, let's say. So
+
+275
+00:22:46,720 --> 00:22:48,200
+in this case, alphabetically.
+
+276
+00:22:49,040 --> 00:22:55,920
+So I could include CR, for example, but not
+CB. That would be a descending subsequence.
+
+277
+00:22:56,740 --> 00:22:57,360
+And in general,
+
+278
+00:22:57,860 --> 00:22:58,630
+or in this example,
+
+279
+00:22:59,420 --> 00:23:01,800
+the right answer,
+or a right answer,
+
+280
+00:23:02,360 --> 00:23:02,920
+is abort.
+
+281
+00:23:05,320 --> 00:23:09,540
+There aren't very many English words that are increasing,
+but there are some. And I looked through all of them.
+
+282
+00:23:10,630 --> 00:23:18,760
+As I just implemented this dynamic program we're about to write down, it
+took me like two minutes to write down the DP, and then more work to read
+
+283
+00:23:18,760 --> 00:23:20,420
+the dictionary and
+look for cool examples.
+
+284
+00:23:22,640 --> 00:23:24,860
+So in general, we're
+given some sequence A.
+
+285
+00:23:26,040 --> 00:23:36,490
+And we want to find the longest increasing subsequence
+of A. The longest sequence that is increasing,
+
+286
+00:23:37,780 --> 00:23:38,330
+strictly.
+
+287
+00:23:42,120 --> 00:23:45,360
+We could use the same thing to
+solve not strictly increasing.
+
+288
+00:23:48,860 --> 00:23:56,080
+So here, things are going to be a little trickier. It's easy in that we
+just have a single sequence. So again, we think, OK, let's look at our chart
+
+289
+00:23:56,080 --> 00:24:01,920
+here. We could try prefixes, suffixes, or substrings.
+I personally prefer suffixes. Jason prefers prefixes.
+
+290
+00:24:02,860 --> 00:24:04,140
+Whatever you prefer is fine.
+
+291
+00:24:05,960 --> 00:24:07,940
+But I'll generally start there.
+
+292
+00:24:09,540 --> 00:24:14,980
+Because there's nothing in this problem that makes me think I need
+to delete things from both ends. One question. Yeah, question.
+
+293
+00:24:15,660 --> 00:24:17,660
+Isn't the answer to
+this problem always 26?
+
+294
+00:24:18,640 --> 00:24:22,480
+So is the answer
+always, at most, 26?
+
+295
+00:24:23,710 --> 00:24:30,580
+Yes, if you're dealing with English words. So when I say
+sequence here, this is a sequence of arbitrary integers,
+
+296
+00:24:31,640 --> 00:24:35,940
+word size integers. So there you can have a ton
+of variety. This is just for the fun of examples.
+
+297
+00:24:36,720 --> 00:24:41,620
+I've drawn this. But even if the answer is 26,
+finding that longest common subsequence is,
+
+298
+00:24:42,540 --> 00:24:46,840
+the obvious algorithm would be
+to take all substrings of size 26,
+
+299
+00:24:47,420 --> 00:24:48,520
+which is like n to the 26.
+
+300
+00:24:49,180 --> 00:24:52,720
+So we're going to do much faster
+than that here. n squared time.
+
+301
+00:24:53,400 --> 00:24:55,220
+And then if you remove
+the strictly increasing,
+
+302
+00:24:56,810 --> 00:24:57,860
+then it can be
+arbitrarily large.
+
+303
+00:25:00,560 --> 00:25:04,180
+OK. So let's try to do this.
+
+304
+00:25:09,540 --> 00:25:10,980
+I'm going to have some
+mystic to write attempt here.
+
+305
+00:25:12,320 --> 00:25:13,510
+Let's just go for it.
+
+306
+00:25:15,680 --> 00:25:18,320
+So I want some subproblems.
+And I'm going to choose suffixes.
+
+307
+00:25:18,980 --> 00:25:20,280
+So I'm going to define l of i
+
+308
+00:25:20,780 --> 00:25:25,540
+to be the longest increasing subsequence
+of the suffix of a starting at i.
+
+309
+00:25:26,900 --> 00:25:28,540
+OK. That's the
+obvious thing to do.
+
+310
+00:25:30,640 --> 00:25:32,600
+And now I'm going to
+leave myself a little space.
+
+311
+00:25:33,380 --> 00:25:35,040
+And then I'd like a relation
+
+312
+00:25:36,960 --> 00:25:37,420
+on these.
+
+313
+00:25:40,220 --> 00:25:41,190
+So I'm going to
+say what l of i is.
+
+314
+00:25:43,420 --> 00:25:49,380
+And what do I have to work with? Well, I have l of
+things larger than i. Those would be smaller suffixes.
+
+315
+00:25:51,380 --> 00:26:01,560
+But let's go back to what is a question that I could ask about this subproblem
+that might help me figure out what the longest increasing subsequence
+
+316
+00:26:01,800 --> 00:26:02,180
+looks like.
+
+317
+00:26:02,720 --> 00:26:04,200
+So we're looking at a,
+
+318
+00:26:06,800 --> 00:26:08,540
+here's a, from i on.
+
+319
+00:26:09,740 --> 00:26:13,480
+Longest increasing subsequence is sub
+-subsequence. And we'd like to remove letter i.
+
+320
+00:26:14,040 --> 00:26:21,420
+Now when we do that, there are two choices. Maybe i is in the longest
+increasing subsequence, or it's not in. So the question I would like to answer
+
+321
+00:26:21,420 --> 00:26:21,770
+is,
+
+322
+00:26:23,780 --> 00:26:23,780
+is
+
+323
+00:26:24,660 --> 00:26:27,580
+i in the longest
+increasing subsequence of a,
+
+324
+00:26:28,760 --> 00:26:30,060
+of a from i onwards?
+
+325
+00:26:33,580 --> 00:26:39,240
+This is a binary question. There are two options. So again,
+just like before. And so I can brute force those two options.
+
+326
+00:26:40,320 --> 00:26:44,660
+The trouble, and then I want the
+longest one. So I'm going to take the max.
+
+327
+00:26:45,320 --> 00:26:55,460
+So I'd like to take the max of something like li plus 1. So in the
+case that I don't put i in the solution, that's fine. Then I just look
+
+328
+00:26:56,020 --> 00:27:00,160
+at i plus 1 on and recursively compute
+that. And that would be my answer.
+
+329
+00:27:00,800 --> 00:27:05,680
+And the other option is that I do put i in the
+longest increasing subsequence. So I do 1 plus
+
+330
+00:27:07,220 --> 00:27:07,700
+the rest.
+
+331
+00:27:09,680 --> 00:27:10,620
+So i plus 1.
+
+332
+00:27:11,520 --> 00:27:13,220
+If I close this brace,
+
+333
+00:27:13,880 --> 00:27:20,840
+this would be a very strange recurrence, right? Because this is always bigger
+than this one. So there's something wrong here. And the something wrong
+
+334
+00:27:20,840 --> 00:27:21,340
+is I
+
+335
+00:27:22,980 --> 00:27:29,540
+haven't enforced increasing at all. There's no constraints here. It's
+just saying, well, I'll put i in, and then I'll do whatever remains.
+
+336
+00:27:30,220 --> 00:27:32,900
+And I'll pray that that's
+increasing. Probably won't be.
+
+337
+00:27:34,100 --> 00:27:36,140
+Because indeed, if i is
+
+338
+00:27:36,700 --> 00:27:45,680
+a letter or is a number that is strictly greater than i plus 1, then this
+will be wrong. So I really can't always do this. I need to somehow know.
+
+339
+00:27:46,490 --> 00:27:51,460
+I could check whether i plus 1 is in the
+answer. But I don't know. Maybe i plus 1.
+
+340
+00:27:52,460 --> 00:27:55,980
+So I can check whether the letter
+i is less than the letter i plus 1.
+
+341
+00:27:56,560 --> 00:28:03,360
+But maybe I put this in the longest increasing subsequence. And then I put
+this in the longest increasing subsequence. And so I need to compare these
+
+342
+00:28:03,360 --> 00:28:05,300
+two items. But I don't know
+when that's going to happen.
+
+343
+00:28:06,420 --> 00:28:07,300
+Things seem really hard.
+
+344
+00:28:08,580 --> 00:28:13,740
+There's no way from this subproblem
+definition to write down a relation.
+
+345
+00:28:15,080 --> 00:28:20,500
+But there is a slight tweak to
+this definition that makes it work.
+
+346
+00:28:21,140 --> 00:28:21,140
+So
+
+347
+00:28:23,280 --> 00:28:28,760
+the trouble we have here, and this is the
+idea of subproblem constraints or conditions,
+
+348
+00:28:29,380 --> 00:28:38,020
+the trouble we have is when we recursively compute the longest
+increasing subsequence on the remainder, we don't know the first
+
+349
+00:28:39,080 --> 00:28:40,460
+item in that answer.
+
+350
+00:28:41,040 --> 00:28:43,200
+Maybe it's i plus 1. Maybe
+it's some guy over here.
+
+351
+00:28:43,800 --> 00:28:47,180
+If we knew who it was, then we
+could compare that item to item i.
+
+352
+00:28:47,860 --> 00:28:58,200
+And so what we'd like to do is add a constraint to this subproblem that
+somehow lets us know where the longest increasing subsequence starts.
+
+353
+00:28:59,240 --> 00:29:05,780
+So what I would like to say is longest
+increasing subsequence of that suffix that starts
+
+354
+00:29:07,900 --> 00:29:11,340
+with a of i.
+
+355
+00:29:12,540 --> 00:29:16,410
+So in other words,
+it includes a of i.
+
+356
+00:29:19,400 --> 00:29:21,400
+This was a separate question.
+
+357
+00:29:24,600 --> 00:29:27,180
+This is a bit of a funny
+constraint. It changes the problem.
+
+358
+00:29:28,120 --> 00:29:30,300
+It's no longer what
+we want to solve.
+
+359
+00:29:31,620 --> 00:29:32,050
+It's a terminal problem
+
+360
+00:29:34,620 --> 00:29:43,240
+before it was solving l of 0. We just want the longest increasing subsequence
+of the whole thing. Now it's not necessarily l of 0. l of 0 means what
+
+361
+00:29:43,240 --> 00:29:47,260
+is the longest increasing
+subsequence of the whole sequence a
+
+362
+00:29:48,320 --> 00:29:50,240
+that includes the
+first letter of a.
+
+363
+00:29:50,980 --> 00:29:56,840
+And maybe we do include the first letter of a. Maybe we don't. We don't
+know where the longest increasing subsequence starts. Here, for example, it
+
+364
+00:29:56,840 --> 00:29:58,020
+didn't. It started
+at the second letter.
+
+365
+00:29:59,780 --> 00:30:00,660
+But conveniently,
+
+366
+00:30:01,740 --> 00:30:06,480
+it's OK that we don't know because
+that's just another question we could ask
+
+367
+00:30:07,040 --> 00:30:08,200
+is where do we start?
+
+368
+00:30:08,800 --> 00:30:13,440
+Where might the LIS start? It could start at the first
+letter, second letter, third letter. There's only n choices.
+
+369
+00:30:13,960 --> 00:30:15,880
+And let's just take
+the max of all of them.
+
+370
+00:30:16,520 --> 00:30:18,920
+So before I get to the relation,
+let's solve this problem.
+
+371
+00:30:19,440 --> 00:30:22,560
+I just want the max of l of i
+
+372
+00:30:23,600 --> 00:30:24,200
+for all i.
+
+373
+00:30:29,460 --> 00:30:31,720
+I guess we've been
+writing sides of a here. OK,
+
+374
+00:30:33,920 --> 00:30:42,060
+the maximum will be the overall longest increasing subsequence. So if I
+could find longest increasing subsequence that includes the first letter or
+
+375
+00:30:42,060 --> 00:30:49,240
+the longest one that includes the second letter and so on, so it starts at
+the first letter, starts at the second letter, then this max will be the
+
+376
+00:30:49,240 --> 00:30:49,960
+longest overall.
+
+377
+00:30:50,640 --> 00:30:58,840
+So this subproblem is not what I really wanted, but it's still good enough
+because it lets me solve my original problem. And this is adding an extra
+
+378
+00:30:59,120 --> 00:30:59,500
+constraint
+
+379
+00:31:01,160 --> 00:31:10,000
+to my subproblem. And doing this is challenging. Thinking about what the
+right constraint that would let you solve your problem is tricky, especially
+
+380
+00:31:10,000 --> 00:31:10,580
+in the beginning.
+
+381
+00:31:11,140 --> 00:31:14,580
+But for now, let's just take this as
+a thing that works. Why does it work?
+
+382
+00:31:15,660 --> 00:31:16,380
+Because now I
+
+383
+00:31:17,240 --> 00:31:19,700
+can say, well,
+this term was fine,
+
+384
+00:31:20,200 --> 00:31:20,200
+max.
+
+385
+00:31:20,760 --> 00:31:21,260
+So I'm trying to
+
+386
+00:31:21,880 --> 00:31:26,100
+write longest increasing subsequence
+starting with the ith letter versus,
+
+387
+00:31:28,500 --> 00:31:30,800
+yeah, actually, no, this is
+just going to be different.
+
+388
+00:31:31,620 --> 00:31:31,720
+OK,
+
+389
+00:31:34,560 --> 00:31:44,120
+so now I get to the central issue, which is I know by the definition of l
+of i that I include letter i. This is going to be in my longest increasing
+
+390
+00:31:44,120 --> 00:31:47,310
+subsequence. That's what I'm
+looking for by this definition.
+
+391
+00:31:48,400 --> 00:31:48,800
+But
+
+392
+00:31:49,460 --> 00:31:51,140
+I don't know what
+the second letter is.
+
+393
+00:31:52,200 --> 00:31:55,320
+Could be i plus 1, could be i
+plus 2, could be anything bigger.
+
+394
+00:31:56,560 --> 00:31:59,760
+Whenever there's something I
+don't know, I'll just brute force it.
+
+395
+00:32:00,600 --> 00:32:08,620
+I don't care. I don't care that I don't know. I'll just take a max over
+all the possible choices. Let's say that the next letter included in the
+
+396
+00:32:08,620 --> 00:32:10,640
+longest increasing
+subsequence i is j.
+
+397
+00:32:11,740 --> 00:32:20,440
+Then I would like to look at l of j. Now, I don't know what j is, but
+I'll just brute force all possible choices for j. So it's going to be i
+
+398
+00:32:20,480 --> 00:32:25,040
+strictly less than j because I don't
+want to include the same letter i again.
+
+399
+00:32:26,500 --> 00:32:29,980
+And otherwise, I would get an infinite recursive
+loop if I put less than or equal to here.
+
+400
+00:32:31,720 --> 00:32:35,020
+And maybe I don't do
+anything else up to n.
+
+401
+00:32:35,660 --> 00:32:37,540
+And OK, not quite done.
+
+402
+00:32:39,200 --> 00:32:43,760
+Now, this is the interesting
+part. I can enforce increasing
+
+403
+00:32:44,420 --> 00:32:47,660
+because I can't just choose
+any letter j to the right of i.
+
+404
+00:32:48,280 --> 00:32:48,600
+Also,
+
+405
+00:32:49,360 --> 00:32:56,240
+the number or letter that's written in here has to be greater than the
+number that's written here. That's the strictly increasing property.
+
+406
+00:32:57,020 --> 00:32:58,560
+So I can add as a constraint
+
+407
+00:32:59,660 --> 00:33:01,000
+in this max
+
+408
+00:33:02,100 --> 00:33:03,680
+to say
+
+409
+00:33:04,560 --> 00:33:12,820
+a of i is strictly less than a of j. And if you wanted
+non -strictly increasing, you would add an equal there.
+
+410
+00:33:14,060 --> 00:33:16,960
+OK, this is mathematical
+notation. In Python, you would
+
+411
+00:33:17,540 --> 00:33:24,000
+say max open paren of this thing
+for j in this range if this holds.
+
+412
+00:33:24,660 --> 00:33:25,780
+So I'm just doing the for loop.
+
+413
+00:33:27,420 --> 00:33:35,160
+And I only look at the possible choices for
+j when the strict increasing property holds.
+
+414
+00:33:35,720 --> 00:33:36,780
+And then when that holds,
+
+415
+00:33:37,360 --> 00:33:41,720
+I check this. Now, this set might be empty. I
+need to define what the max is when it's empty.
+
+416
+00:33:42,460 --> 00:33:51,080
+Then I will just say, oh, I also need a
+1 plus, don't I? Let me just do 1 plus.
+
+417
+00:33:51,820 --> 00:33:54,560
+So we're told that i is in
+the answer. So we always get 1.
+
+418
+00:33:56,920 --> 00:34:00,780
+The remainder is this or 0.
+
+419
+00:34:01,900 --> 00:34:08,120
+If there are no
+aj's greater than ai,
+
+420
+00:34:09,080 --> 00:34:12,440
+then we'll default
+to 0 and say, eh,
+
+421
+00:34:12,960 --> 00:34:14,219
+that i is the only
+
+422
+00:34:14,719 --> 00:34:15,080
+item in
+
+423
+00:34:15,699 --> 00:34:16,690
+my increasing subsequence.
+
+424
+00:34:18,290 --> 00:34:25,820
+OK, so there are a few details to get, right? But in general, once you
+figure out what these recurrences look like, they're very simple. And this is
+
+425
+00:34:25,820 --> 00:34:26,620
+one line of code.
+
+426
+00:34:28,659 --> 00:34:31,420
+And then all you need
+in addition to this
+
+427
+00:34:31,940 --> 00:34:33,000
+is the original
+
+428
+00:34:33,580 --> 00:34:36,820
+subproblem and
+some other things.
+
+429
+00:34:37,400 --> 00:34:38,960
+We need the
+
+430
+00:34:40,280 --> 00:34:40,600
+base cases.
+
+431
+00:34:41,340 --> 00:34:42,380
+But I should do them in order.
+
+432
+00:34:42,960 --> 00:34:49,600
+Topological order is just the usual
+for loop because I'm doing suffixes.
+
+433
+00:34:50,480 --> 00:34:52,560
+It's going to be i
+equals length of a
+
+434
+00:34:53,300 --> 00:34:58,400
+down to 0. Base case is going to
+
+435
+00:34:59,240 --> 00:35:05,020
+be l of length of a, which is 0.
+So there's no letters in that suffix.
+
+436
+00:35:06,300 --> 00:35:06,300
+And
+
+437
+00:35:06,820 --> 00:35:07,660
+we already did o.
+
+438
+00:35:08,460 --> 00:35:09,260
+And then time.
+
+439
+00:35:11,180 --> 00:35:13,490
+OK, this is a little different
+from the past examples.
+
+440
+00:35:14,080 --> 00:35:16,560
+So the number of subproblems,
+just like usual, is linear,
+
+441
+00:35:17,160 --> 00:35:18,140
+length of a.
+
+442
+00:35:20,440 --> 00:35:20,540
+Oops.
+
+443
+00:35:23,500 --> 00:35:25,520
+There's only one sequence
+we're thinking about now,
+
+444
+00:35:26,280 --> 00:35:32,960
+unlike the previous example. But the work we're doing in this relation
+now is nontrivial work. Before, we were just guessing among two different
+
+445
+00:35:32,960 --> 00:35:33,410
+choices.
+
+446
+00:35:34,140 --> 00:35:38,660
+Now we're guessing among up to n different
+choices. This n here is length of a.
+
+447
+00:35:42,320 --> 00:35:42,740
+And so
+
+448
+00:35:44,260 --> 00:35:46,800
+we have theta length of
+
+449
+00:35:47,760 --> 00:35:50,880
+a non -recursive work
+
+450
+00:35:55,560 --> 00:35:57,780
+that we're doing
+in each subproblem.
+
+451
+00:36:00,920 --> 00:36:03,480
+Or you might think of this as
+choices that we're considering.
+
+452
+00:36:06,060 --> 00:36:13,340
+And for each choice, we're just spending. I mean, we're just taking a max
+of those items, adding 1. So that's a constant overhead. And so we just get
+
+453
+00:36:13,420 --> 00:36:13,820
+this product,
+
+454
+00:36:14,660 --> 00:36:17,940
+which is a squared.
+
+455
+00:36:22,720 --> 00:36:25,140
+So that's longest
+increasing subsequence.
+
+456
+00:36:25,980 --> 00:36:27,620
+Make sure I didn't
+miss anything else.
+
+457
+00:36:28,940 --> 00:36:32,440
+So we're using this
+idea of asking a question
+
+458
+00:36:32,960 --> 00:36:36,040
+and guessing or brute forcing
+the answer to that question
+
+459
+00:36:36,620 --> 00:36:38,090
+in two places.
+
+460
+00:36:39,260 --> 00:36:47,260
+One place is we're requesting that the
+longest increasing subsequence starts at i.
+
+461
+00:36:47,780 --> 00:36:50,500
+So then the question is,
+well, what is the very second
+
+462
+00:36:53,940 --> 00:36:58,700
+item that's in the longest increasing subsequence
+that starts with i? We're calling that j.
+
+463
+00:36:59,680 --> 00:37:03,120
+And we're brute forcing all the
+possible choices that j could be,
+
+464
+00:37:03,640 --> 00:37:10,380
+which conveniently lets us check, confirm that it's
+actually an increasing subsequence locally from i to j.
+
+465
+00:37:11,020 --> 00:37:17,540
+And then L of j will take care of the rest by induction. The rest of the
+longest increasing subsequence starting at j will also be increasing.
+
+466
+00:37:18,080 --> 00:37:21,260
+And so this guarantees by induction
+the whole thing will be increasing.
+
+467
+00:37:22,760 --> 00:37:24,480
+Then we also use this
+
+468
+00:37:25,220 --> 00:37:31,480
+local brute force to solve the original problem. So we added this constraint
+of starting at i, but we didn't actually know overall where to start.
+
+469
+00:37:32,060 --> 00:37:37,480
+But that's fine, because there's only eight choices.
+So I should mention, in the running time analysis,
+
+470
+00:37:38,640 --> 00:37:39,880
+so there's solving
+the subproblems.
+
+471
+00:37:40,860 --> 00:37:45,420
+That's fine. But then there's also a plus
+whatever it costs to solve the original problem.
+
+472
+00:37:46,180 --> 00:37:48,100
+But that's OK.
+That's length of a.
+
+473
+00:37:49,660 --> 00:37:54,860
+So this was all of this plus length
+of a is still length of a squared.
+
+474
+00:37:57,820 --> 00:38:04,220
+OK, but if you're doing exponential work here, that would be bad. We have
+to do some reasonable amount of work to solve the original problem in terms
+
+475
+00:38:04,280 --> 00:38:05,060
+of all the subproblems.
+
+476
+00:38:06,280 --> 00:38:09,740
+I have an example hiding here.
+
+477
+00:38:12,540 --> 00:38:14,160
+This is a little
+harder to stare at.
+
+478
+00:38:15,140 --> 00:38:16,420
+Here I have empathy.
+
+479
+00:38:17,800 --> 00:38:23,780
+And this example doesn't have much empathy, because
+the longest increasing subsequence of empathy is empty.
+
+480
+00:38:27,380 --> 00:38:29,780
+Empty is one of the few
+English words that's increasing.
+
+481
+00:38:31,580 --> 00:38:39,680
+And the hard part here is drawing the DAG. I mean,
+it's almost the complete graph. But we only draw edges
+
+482
+00:38:40,260 --> 00:38:45,080
+from smaller letters to bigger letters.
+So we draw from e to m, from e to p,
+
+483
+00:38:45,820 --> 00:38:49,260
+from e not to a. There's
+no edge from e to a. From e
+
+484
+00:38:49,860 --> 00:38:57,220
+to t, not from e to h, but yes, from e to y. And then we also
+draw from e to the base case, which is there's no more letters.
+
+485
+00:38:59,400 --> 00:39:07,820
+That edge to the base
+case corresponds to this 0,
+
+486
+00:39:08,540 --> 00:39:09,640
+or I guess this n,
+
+487
+00:39:10,280 --> 00:39:12,180
+where we say, ah,
+let's just recurse.
+
+488
+00:39:12,800 --> 00:39:13,740
+Let's just throw away.
+
+489
+00:39:16,060 --> 00:39:18,900
+Actually, maybe we don't need
+the union 0 there, in fact, because
+
+490
+00:39:19,440 --> 00:39:23,160
+we include l of n, which
+is the empty substring.
+
+491
+00:39:24,420 --> 00:39:24,540
+Then
+
+492
+00:39:25,200 --> 00:39:27,280
+the definition of
+l is a little funny.
+
+493
+00:39:28,160 --> 00:39:30,180
+What does it mean to
+say you start with a of n?
+
+494
+00:39:31,040 --> 00:39:32,260
+You have to define a of n.
+
+495
+00:39:32,840 --> 00:39:35,160
+Right. a of n is not
+defined. So that's not so nice.
+
+496
+00:39:35,960 --> 00:39:37,360
+So maybe I'll fix that.
+
+497
+00:39:40,380 --> 00:39:41,100
+And erase
+
+498
+00:39:42,600 --> 00:39:42,800
+equals case.
+
+499
+00:39:44,060 --> 00:39:45,550
+But I'm still going
+to draw an edge there,
+
+500
+00:39:46,060 --> 00:39:47,720
+conceptually say, oh, we're
+just done at that point.
+
+501
+00:39:48,720 --> 00:39:52,000
+That's the base case where
+we have no string left.
+
+502
+00:39:54,340 --> 00:39:54,560
+Cool.
+
+503
+00:39:55,330 --> 00:39:59,340
+And when I said from to to, actually, I meant
+the reverse. So the edges go from right to left.
+
+504
+00:40:00,280 --> 00:40:04,800
+And then what we're doing is looking
+for the longest path in this DAG.
+
+505
+00:40:06,200 --> 00:40:09,240
+Longest path is maybe a problem
+we've talked about in problem session.
+
+506
+00:40:11,240 --> 00:40:12,060
+Because it's a DAG,
+
+507
+00:40:12,960 --> 00:40:19,740
+well, longest path is the same thing as shortest path if you just negate
+all the weights. There are no weights in this picture. So if you just put
+
+508
+00:40:19,740 --> 00:40:23,320
+negative 1 on all these edges
+and ask for the shortest path
+
+509
+00:40:24,240 --> 00:40:26,460
+from the base
+
+510
+00:40:27,420 --> 00:40:28,020
+to anywhere,
+
+511
+00:40:28,760 --> 00:40:30,820
+so single source shortest
+paths from this base,
+
+512
+00:40:31,840 --> 00:40:34,860
+then we would end
+up getting this path,
+
+513
+00:40:36,440 --> 00:40:40,760
+which if you look at
+it is EMPTY, empty.
+
+514
+00:40:41,680 --> 00:40:46,880
+And so that shortest path is indeed the right answer.
+What I've drawn here is the shortest path tree.
+
+515
+00:40:47,540 --> 00:40:55,760
+So also, if you wanted the longest increasing subsequence starting
+at a, then it is ATY, just by following the red arrows here.
+
+516
+00:40:57,020 --> 00:41:04,860
+And how do you get that? Just draw the parent pointers just like we did
+before. I didn't mention this example can also be solved with shortest paths.
+
+517
+00:41:05,060 --> 00:41:06,500
+Once I construct this graph,
+
+518
+00:41:07,400 --> 00:41:11,060
+you can do the shortest
+path from some base, I
+
+519
+00:41:11,740 --> 00:41:12,600
+don't know which one,
+
+520
+00:41:13,280 --> 00:41:14,500
+to here.
+
+521
+00:41:16,140 --> 00:41:18,000
+If you put negative 1
+
+522
+00:41:18,540 --> 00:41:20,500
+on all of the diagonal edges
+
+523
+00:41:21,180 --> 00:41:23,100
+and you put weight
+0 everywhere else,
+
+524
+00:41:23,760 --> 00:41:31,840
+then that corresponds to the shortest path in that graph will correspond
+to the longest, the path with the most diagonal edges. And that makes sense
+
+525
+00:41:31,840 --> 00:41:34,640
+because the diagonal edges are where
+we actually get letters in common.
+
+526
+00:41:35,400 --> 00:41:37,240
+And so in this case, it's 2.
+
+527
+00:41:38,200 --> 00:41:47,200
+So both of these dynamic programs could instead of writing them as a
+recursive thing with memorization or writing them bottom up as a for loop and
+
+528
+00:41:47,200 --> 00:41:50,980
+then doing the computation, you
+could instead construct a graph
+
+529
+00:41:51,540 --> 00:41:54,400
+and then run DAG
+shortest paths on it.
+
+530
+00:41:55,240 --> 00:41:57,100
+But the point is these
+are the same thing.
+
+531
+00:41:58,180 --> 00:42:02,760
+It's just simpler to write the dynamic programming code
+because it's just a for loop and then a recurrence,
+
+532
+00:42:03,980 --> 00:42:05,540
+which we were just
+updating an array.
+
+533
+00:42:06,420 --> 00:42:13,780
+Because you already know what the topological order is, you
+don't have to write a generic depth -first search algorithm,
+
+534
+00:42:14,280 --> 00:42:23,980
+take the finishing order, reverse it, and
+then run DAG shortest paths with relaxation.
+
+535
+00:42:25,180 --> 00:42:28,140
+Much simpler to just write down the
+recurrence once you've figured it out.
+
+536
+00:42:29,100 --> 00:42:31,300
+OK? But they are the
+same in these examples.
+
+537
+00:42:32,220 --> 00:42:38,860
+In Fibonacci, for example, you cannot write Fibonacci as a single -source
+shortest paths problem. But a lot of DPs you can write as a shortest paths
+
+538
+00:42:38,860 --> 00:42:39,260
+problem.
+
+539
+00:42:40,870 --> 00:42:44,250
+Just a connection
+to things we've seen.
+
+540
+00:42:45,660 --> 00:42:47,280
+All right. Last example.
+
+541
+00:42:49,400 --> 00:42:54,000
+Last problem for today.
+We'll do more next week.
+
+542
+00:43:02,680 --> 00:43:05,080
+Alternating coin game.
+This is a two -player game.
+
+543
+00:43:05,760 --> 00:43:07,340
+We're going to find the
+optimal strategy in this game.
+
+544
+00:43:08,820 --> 00:43:12,080
+So an example is, in general,
+you have a sequence of coins.
+
+545
+00:43:17,740 --> 00:43:18,220
+And
+
+546
+00:43:19,240 --> 00:43:21,840
+we have two players.
+They take turns.
+
+547
+00:43:23,000 --> 00:43:30,420
+So given coins of value
+
+548
+00:43:31,340 --> 00:43:32,120
+v0
+
+549
+00:43:33,400 --> 00:43:34,640
+to vn minus 1.
+
+550
+00:43:35,500 --> 00:43:36,820
+So it's a sequence.
+
+551
+00:43:39,100 --> 00:43:41,360
+They're given in
+order, in some order.
+
+552
+00:43:44,140 --> 00:43:47,100
+For example, 5, 10, 125.
+Not necessarily sorted order.
+
+553
+00:43:47,640 --> 00:43:49,340
+And the rules of the game
+are we're going to take turns.
+
+554
+00:43:50,560 --> 00:43:54,800
+I'm going to take turns with you. I'm going
+to use i and u to refer to the two players.
+
+555
+00:43:56,780 --> 00:43:58,240
+And so in each turn,
+
+556
+00:43:59,020 --> 00:44:00,180
+whoever's turn it is,
+
+557
+00:44:00,680 --> 00:44:05,580
+we get to choose either the first coin or
+the last coin among the coins that remain.
+
+558
+00:44:06,460 --> 00:44:09,180
+So at the beginning, I can
+choose 5 or 25. And I might think,
+
+559
+00:44:09,720 --> 00:44:16,160
+oh, 25 is really good. That's better than 5. I should choose that. But
+then, of course, you're going next. And you're going to choose 100.
+
+560
+00:44:16,820 --> 00:44:19,820
+And you'll win the game. You'll get
+more of the total value of the coins.
+
+561
+00:44:22,080 --> 00:44:28,010
+The strategy is to take the 5, because then the
+100 is still in the middle. And so once I take 5,
+
+562
+00:44:28,990 --> 00:44:31,740
+you get to choose 10 or 25.
+
+563
+00:44:32,340 --> 00:44:36,580
+At this point, you probably prefer 25, because
+that's better than 10. But whichever you choose,
+
+564
+00:44:37,120 --> 00:44:39,900
+I can take the 100.
+And so I get 105 points.
+
+565
+00:44:40,480 --> 00:44:42,690
+And you're going
+to get 35 points.
+
+566
+00:44:43,960 --> 00:44:45,360
+OK? Good example for me.
+
+567
+00:44:46,720 --> 00:44:54,040
+And what we're going to do, so that's easy for a simple example. But in
+general, there are exponentially many strategies here. At each step, either
+
+568
+00:44:54,040 --> 00:44:55,200
+of us could go left or right.
+
+569
+00:44:55,840 --> 00:44:57,080
+Choose the leftmost
+or the rightmost.
+
+570
+00:44:58,100 --> 00:44:59,740
+And we're going to give
+a dynamic programming
+
+571
+00:45:00,360 --> 00:45:02,660
+algorithm that just
+solves this fast.
+
+572
+00:45:04,660 --> 00:45:05,360
+I didn't mention.
+
+573
+00:45:06,540 --> 00:45:14,760
+So this algorithm is quadratic time. But it can be made n log n time. It's
+a fun exercise. Using a lot of the data structure augmentation stuff we've
+
+574
+00:45:14,760 --> 00:45:17,380
+done, you can make this n log n.
+
+575
+00:45:17,900 --> 00:45:21,720
+This algorithm, I think, is
+going to be n squared time.
+
+576
+00:45:26,340 --> 00:45:29,400
+So I won't write
+the problem exactly.
+
+577
+00:45:30,680 --> 00:45:31,960
+But I think you know the rules.
+
+578
+00:45:32,460 --> 00:45:34,280
+Choose leftmost or rightmost
+coin, alternating moves.
+
+579
+00:45:36,360 --> 00:45:37,900
+So I'd like to define
+
+580
+00:45:39,380 --> 00:45:40,060
+some subproblems.
+
+581
+00:45:40,600 --> 00:45:49,400
+And this is a problem that's very naturally a substring problem. If I just
+looked at suffixes, that would deal great with if I'm deleting coins from
+
+582
+00:45:49,420 --> 00:45:49,720
+the left.
+
+583
+00:45:52,180 --> 00:45:54,480
+Delete coins only from the
+right, that would give me prefixes.
+
+584
+00:45:55,220 --> 00:45:59,840
+But I'll tell you now, there's no dynamic programming
+where the answer is suffixes and prefixes.
+
+585
+00:46:00,480 --> 00:46:03,200
+You can do suffixes or
+prefixes. But if you need both,
+
+586
+00:46:03,900 --> 00:46:05,380
+you almost certainly
+need substrings.
+
+587
+00:46:06,300 --> 00:46:08,560
+Because as soon as I
+delete the first coin,
+
+588
+00:46:09,180 --> 00:46:11,040
+and then maybe you
+take the second coin,
+
+589
+00:46:11,780 --> 00:46:17,660
+that's exactly the optimal strategy here. Now you have an arbitrary
+substring in the middle. OK? But substrings are enough, because we're only
+
+590
+00:46:17,660 --> 00:46:18,600
+deleting from the ends.
+
+591
+00:46:19,220 --> 00:46:20,540
+We'll look at substrings.
+
+592
+00:46:23,680 --> 00:46:26,580
+So more precisely, this
+is just the intuition,
+
+593
+00:46:27,260 --> 00:46:35,160
+we're going to define some generic
+x of ij is going to be what is the
+
+594
+00:46:36,940 --> 00:46:37,040
+maximum
+
+595
+00:46:39,520 --> 00:46:40,280
+total value
+
+596
+00:46:44,140 --> 00:46:45,020
+I can get
+
+597
+00:46:47,380 --> 00:46:49,020
+from this game
+
+598
+00:46:49,800 --> 00:46:51,820
+if we play it on coins
+
+599
+00:46:53,060 --> 00:46:55,820
+of value
+
+600
+00:46:57,040 --> 00:47:02,800
+vi to vj.
+
+601
+00:47:04,020 --> 00:47:05,520
+So that's a substring.
+
+602
+00:47:07,460 --> 00:47:10,810
+So this is one way to write
+down the subproblems. And it's also
+
+603
+00:47:12,200 --> 00:47:18,520
+a good way. I mean, you can write
+down a relation on this definition
+
+604
+00:47:21,580 --> 00:47:28,760
+of subproblems. But I'm low on time. There's two ways to solve this
+problem. This is a reasonable way, exploiting that the game is zero -sum.
+
+605
+00:47:29,300 --> 00:47:35,100
+But I'd like to change this a little bit to give you,
+I think, what's a cleaner way to solve the problem,
+
+606
+00:47:36,140 --> 00:47:42,140
+which is to add a third coordinate to my subproblems.
+So now it's parameterized by three things.
+
+607
+00:47:42,880 --> 00:47:45,100
+p here only
+
+608
+00:47:46,440 --> 00:47:47,480
+has two choices.
+
+609
+00:47:48,480 --> 00:47:49,580
+It's me or you.
+
+610
+00:47:51,480 --> 00:47:55,020
+And this gets at a point that's maybe
+not totally clear from this definition.
+
+611
+00:47:55,880 --> 00:48:00,540
+Max total value that I can get
+from this substring of coins. But
+
+612
+00:48:01,040 --> 00:48:06,400
+this is not obviously what I need. So obviously,
+at the beginning, I want the whole string.
+
+613
+00:48:07,040 --> 00:48:09,360
+And I want to know what
+my maximum value is. Fine.
+
+614
+00:48:10,240 --> 00:48:12,850
+And I go first in this
+game. I didn't specify.
+
+615
+00:48:14,040 --> 00:48:14,720
+But I do.
+
+616
+00:48:16,540 --> 00:48:16,980
+Overloading i.
+
+617
+00:48:18,470 --> 00:48:23,220
+But as soon as I do a move, as soon as I take
+the first coin, for example, it's now your turn.
+
+618
+00:48:24,460 --> 00:48:29,720
+And so I don't really want to know the maximum
+total value that I would get if I go first.
+
+619
+00:48:30,980 --> 00:48:33,120
+I'd like to say if
+
+620
+00:48:35,280 --> 00:48:36,280
+player p goes first.
+
+621
+00:48:37,160 --> 00:48:41,200
+I'd really like to know what
+happens in the case where you go first.
+
+622
+00:48:42,860 --> 00:48:50,040
+And so for some of the substrings, I want to know what happens when you go
+first. And for some of them, I want to know what happens when I go first.
+
+623
+00:48:51,650 --> 00:48:56,560
+So if I move, it's your turn. And so we're going to
+flip back and forth between p being me and p being you.
+
+624
+00:48:57,520 --> 00:48:57,840
+p, you.
+
+625
+00:48:59,110 --> 00:49:03,320
+So you don't have to parameterize by this.
+There's a way to write the recurrence otherwise.
+
+626
+00:49:03,900 --> 00:49:05,720
+But this is, I think,
+a lot more intuitive.
+
+627
+00:49:06,560 --> 00:49:07,820
+Because now we can do
+
+628
+00:49:08,760 --> 00:49:09,930
+a very simple relation,
+
+629
+00:49:12,700 --> 00:49:14,240
+which is as follows.
+
+630
+00:49:16,340 --> 00:49:18,000
+So I'm going to
+split into two cases.
+
+631
+00:49:18,540 --> 00:49:19,920
+One is x of i, j, me.
+
+632
+00:49:20,520 --> 00:49:22,220
+And the other is x of i, j, you.
+
+633
+00:49:25,860 --> 00:49:27,300
+So x of i, j, me.
+
+634
+00:49:28,420 --> 00:49:31,180
+So I have some
+substring from i to j.
+
+635
+00:49:33,790 --> 00:49:36,920
+What could I do? I could take the first
+coin. Or I could take the second coin.
+
+636
+00:49:37,740 --> 00:49:44,860
+Which should I do? That's my question. What is my first move? Should
+I take the first coin or the second coin? So this is my question.
+
+637
+00:49:45,560 --> 00:49:47,280
+What is the first move?
+
+638
+00:49:51,160 --> 00:49:55,590
+There are exactly two possible answers to that
+question. So we can afford to just brute force them.
+
+639
+00:49:56,100 --> 00:49:58,560
+And take the max.
+
+640
+00:49:59,380 --> 00:50:10,120
+If we're moving, we want the maximum number of points we can get, maximum
+total value of the two choices. So if I take from the i side, the left
+
+641
+00:50:10,120 --> 00:50:12,840
+side, that would
+be x of i plus 1,
+
+642
+00:50:13,520 --> 00:50:13,840
+j.
+
+643
+00:50:15,180 --> 00:50:16,180
+And now, crucially,
+
+644
+00:50:16,760 --> 00:50:18,920
+we flip players.
+And it's your turn.
+
+645
+00:50:20,980 --> 00:50:24,520
+And if I take from the j side,
+that will make it j minus 1.
+
+646
+00:50:25,480 --> 00:50:27,540
+This is what I accidentally wrote
+at the beginning of the lecture.
+
+647
+00:50:31,820 --> 00:50:32,920
+Also flip players.
+
+648
+00:50:33,960 --> 00:50:44,020
+So either I shrink on the i side or I shrink on the j side. Oh, I should
+add on here the value of the coin that I get. And add on the value of the
+
+649
+00:50:44,040 --> 00:50:44,720
+coin that I took.
+
+650
+00:50:45,600 --> 00:50:49,140
+So this is an expression
+inside the max.
+
+651
+00:50:49,940 --> 00:50:50,540
+That sum.
+
+652
+00:50:52,120 --> 00:50:53,560
+And if I take the max
+of those two options,
+
+653
+00:50:54,480 --> 00:50:57,180
+that is my locally
+brute forced best choice
+
+654
+00:50:58,040 --> 00:51:03,340
+of what are the total value of coins I will
+get out of the remainder given the u start,
+
+655
+00:51:03,920 --> 00:51:06,220
+plus this coin that I took
+right now in the first step
+
+656
+00:51:06,820 --> 00:51:09,040
+and for the two possible
+choices of what that coin is.
+
+657
+00:51:10,000 --> 00:51:13,440
+What remains is how do we
+define this x of i, j, u?
+
+658
+00:51:14,940 --> 00:51:15,940
+This is a little bit funnier.
+
+659
+00:51:17,080 --> 00:51:19,610
+But it's conceptually
+similar. I'm going to write
+
+660
+00:51:20,420 --> 00:51:21,740
+basically the same
+
+661
+00:51:23,140 --> 00:51:24,720
+thing here, but with a me
+
+662
+00:51:25,400 --> 00:51:27,280
+instead of a u.
+Because again, it flips.
+
+663
+00:51:30,780 --> 00:51:33,740
+This is if u go first, then
+the very next move will be me.
+
+664
+00:51:35,500 --> 00:51:37,660
+So this is just the symmetric
+
+665
+00:51:40,520 --> 00:51:40,840
+formula here.
+
+666
+00:51:43,180 --> 00:51:44,620
+I can even put the braces in.
+
+667
+00:51:45,800 --> 00:51:46,540
+So far the same.
+
+668
+00:51:48,360 --> 00:51:54,680
+Now, I don't put in the plus vi. And I don't put in the plus
+vj here. Because if you're moving, I don't get those points.
+
+669
+00:51:55,300 --> 00:52:01,940
+So there's an asymmetry in this definition. You could define it in different
+ways. But this is the maximum total value that I would get if you start.
+
+670
+00:52:02,620 --> 00:52:03,700
+So in your first move,
+
+671
+00:52:04,280 --> 00:52:06,500
+you get some points. But I
+don't get any points out of that.
+
+672
+00:52:07,060 --> 00:52:09,200
+So there's no plus
+vi. There's no plus vj.
+
+673
+00:52:09,760 --> 00:52:15,100
+It's just you either choose the i -th coin or you choose
+the j -th coin. And then the coins that remain, for me,
+
+674
+00:52:15,660 --> 00:52:16,360
+shrink accordingly.
+
+675
+00:52:17,600 --> 00:52:17,780
+Now,
+
+676
+00:52:18,860 --> 00:52:23,260
+you're kind of a pain in the ass. You're an adversary.
+You're trying to minimize my score, potentially.
+
+677
+00:52:24,140 --> 00:52:31,600
+Because you're trying to maximize your score. This is a zero -sum game.
+So everything that you get, I don't get. So if you want to maximize your
+
+678
+00:52:31,600 --> 00:52:33,920
+score, you're trying to minimize
+my score. These are symmetric things.
+
+679
+00:52:34,460 --> 00:52:35,860
+And so if you think for a while,
+
+680
+00:52:36,410 --> 00:52:38,240
+the right thing
+to put here is min.
+
+681
+00:52:39,160 --> 00:52:42,500
+From our perspective, we're imagining
+what is the worst case that could happen,
+
+682
+00:52:43,180 --> 00:52:44,080
+no matter what you do.
+
+683
+00:52:45,240 --> 00:52:53,260
+And we don't have control over what you do. And so we'd really like
+to see what score would I get if you chose the i -th coin? What
+
+684
+00:52:53,780 --> 00:52:56,000
+score do you get if
+you chose the j -th coin?
+
+685
+00:52:57,110 --> 00:53:01,310
+And then what we get is going to be
+the worst of those two possibilities.
+
+686
+00:53:02,380 --> 00:53:08,060
+So when we get to choose, we're maximizing. And this is
+a general two -player phenomenon that when you choose,
+
+687
+00:53:08,640 --> 00:53:11,730
+we end up minimizing. Because that's
+the saddest thing that can happen to us.
+
+688
+00:53:13,180 --> 00:53:16,840
+OK, this is one way to
+write a recurrence relation.
+
+689
+00:53:18,700 --> 00:53:19,800
+We have, of course,
+
+690
+00:53:23,570 --> 00:53:33,500
+all of sort bot to do. So the topological order here is
+in increasing length of substrings. So the t is increasing
+
+691
+00:53:34,240 --> 00:53:35,240
+j minus i.
+
+692
+00:53:35,920 --> 00:53:38,700
+Start with empty
+strings. So base case is
+
+693
+00:53:39,420 --> 00:53:40,960
+that x of i,
+
+694
+00:53:41,640 --> 00:53:42,460
+i me.
+
+695
+00:53:43,680 --> 00:53:44,200
+Is vi.
+
+696
+00:53:45,720 --> 00:53:47,880
+So here, I'm inclusive in
+
+697
+00:53:48,460 --> 00:53:49,670
+both ends in this definition.
+
+698
+00:53:50,680 --> 00:53:56,080
+So there is a coin I can take at the end. But if you move last
+and there's one coin left, then I don't get it. So it's 0.
+
+699
+00:53:56,860 --> 00:54:00,760
+Then we have the original
+problem. That is xij me.
+
+700
+00:54:02,360 --> 00:54:02,460
+Sorry,
+
+701
+00:54:03,100 --> 00:54:09,260
+x0n. That's the entire coin set starting
+with me. That was the problem I wanted to do.
+
+702
+00:54:09,760 --> 00:54:11,430
+And then the running
+time we get is
+
+703
+00:54:11,940 --> 00:54:14,380
+the number of subproblems.
+That's theta n squared
+
+704
+00:54:15,220 --> 00:54:16,320
+because we're doing substrings
+
+705
+00:54:17,060 --> 00:54:21,900
+times the amount of non -recursive work I do here.
+That's just a max of two numbers. Very simple.
+
+706
+00:54:22,580 --> 00:54:22,900
+Constant time.
+
+707
+00:54:25,360 --> 00:54:26,380
+So this is quadratic.
+
+708
+00:54:30,720 --> 00:54:32,640
+Let me show you an example.
+
+709
+00:54:35,020 --> 00:54:36,180
+This is hard to draw.
+
+710
+00:54:36,880 --> 00:54:39,480
+But what I've described here is
+called solution 2 in the notes.
+
+711
+00:54:41,920 --> 00:54:42,400
+5, 10,
+
+712
+00:54:43,180 --> 00:54:52,060
+125 in both directions. And what we're interested in is all
+substrings. So over here, I've written the choice for i.
+
+713
+00:54:52,960 --> 00:54:55,700
+So we start at one of
+these. And if you start here,
+
+714
+00:54:56,300 --> 00:55:00,800
+you can't end earlier than there. So that's
+why we're in the upper diagonal of this matrix.
+
+715
+00:55:01,340 --> 00:55:07,380
+And then there's two versions of each problem, the white version and the
+blue version just down into the right of it if you can't see what blue is.
+
+716
+00:55:07,940 --> 00:55:10,860
+This is the version where you start.
+This is the version where I start.
+
+717
+00:55:11,960 --> 00:55:16,700
+And I've labeled here all of the different numbers.
+Please admire because this took a long time to draw.
+
+718
+00:55:17,600 --> 00:55:22,320
+But in particular, we have 105 here, meaning
+that the maximum points I can get are 105.
+
+719
+00:55:22,840 --> 00:55:24,600
+And that's the case because if
+
+720
+00:55:25,260 --> 00:55:27,040
+we look over
+there, it is the max
+
+721
+00:55:27,640 --> 00:55:31,020
+of these two incoming values
+
+722
+00:55:31,700 --> 00:55:32,520
+plus
+
+723
+00:55:33,040 --> 00:55:39,380
+the vi that I get. So either I go to the left and
+I take that item or I go down and I take that item.
+
+724
+00:55:42,460 --> 00:55:45,120
+The option here is
+I went to the left
+
+725
+00:55:46,020 --> 00:55:46,800
+and took,
+
+726
+00:55:47,560 --> 00:55:56,440
+well, that's going to be tricky to do in time. The claim is that
+the best answer here is to go here with the 100 and take the 5
+
+727
+00:55:57,060 --> 00:56:00,160
+because going down corresponds
+to removing the last item.
+
+728
+00:56:00,660 --> 00:56:07,020
+If I went to the left, that corresponds to removing, sorry, the first item.
+If I went to the left, that corresponds to removing the last item. So my
+
+729
+00:56:07,020 --> 00:56:08,440
+options are 10 plus 25,
+
+730
+00:56:09,320 --> 00:56:10,130
+which is 35,
+
+731
+00:56:12,800 --> 00:56:14,980
+100 plus 5, 105 wins.
+
+732
+00:56:15,520 --> 00:56:18,640
+So that's why there's a red edge
+here showing that was my better choice.
+
+733
+00:56:19,600 --> 00:56:24,040
+And in general, if you follow these parent
+pointers back, it gives you the optimal strategy
+
+734
+00:56:24,580 --> 00:56:32,000
+in what you should do. First, you should take the 5 is what this is saying
+because we just clipped off the 5. We used to start here. Now we start
+
+735
+00:56:32,060 --> 00:56:33,540
+here in this subinterval.
+
+736
+00:56:34,340 --> 00:56:35,020
+Then
+
+737
+00:56:35,740 --> 00:56:38,680
+our opponent, to be
+annoying, will take the 25.
+
+738
+00:56:39,240 --> 00:56:40,740
+Doesn't actually
+matter, I think.
+
+739
+00:56:41,920 --> 00:56:47,160
+They'll take the 100. And then
+they take the 10. And it's game over.
+
+740
+00:56:48,900 --> 00:56:53,960
+All the numbers here are how many points we get. It doesn't say how
+many points the opponent gets. Of course, you could add that as well.
+
+741
+00:56:55,000 --> 00:56:58,380
+It's just the total
+sum minus what we get.
+
+742
+00:57:00,180 --> 00:57:03,470
+Now let me come back to high
+level here. What we're really doing
+
+743
+00:57:04,580 --> 00:57:06,480
+is subproblem expansion.
+
+744
+00:57:07,440 --> 00:57:11,000
+And this is an idea that we
+will expand on next lecture.
+
+745
+00:57:15,640 --> 00:57:22,860
+And the idea is that sometimes you start with the obvious subproblems of
+prefixes, suffixes, or substrings. Here, the obvious version was substrings
+
+746
+00:57:22,860 --> 00:57:27,420
+because we're removing from both ends. If
+you don't know, probably suffixes or prefixes
+
+747
+00:57:28,420 --> 00:57:28,920
+are enough.
+
+748
+00:57:31,880 --> 00:57:34,620
+So we start there. But sometimes,
+that's still not enough subproblems.
+
+749
+00:57:35,730 --> 00:57:40,860
+Here, as soon as we made a move, our problem almost turned
+upside down because now it's your turn instead of my turn.
+
+750
+00:57:41,680 --> 00:57:43,280
+And that was just
+annoying to deal with.
+
+751
+00:57:43,780 --> 00:57:45,340
+And so whenever you
+
+752
+00:57:45,860 --> 00:57:51,840
+run into a new type of problem, just build more subproblems. As
+long as it stays a polynomial number, we'll get polynomial time.
+
+753
+00:57:52,880 --> 00:57:59,220
+And so here, we doubled the number of subproblems to just the B case and
+the U case. And that made this recurrence really easy to write. In the
+
+754
+00:57:59,220 --> 00:58:01,650
+notes, you'll see a messier way
+to write it if you don't do that.
+
+755
+00:58:02,300 --> 00:58:06,420
+In the examples we'll see next lecture,
+we're going to do a lot more expansion, maybe
+
+756
+00:58:07,300 --> 00:58:09,360
+multiplying the number of
+subproblems by n or n squared.
+
+757
+00:58:10,080 --> 00:58:10,860
+And this will give us,
+
+758
+00:58:11,820 --> 00:58:15,060
+it will let us add
+more constraints
+
+759
+00:58:15,820 --> 00:58:15,960
+to
+
+760
+00:58:17,120 --> 00:58:18,840
+our subproblems like we did
+
+761
+00:58:19,440 --> 00:58:22,780
+in longest increasing subsequence.
+We added this constraint
+
+762
+00:58:23,480 --> 00:58:30,840
+that we start with a particular item. The more subproblems we have, we can
+consider more constraints because we'll just brute force all the possible
+
+763
+00:58:30,840 --> 00:58:32,020
+constraints that could apply.
+
+764
+00:58:32,780 --> 00:58:34,320
+We'll see more
+of that next time.
+
+765
+00:58:34,840 --> 00:58:35,730
+That's it for today.
+

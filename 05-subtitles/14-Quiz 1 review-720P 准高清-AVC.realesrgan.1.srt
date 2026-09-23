@@ -1,0 +1,3332 @@
+﻿1
+00:00:18,658 --> 00:00:23,769
+‫I hope you all are here because you ‫know that there's a quiz next week.
+
+2
+00:00:23,793 --> 00:00:30,607
+‫So what is this quiz about? ‫It's about what we've talked about ‫so far in this class, of course.
+
+3
+00:00:30,631 --> 00:00:35,327
+‫What is this class about? ‫Someone remember ‫from my first lecture,
+
+4
+00:00:35,351 --> 00:00:41,289
+‫what is this class about? What are ‫we trying to test you in this class? ‫Algorithms.
+
+5
+00:00:41,313 --> 00:00:45,621
+‫Also data structures, that's ‫what the first part of this is.
+
+6
+00:00:45,645 --> 00:00:51,705
+‫But really, it's to get you to solve ‫computational problems. That's the first thing.
+
+7
+00:00:51,729 --> 00:00:57,302
+‫Be able to argue to someone else ‫that you actually did solve it. ‫It's correct.
+
+8
+00:00:57,326 --> 00:01:07,256
+‫That you chose something that's better than other things, that it's ‫efficient, and that you can communicate those things to other people.
+
+9
+00:01:07,280 --> 00:01:11,879
+‫Those are my big four that I ‫try to get you guys to internalize.
+
+10
+00:01:11,903 --> 00:01:16,722
+‫And so that's what our quizzes ‫are going to try to evaluate you on.
+
+11
+00:01:16,746 --> 00:01:23,244
+‫And so aside from some nitty gritty kind of ‫stuff that we do at the beginning of the term,
+
+12
+00:01:23,268 --> 00:01:29,595
+‫like talking about our ‫model of computation, ‫our model, ‫and asymptotics, asymptotics, is
+
+13
+00:01:29,619 --> 00:01:31,322
+‫that right? ‫Recurrences.
+
+14
+00:01:31,346 --> 00:01:36,749
+‫Aside from these kind of basics, we ‫kind of delve straight into algorithms.
+
+15
+00:01:36,773 --> 00:01:42,760
+‫These are kind of like almost definitions. ‫We don't rely on these things very much.
+
+16
+00:01:42,784 --> 00:01:46,070
+‫I mean, we rely on ‫these things all the time,
+
+17
+00:01:46,094 --> 00:02:07,340
+‫like the mathematics that we use to talk about things. How can we even say how long this stuff takes unless we can reason, we can abstract away ‫that this stuff is not on a real computer. This is kind of in our minds in a computer. And we're reasoning about these things based on the number of
+
+18
+00:02:07,364 --> 00:02:09,116
+‫constant time operations
+
+19
+00:02:09,140 --> 00:02:18,486
+‫this magical computer might have, which is a pretty good representation ‫of any of the computers you have for certain assumptions.
+
+20
+00:02:18,510 --> 00:02:25,032
+‫I mean, there's not a lot of problem ‫set questions we had you talk about. ‫But these things,
+
+21
+00:02:25,056 --> 00:02:29,655
+‫like specifically, usually they ‫were part of some other problem.
+
+22
+00:02:29,679 --> 00:02:36,689
+‫You had to describe the running time of this thing. ‫And you might have had to solve a recurrence.
+
+23
+00:02:36,713 --> 00:02:40,509
+‫And you might use master ‫theorem, that kind of thing.
+
+24
+00:02:40,533 --> 00:02:58,056
+‫Or you use asymptotics all the time. Or you need to remember in our model, oh, it kind of matters how big of an integer ‫I can store and do arithmetic on in constant time. So for that pset 3 question you had at the end of the coding question,
+
+25
+00:02:58,080 --> 00:03:08,594
+‫you wanted to hash things. And you need to argue that those things fit in ‫a constant number of words so that that could be done in constant time.
+
+26
+00:03:08,618 --> 00:03:11,684
+‫A lot of you guys ‫found canonicalizations,
+
+27
+00:03:11,708 --> 00:03:15,870
+‫basically mapping to things ‫that were exponentially large,
+
+28
+00:03:15,894 --> 00:03:23,779
+‫so maybe multiplying a product of primes or something ‫like that. And that would not be a good representation.
+
+29
+00:03:23,803 --> 00:03:29,644
+‫So these things come up, but they're not ‫the main focus of the problems we solve.
+
+30
+00:03:29,668 --> 00:03:37,918
+‫What are the main focus of the? How do we solve a computational ‫problem in this class? I kind of gave you two ways
+
+31
+00:03:37,942 --> 00:03:43,442
+‫at the beginning of the ‫term. Do you guys remember? ‫We can solve how to solve
+
+32
+00:03:43,466 --> 00:03:48,090
+‫a computational problem. ‫One's the hard way. ‫One's the easy way.
+
+33
+00:03:48,114 --> 00:03:50,815
+‫Brute force. JASON ‫KUO - Brute force?
+
+34
+00:03:50,839 --> 00:03:56,096
+‫OK, so you're describing to me a ‫technique for making your own algorithm.
+
+35
+00:03:56,120 --> 00:04:06,926
+‫I can just design my new algorithm from scratch. One way I could do that is ‫brute force it, look at all the possible outputs and see which one works.
+
+36
+00:04:06,950 --> 00:04:17,244
+‫Or I could reduce to something like divide and conquer or something like ‫that. That's generally a hard thing to do to make your own algorithm.
+
+37
+00:04:17,268 --> 00:04:21,357
+‫That's why we don't ask you ‫to do it a lot in this class.
+
+38
+00:04:21,381 --> 00:04:26,200
+‫It's an 046 kind of thing. So the ‫first thing you could do is write
+
+39
+00:04:26,224 --> 00:04:30,993
+‫design new algorithm ‫from scratch. ‫Usually, it's not from scratch.
+
+40
+00:04:31,017 --> 00:04:40,874
+‫Usually, you're reducing to some kind of algorithmic design paradigm ‫that you've maybe heard of. You'll talk a lot more about it in 046.
+
+41
+00:04:40,898 --> 00:04:45,790
+‫And at the end of this term, when ‫we talk about dynamic programming.
+
+42
+00:04:45,814 --> 00:04:52,336
+‫But generally, that's ‫a hard thing to do. ‫You're trying to think ‫of a recursive algorithm.
+
+43
+00:04:52,360 --> 00:04:57,033
+‫You're trying to prove that it's ‫correct, all these nitty gritty.
+
+44
+00:04:57,057 --> 00:05:00,707
+‫We have actually, throughout ‫the class in lectures,
+
+45
+00:05:00,731 --> 00:05:11,464
+‫have been showing you the algorithms. But we're not really expecting you ‫to make those algorithms. What are we expecting you to do most of the time?
+
+46
+00:05:11,488 --> 00:05:16,039
+‫Yeah? ‫To reduce it to a problem ‫that we showed you how to solve.
+
+47
+00:05:16,063 --> 00:05:25,773
+‫I'm going to say thing here. But really, what I mean is an algorithm ‫that we've taught you to basically here, reduce to a known thing.
+
+48
+00:05:25,797 --> 00:05:30,834
+‫No ‫to ‫known thing. ‫Usually, that means there's ‫a problem or an interface
+
+49
+00:05:30,858 --> 00:05:32,391
+‫that we've given you.
+
+50
+00:05:32,415 --> 00:05:38,986
+‫And in general, we've shown you multiple ‫different ways to solve that problem or interface.
+
+51
+00:05:39,010 --> 00:05:42,661
+‫So we've shown you many ‫ways on how to sort things.
+
+52
+00:05:42,685 --> 00:05:48,988
+‫And we've shown you many ways on how ‫to implement sequence and set interfaces. ‫Remember?
+
+53
+00:05:49,012 --> 00:05:58,503
+‫And a lot of times, the types of problems that we're asking you to ‫do is to just use as a black box some of the things that we did.
+
+54
+00:05:58,527 --> 00:06:03,711
+‫But you need, as a programmer, as a ‫computer scientist, you need to tell
+
+55
+00:06:03,735 --> 00:06:10,330
+‫me when I should use what when. ‫Yeah? Could you clarify what ‫you mean by use as a black box?
+
+56
+00:06:10,354 --> 00:06:14,321
+‫JASON KUO - Mm -hmm. Use ‫as a black box. Exactly. ‫Right.
+
+57
+00:06:14,345 --> 00:06:20,867
+‫So this is a phrase that I use and a ‫lot of people in computer science use. ‫It's basically,
+
+58
+00:06:20,891 --> 00:06:23,519
+‫you import a library ‫into your code.
+
+59
+00:06:23,543 --> 00:06:29,238
+‫What do I have? I have kind of an API. ‫I have a way to interact with that code.
+
+60
+00:06:29,262 --> 00:06:33,643
+‫I don't actually know what's ‫going on inside of that library.
+
+61
+00:06:33,667 --> 00:06:37,098
+‫I'm using it as a black ‫box. It's opaque to me.
+
+62
+00:06:37,122 --> 00:06:43,985
+‫I cannot look inside what the I mean, I actually ‫probably could look inside what their code is.
+
+63
+00:06:44,009 --> 00:06:54,304
+‫The thing that makes it useful to me is that it has this useful API that ‫I trust it to do the things that you told me that it was going to do.
+
+64
+00:06:54,328 --> 00:06:56,007
+‫And so there's kind of,
+
+65
+00:06:56,031 --> 00:07:02,845
+‫I'm going to jump around a little bit here, ‫actually, because that's a great question. ‫So here,
+
+66
+00:07:02,869 --> 00:07:14,186
+‫I think of there's kind of three different types of problems that we talk about ‫that we give you in this class. You might have seen this on the problem set.
+
+67
+00:07:14,210 --> 00:07:19,807
+‫I like to categorize them ‫into kind of three different ‫categories here. ‫One is,
+
+68
+00:07:19,831 --> 00:07:29,395
+‫you kind of have to understand the internals of a data structure ‫and algorithm that we know. You have to be able to look inside and,
+
+69
+00:07:29,419 --> 00:07:34,676
+‫I don't know, given a node in a ‫balanced binary search tree, an AVL tree,
+
+70
+00:07:34,700 --> 00:07:38,302
+‫how can I do a rotation? ‫Or how do I do an insert?
+
+71
+00:07:38,326 --> 00:07:42,438
+‫Or something about the ‫structure of this thing, ‫a binary.
+
+72
+00:07:42,462 --> 00:07:48,522
+‫Heap, where are the top k things in a max ‫binary heap, which is on your problem set?
+
+73
+00:07:48,546 --> 00:07:55,117
+‫Those things require me to very much not black ‫box these data structures. It's a white box.
+
+74
+00:07:55,141 --> 00:08:03,830
+‫I need to know what's inside of that to answer that question. ‫I need to know about the internals of that data structure.
+
+75
+00:08:03,854 --> 00:08:07,723
+‫And there are other types ‫of problems where it's like,
+
+76
+00:08:07,747 --> 00:08:16,144
+‫oh, I don't need to know what the internals of this data ‫structure is. I can just operate with knowledge of the API.
+
+77
+00:08:16,168 --> 00:08:19,672
+‫And try to hook it into ‫the problem that I need.
+
+78
+00:08:19,696 --> 00:08:23,201
+‫And that's what I call ‫a reduction type problem.
+
+79
+00:08:23,225 --> 00:08:28,774
+‫This is like, how does the core material ‫we presented to you in lecture work?
+
+80
+00:08:28,798 --> 00:08:32,545
+‫This is like, how do I ‫apply that core material? ‫And
+
+81
+00:08:32,569 --> 00:08:43,594
+‫harder than both of those things is what I might call a modification type of ‫problem. These aren't really good names. I came up with these this morning.
+
+82
+00:08:43,618 --> 00:08:46,831
+‫But it's trying to get ‫at the idea here that
+
+83
+00:08:46,855 --> 00:08:57,441
+‫it's possible that you kind of need to know what the API is. And you kind ‫of need to know what's going on inside to be able to answer the problem.
+
+84
+00:08:57,465 --> 00:09:04,084
+‫Things like adapting a ‫divide and conquer algorithm. ‫Or instead of using ‫a dynamic array ‫that
+
+85
+00:09:04,108 --> 00:09:11,117
+‫has extra space on one end, maybe I have to put ‫extra space in the middle or something like that.
+
+86
+00:09:11,141 --> 00:09:16,471
+‫I'm adapting something that was from ‫the core material. It's pretty close.
+
+87
+00:09:16,495 --> 00:09:22,044
+‫But I have to modify it in some way. ‫Augmentation. I have to take the vanilla
+
+88
+00:09:22,068 --> 00:09:31,341
+‫set AVL tree that I might have given you and put some other ‫property on the nodes. And you need to tell me how to maintain that.
+
+89
+00:09:31,365 --> 00:09:37,083
+‫How can I compute that subtree ‫property from its children? ‫Does that make sense?
+
+90
+00:09:37,107 --> 00:09:39,736
+‫So this is the ‫harder of the things.
+
+91
+00:09:39,760 --> 00:09:48,156
+‫If you can identify which one of these a problem that you ‫look at on an exam fit under, maybe that can help you kind
+
+92
+00:09:48,180 --> 00:09:52,877
+‫of conceptualize ‫what should I use. ‫For a reduction type problem,
+
+93
+00:09:52,901 --> 00:09:59,277
+‫we're going to talk ‫about this in a second. ‫But a lot of times, ‫it's useful to reduce it
+
+94
+00:09:59,301 --> 00:10:06,115
+‫to a problem or an interface rather ‫than an algorithm or a data structure. ‫What does that mean?
+
+95
+00:10:06,139 --> 00:10:10,374
+‫If I can solve the problem by ‫saying reducing to sorting, I
+
+96
+00:10:10,398 --> 00:10:16,385
+‫can argue to you that that algorithm is ‫correct. I just use sorting as a black box.
+
+97
+00:10:16,409 --> 00:10:22,274
+‫No, it might not be efficient. ‫My choice of sorting ‫algorithm that I chose matters
+
+98
+00:10:22,298 --> 00:10:26,264
+‫for efficiency. ‫But for correctness, ‫it doesn't matter.
+
+99
+00:10:26,288 --> 00:10:35,853
+‫For a data structures problem, I might reduce to using two set data ‫structures and a sequence data structure or something like that.
+
+100
+00:10:35,877 --> 00:10:36,096
+‫But
+
+101
+00:10:36,120 --> 00:10:43,932
+‫it will be correct if I reduce it to those things. I ‫can define the operations in terms of those interfaces.
+
+102
+00:10:43,956 --> 00:10:50,843
+‫I don't have to make that choice ‫until I talk about running time, ‫until I talk about efficiency.
+
+103
+00:10:50,867 --> 00:10:54,445
+‫And the name of the game ‫on the quiz to get points
+
+104
+00:10:54,469 --> 00:11:01,624
+‫is we can't give you points for an incorrect ‫algorithm or something that's pretty close to correct.
+
+105
+00:11:01,648 --> 00:11:14,206
+‫And we can't give you full points unless the correct algorithm you give us is efficient ‫and that you've argued things like correctness and running time and things like that.
+
+106
+00:11:14,230 --> 00:11:20,825
+‫Your algorithm could be correct ‫and efficient, but you analyze ‫the running time incorrectly.
+
+107
+00:11:20,849 --> 00:11:23,550
+‫So we mark your ‫points off for there.
+
+108
+00:11:23,574 --> 00:11:27,882
+‫What you do is you present us ‫with an inefficient algorithm,
+
+109
+00:11:27,906 --> 00:11:34,404
+‫and then you analyze the running time as if ‫it's the target running time that we gave you.
+
+110
+00:11:34,428 --> 00:11:38,906
+‫That's bad on two fronts. ‫So try not to fall ‫into these traps.
+
+111
+00:11:38,930 --> 00:11:44,186
+‫So some general test -taking strategies ‫when you're looking at your quiz.
+
+112
+00:11:44,210 --> 00:11:54,359
+‫I really strongly urge you to read through the entire exam before you ‫start because some of the problems will be easier for you than others.
+
+113
+00:11:54,383 --> 00:12:00,978
+‫And if you're trying to ‫maximize points on here, ‫as all of you, I'm ‫sure, are trying to do,
+
+114
+00:12:01,002 --> 00:12:08,011
+‫it's useful to make that initial pass through the ‫problems to see which ones are easiest for you.
+
+115
+00:12:08,035 --> 00:12:13,146
+‫And then you can tackle them in the ‫order in which you have confidence.
+
+116
+00:12:13,170 --> 00:12:19,960
+‫Now, in actuality, the average on, say, quiz 1 ‫of this class tends to be around, I don't know,
+
+117
+00:12:19,984 --> 00:12:25,727
+‫between a 60 and an 80. I ‫don't think it's ever been 80. ‫But it's not 100. ‫Right?
+
+118
+00:12:25,751 --> 00:12:28,233
+‫So doing 50 % of ‫the problems well
+
+119
+00:12:28,257 --> 00:12:42,276
+‫is probably going to be better for you in terms of time management and those kinds of things than ‫attempting all of the problems and not doing great on any of them in terms of point management.
+
+120
+00:12:42,300 --> 00:12:48,749
+‫In computer science, you have to be pretty ‫close to a correct answer to get points. ‫Right?
+
+121
+00:12:48,773 --> 00:12:52,861
+‫It basically needs to be ‫almost correct or you don't get.
+
+122
+00:12:52,885 --> 00:13:00,332
+‫If you've seen how your problem sets are being graded, ‫sometimes our problem set graders make mistakes.
+
+123
+00:13:00,356 --> 00:13:04,907
+‫Sometimes they give you points ‫for an incorrect solution. ‫Right?
+
+124
+00:13:04,931 --> 00:13:17,051
+‫It's really on you to take a look at your problem sets that you gave us and our ‫solutions that we gave you. We spent a lot of time writing good solutions for you guys.
+
+125
+00:13:17,075 --> 00:13:20,580
+‫You need to make sure ‫that you know the material.
+
+126
+00:13:20,604 --> 00:13:24,619
+‫Don't come up to us at the ‫end of an exam and say, oh, I
+
+127
+00:13:24,643 --> 00:13:31,214
+‫said the same thing on my problem set. It was ‫marked correct. And you guys marked it wrong.
+
+128
+00:13:31,238 --> 00:13:40,438
+‫Well, yeah. The staff knows a little bit more about algorithms ‫than your graders on your problem sets. And we grade your exams.
+
+129
+00:13:40,462 --> 00:13:46,546
+‫So unfortunately, that's not an excuse. ‫Right? It's on you to know the material. ‫Yep?
+
+130
+00:13:46,570 --> 00:13:49,782
+‫So are most of the ‫problems on the exams are
+
+131
+00:13:49,806 --> 00:14:03,459
+‫multiple part things where we need to have a good understanding and do the first few parts right ‫in order to get even partial credit on the other parts? Or is it like it's a shorter thing?
+
+132
+00:14:03,483 --> 00:14:07,547
+‫The question is, ‫are questions ‫built on top of each ‫other
+
+133
+00:14:07,571 --> 00:14:20,275
+‫so that you're kind of at a wall if you miss the first part? We try not to design exams ‫that way. You can actually take a look at the practice exam that's already been posted.
+
+134
+00:14:20,299 --> 00:14:23,219
+‫Our problems tend to ‫be self -contained.
+
+135
+00:14:23,243 --> 00:14:27,989
+‫And if they are multiple parts, ‫the parts are usually independent.
+
+136
+00:14:28,013 --> 00:14:32,759
+‫Usually, you don't need to have ‫done A correctly in order to do B.
+
+137
+00:14:32,783 --> 00:14:38,429
+‫And that's how our problem ‫sets try to be written as well. ‫Right? For your last
+
+138
+00:14:38,453 --> 00:14:45,243
+‫decoding question on PSAT 4, you had this problem ‫where you had to design this data structure.
+
+139
+00:14:45,267 --> 00:14:51,375
+‫Right? ‫But C said, use that as a black box, ‫essentially, and solve the problem. ‫Right?
+
+140
+00:14:51,399 --> 00:14:56,704
+‫So you actually ‫don't need to show. ‫We've given you this interface. ‫Right?
+
+141
+00:14:56,728 --> 00:15:02,495
+‫You can just use that interface to be ‫able to answer C, the algorithms question,
+
+142
+00:15:02,519 --> 00:15:08,433
+‫without even solving the data structures ‫question correctly. Does that make sense?
+
+143
+00:15:08,457 --> 00:15:15,905
+‫And actually, that was the algorithms question was ‫the easier one there, I think, from what I remember.
+
+144
+00:15:15,929 --> 00:15:19,019
+‫Yeah? ‫Do we have to write ‫code on the exam?
+
+145
+00:15:19,043 --> 00:15:22,621
+‫JASON KUO - Do you have ‫to write code on the exam?
+
+146
+00:15:22,645 --> 00:15:26,660
+‫I've never given an exam ‫where you've had to write code.
+
+147
+00:15:26,684 --> 00:15:32,670
+‫I have written exams ‫where you have to read code. ‫OK? ‫So pseudocode or Python. ‫Right?
+
+148
+00:15:32,694 --> 00:15:36,053
+‫Since Python's a ‫prerequisite, for this class,
+
+149
+00:15:36,077 --> 00:15:45,349
+‫it's completely fair game that we give you small snippets of ‫Python code. And you have to be able to understand what's going on.
+
+150
+00:15:45,373 --> 00:15:49,340
+‫Yeah? ‫You said amortization ‫under the modification part.
+
+151
+00:15:49,364 --> 00:15:55,886
+‫So does that mean if we're ‫using an amortized run time? ‫JASON KUO - Yeah. ‫What I mean here,
+
+152
+00:15:55,910 --> 00:16:01,483
+‫amortization certainly ‫appears in here or here. ‫Right? These kinds of things.
+
+153
+00:16:01,507 --> 00:16:08,443
+‫Oftentimes, if I'm using a dynamic array, if I'm ‫using a binary heap, if I'm using a hash table,
+
+154
+00:16:08,467 --> 00:16:23,872
+‫amortization will appear here in our running times for those dynamic operations. What I mean here in ‫amortization, I mean if I'm asking you to generalize something that we've done, like with dynamic arrays, where
+
+155
+00:16:23,896 --> 00:16:37,695
+‫instead of adding additional space at the end, I'm putting additional space in the middle or at ‫the beginning or something like that, and you're having to do some kind of amortized analysis.
+
+156
+00:16:37,719 --> 00:16:40,640
+‫Now, often, it's ‫unnecessary to do this.
+
+157
+00:16:40,664 --> 00:16:50,447
+‫When we talked about a problem where we did do our own amortized ‫analysis of making a double -ended deck, I mean a double -ended queue,
+
+158
+00:16:50,471 --> 00:16:55,363
+‫you could actually solve it by ‫reducing to using two dynamic arrays.
+
+159
+00:16:55,387 --> 00:16:57,797
+‫So there's a lot ‫of ways in which
+
+160
+00:16:57,821 --> 00:17:04,903
+‫you could reduce to using things, but you might ‫have to do some additional bookkeeping at the end.
+
+161
+00:17:04,927 --> 00:17:08,358
+‫But what this is saying ‫is that these are more,
+
+162
+00:17:08,382 --> 00:17:17,655
+‫you're not using things as a black box. You're changing something ‫about the boxes that we gave you. Right? Does that make sense?
+
+163
+00:17:17,679 --> 00:17:18,044
+‫Yeah?
+
+164
+00:17:18,068 --> 00:17:34,422
+‫If you tell us to write an algorithm that does something like O log n time, and we can think only of an algorithm ‫that does something inefficiently like O log n time, then is there any point in writing that? JASON KUO - Sure.
+
+165
+00:17:34,446 --> 00:17:41,016
+‫So let's actually ‫move on for a second. ‫There's ‫I'm going to answer ‫your question very soon.
+
+166
+00:17:41,040 --> 00:17:44,374
+‫OK. ‫But I'm going to get ‫to it in a second. ‫OK?
+
+167
+00:17:44,398 --> 00:17:49,290
+‫If I don't answer that question ‫in five minutes, please let me know.
+
+168
+00:17:49,314 --> 00:17:57,929
+‫OK. So the first thing when I'm approaching a problem on the ‫exam, I might try to ask some questions about the problem.
+
+169
+00:17:57,953 --> 00:18:04,645
+‫OK? ‫It's going to help me ‫decide what to use. Right? ‫Different than your ‫problem sets. Right?
+
+170
+00:18:04,669 --> 00:18:05,983
+‫Your problem sets.
+
+171
+00:18:06,007 --> 00:18:12,067
+‫So basically, what do you use is what did ‫we talk about in lecture that week? Right?
+
+172
+00:18:12,091 --> 00:18:16,399
+‫On a quiz, you have eight ‫lectures that you've talked about.
+
+173
+00:18:16,423 --> 00:18:31,901
+‫And so this is going to be a harder thing for you to do. Right? Because you don't know which of the eight ‫lecture material is going to apply to this problem. And it could be a combination of them, actually. Right?
+
+174
+00:18:31,925 --> 00:18:37,182
+‫And so I'm trying to give you ways ‫of answering that question faster. OK?
+
+175
+00:18:37,206 --> 00:18:50,567
+‫So is this a mechanical reduction or a modification type problem? That's just going to help ‫me determine kind of the difficulty level of what this is. I might not be able to answer it.
+
+176
+00:18:50,591 --> 00:18:55,337
+‫Right? But it can give you a ‫sense for what kind of problem it is.
+
+177
+00:18:55,361 --> 00:19:01,834
+‫Is this a problem about ‫data structures sorting both? ‫Right? ‫If it's about data structures,
+
+178
+00:19:01,858 --> 00:19:08,940
+‫do I need to support sequence type operations? Do ‫I need to store an extrinsic order on something?
+
+179
+00:19:08,964 --> 00:19:16,484
+‫Or is it a thing where I care about what the objects ‫are? I'm trying to look things up by what they are.
+
+180
+00:19:16,508 --> 00:19:17,993
+‫Right? ‫Or maybe both.
+
+181
+00:19:18,017 --> 00:19:30,429
+‫Or maybe some combination. Right? If I have a bunch of different types of keys that I ‫might want to query on, I might have to use at least two set type of data structures.
+
+182
+00:19:30,453 --> 00:19:34,468
+‫Right? You could get very ‫complicated with these things.
+
+183
+00:19:34,492 --> 00:19:41,428
+‫But putting it in terms of, well, I'm going to ‫need to do this kind of operation on these names,
+
+184
+00:19:41,452 --> 00:19:54,813
+‫then I can think, oh, I need to set data structure there. I'll think about how to implement ‫that later. Should I use a hash table? Should I use a sorted array? Should I use a AVL tree?
+
+185
+00:19:54,837 --> 00:19:55,275
+‫Right?
+
+186
+00:19:55,299 --> 00:20:03,769
+‫But thinking about it first at the abstract level of, I need ‫to set data structure here can help you compartmentalize
+
+187
+00:20:03,793 --> 00:20:07,783
+‫correctness versus efficiency. ‫Does that make sense? ‫OK.
+
+188
+00:20:07,807 --> 00:20:11,847
+‫If you're stuck, ‫this is your question. ‫If you're stuck,
+
+189
+00:20:11,871 --> 00:20:15,449
+‫write down a correct ‫algorithm that's inefficient.
+
+190
+00:20:15,473 --> 00:20:23,285
+‫Right? We can give you points for a correct algorithm ‫that's inefficient. At least it's a correct algorithm.
+
+191
+00:20:23,309 --> 00:20:28,176
+‫It's better than other things. ‫Right? ‫Now, if it's exponential time,
+
+192
+00:20:28,200 --> 00:20:30,390
+‫you might be limited to, like,
+
+193
+00:20:30,414 --> 00:20:36,985
+‫10 % or 20 % of the points. Right? But if it's ‫a log factor worse or a linear factor worse,
+
+194
+00:20:37,009 --> 00:20:43,458
+‫maybe that's OK. Right? ‫On a data structures problem, if ‫any operation takes order n time,
+
+195
+00:20:43,482 --> 00:20:53,119
+‫that's probably not going to give you a lot of points because the ‫whole point of the data structure is to make those operations fast.
+
+196
+00:20:53,143 --> 00:20:59,713
+‫Right? ‫But if it solves the problem, ‫you'll get some points. ‫You won't get zero points. ‫Yeah?
+
+197
+00:20:59,737 --> 00:21:02,293
+‫Will we get any ‫questions that are,
+
+198
+00:21:02,317 --> 00:21:09,983
+‫how fast can you make this, make this as fast as ‫possible? JASON KUO - Yeah. So a lot of times, we'll say,
+
+199
+00:21:10,007 --> 00:21:13,317
+‫give us an efficient algorithm. ‫OK. It's like,
+
+200
+00:21:13,341 --> 00:21:22,540
+‫whoa, I don't know if it's efficient or not. Well, that just ‫means that faster running times are going to give you more points.
+
+201
+00:21:22,564 --> 00:21:27,650
+‫OK? ‫So in questions like that, ‫it's mostly trying ‫to play this game of,
+
+202
+00:21:27,674 --> 00:21:37,092
+‫usually, we'll put an efficient one not in terms of a data structure ‫because, usually, the data structures problem, it's important
+
+203
+00:21:37,116 --> 00:21:42,032
+‫in your implementation that ‫these data structure ‫operations be fast.
+
+204
+00:21:42,056 --> 00:21:48,432
+‫And we want to tell you ‫how fast it is. Right? ‫So data structures ‫questions, in general,
+
+205
+00:21:48,456 --> 00:21:51,085
+‫there's usually a ‫trade -off between
+
+206
+00:21:51,109 --> 00:22:01,330
+‫the running times of these different operations. And it's really important ‫how they relate to each other. And so for data structures problem,
+
+207
+00:22:01,354 --> 00:22:04,786
+‫it's kind of about ‫getting those running times.
+
+208
+00:22:04,810 --> 00:22:12,768
+‫OK? With an algorithms problem, where we ask you to do ‫one thing, right, and we try to do as fast as possible,
+
+209
+00:22:12,792 --> 00:22:14,471
+‫try to get linear time.
+
+210
+00:22:14,495 --> 00:22:27,126
+‫Right? Most of the time, you can't get better than linear time if you have to read the ‫entire input at some point. Right? Like if I want to find the things in my data. Right?
+
+211
+00:22:27,150 --> 00:22:30,728
+‫And if you can't think ‫of a linear time algorithm,
+
+212
+00:22:30,752 --> 00:22:35,741
+‫think of an n squared thing or ‫think of an n log n thing. Right? ‫Maybe
+
+213
+00:22:35,765 --> 00:22:40,534
+‫that's a little hard for you ‫guys to think of right now. ‫Right? But
+
+214
+00:22:40,558 --> 00:22:46,983
+‫that's why I'm saying, start with any correct ‫algorithm. And then maybe you can optimize.
+
+215
+00:22:47,007 --> 00:22:53,505
+‫Maybe you can use a better data structure to ‫make it more efficient. Does that make sense?
+
+216
+00:22:53,529 --> 00:22:59,222
+‫Any other questions? ‫OK. ‫Moving right along. ‫OK. ‫Here's some downsides. ‫Right? ‫OK.
+
+217
+00:22:59,246 --> 00:23:03,043
+‫If you find yourself doing ‫one of these three things,
+
+218
+00:23:03,067 --> 00:23:07,325
+‫take a step back. You're ‫probably doing something wrong. ‫OK?
+
+219
+00:23:07,349 --> 00:23:13,506
+‫So question yourself if you're ‫trying to compute decimals, ‫rationals, or real numbers.
+
+220
+00:23:13,530 --> 00:23:19,444
+‫I can't store those things on a, I mean, ‫I can store decimals to finite precision.
+
+221
+00:23:19,468 --> 00:23:24,457
+‫Right? But if you're ‫doing finite precision, ‫you might as well round,
+
+222
+00:23:24,481 --> 00:23:30,273
+‫like multiply your numbers by that ‫fixed precision and deal with integers. ‫Right?
+
+223
+00:23:30,297 --> 00:23:35,408
+‫We only have taught you how to deal ‫with integers in this class. Right?
+
+224
+00:23:35,432 --> 00:23:42,003
+‫We haven't even shown you how to efficiently ‫compute on rationals and real numbers. We have
+
+225
+00:23:42,027 --> 00:23:48,525
+‫told you if you have a denominator and a ‫numerator of a fraction, I can take two fractions
+
+226
+00:23:48,549 --> 00:23:53,149
+‫and compare them in constant ‫time by doing cross multiplication.
+
+227
+00:23:53,173 --> 00:23:59,549
+‫But if I'm trying to ‫actually do this division ‫to arbitrary precision, ‫that's not happy.
+
+228
+00:23:59,573 --> 00:24:06,874
+‫Right? Because I can't even represent that on my ‫computer in finite number of decimal points for some
+
+229
+00:24:06,898 --> 00:24:08,528
+‫of these things. ‫Right?
+
+230
+00:24:08,552 --> 00:24:14,271
+‫If you're trying to use radix sort ‫for every answer, it's probably wrong. ‫Right?
+
+231
+00:24:14,295 --> 00:24:17,946
+‫One of the things that we ‫try to do on our quizzes,
+
+232
+00:24:17,970 --> 00:24:22,885
+‫right, we're not just giving ‫you a bunch of problems randomly. ‫Right?
+
+233
+00:24:22,909 --> 00:24:28,312
+‫We probably are making problems that ‫cover the material in some way. Right?
+
+234
+00:24:28,336 --> 00:24:32,011
+‫We do want to test you ‫on all of the things. ‫Right?
+
+235
+00:24:32,035 --> 00:24:38,022
+‫And so if you find that you're using the ‫same thing four or five times on the exam,
+
+236
+00:24:38,046 --> 00:24:39,871
+‫that might be a sign that
+
+237
+00:24:39,895 --> 00:24:52,088
+‫you're using it too many times. It's not always the case. Right? Sometimes hashing ‫is super useful. Right? So you want to use it all the time. But in particular, right,
+
+238
+00:24:52,112 --> 00:24:56,663
+‫everyone tries to use radix ‫sort when it's inappropriate. ‫Right?
+
+239
+00:24:56,687 --> 00:25:01,869
+‫And they love, right, ‫because it gets linear time. ‫Right? ‫But ‫if you write
+
+240
+00:25:01,893 --> 00:25:10,290
+‫merge sort for something where radix sort will apply, you'll ‫get some points because it's correct but not efficient.
+
+241
+00:25:10,314 --> 00:25:13,939
+‫Right? ‫And ‫it's inefficient by ‫a log factor. Right?
+
+242
+00:25:13,963 --> 00:25:23,090
+‫If you're trying to use radix sort in a situation where comparisons ‫are the answer and you don't have a bound on the integers,
+
+243
+00:25:23,114 --> 00:25:28,736
+‫if I don't have a bound on the size of ‫the integers, then this may be taking a
+
+244
+00:25:28,760 --> 00:25:30,731
+‫huge amount of time. Right?
+
+245
+00:25:30,755 --> 00:25:37,569
+‫So I might not even think of that as being ‫correct because it could be exponential time. ‫Right?
+
+246
+00:25:37,593 --> 00:25:44,188
+‫I mean, I don't know. I don't know how big ‫my word size is. It could be arbitrarily bad. ‫OK?
+
+247
+00:25:44,212 --> 00:25:57,281
+‫And then if you're trying to augment a binary tree with something that's not a subtree ‫property, right, something that can't be computed from the augmentations of its two children,
+
+248
+00:25:57,305 --> 00:26:02,829
+‫you're doing something ‫bad. I mean, every exam, ‫we have ‫30 % of students say,
+
+249
+00:26:02,853 --> 00:26:08,790
+‫augment by my index ‫in the entire tree. ‫Right? ‫Or augment by, ‫here's one that's fun,
+
+250
+00:26:08,814 --> 00:26:12,634
+‫augment by the things the ‫size of my left subtree. ‫OK?
+
+251
+00:26:12,658 --> 00:26:15,871
+‫Like the number of ‫nodes in my left subtree.
+
+252
+00:26:15,895 --> 00:26:21,906
+‫I'm not sure how I can maintain that ‫with rotations and things like that. ‫Let's see.
+
+253
+00:26:21,930 --> 00:26:26,603
+‫In order for me to keep track of ‫the augmentation of my left tree
+
+254
+00:26:26,627 --> 00:26:38,308
+‫from the augmentation of my left tree, right, I kind of have to do a logarithmic ‫walk all the way down the thing to figure out how many things were there. Right?
+
+255
+00:26:38,332 --> 00:26:52,716
+‫So that's not a maintainable thing in constant time. If I want to augment something of my left ‫subtree, just augment the thing itself and just look at your left subtree and look at its augmentation.
+
+256
+00:26:52,740 --> 00:26:54,273
+‫Does that make sense?
+
+257
+00:26:54,297 --> 00:27:14,667
+‫Yeah? If you had, say, augmented it with a subtree and then augmented it again with left subtree and then used that. JASON KU - You could do ‫that. That's still kind of like .. JASON KU - You could do that. Yeah. So you could do that in constant time by augmenting by subtree size.
+
+258
+00:27:14,691 --> 00:27:29,147
+‫Right? Yeah, and then have another augmentation in the node thing. JASON KU - You could have another ‫augmentation because then you could just look at, but then just look at your left subtree, please.
+
+259
+00:27:29,171 --> 00:27:29,537
+‫Yeah?
+
+260
+00:27:29,561 --> 00:27:38,541
+‫No reason to store it again. Right? You just do one constant ‫time look to your left subtree. JASON KU - To your left, right?
+
+261
+00:27:38,565 --> 00:27:43,091
+‫OK. ‫Don't do that. ‫OK. ‫So that is cool. I'm ‫not that far behind.
+
+262
+00:27:43,115 --> 00:27:48,420
+‫Those are my tips ‫on solving questions. ‫Oh, there's one more, ‫Paige. Yeah?
+
+263
+00:27:48,444 --> 00:28:01,659
+‫So in defining an augmentation, you just have to give a formula and argue that it's random ‫constant time? JASON KU - Exactly, right? So the idea is if you give an augmentation that's
+
+264
+00:28:01,683 --> 00:28:02,778
+‫not stand, like
+
+265
+00:28:02,802 --> 00:28:20,471
+‫we're going to talk about our standard things you can reduce to in a second, if you're saying, I'm going to take a set AVL ‫tree or a sequence AVL tree, and like, for example, at the end of lecture, we were talking about how a sequence AVL tree
+
+266
+00:28:20,495 --> 00:28:20,860
+‫could
+
+267
+00:28:20,884 --> 00:28:27,455
+‫be modified to support priority queue operations ‫in the same running times as binary heaps.
+
+268
+00:28:27,479 --> 00:28:33,465
+‫And that was saying, ‫we store our subtree maxes, ‫the max thing in my subtree. ‫Right?
+
+269
+00:28:33,489 --> 00:28:40,230
+‫And so that's a different augmentation ‫than what's already augmented on ‫the sequence AVL tree.
+
+270
+00:28:40,254 --> 00:28:44,682
+‫What are the augmentations ‫on a sequence AVL tree? ‫Size. ‫Count.
+
+271
+00:28:44,706 --> 00:28:50,352
+‫JASON KU - So count is the same thing ‫as how many nodes are in my subtree. ‫And?
+
+272
+00:28:50,376 --> 00:28:55,073
+‫Height. JASON KU - Height, ‫right, because it's an AVL tree. ‫Right?
+
+273
+00:28:55,097 --> 00:29:01,181
+‫So if I'm augmenting ‫by max in my subtree, ‫that's not part of ‫my standard interface.
+
+274
+00:29:01,205 --> 00:29:07,995
+‫So you need to tell me that. Even though we've ‫done it before, it should be very easy for you.
+
+275
+00:29:08,019 --> 00:29:10,574
+‫Just say, I'm ‫augmenting by my max.
+
+276
+00:29:10,598 --> 00:29:17,193
+‫Max can be computed as the max between me ‫and my left and right subtree if they exist. ‫Done.
+
+277
+00:29:17,217 --> 00:29:18,459
+‫But just do that.
+
+278
+00:29:18,483 --> 00:29:26,733
+‫You have to tell me, and it takes constant time, so it can ‫be maintained in constant time when I'm doing my stuff.
+
+279
+00:29:26,757 --> 00:29:30,528
+‫Does that make sense? ‫OK. ‫So the last thing, I guess,
+
+280
+00:29:30,552 --> 00:29:34,811
+‫especially on the data ‫structures problems, ‫I would suggest
+
+281
+00:29:34,835 --> 00:29:41,698
+‫that you approach these things by solving these ‫problems just in terms of the interfaces first,
+
+282
+00:29:41,722 --> 00:29:45,665
+‫because then at least you ‫get something that's correct.
+
+283
+00:29:45,689 --> 00:29:53,209
+‫And then choose the algorithms or data structures ‫that you use to implement those interfaces afterwards.
+
+284
+00:29:53,233 --> 00:29:57,906
+‫One gets you to a correct ‫algorithm. The other is for efficiency.
+
+285
+00:29:57,930 --> 00:30:03,795
+‫So that's going to help ‫you in solving the problem. ‫If it doesn't help you, don't.
+
+286
+00:30:03,819 --> 00:30:12,069
+‫If you're like, whenever I see a set data structure, I'm ‫going to probably use a hash table, that's probably fine.
+
+287
+00:30:12,093 --> 00:30:17,423
+‫But if we're looking for worst case ‫time bounds, that's probably not fine.
+
+288
+00:30:17,447 --> 00:30:19,418
+‫So just you, I'm suggesting
+
+289
+00:30:19,442 --> 00:30:27,473
+‫that you separate these things so that you concentrate ‫on solving the problem first and then optimize it later.
+
+290
+00:30:27,497 --> 00:30:31,683
+‫Yeah? ‫Just a question in regards ‫to worst case time bounds.
+
+291
+00:30:31,707 --> 00:30:35,796
+‫So for a hash table, even ‫though that's all one expected,
+
+292
+00:30:35,820 --> 00:30:44,070
+‫that also implies that's all n worst case. So could you ‫technically? JASON KU - It doesn't imply that. It is that.
+
+293
+00:30:44,094 --> 00:30:52,636
+‫So I mean, you could have a data structure whose expected ‫time bound is constant, but its worst case bound is n log n.
+
+294
+00:30:52,660 --> 00:30:59,377
+‫It just happens to be the fact that for a hash ‫table, those worst case operations are linear.
+
+295
+00:30:59,401 --> 00:31:02,322
+‫But if I had, we had ‫a question up here.
+
+296
+00:31:02,346 --> 00:31:11,180
+‫Beforehand, if I had a running time bound that I did something ‫to a hash table in constant expected time, I did a look up.
+
+297
+00:31:11,204 --> 00:31:17,264
+‫And then I queried an AVL tree for the ‫predecessor of a node or something like that.
+
+298
+00:31:17,288 --> 00:31:19,771
+‫And I did that in ‫o of log n time.
+
+299
+00:31:19,795 --> 00:31:24,832
+‫What's the worst case running time ‫of that? O of n. JASON KU - o of n.
+
+300
+00:31:24,856 --> 00:31:30,137
+‫What's the expected ‫running time of this thing? ‫o of n. JASON KU - log n.
+
+301
+00:31:30,161 --> 00:31:36,002
+‫Expected log n. Because it's possible ‫that in the worst case, it could be higher.
+
+302
+00:31:36,026 --> 00:31:39,798
+‫Does that make sense? ‫OK. ‫So OK, the second bullet is
+
+303
+00:31:39,822 --> 00:31:45,079
+‫just setting up a data structures ‫problem. There's a lot of moving parts.
+
+304
+00:31:45,103 --> 00:31:50,359
+‫We're going to do two data structures ‫problem at the end of this session.
+
+305
+00:31:50,383 --> 00:31:53,888
+‫Describe all of the data ‫structures you're using.
+
+306
+00:31:53,912 --> 00:32:03,038
+‫JASON KU - Including what they store. If you're storing a set ‫data structure, you better tell me what the things you're stored
+
+307
+00:32:03,062 --> 00:32:09,073
+‫are keyed on. ‫Usually, the things that we're ‫storing contain a bunch of information.
+
+308
+00:32:09,097 --> 00:32:15,522
+‫And if you just say, I'm storing all of the ‫toppings of my pizza in a set data structure,
+
+309
+00:32:15,546 --> 00:32:27,301
+‫and that's all you tell me, I have no idea what you're talking about. Because I ‫don't know what the semantics of your set data structure are. What is it keyed on?
+
+310
+00:32:27,325 --> 00:32:33,068
+‫I have to say, ‫oh, it's keyed on, ‫I don't know, the y's. ‫Or something like that.
+
+311
+00:32:33,092 --> 00:32:34,771
+‫And they're invariants.
+
+312
+00:32:34,795 --> 00:32:42,681
+‫How we're setting up these data structures problem, ‫usually how I solve these when I'm writing the solutions,
+
+313
+00:32:42,705 --> 00:32:49,373
+‫I set you up a state of what this ‫data structure could be at some instance. ‫I'm going to say,
+
+314
+00:32:49,397 --> 00:32:53,412
+‫this data structure stores ‫all of the things less than k
+
+315
+00:32:53,436 --> 00:32:59,325
+‫with key less than ‫k, blah, blah, blah. ‫And this one stores the ‫extrinsic order of
+
+316
+00:32:59,349 --> 00:33:01,978
+‫the items based on ‫blah, blah, blah.
+
+317
+00:33:02,002 --> 00:33:12,880
+‫So actually, me stating what they store in that way is actually imposing ‫some kind of invariant on these data structures that I'm wanting to maintain.
+
+318
+00:33:12,904 --> 00:33:17,650
+‫But what I need to do to prove ‫that this thing is correct is that,
+
+319
+00:33:17,674 --> 00:33:22,736
+‫based on the assumption ‫that those invariants held ‫before my operation,
+
+320
+00:33:22,760 --> 00:33:27,141
+‫then I can prove that an ‫operation is correct if all of those
+
+321
+00:33:27,165 --> 00:33:31,326
+‫invariants are maintained ‫before then after the operation.
+
+322
+00:33:31,350 --> 00:33:34,928
+‫That's how I'm proving ‫that this thing is correct.
+
+323
+00:33:34,952 --> 00:33:40,866
+‫And then when I'm querying, I'm doing some ‫kind of look up on this data structure.
+
+324
+00:33:40,890 --> 00:33:46,560
+‫I can rely on those invariants. ‫I know that those ‫things are good. ‫Those things
+
+325
+00:33:46,584 --> 00:33:55,637
+‫have been maintained. And so I can rely on those to look up ‫what's the largest k of this thing. Does that kind of make sense?
+
+326
+00:33:55,661 --> 00:34:01,818
+‫This is very abstract. We're ‫going to get a little bit more ‫concrete in just a second.
+
+327
+00:34:01,842 --> 00:34:08,705
+‫And then implement every operation. You have no ‫idea how many solutions we read on the quizzes,
+
+328
+00:34:08,729 --> 00:34:14,472
+‫which we give you ‫three operations to implement, ‫and you don't even mention one.
+
+329
+00:34:14,496 --> 00:34:20,288
+‫And it's usually ‫the easiest one. ‫It's like, insert it ‫into your data structure.
+
+330
+00:34:20,312 --> 00:34:27,102
+‫It's like, come on, just say that. We can't give ‫you points unless you mention that operation.
+
+331
+00:34:27,126 --> 00:34:33,891
+‫Does that make sense? ‫And then it's going ‫to help us read. ‫Happy graders give ‫you more points.
+
+332
+00:34:33,915 --> 00:34:40,437
+‫Not really, ‫but if your solution is well -organized ‫and well -labeled and things like that,
+
+333
+00:34:40,461 --> 00:34:48,127
+‫then we're going to be able to comprehend your solution ‫better, and we'll be able to give you more points.
+
+334
+00:34:48,151 --> 00:34:53,724
+‫Remember, part of this ‫class is about communication. ‫If your thing is correct,
+
+335
+00:34:53,748 --> 00:34:58,080
+‫but we can't tell ‫what you're saying, ‫then it's not correct.
+
+336
+00:34:58,104 --> 00:35:04,115
+‫So now we get to any ‫questions on that? ‫Yeah. Just a question ‫about the invariants.
+
+337
+00:35:04,139 --> 00:35:13,995
+‫So for the data structures that we've discussed in the past, are you ‫still going to say what the invariants are, like the set ABL3 will?
+
+338
+00:35:14,019 --> 00:35:21,978
+‫JASON KUO - Right. So if it's the standard things, we're ‫going to talk about what the standard things are now.
+
+339
+00:35:22,002 --> 00:35:28,281
+‫Then you don't need to re -argue or restate ‫all of that. I mean, you can basically say,
+
+340
+00:35:28,305 --> 00:35:35,046
+‫because the set and sequence interfaces are ‫defined that way, these things are correct. ‫You're
+
+341
+00:35:35,070 --> 00:35:38,866
+‫trying to convince us that ‫you know why it's correct.
+
+342
+00:35:38,890 --> 00:35:46,191
+‫If you're correctly using a set or a sequence data ‫structure in these data structures -type problems,
+
+343
+00:35:46,215 --> 00:35:50,012
+‫then unless you're using ‫it in a way that is unusual,
+
+344
+00:35:50,036 --> 00:35:57,337
+‫usually you can just rely on the properties of the ‫set and sequence data structures that we gave you.
+
+345
+00:35:57,361 --> 00:36:01,985
+‫I do want you to mention that ‫you thought about correctness, ‫like
+
+346
+00:36:02,009 --> 00:36:07,582
+‫this data structure ‫is correct because. ‫Just write a sentence ‫saying that and
+
+347
+00:36:07,606 --> 00:36:08,993
+‫arguing that you're
+
+348
+00:36:09,017 --> 00:36:15,369
+‫basically maintaining the invariants of your ‫data structure, kind of at the upper level.
+
+349
+00:36:15,393 --> 00:36:19,117
+‫What kinds of things is ‫this data structure storing?
+
+350
+00:36:19,141 --> 00:36:22,280
+‫What things about the ‫global data structure
+
+351
+00:36:22,304 --> 00:36:37,344
+‫are we relying on to make query operations? As long as you are convincing that after a dynamic operation ‫where I'm modifying the data structure, that those invariants stay the same, that are still satisfied,
+
+352
+00:36:37,368 --> 00:36:40,216
+‫then that's really ‫all you need to say.
+
+353
+00:36:40,240 --> 00:36:51,557
+‫These invariants are satisfied because of the definitions of the set and sequence ‫data structure. Like, a lot of times, it doesn't require a lot of thought.
+
+354
+00:36:51,581 --> 00:36:55,693
+‫We're not asking. ‫The reason why we ‫do reduction problems
+
+355
+00:36:55,717 --> 00:37:01,412
+‫is so that you don't have to do a lot ‫of work to prove to us that it's correct.
+
+356
+00:37:01,436 --> 00:37:05,476
+‫We have these really ‫nice black boxes. ‫They are correct.
+
+357
+00:37:05,500 --> 00:37:11,584
+‫We proved them to you ‫that they're correct. ‫And so you don't have ‫to redo that work.
+
+358
+00:37:11,608 --> 00:37:17,887
+‫So now we're going to go through the core ‫material I like to think about in this class.
+
+359
+00:37:17,911 --> 00:37:30,761
+‫The first part of this class, aside from these mathematical tools that we developed at ‫the beginning of the course, it's mostly about solving problems involving data structures.
+
+360
+00:37:30,785 --> 00:37:39,546
+‫And we motivated this problem of sorting by saying that a ‫sorted array is a data structure that's actually pretty useful.
+
+361
+00:37:39,570 --> 00:37:45,362
+‫But how do we sort those things? ‫Well, we showed you a ‫bunch of ways to do that.
+
+362
+00:37:45,386 --> 00:37:48,477
+‫And this is that nice table, ‫lots of stuff.
+
+363
+00:37:48,501 --> 00:37:55,096
+‫Why do we show you so many sorting algorithms? ‫Why don't we just give you one algorithm? ‫Hm?
+
+364
+00:37:55,120 --> 00:37:56,969
+‫Yeah? ‫Different run times.
+
+365
+00:37:56,993 --> 00:38:06,557
+‫Better for different scenarios. Better for different scenarios. ‫Yeah, they each have their own individual points that may be better.
+
+366
+00:38:06,581 --> 00:38:12,227
+‫But in this table, ‫there's not blue all the way ‫across for any of these things.
+
+367
+00:38:12,251 --> 00:38:18,335
+‫So some of them are better ‫for different scenarios. ‫And actually, ‫these comments list
+
+368
+00:38:18,359 --> 00:38:22,229
+‫some special cases where ‫these things might be better.
+
+369
+00:38:22,253 --> 00:38:28,483
+‫In actuality, this ultra blue thing ‫is saying this could be linear time. ‫That's better.
+
+370
+00:38:28,507 --> 00:38:32,741
+‫But in some cases, this is ‫worse than all the other things.
+
+371
+00:38:32,765 --> 00:38:35,759
+‫Be a little wary of ‫this blue color here.
+
+372
+00:38:35,783 --> 00:38:42,524
+‫Generally, we're trying to get you down ‫further down in this chart if you can. ‫And in general,
+
+373
+00:38:42,548 --> 00:38:46,223
+‫for example, merge ‫sort, AVL sort, ‫these are really
+
+374
+00:38:46,247 --> 00:38:53,986
+‫the same in terms of asymptotic complexity and the way ‫in which you interact with these sorting algorithms.
+
+375
+00:38:54,010 --> 00:38:57,149
+‫But there are special ‫cases where you might
+
+376
+00:38:57,173 --> 00:39:03,087
+‫use insertion sort or selection sort. ‫Actually, I'm not sure about insertion sort.
+
+377
+00:39:03,111 --> 00:39:08,294
+‫You had a in your recitation ‫two days ago, ‫I think you guys ‫showed how to
+
+378
+00:39:08,318 --> 00:39:14,743
+‫do if you had a k -proximate array where things ‫are not more than k away from each other.
+
+379
+00:39:14,767 --> 00:39:21,192
+‫Insertion sort actually runs in n times k. ‫And so if k is small, then that's really good.
+
+380
+00:39:21,216 --> 00:39:25,767
+‫That's kind of like linear. ‫But you can actually ‫do even better
+
+381
+00:39:25,791 --> 00:39:33,238
+‫with a binary heap, which you saw in your recitation, ‫hopefully, where you can get that down to n log k
+
+382
+00:39:33,262 --> 00:39:38,154
+‫by maintaining a heap as you go ‫across and finding the max that way.
+
+383
+00:39:38,178 --> 00:39:44,992
+‫So insertion sort ‫maybe is not so great. ‫But selection sort, the ‫name of the game there is that
+
+384
+00:39:45,016 --> 00:39:48,617
+‫if ‫my reads are cheap but ‫my writes are expensive,
+
+385
+00:39:48,641 --> 00:39:53,971
+‫selection sort actually does pretty ‫well because I only have to do, sorry,
+
+386
+00:39:53,995 --> 00:39:57,427
+‫my reads are cheap and ‫my writes are expensive.
+
+387
+00:39:57,451 --> 00:40:01,028
+‫Selection sort only does ‫a linear number of swaps.
+
+388
+00:40:01,052 --> 00:40:05,871
+‫It's looking down, finding the ‫max, swapping it in, and keep going.
+
+389
+00:40:05,895 --> 00:40:12,709
+‫And so in such cases, ‫that's actually better than ‫any of these other ‫algorithms that we've got.
+
+390
+00:40:12,733 --> 00:40:18,403
+‫Yeah? ‫Is heap sort time ‫worst case or expected? ‫JASON KUO - This is worst case.
+
+391
+00:40:18,427 --> 00:40:23,903
+‫So it's a little hard to put. There ‫was a lot of moving parts to get to this
+
+392
+00:40:23,927 --> 00:40:29,135
+‫bound in Tuesday's lecture. ‫But basically what we ‫did, we showed you how
+
+393
+00:40:29,159 --> 00:40:34,244
+‫to think of an array as a heap, ‫as a binary tree, ‫complete binary tree.
+
+394
+00:40:34,268 --> 00:40:40,791
+‫It's not an AVL. I ‫mean, it is an AVL tree. ‫But AVL trees are weaker ‫than a complete tree.
+
+395
+00:40:40,815 --> 00:40:47,556
+‫Height balance is a weaker ‫property than a complete. ‫The reason why we ‫use complete is because
+
+396
+00:40:47,580 --> 00:40:50,013
+‫it's unique ‫for a number of nodes.
+
+397
+00:40:50,037 --> 00:41:00,770
+‫That way, when I give you one array with a fixed length, I know exactly ‫what tree you're talking about because there's a one -to -one mapping there.
+
+398
+00:41:00,794 --> 00:41:06,975
+‫If ‫there was some ambiguity on ‫what tree I was talking about, ‫heaps just wouldn't work.
+
+399
+00:41:06,999 --> 00:41:13,132
+‫So what heap sort does is it has this ‫correspondence between arrays and binary trees.
+
+400
+00:41:13,156 --> 00:41:19,362
+‫And then what it does is provides these ‫operations that only do operations at the end.
+
+401
+00:41:19,386 --> 00:41:32,455
+‫And then the in -place optimization is that, well, instead of actually popping it or pushing ‫it onto the back of an array, I'm just going to think of a subset of my array as a heap
+
+402
+00:41:32,479 --> 00:41:36,445
+‫and then always kind ‫of pooping the ‫max out to the end,
+
+403
+00:41:36,469 --> 00:41:43,137
+‫just leaving it behind and thinking ‫of my heap as a smaller subset. ‫And that's how we got it.
+
+404
+00:41:43,161 --> 00:41:47,712
+‫It didn't actually ‫use any amortization. ‫So for the time bound,
+
+405
+00:41:47,736 --> 00:41:53,723
+‫time bound, you could actually do this with ‫the amortized, basically, dynamic array
+
+406
+00:41:53,747 --> 00:41:57,544
+‫version of this. The time ‫bound doesn't rely on that.
+
+407
+00:41:57,568 --> 00:42:02,970
+‫The in -place relies on staying all ‫within one array. Does that make sense?
+
+408
+00:42:02,994 --> 00:42:10,442
+‫You're doing a bunch of amortized operations so that ‫this actually does achieve worst case NLogN. Yeah?
+
+409
+00:42:10,466 --> 00:42:17,256
+‫It seems that the things we learn do not like ‫such a long time ago. Or they tend to be better.
+
+410
+00:42:17,280 --> 00:42:21,392
+‫I assume that most algorithms, ‫we want them to be faster.
+
+411
+00:42:21,416 --> 00:42:28,425
+‫It seems like we will not use as often, especially ‫in the exam, as well, insertion and selection.
+
+412
+00:42:28,449 --> 00:42:33,998
+‫JASON KUO - Right, yeah. So there are ‫these special cases where they're good.
+
+413
+00:42:34,022 --> 00:42:41,031
+‫But generally, these are better general data ‫structures for most situations that you come across.
+
+414
+00:42:41,055 --> 00:42:47,918
+‫There are cases where those other things are ‫good, so you don't want to completely ignore them.
+
+415
+00:42:47,942 --> 00:42:48,965
+‫But generally,
+
+416
+00:42:48,989 --> 00:43:01,109
+‫yeah. JASON KUO - You're trying to be lower down in this chart. What I mean is that ‫if I don't have an exam, I'm using them all, except for selection .. JASON KUO - So
+
+417
+00:43:01,133 --> 00:43:06,170
+‫there's too many things on here ‫for us to test all of them on an exam.
+
+418
+00:43:06,194 --> 00:43:09,699
+‫So don't be afraid if ‫not everything is covered.
+
+419
+00:43:09,723 --> 00:43:15,953
+‫Worry when things are covered 18 ‫times on the exam. That's not good. ‫So for radix sort,
+
+420
+00:43:15,977 --> 00:43:22,864
+‫there are situations where you get linear ‫time. It's when you're polynomially bounded. ‫I want to
+
+421
+00:43:22,888 --> 00:43:27,488
+‫use radix sort when I'm not ‫polynomially bounded in my integers.
+
+422
+00:43:27,512 --> 00:43:33,450
+‫Well, if you're not ‫polynomially bounded, ‫then that could take ‫a really long time.
+
+423
+00:43:33,474 --> 00:43:39,094
+‫JASON KUO - Sure, ‫yeah. ‫But where is the, ‫this will be worse ‫than n log n when?
+
+424
+00:43:39,118 --> 00:43:45,933
+‫It's definitely better than n log n ‫when u is polynomially bounded. Right? ‫Because it's linear.
+
+425
+00:43:45,957 --> 00:43:49,436
+‫Yeah? ‫When is n to the n? ‫JASON KUO - n to the n.
+
+426
+00:43:49,460 --> 00:43:54,814
+‫OK, so if I put n to ‫the n in here, I get an n ‫factor that comes out here.
+
+427
+00:43:54,838 --> 00:43:59,097
+‫That gives me a ‫quadratic running time, ‫which is not great.
+
+428
+00:43:59,121 --> 00:44:05,302
+‫But when will this ‫be better than n log n? ‫Yeah? ‫n to the c u is ‫less than n to the c.
+
+429
+00:44:05,326 --> 00:44:12,116
+‫JASON KUO - n to the c. So that'll definitely ‫give us linear time. That's what this is saying.
+
+430
+00:44:12,140 --> 00:44:18,564
+‫But we can actually ‫do better than n log n ‫if ‫this u is n to ‫the c times log n for some c.
+
+431
+00:44:18,588 --> 00:44:22,457
+‫If it's asymptotic, like ‫if it's n to the c log log n,
+
+432
+00:44:22,481 --> 00:44:28,419
+‫that's smaller than log n. ‫So that's a better algorithm. ‫That's a faster algorithm.
+
+433
+00:44:28,443 --> 00:44:38,300
+‫Do you guys see why we wrote these things? JASON KUO - Yeah. We wrote ‫these things this way is so that we give you a more precise about.
+
+434
+00:44:38,324 --> 00:44:46,574
+‫This is more important for you to understand what u means ‫here than that this thing sometimes runs in linear time.
+
+435
+00:44:46,598 --> 00:44:51,368
+‫We want to know when ‫it runs in linear time. ‫Does that make sense?
+
+436
+00:44:51,392 --> 00:44:57,427
+‫Or when it runs ‫faster than merge sort. ‫Does that make sense? ‫OK, so that's sorting.
+
+437
+00:44:57,451 --> 00:45:01,782
+‫We have sequence ‫type data structures. ‫We have linked lists.
+
+438
+00:45:01,806 --> 00:45:06,941
+‫We have dynamic arrays. ‫We have sequence ABLs. ‫Sequence ABLs are great.
+
+439
+00:45:06,965 --> 00:45:10,543
+‫I don't know why no one ‫teaches it. They're great.
+
+440
+00:45:10,567 --> 00:45:15,605
+‫They don't teach it probably because ‫they're actually not that useful.
+
+441
+00:45:15,629 --> 00:45:20,179
+‫You don't actually use ‫the insert in the middle a ‫lot in coding.
+
+442
+00:45:20,203 --> 00:45:34,952
+‫So you can usually get around with shifting something to the end and doing dynamic operations there. ‫And that's a lot of the games that you try to play. So you don't have to make your own data structure.
+
+443
+00:45:34,976 --> 00:45:40,256
+‫There's and you can ‫just use the Python list ‫that's native to your thing.
+
+444
+00:45:40,280 --> 00:45:49,261
+‫But it has a theoretical interest because it gets these kind ‫of bounds if you need to insert in the middle of this sequence.
+
+445
+00:45:49,285 --> 00:45:55,174
+‫Now, some of you look at me and ‫had a question before that was like, ‫but Jason, ‫how
+
+446
+00:45:55,198 --> 00:46:01,452
+‫does linked list ‫operations on the end ‫of a linked list, why ‫does that take linear time?
+
+447
+00:46:01,476 --> 00:46:06,757
+‫It's because in lecture, ‫we presented you with what? ‫A singly linked list.
+
+448
+00:46:06,781 --> 00:46:09,628
+‫It just had pointers ‫to the next thing.
+
+449
+00:46:09,652 --> 00:46:16,539
+‫And if I only have pointers to the ‫next thing and a pointer to the head, ‫for me to find the end,
+
+450
+00:46:16,563 --> 00:46:22,866
+‫I need to walk all ‫the way down the list. ‫Now, let's say I keep ‫my pointer to the tail.
+
+451
+00:46:22,890 --> 00:46:24,861
+‫Doing that end one is fine.
+
+452
+00:46:24,885 --> 00:46:30,726
+‫But removing it still takes linear time ‫because I don't know what came before me.
+
+453
+00:46:30,750 --> 00:46:40,972
+‫And so that's why in pset whatever, 1, 2, I don't remember, you stored ‫a pointer back to your previous one that gave you doubly linked lists.
+
+454
+00:46:40,996 --> 00:46:44,086
+‫Yay. ‫So actually, expanding ‫this table out,
+
+455
+00:46:44,110 --> 00:46:49,732
+‫you can reference a doubly linked list ‫here and get this one as constant time.
+
+456
+00:46:49,756 --> 00:46:54,891
+‫Does that make sense? ‫JASON KU - Yeah, but this ‫one's still linear time.
+
+457
+00:46:54,915 --> 00:46:57,324
+‫But this one's ‫still linear time.
+
+458
+00:46:57,348 --> 00:47:03,943
+‫We actually also showed you how ‫to do this in constant amortized. ‫Do you guys remember that?
+
+459
+00:47:03,967 --> 00:47:07,788
+‫That was in problem session ‫2 or 1. I don't remember.
+
+460
+00:47:07,812 --> 00:47:11,682
+‫It was whatever we were ‫talking about amortized stuff.
+
+461
+00:47:11,706 --> 00:47:17,839
+‫We got actually both of these to 1 amortized ‫using the concepts of the dynamic array.
+
+462
+00:47:17,863 --> 00:47:24,750
+‫And then we actually did it one more time ‫where we got a good doubly ended thing. ‫What was that?
+
+463
+00:47:24,774 --> 00:47:30,541
+‫Does anyone remember? ‫We went ‫to problem session 3. ‫Yeah? Oh, I'm probably wrong.
+
+464
+00:47:30,565 --> 00:47:39,618
+‫This is not from problem session 3. But like QDQ, that stuff? ‫JASON KU - So QDQ, those are talking about doubly ended things.
+
+465
+00:47:39,642 --> 00:47:47,673
+‫Those are implemented in a certain way, which is actually ‫one of these things. It's actually, I think, this one
+
+466
+00:47:47,697 --> 00:47:53,927
+‫in pi. ‫But we used a different data structure ‫to get something that had really good at.
+
+467
+00:47:53,951 --> 00:47:58,818
+‫It had really ‫good pop and append ‫first and last ‫dynamic operations.
+
+468
+00:47:58,842 --> 00:48:04,171
+‫Do you guys remember ‫problem session 3? ‫JASON KU - ‫That's what this was. ‫We
+
+469
+00:48:04,195 --> 00:48:10,643
+‫got one that had ‫expected bounds. ‫Does that help? ‫I heard someone say it. ‫Hash table. ‫Yeah.
+
+470
+00:48:10,667 --> 00:48:17,359
+‫So what basically you did, ‫instead of, ‫this is a sequence thing. ‫These things don't have keys.
+
+471
+00:48:17,383 --> 00:48:23,248
+‫But ‫I could identify with each item as I ‫stick it in a key representing its index.
+
+472
+00:48:23,272 --> 00:48:27,068
+‫And I could use a hash ‫table that way. Now, there was
+
+473
+00:48:27,092 --> 00:48:33,297
+‫some difficulty if I ‫removed the first thing. ‫JASON KU - Yeah. ‫Right? ‫Because actually,
+
+474
+00:48:33,321 --> 00:48:40,136
+‫all of my indices ‫have now changed. ‫But if I just store what the ‫smallest index in my thing is,
+
+475
+00:48:40,160 --> 00:48:47,047
+‫then ‫I'm golden because I can compute what that ‫index should be as I change things at the front.
+
+476
+00:48:47,071 --> 00:48:56,051
+‫OK, so there's actually three different ways we showed you of ‫getting constant time at the front and the back of this thing.
+
+477
+00:48:56,075 --> 00:49:02,013
+‫So actually, you can think of that as ‫standard material that you can reduce to. ‫OK?
+
+478
+00:49:02,037 --> 00:49:07,367
+‫That's the one exception of the things ‫that I'm not showing on this chart,
+
+479
+00:49:07,391 --> 00:49:16,882
+‫but is a bonus if you're watching this problem session. Yeah? So ‫isn't a hash table a set data structure, though? JASON KU - It is.
+
+480
+00:49:16,906 --> 00:49:21,287
+‫Right? But we used it to ‫implement a sequence data structure.
+
+481
+00:49:21,311 --> 00:49:27,249
+‫So I will refer you to that problem ‫session if you want to learn more about it. ‫OK?
+
+482
+00:49:27,273 --> 00:49:30,923
+‫So any questions on sequence ‫data structures? Yeah?
+
+483
+00:49:30,947 --> 00:49:36,301
+‫A different question. ‫JASON KU - Yeah. Uh -huh? ‫Should we be able to prove
+
+484
+00:49:36,325 --> 00:49:40,827
+‫the tables that were given? ‫JASON KU - So I would hope, ‫I hope,
+
+485
+00:49:40,851 --> 00:49:46,059
+‫that if I gave ‫you a blank table, ‫that you would be ‫able to fill it out.
+
+486
+00:49:46,083 --> 00:49:51,486
+‫Right? That's how well I want you to ‫know how these things are implemented.
+
+487
+00:49:51,510 --> 00:49:57,399
+‫We're not going to ‫have that on the exam. ‫Right? ‫That's a boring ‫kind of question.
+
+488
+00:49:57,423 --> 00:50:01,267
+‫But it is important to know. ‫JASON KU - Yeah. ‫I would,
+
+489
+00:50:01,291 --> 00:50:10,856
+‫you know, it's good for you to think, like, oh, if I'm going to use ‫an AVL tree, right, operations are generally going to be log in.
+
+490
+00:50:10,880 --> 00:50:16,648
+‫Right? That's a really useful thing. Or ‫if I'm going to use a hash table, right,
+
+491
+00:50:16,672 --> 00:50:22,951
+‫dictionary type operations, you know, finding, ‫inserting, and deleting, those are fast.
+
+492
+00:50:22,975 --> 00:50:32,028
+‫Doing order type operations on hash tables is bad. That's hard ‫to do, because I have to basically look through all my things.
+
+493
+00:50:32,052 --> 00:50:37,065
+‫Right? ‫Knowing that dynamic operations ‫on assorted array is bad. ‫Right?
+
+494
+00:50:37,089 --> 00:50:38,987
+‫Or knowing that, you know,
+
+495
+00:50:39,011 --> 00:50:46,166
+‫you have to think about here what we mean when we ‫say, linked list and dynamic array in this table.
+
+496
+00:50:46,190 --> 00:50:46,628
+‫Right?
+
+497
+00:50:46,652 --> 00:50:55,268
+‫Because you've - Yeah, exactly. We are implying singly linked ‫here, because that's what we presented to you in lecture.
+
+498
+00:50:55,292 --> 00:51:16,684
+‫And so those are the standard things that we want you to reduce to. So the three modified standard things are the double -ended list, the double ‫-ended dynamic array? JASON KU - Yeah. Basically, you can assume that you have a double - It's this one that you probably want to use. Right? Because
+
+499
+00:51:16,708 --> 00:51:22,451
+‫you get constant indexing. ‫Right? ‫And then pretty good ‫on both ends. Right? But,
+
+500
+00:51:22,475 --> 00:51:33,354
+‫you know, if you need a double -ended queue, you can also reduce it to having ‫two dynamic arrays back to back, one going this way, one going this way.
+
+501
+00:51:33,378 --> 00:51:44,621
+‫And so there's lots of way - We're not going to give that to you as a standard ‫method, because there's literally like four methods we showed you how to do.
+
+502
+00:51:44,645 --> 00:51:47,298
+‫Right? So you choose one. ‫Okay? Yeah?
+
+503
+00:51:47,322 --> 00:52:03,603
+‫In the interest of saving time on the example, like if we want to say, like, we do this thing with the sequence ‫A, B, I, I, and it takes long end time, like do we have to say the sentence, like, because it's a sequence A, B,
+
+504
+00:52:03,627 --> 00:52:17,792
+‫L, it takes long end time? Because this - Or can we just, like, say, like, per the table that we ‫know? JASON KU - Yeah. No. If you told me that you're storing things in a sequence A, B, I, right?
+
+505
+00:52:17,816 --> 00:52:32,272
+‫And you just say - You basically say what you do to it, and you say which takes blah, blah, blah ‫time, you don't need to say because it's a sequence A, B, I, right? Because you already told us it's a
+
+506
+00:52:32,296 --> 00:52:39,743
+‫sequence A, B, L. I believe that you probably wrote ‫the chart on your cheat sheet and you looked it up.
+
+507
+00:52:39,767 --> 00:52:43,587
+‫Okay? ‫All right. ‫Any other questions on this? ‫No? ‫Yeah.
+
+508
+00:52:43,611 --> 00:52:52,737
+‫Just to make sure, the double -linked list will make the insert, ‫last, and the delete box be all one. Is that the only change?
+
+509
+00:52:52,761 --> 00:52:57,531
+‫JASON KU - Yes. ‫A double -linked list ‫gives this guy constant time.
+
+510
+00:52:57,555 --> 00:53:05,367
+‫And actually, there are two operations here, insert, ‫delete, and I guess there's a find here as well, right?
+
+511
+00:53:05,391 --> 00:53:10,940
+‫If I just store the tail pointer, that ‫gets the find to constant time, right?
+
+512
+00:53:10,964 --> 00:53:21,624
+‫But it doesn't get the dynamic ones to constant time, right? I need to ‫store the previous pointers as well. So I'm going to do that with each node.
+
+513
+00:53:21,648 --> 00:53:27,634
+‫Does that make sense? ‫Okay. ‫Lastly, ‫or I guess second to ‫lastly, set data structures.
+
+514
+00:53:27,658 --> 00:53:32,305
+‫There are a little ‫bit more of these, ‫not so many more. ‫But yeah,
+
+515
+00:53:32,329 --> 00:53:38,559
+‫we had a sorted array, gets good ‫find, but is not dynamic, right? ‫We have set AVL tree,
+
+516
+00:53:38,583 --> 00:53:43,645
+‫which does pretty good ‫find and is dynamic. Again, ‫you get this n log n
+
+517
+00:53:43,669 --> 00:53:51,554
+‫overhead to build because essentially what you're doing ‫with both of those data structures is to sort, right?
+
+518
+00:53:51,578 --> 00:53:54,961
+‫But if I'm looking ‫on a theory question, ‫right,
+
+519
+00:53:54,985 --> 00:53:59,877
+‫like I'm not asking you something ‫specifically about a sorted array,
+
+520
+00:53:59,901 --> 00:54:07,494
+‫right, if you have a choice between this data structure ‫and this data structure, which one do you choose?
+
+521
+00:54:07,518 --> 00:54:09,343
+‫Well, I don't quite know.
+
+522
+00:54:09,367 --> 00:54:15,427
+‫Because it's almost like this one's better ‫at everything except for this one, right?
+
+523
+00:54:15,451 --> 00:54:20,197
+‫But can anyone tell me how to ‫make this one constant time as well?
+
+524
+00:54:20,221 --> 00:54:25,770
+‫Augmentation, right? I could just store ‫in my subtrees the max or min, right?
+
+525
+00:54:25,794 --> 00:54:35,358
+‫And I can make this one strictly better than this one, right? So ‫in a theory problem, you probably just want to use this one, right?
+
+526
+00:54:35,382 --> 00:54:41,198
+‫Here, hash tables, ‫direct access arrays, ‫even better for ‫these operations. ‫Right?
+
+527
+00:54:41,222 --> 00:54:46,649
+‫But they suck at these, ‫right? So if you need ‫these, don't use these, right?
+
+528
+00:54:46,673 --> 00:55:07,992
+‫And in actual coding, right, especially if you're coding in a language that's not Python, something that doesn't automatically give you a hash table, ‫right? If you're in C, in a microcontroller lab at MIT here, you're taking 6, 1, 15 or whatever, right? Like, and you're doing assembly, right?
+
+529
+00:55:08,016 --> 00:55:12,129
+‫Usually what you're doing ‫is a direct access stuff, ‫right?
+
+530
+00:55:12,153 --> 00:55:26,025
+‫Because that's giving you the jumps that you need in machine learning. In machine language to ‫actually go and access this constant time, that's general. If you have control over the keys that
+
+531
+00:55:26,049 --> 00:55:29,846
+‫you're putting in your data ‫structure, you don't want
+
+532
+00:55:29,870 --> 00:55:35,857
+‫this overhead of running your keys through ‫a hash function to look these things up.
+
+533
+00:55:35,881 --> 00:55:40,942
+‫You just store the ‫things in array, right? ‫You use the hash table when
+
+534
+00:55:40,966 --> 00:55:47,245
+‫you don't have control over the keys or your ‫keys are like strings or something, right?
+
+535
+00:55:47,269 --> 00:55:52,331
+‫So that's when you ‫use the hash table. ‫Now, for our purposes, usually,
+
+536
+00:55:52,355 --> 00:55:58,950
+‫you know, a hash table is just as good unless ‫we're asking you for worst case bounds, ‫right?
+
+537
+00:55:58,974 --> 00:55:59,704
+‫And if we,
+
+538
+00:55:59,728 --> 00:56:06,738
+‫we're going to do this when we talk about the data ‫structures problem. If we give you a situation
+
+539
+00:56:06,762 --> 00:56:08,149
+‫where we don't care
+
+540
+00:56:08,173 --> 00:56:17,810
+‫if you achieve worst case or expected or amortized or any of these ‫things, we'll just say, make sure you state which one you achieve,
+
+541
+00:56:17,834 --> 00:56:18,272
+‫right?
+
+542
+00:56:18,296 --> 00:56:25,232
+‫And as long as you analyzed it correctly with ‫respect to your data structures, then you're fine,
+
+543
+00:56:25,256 --> 00:56:31,899
+‫right? But if we say you ‫better do worst case, here, ‫I'm going to slap you around, ‫right? ‫Then
+
+544
+00:56:31,923 --> 00:56:38,519
+‫please get those bounds, right? ‫Don't use the hash table in that case. ‫Does that make sense?
+
+545
+00:56:38,543 --> 00:56:42,874
+‫OK. ‫Lastly, we've got priority ‫queues, which we talked about.
+
+546
+00:56:42,898 --> 00:56:49,566
+‫I'm not going to go through this one ‫very much. It's basically just adding this ‫to the thing.
+
+547
+00:56:49,590 --> 00:56:53,460
+‫But in actuality, you can ‫get all of these bounds with
+
+548
+00:56:53,484 --> 00:56:58,400
+‫a set AVL, I mean, a ‫sequence AVL tree with ‫max or min augmentation,
+
+549
+00:56:58,424 --> 00:57:04,776
+‫which isn't on this list because we didn't ‫really talk about it. But hopefully, you can.
+
+550
+00:57:04,800 --> 00:57:10,738
+‫If you need these bounds ‫without the amortization, ‫then you could achieve them, OK?
+
+551
+00:57:10,762 --> 00:57:16,748
+‫All right, so that's basically everything ‫that we've talked about in the class, OK?
+
+552
+00:57:16,772 --> 00:57:22,759
+‫We're going to spend the rest of the time ‫working a couple data structures problem.
+
+553
+00:57:22,783 --> 00:57:27,675
+‫There's a number of different ‫types of questions you'll actually see
+
+554
+00:57:27,699 --> 00:57:32,226
+‫in the quiz, the practice quiz ‫that we gave you from last term.
+
+555
+00:57:32,250 --> 00:57:37,531
+‫There's some what I call mechanical ‫type questions up at the front, ‫right?
+
+556
+00:57:37,555 --> 00:57:46,316
+‫Then usually some reduction type problems where you're reducing ‫to using some sorting algorithms or some data structures.
+
+557
+00:57:46,340 --> 00:57:55,248
+‫And then usually the latter ones are ones where you have to do ‫some kind of something additional, like some augmentation or
+
+558
+00:57:55,272 --> 00:57:59,384
+‫some divide and conquer or ‫something like that, right? ‫OK,
+
+559
+00:57:59,408 --> 00:58:06,125
+‫so we're going to go ahead and spend the rest ‫of the time working a couple of these problems.
+
+560
+00:58:06,149 --> 00:58:10,262
+‫These were from spring ‫of 2019 on the exam. ‫And actually,
+
+561
+00:58:10,286 --> 00:58:23,720
+‫one of the TAs who's TAing for us now was also TAing for us in spring 19, was grading problem ‫number two here, the rainy research problem, and just hated me because no one did it right.
+
+562
+00:58:23,744 --> 00:58:29,706
+‫So all right, ‫so let's try to solve ‫these problems. Problem one ‫is about restaurant.
+
+563
+00:58:29,730 --> 00:58:34,208
+‫Stor -rant, yes, OK. ‫All right, so basically ‫what's happening?
+
+564
+00:58:34,232 --> 00:58:38,952
+‫Popular restaurant, ‫criminal seafood. ‫What's the reference? ‫Legal.
+
+565
+00:58:38,976 --> 00:58:48,176
+‫Does not take reservations, but maintains a wait list where ‫customers who have been on the wait list longer are seated earlier.
+
+566
+00:58:48,200 --> 00:58:56,012
+‫Sometimes customers decide to eat somewhere else, so ‫the restaurant must remove them from the wait list. OK,
+
+567
+00:58:56,036 --> 00:59:12,756
+‫assume that a customer has a different name. No two customers are added to the wait list at the exact same time, ‫right? So there's kind of an ordering at which people are being added to this wait list, right? Does that make sense?
+
+568
+00:59:12,780 --> 00:59:21,979
+‫Design a database to help criminal seafood maintain its wait ‫lists, supporting the following operations, each in constant time.
+
+569
+00:59:22,003 --> 00:59:26,311
+‫OK, so here we've refactored ‫the running time up to the top.
+
+570
+00:59:26,335 --> 00:59:29,547
+‫And it's, oh, sorry, ‫I added the build here.
+
+571
+00:59:29,571 --> 00:59:33,295
+‫I guess that's still ‫constant time. That's fine, OK.
+
+572
+00:59:33,319 --> 00:59:37,846
+‫Yeah, state whether each running ‫time operation is, worst case,
+
+573
+00:59:37,870 --> 00:59:46,339
+‫amortized, expested. So when you see that statement, you're ‫saying, OK, I'm allowed to use a hash table if I want to.
+
+574
+00:59:46,363 --> 00:59:52,350
+‫I just have to make sure if I use one, I ‫label my operations expected and amortized
+
+575
+00:59:52,374 --> 00:59:57,387
+‫when they occur. ‫Which ‫operations are expected? ‫Basically all of them.
+
+576
+00:59:57,411 --> 01:00:03,909
+‫Which operations are amortized? The ones that ‫changed what's in the data structure, right?
+
+577
+01:00:03,933 --> 01:00:09,214
+‫Insert, delete. ‫OK, so we've got some operations, ‫building an empty thing,
+
+578
+01:00:09,238 --> 01:00:15,468
+‫adding a name, so this name is ‫x, to the back of the wait list. ‫What do I know about x?
+
+579
+01:00:15,492 --> 01:00:20,188
+‫What do I know about the names ‫per our assumptions ‫in this class?
+
+580
+01:00:20,212 --> 01:00:27,075
+‫They're all unique, so they can be a key. JASON ‫KUO - They're unique, so they can be a key. And
+
+581
+01:00:27,099 --> 01:00:37,905
+‫they fit in a constant number of words by our assumption, right? So I can ‫compare two of them in constant, or I can hash one in constant time, right?
+
+582
+01:00:37,929 --> 01:00:43,040
+‫That's kind of the assumption we ‫make on these inputs. They're strings.
+
+583
+01:00:43,064 --> 01:00:51,095
+‫And I didn't assign you a bound on their length, so it's ‫probably not something you need to worry about, right?
+
+584
+01:00:51,119 --> 01:00:52,895
+‫OK, ‫remove a name, right?
+
+585
+01:00:52,919 --> 01:00:59,149
+‫So already, I'm feeling like I need to be ‫able to find things by their name, right? ‫OK,
+
+586
+01:00:59,173 --> 01:01:03,505
+‫and then seat the ‫next person in line. ‫Does that make sense?
+
+587
+01:01:03,529 --> 01:01:09,929
+‫So what kinds of things ‫do I need to maintain here? ‫I have people, ‫right? They have names.
+
+588
+01:01:09,953 --> 01:01:15,793
+‫They have places, ‫the time that they ‫came in, right? ‫But am I given the times? ‫No.
+
+589
+01:01:15,817 --> 01:01:21,366
+‫I'm not given times anywhere, right? ‫It's not on the inputs to my operations,
+
+590
+01:01:21,390 --> 01:01:27,328
+‫right? So it's not like I'm ‫going to be able to key on times. ‫Does that make sense?
+
+591
+01:01:27,352 --> 01:01:30,880
+‫What's the important ‫part about times? ‫The order.
+
+592
+01:01:30,904 --> 01:01:36,745
+‫JASON KUO - The order, right? And you're ‫given that. JASON KUO - Yeah, basically,
+
+593
+01:01:36,769 --> 01:01:42,099
+‫whenever I'm basically trying to ‫maintain a sequence on these guys, right?
+
+594
+01:01:42,123 --> 01:01:47,404
+‫There's a front ‫one and a back one. ‫JASON KUO - And ‫people in the middle,
+
+595
+01:01:47,428 --> 01:02:01,519
+‫right? And I want to make sure that order stays the same or else people are going to get angry at ‫me, right? Because, ah, they came here after me and ready to go to the city for it. Yeah, right?
+
+596
+01:02:01,543 --> 01:02:03,733
+‫You've been in that situation.
+
+597
+01:02:03,757 --> 01:02:10,255
+‫OK, so we're trying to maintain some kind of ‫sequence, an extrinsic order on these things,
+
+598
+01:02:10,279 --> 01:02:10,718
+‫right?
+
+599
+01:02:10,742 --> 01:02:19,430
+‫But we're also needing to be able to look up people by their ‫name because I want to be able to change this thing, right?
+
+600
+01:02:19,454 --> 01:02:26,195
+‫Does this maybe sound familiar to ‫some other problem we had on this? ‫This term's problem sets?
+
+601
+01:02:26,219 --> 01:02:32,814
+‫Yeah, I think there was ‫a problem where the chat, ‫right? You had to ‫store a sequence, right?
+
+602
+01:02:32,838 --> 01:02:37,949
+‫But you also had this dictionary ‫that you had to look things up, right?
+
+603
+01:02:37,973 --> 01:02:44,349
+‫Now, the nice thing about that ‫situation is that the things ‫that you needed to look up on
+
+604
+01:02:44,373 --> 01:02:50,992
+‫was static, ‫right? ‫And so what could I use for my ‫dictionary, my set data structure for that?
+
+605
+01:02:51,016 --> 01:02:53,060
+‫JASON KUO - Anyone remember?
+
+606
+01:02:53,084 --> 01:03:05,642
+‫You could just use a sorted array, right? Because it's static, these things aren't ‫updating all the time, right? And so it was fine for me to just use a static array, right?
+
+607
+01:03:05,666 --> 01:03:11,093
+‫Here, ‫and we gave you look up times that ‫were worst case logarithmic, right?
+
+608
+01:03:11,117 --> 01:03:16,836
+‫Here, I'm asking for ‫constant time, right? ‫Sorted array is ‫not going to cut it.
+
+609
+01:03:16,860 --> 01:03:21,119
+‫Set AVL is not going to cut ‫it. So what am I going to use? ‫A
+
+610
+01:03:21,143 --> 01:03:23,844
+‫dynamic array or a ‫hash table. Right?
+
+611
+01:03:23,868 --> 01:03:34,455
+‫Now, dynamic array might not be great because I don't actually have a ‫numeric bound on how big these keys are. I just know that they fit in words,
+
+612
+01:03:34,479 --> 01:03:34,917
+‫right?
+
+613
+01:03:34,941 --> 01:03:48,813
+‫So I can't actually make a direct access array because those words, while they fit in a constant ‫number of words, I don't know if the integer representation of those are polynomially bounded.
+
+614
+01:03:48,837 --> 01:03:50,370
+‫Does that make sense?
+
+615
+01:03:50,394 --> 01:03:58,279
+‫Right? So I do want to use hashing in this case, right? ‫And so what do I want to maintain? I want to maintain
+
+616
+01:03:58,303 --> 01:04:01,929
+‫a sequence data structure. ‫On customers. ‫Customers.
+
+617
+01:04:01,953 --> 01:04:07,745
+‫Is there a U in there somewhere? ‫No, this is right, right? ‫OK, and a set mapping.
+
+618
+01:04:07,769 --> 01:04:12,880
+‫So this is usually how I do it. I ‫want to say a set keyed on something.
+
+619
+01:04:12,904 --> 01:04:20,351
+‫If it's just a set, then I just have it keyed, right? ‫I can look up whether that thing is there or not.
+
+620
+01:04:20,375 --> 01:04:36,510
+‫But when I'm actually having it mapped to something else, I'll say mapping a key space to something else, usually ‫the item that I'm storing or maybe some property of the items that I'm storing. Right? Does that make sense?
+
+621
+01:04:36,534 --> 01:04:42,471
+‫OK, so mapping, ‫what do I map here? ‫Names, ‫right? ‫To. ‫Oh, to what? Do I want to map?
+
+622
+01:04:42,495 --> 01:04:47,094
+‫The time. ‫The time that they entered. ‫Do I want to do that? ‫Well,
+
+623
+01:04:47,118 --> 01:05:01,720
+‫we can't exactly do it with the time that they entered, but the sequence and the customers will show ‫what's next and what's not. Yeah, kind of I want to store it to where it is in this sequence, right?
+
+624
+01:05:01,744 --> 01:05:09,265
+‫So I'll just store the index where it is in the ‫sequence, and I can just look it up, right? That sounds.
+
+625
+01:05:09,289 --> 01:05:09,824
+‫Yeah? ‫Is
+
+626
+01:05:09,848 --> 01:05:18,244
+‫that what? Well, I couldn't indices change. Yeah, indices ‫change every time I add or remove things, right? Ah, yeah.
+
+627
+01:05:18,268 --> 01:05:22,356
+‫Store a pointer. Right? ‫Pointer to place ‫in sequence. ‫Now,
+
+628
+01:05:22,380 --> 01:05:29,194
+‫that's a little weird to say because I haven't ‫told you how I represented this sequence, ‫right?
+
+629
+01:05:29,218 --> 01:05:39,804
+‫But conceptually, I can say I'm storing a pointer to some place in this ‫that represents where it is. I'll deal with the details of that later, OK?
+
+630
+01:05:39,828 --> 01:05:40,266
+‫Right?
+
+631
+01:05:40,290 --> 01:05:48,030
+‫But generally, I call this a linked data structure, ‫right? Because I'm linking between two data structures,
+
+632
+01:05:48,054 --> 01:05:54,503
+‫right? ‫So that I can do a query in one, say, and ‫find out where it is in the other, right?
+
+633
+01:05:54,527 --> 01:05:58,177
+‫Or do a query in the other, ‫that kind of thing, OK?
+
+634
+01:05:58,201 --> 01:06:02,217
+‫So everyone kind of understand ‫why I chose these things,
+
+635
+01:06:02,241 --> 01:06:05,234
+‫right? How I approach ‫this problem? Yeah?
+
+636
+01:06:05,258 --> 01:06:10,150
+‫I'm not sure how a pointer fixes ‫a problem of just storing an index.
+
+637
+01:06:10,174 --> 01:06:22,221
+‫But I'm just wondering if the place that the person is at in the sequence is going ‫to change over time. Or are you assuming that the pointer updates with that change?
+
+638
+01:06:22,245 --> 01:06:28,718
+‫So OK. ‫So let's say if ‫every time, so let's say I'm ‫storing this sequence in a linked list.
+
+639
+01:06:28,742 --> 01:06:29,837
+‫Let's just say.
+
+640
+01:06:29,861 --> 01:06:37,381
+‫Because I know that I'm going to have to be inserting ‫and deleting things from the middle of this thing.
+
+641
+01:06:37,405 --> 01:06:40,131
+‫Does that make sense? ‫Yeah. All right.
+
+642
+01:06:40,155 --> 01:06:46,847
+‫So I'm going to go ahead and say ‫that this is going to be a linked list, ‫OK? ‫This linked list,
+
+643
+01:06:46,871 --> 01:06:48,014
+‫OK? ‫So if ‫I said,
+
+644
+01:06:48,038 --> 01:06:55,266
+‫all right, this set data structure, my set, stores ‫pointer or stores where it is in the linked list,
+
+645
+01:06:55,290 --> 01:07:01,689
+‫right? Say it's stored at k, ‫right? Cool. ‫Now, if ‫I see it's this guy, ‫right? ‫At his table,
+
+646
+01:07:01,713 --> 01:07:04,439
+‫right? ‫Every index has changed, right?
+
+647
+01:07:04,463 --> 01:07:12,348
+‫So for me to update the indexes stored in this set data ‫structure, I have to change every single one of them.
+
+648
+01:07:12,372 --> 01:07:16,996
+‫Yeah. Does that make sense? ‫Yeah. No, this ‫makes way more sense.
+
+649
+01:07:17,020 --> 01:07:25,708
+‫Yeah. So really what I want, not to store a number here, but ‫an actual pointer to the node that's containing this thing,
+
+650
+01:07:25,732 --> 01:07:32,011
+‫right? Because the node isn't changing unless ‫that thing left my data structure, right?
+
+651
+01:07:32,035 --> 01:07:35,393
+‫The node, the address ‫of this thing in memory,
+
+652
+01:07:35,417 --> 01:07:45,420
+‫the node is just a little container that contains an item and the next ‫pointer. And actually, we're going to need a previous pointer here,
+
+653
+01:07:45,444 --> 01:07:48,949
+‫right? We're going to ‫need a double linked list,
+
+654
+01:07:48,973 --> 01:07:56,055
+‫right? Because what we're going to do when we ‫remove something, we need to stitch it back together
+
+655
+01:07:56,079 --> 01:08:03,672
+‫in constant time, which means we need to know what's ‫the one in front of us and the one behind us, right?
+
+656
+01:08:03,696 --> 01:08:10,193
+‫Yeah? ‫All right. So linked list here, ‫we already said maybe ‫using a hash table here. ‫Right?
+
+657
+01:08:10,217 --> 01:08:16,325
+‫And so, OK, great. ‫This is basically ‫enough for me to say, ‫this is my data structure.
+
+658
+01:08:16,349 --> 01:08:22,676
+‫These are the invariants. ‫What are the invariants? ‫It's storing all the customers, ‫right?
+
+659
+01:08:22,700 --> 01:08:27,177
+‫That's an invariant. ‫I mean, it's not a ‫very strong invariant,
+
+660
+01:08:27,201 --> 01:08:39,102
+‫but it's, I mean, I should say that, right? I'm storing all the customers because ‫I'm going to have to make sure that I'm maintaining that when I do a query, right?
+
+661
+01:08:39,126 --> 01:08:45,137
+‫And then here, set mapping ‫names to pointers, right? ‫The place in this thing, right?
+
+662
+01:08:45,161 --> 01:08:51,002
+‫And as I remove things, I need to make ‫sure that invariant stays the same, right?
+
+663
+01:08:51,026 --> 01:08:57,353
+‫It's still mapping all the names ‫of customers that I have in my thing ‫to their nodes, ‫OK?
+
+664
+01:08:57,377 --> 01:09:03,899
+‫So when something leaves, I better need ‫to make sure that both of these things ‫are updated.
+
+665
+01:09:03,923 --> 01:09:09,812
+‫Does that make sense? ‫OK. So how do I maintain ‫these operations? We've got ‫a build.
+
+666
+01:09:09,836 --> 01:09:14,898
+‫Build just sets up empty ‫of these things, right? ‫So you just say that.
+
+667
+01:09:14,922 --> 01:09:21,055
+‫I build an empty linked list, doubly linked ‫list on the customers, and I build a set,
+
+668
+01:09:21,079 --> 01:09:26,603
+‫a hash table mapping nothing ‫to nothing right now, right? ‫OK. ‫So that's build.
+
+669
+01:09:26,627 --> 01:09:33,490
+‫I'm going to be precise here and actually write ‫down the thing because I told you not to ignore
+
+670
+01:09:33,514 --> 01:09:38,649
+‫a operation or else we ‫can't give you points for it. ‫The next one, yeah?
+
+671
+01:09:38,673 --> 01:09:47,580
+‫By building an empty linked list, you mean like it just has ‫like the head and the tail are set to none, but like it exists?
+
+672
+01:09:47,604 --> 01:09:51,182
+‫Yeah, right. It's a thing ‫in memory that we store.
+
+673
+01:09:51,206 --> 01:09:55,805
+‫It has a pointer to a head and ‫a tail. Those are none right now,
+
+674
+01:09:55,829 --> 01:10:01,329
+‫but we will add things ‫to it, right? OK. ‫So the second one, ‫add name, right?
+
+675
+01:10:01,353 --> 01:10:03,033
+‫What do we have to say?
+
+676
+01:10:03,057 --> 01:10:08,532
+‫We have to update this data structure ‫so it maintains it to variance, right?
+
+677
+01:10:08,556 --> 01:10:13,472
+‫I have to, usually I ‫start with one of them. ‫I get to a point where,
+
+678
+01:10:13,496 --> 01:10:19,969
+‫oh, I really should have ‫updated the other one first, ‫right? ‫So sometimes it's hit or miss.
+
+679
+01:10:19,993 --> 01:10:26,150
+‫What do I want to do here? Well, I have ‫no idea where in this sequence this is, ‫right?
+
+680
+01:10:26,174 --> 01:10:30,919
+‫So I kind of have ‫to go here first, ‫right? ‫Oh, sorry. ‫Adding a guy,
+
+681
+01:10:30,943 --> 01:10:37,684
+‫I kind of have to go here first. ‫I could do either way, right? ‫I know where is he going to go?
+
+682
+01:10:37,708 --> 01:10:44,108
+‫End of the list, right? ‫So I can just stick ‫it there, right? ‫So add x to end of sequence.
+
+683
+01:10:44,132 --> 01:10:49,656
+‫All right, so ‫I've already come to a ‫trick that I like, right? ‫Sequence, set.
+
+684
+01:10:49,680 --> 01:10:58,441
+‫OK, in this instance, I only have one sequence and one set. ‫And so calling them sequence and set is probably fine. Right?
+
+685
+01:10:58,465 --> 01:11:03,941
+‫I'm not going to confuse the grader. ‫I'm not going to confuse myself, right?
+
+686
+01:11:03,965 --> 01:11:11,558
+‫But when I have more than one of these things, or even ‫for brevity on an exam where I'm time constrained,
+
+687
+01:11:11,582 --> 01:11:17,130
+‫give these things a name, ‫right? ‫Say this is a sequence ‫C and M. I don't know.
+
+688
+01:11:17,154 --> 01:11:21,997
+‫I see customer ‫here. I see map here. ‫So maybe. I don't know, right?
+
+689
+01:11:22,021 --> 01:11:32,096
+‫But just give them a letter, and we can follow you much more clearly, ‫and you can refer to these things more precisely, right, so end of C.
+
+690
+01:11:32,120 --> 01:11:38,763
+‫OK? ‫Then what do we have to do? ‫I fix this guy. ‫This guy is good. ‫Now I have to fix this guy.
+
+691
+01:11:38,787 --> 01:11:40,394
+‫So I add x to the set,
+
+692
+01:11:40,418 --> 01:11:48,303
+‫and I map it back to that node that I just came from, ‫right? I could store it in a temporary variable, right?
+
+693
+01:11:48,327 --> 01:11:51,635
+‫Add x ‫to M pointing to ‫in ‫node v to v. ‫OK, cool?
+
+694
+01:11:51,659 --> 01:11:55,480
+‫So I added my x to the ‫end of C into a node v, ‫right?
+
+695
+01:11:55,504 --> 01:11:59,009
+‫I labeled it so I can ‫reference it later, right?
+
+696
+01:11:59,033 --> 01:12:03,778
+‫And kind of in code, I would ‫probably remember what that node was.
+
+697
+01:12:03,802 --> 01:12:09,910
+‫Add x to M pointing ‫to that node, ‫right? And now I've ‫maintained my invariant. ‫Great.
+
+698
+01:12:09,934 --> 01:12:11,954
+‫Maybe what's this? ‫Add ‫key x,
+
+699
+01:12:11,978 --> 01:12:17,380
+‫or add x to M having the key of x ‫point to that node. Does that make sense?
+
+700
+01:12:17,404 --> 01:12:23,926
+‫There's a little subtlety there. ‫OK? ‫3, ‫we have remove. ‫I don't remember ‫the name, whatever.
+
+701
+01:12:23,950 --> 01:12:30,691
+‫OK? ‫So here, we have to do the order matters, ‫right? I don't know where it is in the sequence.
+
+702
+01:12:30,715 --> 01:12:36,214
+‫But I'm going to ‫look it up in the set. ‫I'm going to remove ‫it from the set.
+
+703
+01:12:36,238 --> 01:12:42,176
+‫And I'm going to look at whatever it ‫points to and remove it from the sequence. ‫OK?
+
+704
+01:12:42,200 --> 01:12:51,181
+‫I'm running out of time a little bit here, so I'm not going to ‫write all that down. But you guys understand what that means.
+
+705
+01:12:51,205 --> 01:12:55,293
+‫Here, we're using the fact ‫that it's a doubly linked list
+
+706
+01:12:55,317 --> 01:12:59,990
+‫so that we can relink things ‫together. You don't have to tell me,
+
+707
+01:13:00,014 --> 01:13:04,638
+‫repoint the previous pointer ‫of my next thing to the next, ‫right?
+
+708
+01:13:04,662 --> 01:13:11,671
+‫You don't have to tell me how to relink those ‫pointers because we did that already in problem set
+
+709
+01:13:11,695 --> 01:13:13,374
+‫one or whatever, right?
+
+710
+01:13:13,398 --> 01:13:28,439
+‫Just in general, is there any situation for where using not a doubly linked list would be like just the ‫linked list would be better than a doubly linked list? Because it seems like it always solves problems.
+
+711
+01:13:28,463 --> 01:13:35,910
+‫Yeah, doubly linked list is almost always strictly ‫better than a singly linked list in theory problems.
+
+712
+01:13:35,934 --> 01:13:42,236
+‫So yeah, use it. ‫OK. ‫And then seat, last one. ‫That's just ‫take the front of the sequence,
+
+713
+01:13:42,260 --> 01:13:47,833
+‫remove it, ‫change the head around. But I get ‫that you can delete first, right?
+
+714
+01:13:47,857 --> 01:13:53,722
+‫Reducing to the interface that we had. ‫You're deleting first on this sequence. ‫OK?
+
+715
+01:13:53,746 --> 01:14:00,244
+‫But now, we have a situation. I deleted the ‫first guy. How do I know who the first guy is?
+
+716
+01:14:00,268 --> 01:14:06,425
+‫Well, I'm storing its ‫name in there, right? ‫I'm storing the names ‫of these customers.
+
+717
+01:14:06,449 --> 01:14:12,995
+‫So I know who was at the front. ‫I look in this ‫set data structure, ‫and I remove that entry.
+
+718
+01:14:13,019 --> 01:14:18,591
+‫Does that make sense? ‫Because now, I no longer ‫need to maintain where he goes.
+
+719
+01:14:18,615 --> 01:14:23,409
+‫Now, in actuality, ‫I could just ‫not update this ‫set data structure.
+
+720
+01:14:23,433 --> 01:14:28,909
+‫But if I do that, then, well, my ‫running times are still linear time, right?
+
+721
+01:14:28,933 --> 01:14:33,800
+‫I'm not giving you ‫a bound on space. ‫I'm still constant time. ‫Sorry.
+
+722
+01:14:33,824 --> 01:14:37,425
+‫So you don't actually ‫have to do that removal. ‫But
+
+723
+01:14:37,449 --> 01:14:42,341
+‫if that customer comes back and ‫wants to get on the wait list again,
+
+724
+01:14:42,365 --> 01:14:48,375
+‫there are things ‫to consider, right? ‫OK. ‫So that's that question. ‫Next question, ‫last
+
+725
+01:14:48,399 --> 01:14:54,774
+‫10 minutes or so. ‫Rainy research. ‫This was a problem that ‫people had nightmares about. ‫OK.
+
+726
+01:14:54,798 --> 01:14:58,765
+‫So basically, we've ‫got Mether Wann. ‫He's a weatherman,
+
+727
+01:14:58,789 --> 01:15:04,873
+‫a scientist who ‫studies global rainfall. ‫And he's got a bunch ‫of sensors everywhere.
+
+728
+01:15:04,897 --> 01:15:12,563
+‫And each one can post to the cloud or something. A ‫measurement that's of the form a triple of integers, R,
+
+729
+01:15:12,587 --> 01:15:17,941
+‫L, and T, where R is a positive ‫amount of rainfall, an integer, ‫a latitude,
+
+730
+01:15:17,965 --> 01:15:24,413
+‫an integer again, and at a time. ‫OK. ‫So we've got three ‫things to deal with here. ‫Yuck. ‫OK.
+
+731
+01:15:24,437 --> 01:15:30,813
+‫But they're all integers. And ‫don't be like, oh, well, Jason, ‫latitudes are pretty small.
+
+732
+01:15:30,837 --> 01:15:33,830
+‫So I can assume these ‫integers are small.
+
+733
+01:15:33,854 --> 01:15:41,593
+‫They're constant time, right? I'm not specifying to ‫you a resolution at which I'm measuring these integers.
+
+734
+01:15:41,617 --> 01:15:49,941
+‫And I haven't given you a bound between what that resolution ‫is compared to the number of measurements that I have.
+
+735
+01:15:49,965 --> 01:15:56,511
+‫So don't play those games. ‫OK. ‫The peak rainfall at a given ‫latitude since a particular time
+
+736
+01:15:56,535 --> 01:16:00,769
+‫is the maximum rainfall at ‫any measurement at that latitude
+
+737
+01:16:00,793 --> 01:16:06,220
+‫measured at a time greater ‫than or equal to that time. ‫Does that make sense?
+
+738
+01:16:06,244 --> 01:16:10,187
+‫Or 0 if there aren't ‫measurements at that latitude. OK.
+
+739
+01:16:10,211 --> 01:16:13,861
+‫Or after the time, or ‫before the time, or whatever.
+
+740
+01:16:13,885 --> 01:16:18,509
+‫Describe a database that we ‫can build it in constant time, ‫right?
+
+741
+01:16:18,533 --> 01:16:24,155
+‫An empty one. I added this one because ‫we weren't good about that last spring.
+
+742
+01:16:24,179 --> 01:16:30,190
+‫Record data. We ‫give you a triplet. ‫And then, so record ‫data, for it to be correct,
+
+743
+01:16:30,214 --> 01:16:36,249
+‫I just have to maintain ‫that information, right? ‫For these kind of updates, ‫I don't,
+
+744
+01:16:36,273 --> 01:16:41,043
+‫it's really hard for me to ‫argue that this thing is correct, ‫right?
+
+745
+01:16:41,067 --> 01:16:49,390
+‫Because I just, you know, I throw it at the database. The ‫database doesn't have to give anything back to me, right?
+
+746
+01:16:49,414 --> 01:16:49,560
+‫So
+
+747
+01:16:49,584 --> 01:17:05,939
+‫the important thing here about correctness is that peak rainfall gives it to me, and it gives it to me in the time ‫bound that I'm looking for. And peak rainfall is returning the peak rainfall at a particular latitude since t.
+
+748
+01:17:05,963 --> 01:17:08,274
+‫OK. ‫So we have three things. ‫Yep.
+
+749
+01:17:08,298 --> 01:17:28,741
+‫Measurement is like a technique that we just have a record of it. There's the potential that you don't need to store all of the information ‫because all we're doing is giving you back r's, essentially, right? It's possible that you don't need to store the latitudes or times at all,
+
+750
+01:17:28,765 --> 01:17:32,270
+‫right? You don't even ‫need to store the triplets.
+
+751
+01:17:32,294 --> 01:17:36,674
+‫Now, in reality, I'm querying ‫on the latitudes and the times.
+
+752
+01:17:36,698 --> 01:17:43,366
+‫So I should store them somewhere, but I might ‫be able to compress them. In particular, ‫right?
+
+753
+01:17:43,390 --> 01:17:47,357
+‫Many things could be ‫stored at the same latitude, ‫right?
+
+754
+01:17:47,381 --> 01:17:51,713
+‫That's kind of the ‫whole point of the query. ‫And so we want,
+
+755
+01:17:51,737 --> 01:17:57,140
+‫I mean, we may only need to store ‫that latitude once. Does that make sense?
+
+756
+01:17:57,164 --> 01:18:04,465
+‫OK. I'm going to wait for questions and laughter ‫because I want to get to a solution to this problem.
+
+757
+01:18:04,489 --> 01:18:05,219
+‫All right.
+
+758
+01:18:05,243 --> 01:18:14,661
+‫So what do we need to do? We need to be able to add things, and I ‫want to return. So return, I'm going to have to query something,
+
+759
+01:18:14,685 --> 01:18:22,279
+‫right? And then I'm going to return something, right? ‫So return peak rainfall at latitude I since time t.
+
+760
+01:18:22,303 --> 01:18:28,752
+‫What do I care about ‫in a particular query? ‫I only care about all ‫the things at I, right?
+
+761
+01:18:28,776 --> 01:18:30,698
+‫At a latitude I. ‫So really,
+
+762
+01:18:30,722 --> 01:18:39,629
+‫this isn't such an interesting thing, but I want to be able to ‫have maybe many data structures, one associated with each I.
+
+763
+01:18:39,653 --> 01:18:45,201
+‫Does that make sense? ‫Right? And how can I find ‫one in each I, right? ‫Quickly?
+
+764
+01:18:45,225 --> 01:18:48,511
+‫Put it in a dictionary. ‫What's my time bound?
+
+765
+01:18:48,535 --> 01:18:54,668
+‫Worst case log n, right? So what data ‫structure do I use for that set data structure?
+
+766
+01:18:54,692 --> 01:19:00,824
+‫A set AVO, right? So we're ‫going to first have a set AVO, ‫say, ‫I, ‫mapping latitudes to,
+
+767
+01:19:00,848 --> 01:19:04,206
+‫well, now we have more ‫data structures, right?
+
+768
+01:19:04,230 --> 01:19:11,896
+‫So we're going to store a lot of the things that have ‫the same latitudes in another data structure, right?
+
+769
+01:19:11,920 --> 01:19:18,101
+‫The one's probably ‫storing the times and the ‫rainfalls of all those measurements. ‫Yeah?
+
+770
+01:19:18,125 --> 01:19:19,513
+‫Yeah? A hash table?
+
+771
+01:19:19,537 --> 01:19:26,838
+‫A hash table. OK. So what kinds of query am I going ‫to want to do on the things at the same latitude?
+
+772
+01:19:26,862 --> 01:19:33,603
+‫You're going to want ‫to get the times. ‫I'm going to want to get ‫the times, but more than that,
+
+773
+01:19:33,627 --> 01:19:40,344
+‫I'm doing kind of an ordered query, right? I ‫need the things less than a certain time, right?
+
+774
+01:19:40,368 --> 01:19:40,952
+‫Greater.
+
+775
+01:19:40,976 --> 01:19:49,445
+‫Also, it's really worth. ELIZABETH NOLAN - Just a second. ‫Do you do like an AVL for the time and an AVL for the rain?
+
+776
+01:19:49,469 --> 01:19:56,015
+‫ELIZABETH NOLAN - OK. ‫Do I care about an ‫AVL for the rain? ‫Am I looking up on the rainfall?
+
+777
+01:19:56,039 --> 01:20:01,879
+‫No. ‫So I'm going to go ahead and ‫store these things in a time ‫sorted AVL, right, ‫to
+
+778
+01:20:01,903 --> 01:20:03,217
+‫mapping latitude I
+
+779
+01:20:03,241 --> 01:20:09,520
+‫to I'm going to call this data structure a ‫time data structure, right? I'm going to say
+
+780
+01:20:09,544 --> 01:20:10,664
+‫it's t of I. ‫OK?
+
+781
+01:20:10,688 --> 01:20:18,573
+‫That kind of looks like a recurrence, so it's a little ‫irking me right now, but I don't have anything better.
+
+782
+01:20:18,597 --> 01:20:24,146
+‫All right. So now each one of these ‫time data structures, right, is a set AVL
+
+783
+01:20:24,170 --> 01:20:28,428
+‫mapping time to the ‫rainfall measurement. Right? ‫All right.
+
+784
+01:20:28,452 --> 01:20:32,833
+‫So that's going to, if my query ‫was return the peak rainfall,
+
+785
+01:20:32,857 --> 01:20:37,676
+‫sorry, return the rainfall of the ‫thing with latitude I and time t,
+
+786
+01:20:37,700 --> 01:20:43,030
+‫we'd be done, kind of, right? You'd ‫know how to support that query, right?
+
+787
+01:20:43,054 --> 01:20:49,211
+‫To insert things, I insert things into ‫both data structures. I just look it up, ‫right?
+
+788
+01:20:49,235 --> 01:20:56,049
+‫The one complication here is ‫that I'm not asking for what ‫is the rainfall at ‫a particular time.
+
+789
+01:20:56,073 --> 01:21:00,623
+‫I want to know what the maximum ‫rainfall is up to this time. ‫OK.
+
+790
+01:21:00,647 --> 01:21:07,193
+‫So max heap's good if I ‫want to know the global max, ‫right? ‫But here, I want to know the max
+
+791
+01:21:07,217 --> 01:21:09,432
+‫bounded by a certain range. ‫OK?
+
+792
+01:21:09,456 --> 01:21:16,319
+‫So we're going to, you can ask me questions after ‫this. We're running out of time a little bit.
+
+793
+01:21:16,343 --> 01:21:19,287
+‫OK? ‫So anyone have an ‫idea for how, yeah?
+
+794
+01:21:19,311 --> 01:21:32,891
+‫OK. And then you can just look at the right child, and then just look at the max of that child. ‫JASON KUO - OK. So what your colleague is saying, if we augment by the max r in my subtree,
+
+795
+01:21:32,915 --> 01:21:36,347
+‫maybe we can use that ‫to figure out this query,
+
+796
+01:21:36,371 --> 01:21:45,497
+‫right, because we're ordered on t, right? We have this nice ‫monotonic property that everything that's going to be in my query,
+
+797
+01:21:45,521 --> 01:21:51,216
+‫right, everything to the right of a ‫certain time, right, if my time is above t,
+
+798
+01:21:51,240 --> 01:22:04,309
+‫right, at a particular node, then everything in the right subtree is also above that t, ‫right, because of the order of my set's data structure, right, because I'm ordered on times,
+
+799
+01:22:04,333 --> 01:22:18,206
+‫right? So there's maybe the possibility that if I look to my right subtree, I can not do work ‫all over here by just looking at the max in that subtree, right? So that's an idea of, let's say,
+
+800
+01:22:18,230 --> 01:22:20,079
+‫augmented. ‫JASON KUO - OK.
+
+801
+01:22:20,103 --> 01:22:25,506
+‫You probably want to give this a name ‫as well, right? So like v max, right,
+
+802
+01:22:25,530 --> 01:22:28,231
+‫where v is a node ‫in my thing, right?
+
+803
+01:22:28,255 --> 01:22:34,607
+‫And I want to show how to support this, right, ‫how I can compute that from its children.
+
+804
+01:22:34,631 --> 01:22:40,690
+‫So how do I actually ‫support this query, ‫right? ‫I can think of it recursively, ‫right?
+
+805
+01:22:40,714 --> 01:22:43,732
+‫I have a couple cases. ‫If I'm at a v here,
+
+806
+01:22:43,756 --> 01:22:47,771
+‫I want to define a recursive ‫function that's called peak
+
+807
+01:22:47,795 --> 01:22:54,341
+‫rainfall of a given node ‫lower bounded by a t, OK? ‫So if I'm here, ‫there's two cases, ‫right?
+
+808
+01:22:54,365 --> 01:22:59,987
+‫Either my time is bigger or smaller, ‫is in my range or out of my range, right?
+
+809
+01:23:00,011 --> 01:23:05,511
+‫If it's out of my range, ‫what do I do, right? ‫It's lower than my time bound.
+
+810
+01:23:05,535 --> 01:23:11,741
+‫I can just recursively call this function ‫on this node, right, because I know that any
+
+811
+01:23:11,765 --> 01:23:15,781
+‫thing is going to be down ‫here that I care about, right?
+
+812
+01:23:15,805 --> 01:23:27,121
+‫And that's just one recursive call down the tree, right? And so if I only limit ‫myself to one recursive call down the tree, I'm always going down each time.
+
+813
+01:23:27,145 --> 01:23:34,227
+‫This is going to take logarithmic time, right? OK, ‫so that's the first case. That's the easy case,
+
+814
+01:23:34,251 --> 01:23:39,897
+‫right? This thing ‫is not in range. ‫I return recursively ‫the thing to my right.
+
+815
+01:23:39,921 --> 01:23:43,182
+‫What's the other case? ‫I'm in my range, ‫right?
+
+816
+01:23:43,206 --> 01:23:47,464
+‫Well, now I could return ‫recursively call both sides, ‫right?
+
+817
+01:23:47,488 --> 01:23:52,672
+‫Because that's what this peak is ‫talking about. What's my peak rainfall?
+
+818
+01:23:52,696 --> 01:24:03,721
+‫But if I do that, if I call it here recursively and I call it here recursively, ‫that could take linear time, right? I might touch every node in my tree.
+
+819
+01:24:03,745 --> 01:24:09,148
+‫So why did I do this augmentation? So ‫I don't have to do work on this node.
+
+820
+01:24:09,172 --> 01:24:15,840
+‫I can just return the maximum ‫rainfall in this subtree, right, ‫and then recurse on this side.
+
+821
+01:24:15,864 --> 01:24:18,492
+‫So I did constant ‫work on this side.
+
+822
+01:24:18,516 --> 01:24:23,189
+‫I did one recursive call down ‫here, which could go to the bottom.
+
+823
+01:24:23,213 --> 01:24:27,521
+‫But that's OK. I can afford ‫to go to the bottom of the tree.
+
+824
+01:24:27,545 --> 01:24:33,191
+‫Does that make sense? And if ‫I don't have either subtree, ‫then I'm done. Right?
+
+825
+01:24:33,215 --> 01:24:39,494
+‫If at any time I don't have the node that ‫I'm supposed to recurse on, I take the max of
+
+826
+01:24:39,518 --> 01:24:40,394
+‫this subtree
+
+827
+01:24:40,418 --> 01:24:47,865
+‫myself and whatever the recursive return value is ‫here. I'm comparing three values returning their max.
+
+828
+01:24:47,889 --> 01:24:53,170
+‫Does that make sense? ‫OK, so that's what we call ‫a one -sided range query.
+
+829
+01:24:53,194 --> 01:25:01,809
+‫So in the, I think, problem session 4 that I didn't get to, ‫it shows you a way to do this for a two -sided range query,
+
+830
+01:25:01,833 --> 01:25:07,090
+‫where I need to know the maximum of ‫all things between two things, right?
+
+831
+01:25:07,114 --> 01:25:14,342
+‫But it's really no more difficult than this, defining ‫a recursive function that uses an augmentation
+
+832
+01:25:14,366 --> 01:25:20,328
+‫so that you don't have to do ‫recursive call on both sides. ‫Does that make sense? ‫OK,
+
+833
+01:25:20,352 --> 01:25:26,460
+‫that's going to be it for now. ‫And I can take questions after. ‫OK, thanks for coming.
+

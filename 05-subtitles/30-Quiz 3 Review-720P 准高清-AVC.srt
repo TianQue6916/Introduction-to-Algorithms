@@ -1,0 +1,3772 @@
+1
+00:00:12,480 --> 00:00:18,840
+Hey everybody, welcome back. This is our
+last quiz review for the term, quiz three
+
+16
+00:00:18,840 --> 00:00:23,960
+we'll be talking about, which will be the
+last quiz until the final. It's on dynamic
+
+32
+00:00:23,960 --> 00:00:28,260
+programming, which you guys have been
+studying in lectures and recitations and on
+
+45
+00:00:28,260 --> 00:00:36,120
+your problem sets. Seven and eight, and
+lectures 15 through 18, so four lectures.
+
+59
+00:00:37,520 --> 00:00:42,260
+Quiz one and quiz two material on
+essentially data structures and graph
+
+71
+00:00:42,260 --> 00:00:46,700
+algorithms aren't going to be explicitly
+tested, or we're not trying to explicitly
+
+84
+00:00:46,700 --> 00:00:53,380
+test it, that material on quiz three.
+But it is fair game. The material is
+
+99
+00:00:53,380 --> 00:00:57,960
+cumulative. And so if you have to store
+some stuff in a data structure, that's fair
+
+115
+00:00:57,960 --> 00:01:03,280
+game. But we're not specifically trying to
+test you on that material. And really, we
+
+130
+00:01:03,280 --> 00:01:08,660
+haven't learned all that much new material
+in these last four lectures in this last
+
+145
+00:01:08,660 --> 00:01:19,000
+unit. So this is scope. We're mostly
+handling dynamic programming on these four
+
+158
+00:01:19,000 --> 00:01:23,600
+lectures and recitations and these
+two problem sets. But really, the focus is
+
+171
+00:01:23,600 --> 00:01:29,580
+going to be on this recursive framework
+of solving problems with a focus on dynamic
+
+186
+00:01:29,620 --> 00:01:36,080
+programming specifically. Now, the
+recursive framework we have, I think in
+
+197
+00:01:36,080 --> 00:01:43,140
+previous slides, we used this sort bot
+notation. And I think there might be a
+
+212
+00:01:43,240 --> 00:01:48,700
+space there in previous versions. I'm
+concatenating them together here. But
+
+223
+00:01:48,700 --> 00:01:54,700
+really, it's a framework for solving,
+breaking down your problem into a set of
+
+237
+00:01:54,940 --> 00:01:59,360
+subproblems that can then be related
+recursively. And if that relationship
+
+248
+00:02:00,960 --> 00:02:08,160
+depends on problems in a decreasing or in a
+smaller sense, there's a directionality to
+
+263
+00:02:08,699 --> 00:02:14,200
+which subproblems I'm reducing to
+each time I make a recursive call. And that
+
+277
+00:02:14,360 --> 00:02:16,120
+dependency graph is acyclic.
+
+281
+00:02:19,820 --> 00:02:24,300
+And so we're trying to find a way to solve
+via dynamic programming by memoizing from
+
+297
+00:02:24,300 --> 00:02:29,820
+bottom up or by calling things and
+remembering the calls that we've called
+
+310
+00:02:29,820 --> 00:02:36,660
+before via memoization. And the basic idea
+here is the recursive framework sort bot
+
+324
+00:02:36,660 --> 00:02:41,960
+that we established is good
+for any recursive algorithm.
+
+333
+00:02:48,500 --> 00:02:55,840
+And once may be used when computing other
+subproblems, then we get this really nice
+
+348
+00:02:55,840 --> 00:03:03,040
+speed up by recognizing that we don't
+have to do that work more than once. And
+
+364
+00:03:03,040 --> 00:03:08,180
+essentially, instead of looking at it as a
+tree of recursive calls that may call the
+
+380
+00:03:08,200 --> 00:03:12,920
+same problems more than once, we look
+at it by collapsing those nodes of the same
+
+396
+00:03:12,920 --> 00:03:20,300
+value down into one. We get a DAG.
+And dynamic programming is when those
+
+410
+00:03:20,300 --> 00:03:27,980
+subproblems overlap. So let's take a look
+at our recursive framework here, sort bot.
+
+424
+00:03:28,680 --> 00:03:35,980
+We have the SRTBOT. I remembered the space
+this time. Subproblem, you're going to
+
+438
+00:03:35,980 --> 00:03:40,320
+define some subproblems. You're going
+to relate them recursively. You're going to
+
+450
+00:03:40,340 --> 00:03:46,280
+specify a topological order of those
+subproblems that the relation satisfies.
+
+461
+00:03:47,660 --> 00:03:52,280
+You're going to list some base cases,
+basically wherever you could solve the
+
+474
+00:03:52,280 --> 00:03:57,900
+subproblem in constant time without doing
+any recursive work, stating how you solve
+
+487
+00:03:57,900 --> 00:04:03,960
+the original problem, which might involve
+combining many subproblems but frequently
+
+498
+00:04:03,960 --> 00:04:10,900
+is just finding one subproblem, and
+possibly remembering, storing parent
+
+508
+00:04:10,920 --> 00:04:14,900
+pointers to return an optimal sequence or
+something like that, and then analyze the
+
+522
+00:04:14,900 --> 00:04:18,019
+time. Now, the last one isn't really
+important. It's not really important for
+
+535
+00:04:18,019 --> 00:04:21,680
+solving a problem recursively. But in this
+class, it's really important because we
+
+548
+00:04:21,680 --> 00:04:28,000
+want to tell whether the algorithms that we
+make are efficient. So let's dive a little
+
+564
+00:04:28,060 --> 00:04:34,780
+deeper into each one of these things. So
+when we approach a subproblem, really what
+
+579
+00:04:34,780 --> 00:04:40,090
+I'm asking you for is to describe,
+basically set up a set of subproblems.
+
+593
+00:04:40,820 --> 00:04:45,540
+Basically, I like to use the variable x,
+but you can use whatever variable you want.
+
+609
+00:04:47,660 --> 00:04:53,860
+You're telling us what's in your memo and
+how big your memo is. So we usually have x
+
+627
+00:04:54,080 --> 00:05:00,820
+as a function of some variables. And you're
+wanting to describe to me what the meaning
+
+643
+00:05:00,820 --> 00:05:05,380
+of that subproblem is in terms of the
+parameters. Now, if you have parameters in
+
+658
+00:05:05,380 --> 00:05:10,440
+your subproblem that don't appear in
+your subproblem definition, you're doing it
+
+670
+00:05:10,440 --> 00:05:13,940
+wrong, and you're probably not going to
+get points for the problem, because I don't
+
+685
+00:05:13,940 --> 00:05:18,000
+know what your subproblem means now. Even
+if it's a correct subproblem, and you do
+
+700
+00:05:18,000 --> 00:05:18,900
+the rest of it right,
+
+705
+00:05:21,260 --> 00:05:24,600
+part of this class is about communication.
+And if you're not communicating to us what
+
+720
+00:05:24,660 --> 00:05:32,300
+this thing is doing, it's really difficult
+for you to convince us that your algorithm
+
+735
+00:05:32,300 --> 00:05:38,560
+is correct. So you really want to, in
+words, describe what the output of your
+
+750
+00:05:38,560 --> 00:05:45,680
+subproblem is. What will the memo return to
+me? And how those return values depend on
+
+766
+00:05:45,680 --> 00:05:49,860
+the inputs, the parameters of your
+subproblem. So that's what, in words,
+
+778
+00:05:50,240 --> 00:05:54,720
+describe what a subproblem means. So that's
+going to be a really important thing for
+
+793
+00:05:54,720 --> 00:06:00,440
+you not to forget on a quiz. Then when
+making subproblems, often what we're doing
+
+808
+00:06:00,440 --> 00:06:07,920
+is we're recursing on different values of
+indices in a sequence or numbers in your
+
+823
+00:06:07,920 --> 00:06:14,340
+problem. That's kind of what we got to in
+the last, in lecture 18, I guess, when we
+
+841
+00:06:14,340 --> 00:06:18,560
+were talking about expanding subproblems
+based on an integer. In our problem now,
+
+854
+00:06:18,560 --> 00:06:23,740
+actually, an integer in our problem is
+the number of things in a sequence. And so
+
+870
+00:06:23,740 --> 00:06:28,560
+really, those indices are integers in our
+problem that we're looping over, except
+
+883
+00:06:28,560 --> 00:06:35,700
+those integers happen to be the size of our
+subproblem, whereas other integers might
+
+897
+00:06:35,700 --> 00:06:39,680
+be larger, which is why you might get
+a pseudo polynomial time bound. But in
+
+912
+00:06:39,680 --> 00:06:43,520
+general, when I have a sequence of things
+that I might want to dynamic program over,
+
+928
+00:06:44,520 --> 00:06:52,800
+common choices for subproblems are prefixes
+or suffixes if I can kind of locally
+
+942
+00:06:52,800 --> 00:07:00,240
+figure out what to do with one item
+and then recurse. Or if I can't kind of
+
+959
+00:07:00,240 --> 00:07:04,720
+localize it by one choice on one side, if I
+have to make a choice in the middle or I
+
+979
+00:07:04,720 --> 00:07:10,400
+have to make a choice on both ends, then
+you might want to use basically contiguous
+
+995
+00:07:10,400 --> 00:07:16,620
+subsequences of your sequence, because you
+might need that flexibility when recursing
+
+1007
+00:07:16,620 --> 00:07:20,900
+downward if you need to take something from
+both the front and the back, for example.
+
+1023
+00:07:21,960 --> 00:07:27,560
+And really, what's the difference between
+prefixes and suffixes? Not much. We've been
+
+1036
+00:07:27,560 --> 00:07:31,440
+concentrating on suffixes in this class
+because in some sense, it's easier to think
+
+1050
+00:07:31,440 --> 00:07:37,520
+about. What am I doing with the first thing
+in my sequence or my suffix? And then I
+
+1068
+00:07:37,520 --> 00:07:43,780
+could recurse on what happens later. Now,
+in actuality, when you're doing this, say,
+
+1082
+00:07:44,420 --> 00:07:50,790
+bottom up, the actual computation that is
+evaluated first is where in that sequence?
+
+1096
+00:07:53,400 --> 00:07:59,160
+I may be calling at the top level what
+happens to my first element, but I'll
+
+1112
+00:07:59,160 --> 00:08:04,220
+actually deal with that first element
+last, because I will recursively solve
+
+1124
+00:08:04,220 --> 00:08:10,190
+everything below me, in front of me, before
+I figure out what to do with this thing.
+
+1141
+00:08:10,840 --> 00:08:17,900
+So in actuality, when I'm solving
+my recursion, I will start at the end and
+
+1156
+00:08:17,900 --> 00:08:22,800
+bottom up, because that's my base case. And
+then I'll work my way back to the front.
+
+1173
+00:08:23,780 --> 00:08:27,940
+Whereas with prefixes, you look at it the
+other way. What do I'm doing with my last
+
+1190
+00:08:27,940 --> 00:08:32,720
+element? If I look at what I'm doing with
+the last element, I recurse on a prefix on
+
+1208
+00:08:32,720 --> 00:08:37,559
+the stuff that's before me. And then when
+I do bottom up, I start from the front and
+
+1226
+00:08:37,559 --> 00:08:42,799
+work my way up. It's two different sides
+of the same coin. And usually, these are
+
+1242
+00:08:42,799 --> 00:08:48,680
+interchangeable. We've been doing it suffix
+-wise, because when we're starting to
+
+1254
+00:08:48,680 --> 00:08:53,980
+learn dynamic programming, we read things
+from left to right and things like that.
+
+1268
+00:08:54,360 --> 00:08:57,600
+It's a lot easier to figure out what's
+happening with the first thing and move
+
+1283
+00:08:57,640 --> 00:09:02,260
+forward conceptually. It's actually exactly
+the same thing. I could just flip my
+
+1296
+00:09:02,260 --> 00:09:06,760
+sequence, do the exact same thing
+with prefixes. It would be the exact same
+
+1310
+00:09:06,760 --> 00:09:12,500
+dynamic program. So these things
+are interchangeable. It's just it's really
+
+1321
+00:09:12,500 --> 00:09:18,460
+useful when learning into dynamic program
+to be able to switch back and forth between
+
+1336
+00:09:18,460 --> 00:09:25,280
+these things. We'll be working on suffixes
+today on the problems that we do. But these
+
+1352
+00:09:25,280 --> 00:09:28,820
+are interchangeable. And sometimes it's
+useful to be able to conceptually think
+
+1364
+00:09:28,820 --> 00:09:30,280
+about it in both directions.
+
+1369
+00:09:33,080 --> 00:09:40,620
+So aside from dealing with subsequences of
+sequences, in particular contiguous ones,
+
+1381
+00:09:41,680 --> 00:09:47,880
+we often multiply our subsets across
+multiple inputs, like if we have multiple
+
+1394
+00:09:47,880 --> 00:09:53,340
+sequences, we might take indices in
+each one of them to represent prefixes or
+
+1408
+00:09:53,340 --> 00:09:57,180
+suffixes. And then we might have to
+remember additional information by
+
+1419
+00:09:57,180 --> 00:10:03,660
+maintaining some auxiliary information,
+like am I trying to maximize or minimize my
+
+1432
+00:10:04,000 --> 00:10:10,560
+sum in an evaluated expression in
+an arithmetic parenthesization? Or is it
+
+1444
+00:10:10,560 --> 00:10:18,440
+player one's turn or player's two turn?
+Or where was my finger when I was playing
+
+1460
+00:10:18,440 --> 00:10:22,800
+piano or something like that? Those are the
+kinds of things that we might expand our
+
+1476
+00:10:22,800 --> 00:10:27,880
+state on. And in particular, we might
+expand our state based on the numbers in
+
+1491
+00:10:27,880 --> 00:10:32,240
+our problem if we're trying to, for
+example, keep track of how much space is
+
+1506
+00:10:32,340 --> 00:10:39,500
+left in a knapsack or something like that.
+But in general, if I'm trying to, say, pack
+
+1523
+00:10:39,680 --> 00:10:47,120
+a set of things, it's useful to know how
+much space I have left to pack. So that's
+
+1541
+00:10:47,120 --> 00:10:52,500
+subproblems. This is really the key part
+about dynamic programming, is the recursive
+
+1554
+00:10:52,500 --> 00:10:55,900
+part. This is what makes it hard, is
+choosing a set of subproblems. And it's
+
+1569
+00:10:55,900 --> 00:11:07,000
+often you build subproblems to fit well
+with a relation. So usually, building what
+
+1583
+00:11:07,000 --> 00:11:12,720
+these subproblems are is usually closely
+coupled with the next step, which is
+
+1596
+00:11:12,720 --> 00:11:17,940
+relating the subproblems recursively.
+And by relate recursively, I usually what I
+
+1608
+00:11:17,940 --> 00:11:27,200
+want is an expression, a mathematical
+expression relating the definition of a
+
+1620
+00:11:27,200 --> 00:11:34,400
+subproblem you had in the previous section,
+relating those in math terms to the other
+
+1635
+00:11:34,400 --> 00:11:40,000
+things. It's really important that you
+write this in math because it needs to be
+
+1650
+00:11:40,200 --> 00:11:44,620
+precise to communicate this thing well.
+Now, you can write it in words. But I would
+
+1666
+00:11:44,680 --> 00:11:49,780
+suggest you write it as a mathematical
+expression because it's a lot more concise
+
+1680
+00:11:49,920 --> 00:11:55,080
+for us to see what's happening in
+your recursion. So relate them recursively.
+
+1693
+00:11:55,580 --> 00:12:00,860
+Basically, I'm going to write, say, that x
+of some set of parameters equals some
+
+1708
+00:12:00,860 --> 00:12:07,500
+function, usually a maximization or a
+minimization or a summation or an or or an
+
+1723
+00:12:07,500 --> 00:12:15,980
+and or some other combinator of a bunch of
+choices that you might make or a bunch of
+
+1741
+00:12:16,080 --> 00:12:20,460
+subproblems that you might recurse on. So
+basically, you're going to depend on some
+
+1755
+00:12:20,460 --> 00:12:27,600
+other subproblems that are smaller in some
+sense. Now, actually embedded in this, the
+
+1769
+00:12:27,600 --> 00:12:34,960
+idea of a smaller subproblem isn't really
+well -defined yet. We haven't told you an
+
+1784
+00:12:34,960 --> 00:12:40,680
+ordering of these subproblems to be
+smaller. But that's what's going to come in
+
+1798
+00:12:40,680 --> 00:12:48,500
+the third step. So kind of a strategy for
+figuring out what these recursive relations
+
+1813
+00:12:48,540 --> 00:12:55,960
+might be is to identify some question about
+the subproblem solution. What do I do with
+
+1829
+00:12:56,060 --> 00:12:57,940
+the first character
+in this string?
+
+1835
+00:13:00,000 --> 00:13:11,960
+Or which cage do I put this tiger in to
+figure out what subproblem should I recurse
+
+1852
+00:13:11,960 --> 00:13:16,600
+on later? I don't know the answer to that
+question. But if I knew the answer to that
+
+1870
+00:13:16,600 --> 00:13:22,320
+question, then I could recurse on a smaller
+subproblem because I've figured out what
+
+1884
+00:13:22,380 --> 00:13:30,000
+to do with that tiger. And so it will let
+me reduce to smaller subproblems. And then
+
+1901
+00:13:30,000 --> 00:13:34,040
+what dynamic programming does is
+because I only have a polynomial number of
+
+1914
+00:13:34,040 --> 00:13:39,140
+subproblems and I've assumed I've already
+computed what those are, I've already
+
+1926
+00:13:39,140 --> 00:13:44,640
+memorized what the solutions to those
+subproblems are, then I can just locally
+
+1939
+00:13:44,640 --> 00:13:49,380
+brute force over all the possible answers
+to that question. And that's just one way
+
+1954
+00:13:49,380 --> 00:13:50,180
+to look at dynamic programming.
+
+1959
+00:13:52,940 --> 00:13:57,560
+So then as we were talking about
+topological order, arguing that relation is
+
+1972
+00:13:57,560 --> 00:14:02,700
+acyclic, essentially just defining what
+smaller means when we say we're recursing
+
+1984
+00:14:02,700 --> 00:14:08,020
+on smaller subproblems. What does smaller
+mean? Usually, you're saying that some
+
+1996
+00:14:08,020 --> 00:14:14,320
+index or some parameter of my subproblem
+always decreases or increases. Sometimes
+
+2008
+00:14:14,320 --> 00:14:19,880
+that's not always the case. Sometimes you
+have to maybe add a couple indices and see
+
+2024
+00:14:19,880 --> 00:14:24,380
+that that always increases because one may
+stay the same while the other increases or
+
+2039
+00:14:24,540 --> 00:14:30,360
+something like that. But in general, as
+long as you argue that the relations are
+
+2054
+00:14:30,360 --> 00:14:35,900
+acyclic, then the subproblem graph is a DAG
+and you can compute in a bottom -up manner
+
+2071
+00:14:36,260 --> 00:14:38,520
+and you don't get infinite
+loops in your recursion.
+
+2080
+00:14:40,560 --> 00:14:46,140
+The last couple of things are bookkeeping.
+But if you don't write these on your exam,
+
+2096
+00:14:46,160 --> 00:14:53,020
+we can't give you points for them. So write
+these down. Base cases, if you don't tell
+
+2113
+00:14:53,020 --> 00:14:58,320
+us base cases, then your algorithm cannot
+be polynomial time. It can't even be finite
+
+2128
+00:14:58,320 --> 00:15:03,600
+time because your algorithm never stops. It
+just continues to recurse forever and ever
+
+2142
+00:15:03,640 --> 00:15:07,620
+and ever. And so it's hard to give us
+points. I mean, we will give you some
+
+2159
+00:15:07,660 --> 00:15:13,380
+points if your subproblems and relation
+are correct. But really, if you write code
+
+2173
+00:15:13,380 --> 00:15:18,900
+without a base case, it's going to be
+wrong. So base cases are really important.
+
+2188
+00:15:19,760 --> 00:15:26,460
+Basically, for anything at the bounds of
+your computation, wherever your recursive
+
+2200
+00:15:26,460 --> 00:15:32,280
+relation would essentially go outside the
+bounds of your memo, let's say I'm dealing
+
+2214
+00:15:32,280 --> 00:15:39,720
+with a subsequence. And at some point,
+I'm trying to point to a state where I have
+
+2231
+00:15:39,720 --> 00:15:44,680
+zero or negative elements in my sequence.
+That's probably a bad thing. And so I want
+
+2247
+00:15:44,680 --> 00:15:51,080
+to define how to compute those things
+in constant time so that my algorithm can
+
+2262
+00:15:51,100 --> 00:15:57,480
+terminate when it gets to one of those base
+cases. So it's really important that you
+
+2278
+00:15:57,520 --> 00:16:03,280
+cover all of those possible leaf locations
+where you want to be able to return in
+
+2294
+00:16:03,280 --> 00:16:08,700
+constant time. And we'll do some of that
+today. State solutions for all reachable
+
+2308
+00:16:08,700 --> 00:16:13,460
+independent subproblems where the relation
+breaks down. Essentially, I would be going
+
+2320
+00:16:13,460 --> 00:16:20,260
+outside the bounds of my thing or anything
+where maybe if you've got one item left,
+
+2336
+00:16:20,940 --> 00:16:24,740
+you might say, well, I have no choice on
+what to do with that item. I have to pick
+
+2355
+00:16:24,740 --> 00:16:32,280
+it or something like that. OK, then for
+your original problem, you show how to
+
+2370
+00:16:32,280 --> 00:16:39,660
+compute solution to the original problem
+from the solutions of your subproblems. So
+
+2383
+00:16:39,660 --> 00:16:45,460
+usually, this is just, here's a subproblem.
+It's the one that used all of the things.
+
+2399
+00:16:46,540 --> 00:16:50,820
+And that's going to be my answer. But
+that's not always the case. Sometimes, like
+
+2414
+00:16:50,840 --> 00:16:55,720
+in a longest increasing subsequence, we had
+to take a max over all of our subproblems
+
+2430
+00:16:55,720 --> 00:16:59,260
+that we computed or max
+subarray sum. We also had to do that.
+
+2443
+00:17:02,140 --> 00:17:09,480
+But in general, the output to our
+subproblems wants to be some scalar value
+
+2457
+00:17:09,480 --> 00:17:14,339
+that we're trying to optimize or a
+Boolean or something like that. It's how we
+
+2472
+00:17:14,339 --> 00:17:19,980
+maximize or minimize what we're doing.
+We're not storing the entire sequence of
+
+2485
+00:17:19,980 --> 00:17:23,960
+how we got there because there could be an
+exponential number of possible subsequences
+
+2499
+00:17:24,119 --> 00:17:27,819
+that got there. That's the whole point
+of dynamic programming. We're kind of
+
+2512
+00:17:27,839 --> 00:17:31,300
+isolating the complexity of one
+subproblem down to a single number.
+
+2523
+00:17:34,140 --> 00:17:40,520
+But in a lot of problems, we might want to
+reconstruct, say, the placement of tigers
+
+2539
+00:17:40,520 --> 00:17:49,640
+into cages and not just what's the minimum
+discomfort over all tigers or something
+
+2553
+00:17:49,640 --> 00:17:54,400
+like that, like you add in your problem
+set. So I actually want to know where to
+
+2570
+00:17:54,400 --> 00:18:00,040
+put tigers into cages. And to do that,
+every time I maximize a subproblem, I can
+
+2586
+00:18:00,040 --> 00:18:05,820
+remember which subproblem or subproblems
+I depended on, just like storing parent
+
+2598
+00:18:05,900 --> 00:18:12,280
+pointers in shortest paths. And then using
+those parent pointers, I can just walk back
+
+2613
+00:18:12,640 --> 00:18:20,180
+in my subproblem graph and figure out which
+path to a base case led me to an optimal
+
+2631
+00:18:20,180 --> 00:18:20,280
+solution.
+
+2632
+00:18:22,640 --> 00:18:27,080
+And then the last thing is analyzing
+running time. Generally, you're just
+
+2644
+00:18:27,120 --> 00:18:30,720
+summing the work done by each
+subproblem because the assumption is you're
+
+2656
+00:18:30,760 --> 00:18:37,020
+calculating all of the subproblems
+you described to me. But if the work per
+
+2670
+00:18:37,040 --> 00:18:42,820
+subproblem is bounded by the same value,
+you can just multiply it out. So that's
+
+2685
+00:18:42,840 --> 00:18:48,430
+generally a weaker bound, but usually
+asymptotically equivalent. To the stronger
+
+2696
+00:18:49,060 --> 00:18:51,220
+notion on the left.
+
+2700
+00:18:53,400 --> 00:18:59,400
+And that's basically how you do running
+time. Usually, it's enough to, how do I
+
+2715
+00:18:59,400 --> 00:19:05,020
+define, determine how many subproblems
+I have? Well, I look at the possible values
+
+2729
+00:19:05,020 --> 00:19:10,600
+of each of my parameters. And then I
+multiply those numbers together. A lot of
+
+2744
+00:19:10,620 --> 00:19:15,140
+people will maybe say, oh, I add them
+together. No, because I'm able to choose
+
+2759
+00:19:15,140 --> 00:19:19,440
+each of these independently. And so I
+multiply those things together. And then
+
+2772
+00:19:20,040 --> 00:19:26,980
+the work done by each subproblem is usually
+the size of the thing I'm maximizing over
+
+2788
+00:19:26,980 --> 00:19:32,420
+or minimizing over or summing in
+my relation. It's going to be the size of
+
+2803
+00:19:32,420 --> 00:19:37,660
+that, the branching that I have, the number
+of subproblems I depend on. And so the
+
+2819
+00:19:37,660 --> 00:19:42,480
+number of subproblems, you probably look
+at your subproblem statement definition. To
+
+2831
+00:19:42,520 --> 00:19:45,680
+find the work done by each subproblem,
+you look at your recursive relation.
+
+2844
+00:19:48,060 --> 00:19:52,620
+So with that, we've got this really nice
+framework. And we're going to use it to
+
+2860
+00:19:52,620 --> 00:19:58,680
+solve some practice problems. Happy days.
+And these are a little bit longer in terms
+
+2875
+00:19:58,680 --> 00:19:59,480
+of
+
+2876
+00:20:02,060 --> 00:20:08,520
+description than our previous quiz to
+review. So I'm going to go ahead and read
+
+2891
+00:20:08,520 --> 00:20:13,620
+them out for you. This one's a little
+shorter. Tiffany Bannon stumbles upon a
+
+2905
+00:20:13,620 --> 00:20:18,780
+lottery chart dropped by a time traveler
+from the future, winning lottery numbers
+
+2918
+00:20:18,780 --> 00:20:23,160
+and positive integer cast payouts for the
+next n days. Anyone get the reference here?
+
+2933
+00:20:24,820 --> 00:20:25,200
+Tiffany Bannon.
+
+2935
+00:20:27,400 --> 00:20:34,360
+Biff Tannen from some Back to the Future
+thing. So this was actually, I think it's
+
+2951
+00:20:34,360 --> 00:20:40,100
+the second Back to the Future movie where
+this happens. Anyway, Tiffany wants to use
+
+2966
+00:20:40,100 --> 00:20:44,600
+this information to make money because she
+knows the future about the lottery, but is
+
+2981
+00:20:44,600 --> 00:20:48,540
+worried that if she plays winning
+numbers every day, the organizers will get
+
+2994
+00:20:48,540 --> 00:20:54,040
+suspicious and shut her down. So the idea
+here is maybe it's still suspicious, but
+
+3009
+00:20:54,420 --> 00:21:01,500
+decides to play the lottery infrequently,
+at most twice in any seven -day period. She
+
+3024
+00:21:01,500 --> 00:21:08,620
+will. She'll win. But it's infrequent
+enough that maybe that's by chance, maybe
+
+3037
+00:21:08,620 --> 00:21:13,020
+not. Describe a linear time algorithm to
+determine the maximum amount of lottery
+
+3050
+00:21:13,020 --> 00:21:18,660
+winnings Tiffany can win in the next n days
+by playing the lottery infrequently. Now,
+
+3065
+00:21:18,660 --> 00:21:25,460
+this was a particularly difficult type of
+PSET, or first PSET on dynamic programming
+
+3079
+00:21:25,460 --> 00:21:31,440
+problem, but let's try to do it together.
+So this is problem one. I'm going to just
+
+3096
+00:21:31,580 --> 00:21:32,100
+call it Lotto.
+
+3099
+00:21:34,240 --> 00:21:42,080
+OK, so how can we deal with subproblems
+here? Well, I might want to think about
+
+3115
+00:21:42,440 --> 00:21:48,160
+what do I do on the first day? Am I going
+to play the lottery or not? Curse on the
+
+3135
+00:21:48,160 --> 00:21:55,480
+rest. That sounds good, right? So I might
+have something like, well, let's say that L
+
+3151
+00:21:55,480 --> 00:21:58,480
+of i is the
+
+3155
+00:22:02,620 --> 00:22:10,040
+winnings on day i. This is kind of just
+like, this doesn't define me some notation
+
+3171
+00:22:10,040 --> 00:22:16,400
+on what the cash payouts are, and so I'm
+making a variable to do that. And for the
+
+3189
+00:22:16,420 --> 00:22:22,380
+sake of what's written down on my sheet,
+I'm going to assume that this is 1 indexed.
+
+3206
+00:22:23,320 --> 00:22:29,800
+I don't know why. OK, so I have days 1 to
+n. I know what their lottery payouts are.
+
+3225
+00:22:30,860 --> 00:22:37,160
+So I might, when I'm doing my sort bot
+stuff, I have subproblems, right? What I
+
+3241
+00:22:37,160 --> 00:22:43,320
+might want to do is see what happens on day
+1 and recurse on what's later. So I might
+
+3260
+00:22:43,320 --> 00:23:03,460
+have something like x of i is max winnings
+for, I guess, possible for days i to n.
+
+3278
+00:23:05,530 --> 00:23:11,500
+Anyone have a problem with this type
+of subproblem? Let's see. Let's kind of see
+
+3293
+00:23:11,500 --> 00:23:15,000
+what this type of
+subproblem would lead me to.
+
+3302
+00:23:18,160 --> 00:23:25,500
+I can either, in my reload step, what are
+my choices? I can either play on day i or I
+
+3322
+00:23:25,500 --> 00:23:28,100
+can not play on day i. If I,
+
+3330
+00:23:32,180 --> 00:23:39,560
+I'm trying to maximize this thing.
+Maximize. Either if I play on day i, I get
+
+3346
+00:23:39,840 --> 00:23:46,120
+L i, and then I can recurse on the
+remainder. Or I don't play on L i, and I
+
+3365
+00:23:46,120 --> 00:23:46,900
+recurse on the remainder.
+
+3369
+00:23:54,970 --> 00:23:57,840
+Or I make careful mistake adherence,
+right? I can always pick perhaps.
+
+3381
+00:24:17,660 --> 00:24:23,920
+It's within any consecutive seven day
+period, which is a little confusing. How
+
+3394
+00:24:24,020 --> 00:24:30,320
+can I remember what days I'm allowed to
+pick later on? It seems a little daunting.
+
+3410
+00:24:31,820 --> 00:24:38,820
+OK. In a sense, for me to know, like this
+is max winning possible for days i to n.
+
+3429
+00:24:39,820 --> 00:24:45,480
+But in some sense, it depends on which
+days I picked before. Right. Because if I
+
+3445
+00:24:45,480 --> 00:24:54,540
+picked i minus 1, I can't pick another day
+for another six days. If I have a right.
+
+3463
+00:24:57,780 --> 00:25:05,840
+So I have let's do this precisely. This is
+i minus 1. Right. I have seven day period
+
+3481
+00:25:05,840 --> 00:25:15,440
+1, 2, 3, 4, 5, 6, 7. Right. If I played
+the lottery here, and I played the lottery
+
+3500
+00:25:15,440 --> 00:25:19,580
+here, then I'm not allowed to play the
+lottery here. I'm not allowed to play here,
+
+3516
+00:25:19,660 --> 00:25:23,400
+not allowed to play here, not allowed to
+play here. I'm not allowed to play here, I
+
+3533
+00:25:23,400 --> 00:25:24,080
+am allowed to play.
+
+3537
+00:25:26,640 --> 00:25:32,770
+Here so this is i plus 1 plus 2
+plus 3 plus 4 plus 5 plus 6 i plus 6.
+
+3557
+00:25:35,480 --> 00:25:43,280
+So depending on what happened before me, I
+might not be able to play until day i plus
+
+3575
+00:25:43,280 --> 00:25:51,420
+6. But if I haven't played until since
+way back here, I could potentially play the
+
+3591
+00:25:51,420 --> 00:25:56,880
+next guy. I don't actually know which of
+these I can play on next. In some sense, I
+
+3609
+00:25:56,880 --> 00:26:02,460
+need to remember which days I'm allowed
+to play on next. And I want to be able to
+
+3627
+00:26:02,460 --> 00:26:07,120
+just, like at the beginning, I have no
+restrictions. I can just play on this guy
+
+3643
+00:26:07,120 --> 00:26:09,340
+next, even if I played there.
+
+3649
+00:26:11,420 --> 00:26:17,640
+But in general, I will be restricted in
+some way between being able to play on this
+
+3666
+00:26:17,640 --> 00:26:20,780
+guy and being able to play on this guy.
+And so what I'm going to do is I'm going to
+
+3686
+00:26:20,780 --> 00:26:26,920
+generalize my subproblems by storing
+additional information so that I can rely
+
+3698
+00:26:26,930 --> 00:26:29,000
+on that information when I
+look into the future and recurse.
+
+3709
+00:26:31,060 --> 00:26:38,420
+So instead of I'm going to, in some
+sense, need to remember two days.
+
+3723
+00:26:41,520 --> 00:26:46,400
+Where was the last two places I played?
+I'm going to simplify that a little bit by
+
+3740
+00:26:46,460 --> 00:26:53,820
+saying that this subproblem, max winnings
+possible for days i to n, I'm going to say
+
+3756
+00:26:53,820 --> 00:26:55,320
+that I have to play on day i.
+
+3764
+00:27:24,320 --> 00:27:24,520
+and so on.
+
+3767
+00:27:28,780 --> 00:27:34,240
+OK, so I'm going to expand this
+problem by another, I guess this is a j.
+
+3783
+00:27:36,580 --> 00:27:46,900
+OK, assuming I play on day i and
+I'm allowed to play, I guess, and next
+
+3799
+00:27:48,740 --> 00:27:51,020
+allowable
+
+3800
+00:27:53,040 --> 00:28:01,540
+play on day i plus j for,
+
+3807
+00:28:05,720 --> 00:28:07,720
+what are my possible
+range of days for j?
+
+3816
+00:28:10,120 --> 00:28:19,000
+I can either play the next day, but I never
+restricted past day i plus 6, because the
+
+3834
+00:28:19,040 --> 00:28:25,060
+things before me further to the right,
+because I haven't dealt with them yet. So I
+
+3850
+00:28:25,060 --> 00:28:31,820
+only have to deal with this from 1 to 6.
+Well, this is nice, because it expanded my
+
+3868
+00:28:31,820 --> 00:28:36,520
+subproblems by a constant number.
+So I actually didn't lose anything
+
+3879
+00:28:36,520 --> 00:28:43,200
+asymptotically here by remembering this
+information. But I'm able to remember all
+
+3891
+00:28:43,200 --> 00:28:47,120
+the things that could have happened before
+me. I compress it into this one number.
+
+3906
+00:28:49,400 --> 00:28:56,340
+So now let's rewrite our relation. I'm
+actually going to go ahead and use some
+
+3921
+00:28:56,340 --> 00:29:01,020
+more board space, because I
+think that's easier than erasing.
+
+3931
+00:29:06,120 --> 00:29:11,900
+So we are looking at my relation. This is
+a pretty complicated relation, but what's
+
+3946
+00:29:11,900 --> 00:29:17,840
+happening now? Now, I'm assuming I play
+on day i. That actually simplifies things a
+
+3961
+00:29:17,840 --> 00:29:25,120
+little bit, because no matter what, I get
+the winnings on day i. Now, when I call
+
+3978
+00:29:25,340 --> 00:29:30,220
+this subproblem, I better make sure that
+it's OK that I played on day i, but that's
+
+3995
+00:29:30,220 --> 00:29:35,460
+for my caller. I am locally allowed to play
+on day i. I am playing on day i. That's
+
+4014
+00:29:35,480 --> 00:29:37,160
+the definition of my subproblem.
+
+4019
+00:29:39,410 --> 00:29:44,140
+So I'm going to maximize
+over some choice,
+
+4027
+00:29:46,700 --> 00:29:46,840
+max of,
+
+4029
+00:29:49,980 --> 00:29:56,640
+I guess I have li no matter what. So this
+could actually come out of my max. And then
+
+4048
+00:29:56,640 --> 00:29:59,420
+I'm going to choose, what am I choosing
+here? I'm not choosing whether I'm playing
+
+4063
+00:29:59,420 --> 00:30:05,260
+on day i. I'm choosing what my next day I
+play is, so that then I can recurse on that
+
+4083
+00:30:05,260 --> 00:30:05,620
+subproblem.
+
+4084
+00:30:09,480 --> 00:30:11,900
+Play on. Well, I'm restricted
+
+4089
+00:30:14,660 --> 00:30:17,620
+by this j parameter that I
+didn't add into my subproblem
+
+4100
+00:30:20,020 --> 00:30:28,040
+on what possible days I can play next. I'm
+going to split that into a kind of compress
+
+4118
+00:30:28,040 --> 00:30:40,460
+that into one thing. So x, I can play on. I
+have a choice of the next day I play. I'm
+
+4139
+00:30:40,460 --> 00:30:43,600
+going to compare between j, which is my
+next allowable play, and sometime in the
+
+4154
+00:30:43,600 --> 00:30:43,740
+future.
+
+4155
+00:30:45,840 --> 00:30:52,100
+So i plus k, this is going to be my loop
+that I'm looping over in terms of my max.
+
+4175
+00:30:54,260 --> 00:31:04,600
+And then what am I restricted on in my
+play? It depends on how far I am from i. So
+
+4195
+00:31:04,600 --> 00:31:05,990
+if I'm here,
+
+4198
+00:31:09,160 --> 00:31:19,720
+i, if I choose k to be the next day, I
+can't play for many, many times. So the
+
+4217
+00:31:19,720 --> 00:31:29,280
+subproblem I'm going to recurse on is,
+this is i plus k. I'm going to recurse on i
+
+4235
+00:31:29,340 --> 00:31:38,440
+plus k. But I'm not able to, j needs to
+be the max it can be, because I can't play
+
+4255
+00:31:39,840 --> 00:31:51,000
+until i plus 6. So this i plus k plus 6 is
+going to be my thing. So let's see. So I'm
+
+4277
+00:31:51,000 --> 00:31:51,500
+going to put,
+
+4280
+00:31:54,360 --> 00:32:02,600
+let's see if I can unpack what I wrote
+down here. Max of 1, 7 minus k. Yuck.
+
+4298
+00:32:05,880 --> 00:32:09,260
+Oh, I'll put it here. 1,
+
+4304
+00:32:11,820 --> 00:32:15,660
+7 minus k. OK, if I pick k,
+
+4312
+00:32:21,080 --> 00:32:30,100
+I'm not aggressive toward these boards.
+It's justness. OK, so if I get, if I pick a
+
+4329
+00:32:30,100 --> 00:32:37,240
+k way down here, right, I'm not restricted
+at all, right? And so the most permissive
+
+4345
+00:32:37,560 --> 00:32:43,630
+option I have here is 1. So I definitely
+can't be worse than 1. But if I pick,
+
+4363
+00:32:47,120 --> 00:32:54,340
+and then this needs to be some number
+between 6 and 1. And so I can just check
+
+4381
+00:32:54,420 --> 00:33:03,560
+the other bound. If this is the most
+restrictive, then this should be 6. So when
+
+4397
+00:33:03,600 --> 00:33:09,380
+k equals 1, this should be 6. And it
+decreases every time further back or
+
+4412
+00:33:09,380 --> 00:33:14,720
+further forward I choose this k, right? So
+that's what my subproblem is going to be.
+
+4428
+00:33:15,700 --> 00:33:30,020
+And I'm choosing over k in from j, j,
+sorry, i plus j. Sorry, j. Thank you. Until
+
+4446
+00:33:30,020 --> 00:33:31,040
+what?
+
+4447
+00:33:33,880 --> 00:33:38,860
+That's the question. Until what? Do I have
+to loop over n? If I loop over n, I'm going
+
+4466
+00:33:38,860 --> 00:33:43,740
+to get a quadratic running time, which
+is worse than what I'm allowed to do. The
+
+4482
+00:33:43,740 --> 00:33:49,180
+assumption is that I only have to check a
+constant number of these. And why might
+
+4498
+00:33:49,180 --> 00:33:49,580
+that be?
+
+4500
+00:33:52,320 --> 00:34:02,160
+Any ideas? Let's say I got my subproblem.
+I'm recursing. I've got i. Yeah, I don't
+
+4516
+00:34:02,160 --> 00:34:07,360
+know where j is. j is somewhere over here.
+1, 2, 3, maybe it's 4 or something like
+
+4534
+00:34:07,360 --> 00:34:07,620
+that.
+
+4535
+00:34:10,880 --> 00:34:18,080
+Let's say I pick some k down here. What is
+this? This is i plus, so this is j is 4, 5,
+
+4557
+00:34:18,080 --> 00:34:26,940
+6, 7, 8, 9, 10, 11, 12, 13, 14, 15. 15,
+way over here, like two weeks later. Is it
+
+4577
+00:34:26,940 --> 00:34:33,659
+ever optimal for me to do that? Why not?
+You could play the lotto in the middle.
+
+4594
+00:34:34,300 --> 00:34:40,600
+Yeah, I could play the lotto in the middle.
+Here, right? Right. I'm within, like, from
+
+4610
+00:34:40,600 --> 00:34:45,060
+here to there, that's a seven -day period
+where I only played once. And from here to
+
+4627
+00:34:45,060 --> 00:34:49,440
+here, that's a seven -day period where I
+only played once. Right? So it's going to
+
+4643
+00:34:49,440 --> 00:34:53,000
+be more, these are positive values, so it's
+going to be more optimal for me to choose
+
+4660
+00:34:53,000 --> 00:34:59,160
+something in here to play. Right? So how
+far, I mean, I could just use 15, and that
+
+4678
+00:34:59,160 --> 00:35:04,000
+would satisfy. Right? Because I've already
+argued to you that it's never optimal to, I
+
+4693
+00:35:04,000 --> 00:35:07,920
+can check this. It's not going to be
+optimal. It's going to be more optimal to
+
+4709
+00:35:07,920 --> 00:35:12,180
+play sometime over here. Right?
+But how far do I have to check?
+
+4722
+00:35:14,360 --> 00:35:18,000
+Well, maybe I have to check
+up to seven. Does that work?
+
+4734
+00:35:21,820 --> 00:35:31,080
+Not quite. So let's say I played here and I
+played here and I played here and I played
+
+4753
+00:35:31,080 --> 00:35:42,020
+here. Right? I actually, can't play here,
+here, here, here, here. Right? I'm not
+
+4767
+00:35:42,020 --> 00:35:45,740
+allowed to play those. I guess
+these should be O's. I played there.
+
+4780
+00:35:48,200 --> 00:35:55,100
+And I'm not allowed to play here. One, two,
+three, four, five. Right? But I am allowed
+
+4797
+00:35:55,100 --> 00:35:59,820
+to play anywhere in here. So I basically
+want to shrink this until these x's
+
+4812
+00:36:02,040 --> 00:36:06,620
+collide with each other, because then it's
+possible that an optimal solution would
+
+4825
+00:36:06,620 --> 00:36:10,780
+require me to pick these two and then
+require me to pick these two way over
+
+4841
+00:36:10,780 --> 00:36:16,380
+there. Right? So this is 10 things in the
+middle. I only have to go up to at most 11.
+
+4861
+00:36:17,480 --> 00:36:24,360
+OK? That's 11. Now, you could use any
+constant above 11 and get the same running
+
+4877
+00:36:24,480 --> 00:36:34,220
+time bound, but that's my analysis. OK. So
+we have our recursive relation. And so what
+
+4893
+00:36:34,220 --> 00:36:39,400
+am I doing? I'm just looping over my
+choices of next day to play. I'm recursing
+
+4909
+00:36:39,400 --> 00:36:45,040
+on this thing where I actually do play on
+that day. Right? But I'm remembering the
+
+4925
+00:36:45,040 --> 00:36:51,260
+information about what I'm allowed to play
+next by limiting based on what my previous
+
+4940
+00:36:51,260 --> 00:36:56,020
+value was. OK? So that's the kind of key
+thing. I'm remembering something further in
+
+4955
+00:36:56,020 --> 00:37:01,600
+advance. Or I'm remembering what
+happened in the past by describing it as a
+
+4969
+00:37:01,600 --> 00:37:07,960
+restriction of something in the future. OK?
+So this was a pretty difficult problem. I
+
+4984
+00:37:07,960 --> 00:37:12,320
+think it was one of our first dynamic
+programming problems on that term. It was
+
+4999
+00:37:12,360 --> 00:37:16,500
+probably a little ambitious. OK. Well,
+you're saying this recurrence goes up to
+
+5012
+00:37:16,500 --> 00:37:25,840
+11. Hm. JASON KUO - Yes. The recurrence
+goes up to 11. Not 10. 11. OK. So we have
+
+5031
+00:37:25,840 --> 00:37:31,420
+our topological sort. What's a topological
+sort for these subproblems? Anybody?
+
+5042
+00:37:36,470 --> 00:37:40,800
+JASON KUO - k is always going to be a
+positive number, right? Because j goes from
+
+5059
+00:37:40,800 --> 00:37:48,660
+1 to 6. So I'm always going to be
+increasing in this first quantity. Right?
+
+5074
+00:37:49,460 --> 00:37:59,880
+So for x of i, j, i always,
+or sorry, depends
+
+5085
+00:38:02,820 --> 00:38:03,890
+on strictly
+
+5087
+00:38:06,930 --> 00:38:15,440
+on the larger i. Right? So this i,
+when I call subproblems, it always calls
+
+5102
+00:38:15,480 --> 00:38:20,440
+subproblems with a larger i. Now, this is a
+little weird because I wanted me to depend
+
+5119
+00:38:20,440 --> 00:38:21,620
+on smaller subproblems.
+
+5122
+00:38:23,680 --> 00:38:28,520
+Smaller. Now, it is smaller because
+I'm taking a smaller suffix. But it's
+
+5135
+00:38:28,540 --> 00:38:34,760
+corresponding to using a larger number. To
+me, that's a little confusing. But that's
+
+5149
+00:38:34,760 --> 00:38:39,720
+OK because we're kind of using things
+that are always monotonically going in some
+
+5163
+00:38:39,720 --> 00:38:48,080
+direction. So this is corresponding to a
+smaller subproblem in some measure. Right?
+
+5176
+00:38:48,160 --> 00:38:52,740
+It's the number of elements that we're
+actually recursing on. In some sense, if we
+
+5191
+00:38:52,740 --> 00:38:59,960
+wrote this as a prefix, we would have us
+depending on strictly smaller i. And that
+
+5207
+00:38:59,960 --> 00:39:04,980
+would be more natural in terms of a
+recursing on smaller subproblems. But I
+
+5221
+00:39:04,980 --> 00:39:13,700
+digress. OK? All right. Then we have our
+original subproblem. I'm going to, I can't
+
+5236
+00:39:13,700 --> 00:39:20,840
+move this board. I'll just keep going
+because we have lots of boards. OK? Our
+
+5251
+00:39:20,840 --> 00:39:23,020
+original subproblem. Now,
+
+5254
+00:39:25,860 --> 00:39:27,100
+what could I do? I
+have to start somewhere.
+
+5263
+00:39:29,380 --> 00:39:34,420
+Right? Here, my subproblems assume that
+I'm starting at i. But I don't know where I
+
+5279
+00:39:34,420 --> 00:39:40,820
+start. I could start by taking the first
+element. But I might not. So I could just
+
+5296
+00:39:41,400 --> 00:39:47,420
+take the max over all i
+
+5302
+00:39:49,620 --> 00:39:53,020
+of xi. What?
+
+5305
+00:39:55,620 --> 00:40:01,320
+The first one, I'm not restricted on what I
+choose next. So what's the most permissive
+
+5321
+00:40:02,300 --> 00:40:12,020
+version of j? 1. Right? I'm allowed to take
+the next day. Right? So if I just take the
+
+5340
+00:40:12,020 --> 00:40:16,640
+max over all of these subproblems, I'll
+get the solution. Now, actually, this is a
+
+5355
+00:40:16,640 --> 00:40:23,180
+little bit more work than I need. This is
+looping over all n. Right? It's definitely
+
+5371
+00:40:23,180 --> 00:40:27,680
+correct. Right? Because I have to start
+somewhere. But will I ever start after the
+
+5386
+00:40:27,680 --> 00:40:33,820
+first, I don't know, 7? No. Right? So I
+could just take this max over the first
+
+5403
+00:40:33,920 --> 00:40:37,740
+some constant number. And that would be
+fine. But that's OK. This is still smaller
+
+5418
+00:40:37,740 --> 00:40:41,200
+than the number of subproblems that we
+have. Yeah? If I were being lazy during my
+
+5434
+00:40:41,200 --> 00:40:45,580
+exam and I looped over j, would that be
+correct? JASON KURIYAMA - If I looped over
+
+5451
+00:40:45,620 --> 00:40:52,880
+j for? I took the max over every possible
+thing? JASON KURIYAMA - Took the loop over
+
+5468
+00:40:52,880 --> 00:40:58,180
+this and j? Yeah. JASON KURIYAMA - Yeah.
+That would still be fine. Why not? It's
+
+5484
+00:40:58,180 --> 00:41:05,600
+just less. It's more restrictive of
+subproblems. It will never be better to do
+
+5498
+00:41:05,600 --> 00:41:09,260
+that. But you could do that because it
+wouldn't change your running time. JASON
+
+5512
+00:41:09,260 --> 00:41:15,560
+KURIYAMA - Could it change my running time
+if my j accidentally looped too far? JASON
+
+5528
+00:41:15,560 --> 00:41:21,720
+KURIYAMA - Well, j is restricted to be 1 to
+6. So I don't think so. But in a different
+
+5548
+00:41:21,720 --> 00:41:27,760
+problem in a different context, it could.
+OK. So that's the original. And then time
+
+5563
+00:41:27,760 --> 00:41:28,320
+here.
+
+5564
+00:41:31,020 --> 00:41:36,520
+What do we got? We have a linear number of
+subproblems, number of subproblems. We've
+
+5579
+00:41:36,520 --> 00:41:36,900
+got,
+
+5580
+00:41:39,280 --> 00:41:43,920
+I actually like usually saying exactly how
+many subproblems I have. Oh, we didn't do
+
+5595
+00:41:43,920 --> 00:41:48,420
+base case. I missed
+bot. I missed my b. We'll
+
+5605
+00:41:51,760 --> 00:41:58,820
+do the original first and then the base
+case. OK. Base case. What do we have as our
+
+5623
+00:41:58,820 --> 00:42:03,800
+base case here? Well, when
+I don't have anything to do.
+
+5634
+00:42:06,100 --> 00:42:20,900
+And actually, if I have this situation
+for i equals, say, n, I got my last thing,
+
+5651
+00:42:23,280 --> 00:42:27,580
+I could potentially start looping over
+subproblems that are negative in terms of
+
+5664
+00:42:27,580 --> 00:42:32,000
+my index. I'm not going to want to do that.
+There's a couple of ways I can deal with
+
+5683
+00:42:32,000 --> 00:42:32,160
+that.
+
+5684
+00:42:36,000 --> 00:42:40,200
+If I have my subproblems for negative
+i, that's one thing I could do. But then I
+
+5701
+00:42:40,200 --> 00:42:46,220
+have to remember, or I have to figure out
+how far I go into the negative. That's one
+
+5719
+00:42:46,240 --> 00:42:49,780
+thing I could do. And I give a base
+case for each of those cases. I don't have
+
+5737
+00:42:49,780 --> 00:42:53,020
+anything. So I get
+like a, I don't know,
+
+5746
+00:42:55,300 --> 00:43:00,080
+zero value for playing in the future.
+Because I have negative things. I can't do
+
+5761
+00:43:00,080 --> 00:43:04,980
+anything with that. Another way of handling
+that, which I think I did in my solutions,
+
+5777
+00:43:05,920 --> 00:43:08,180
+was restrict that k
+
+5781
+00:43:10,860 --> 00:43:19,820
+to only be, I guess, and restrict that i
+plus k is less than or equal to n. And then
+
+5801
+00:43:19,820 --> 00:43:23,660
+I'll never go to negative subproblems. I'll
+never recurse on these things. But that
+
+5815
+00:43:23,660 --> 00:43:32,680
+means that when I call this on n,
+when I only have one lottery day left,
+
+5831
+00:43:37,140 --> 00:43:39,520
+n is negative
+
+5834
+00:43:49,360 --> 00:43:50,360
+negative對対, then the
+answer's dominant total,
+
+5840
+00:43:59,980 --> 00:44:10,740
+but你的maix? case, xij, I guess we could put
+this at n equals 0, or sorry, equals L of
+
+5858
+00:44:10,740 --> 00:44:11,060
+i,
+
+5859
+00:44:13,640 --> 00:44:19,340
+L of n. Thank you. Because
+at the last guy, I have to use ln.
+
+5874
+00:44:22,860 --> 00:44:31,040
+So there it is. Now, in actuality, if you
+write this correctly, I put the L i outside
+
+5892
+00:44:31,040 --> 00:44:37,920
+and I union this with a 0, I can actually
+get away with just having the relation and
+
+5910
+00:44:37,920 --> 00:44:43,560
+no base case, because my relation actually
+reduces to a base case because of the way
+
+5926
+00:44:43,560 --> 00:44:48,260
+that I wrote my relation. But in general,
+you'll want to write some kind of base case
+
+5943
+00:44:48,540 --> 00:44:54,360
+here to either acknowledge that your
+relation handles it, or be specific about
+
+5956
+00:44:54,360 --> 00:45:02,460
+what happens when I can't do any more work.
+All right, so and the last thing, time,
+
+5973
+00:45:02,460 --> 00:45:11,100
+we've got n subproblems exactly times
+constant work per subproblem, because I'm
+
+5985
+00:45:11,100 --> 00:45:17,820
+looping over 11 possible values. Actually,
+it's up to 11, because j could be 6.
+
+6000
+00:45:22,100 --> 00:45:30,740
+So this is order n work total. So this is
+a pretty daunting first problem. But in
+
+6017
+00:45:30,740 --> 00:45:39,500
+terms of what Professor Domain was
+talking about last lecture in terms of
+
+6030
+00:45:39,500 --> 00:45:44,780
+categorization of subproblem, or
+categorization of dynamic programs, what do
+
+6040
+00:45:44,780 --> 00:45:49,060
+we got? We've got a suffix subproblem,
+where we expanded by some local
+
+6053
+00:45:49,060 --> 00:45:57,380
+information, remembering when the
+next time I can play. So that's kind of a
+
+6067
+00:45:57,840 --> 00:46:03,720
+categorization of these subproblems. The
+recurrence relation has constant branching,
+
+6077
+00:46:03,720 --> 00:46:05,160
+but more than two branching.
+
+6082
+00:46:07,760 --> 00:46:19,620
+And I'm combining a bunch of subproblems in
+my original evaluation. And if I wanted to
+
+6098
+00:46:19,680 --> 00:46:26,720
+figure out what days Tiff should play on
+the lottery, you can store parent pointers
+
+6113
+00:46:26,720 --> 00:46:35,780
+when I'm evaluating this max. I figure out
+which subproblem x I recursed that gave me
+
+6129
+00:46:35,780 --> 00:46:41,180
+the max. And I can walk back to see which
+choices I made to figure out which days I
+
+6148
+00:46:41,180 --> 00:46:42,710
+played the lottery.
+Does that make sense?
+
+6155
+00:46:47,080 --> 00:46:54,560
+So any questions on problem one? That's the
+most, I want to have the most complicated
+
+6171
+00:46:54,560 --> 00:46:59,900
+one first, so that we could have an easier
+way to go. In a sense, this is the most
+
+6190
+00:47:00,000 --> 00:47:05,740
+complicated version of this kind of
+actually pretty simple dynamic programming
+
+6201
+00:47:05,740 --> 00:47:11,040
+setup. Why do I say simple dynamic
+programming setup? It's just suffixes. And
+
+6214
+00:47:11,040 --> 00:47:15,980
+I'm just doing a constant amount of work
+local to me. It's just a very complicated
+
+6230
+00:47:15,980 --> 00:47:23,800
+local setup. But that's what I mean by
+simple. When we're designing subproblems,
+
+6243
+00:47:23,800 --> 00:47:28,480
+this is one that we could, I mean, when
+we're designing problems for this dynamic
+
+6258
+00:47:28,560 --> 00:47:36,280
+programming setup, it's one of the hardest
+from a, it's one of the easiest from a
+
+6274
+00:47:36,320 --> 00:47:41,020
+conceptual standpoint, but one of the
+hardest to actually implement. Okay. So
+
+6286
+00:47:41,260 --> 00:47:43,080
+problem two, this
+one's a longing.
+
+6292
+00:47:45,480 --> 00:47:48,960
+Okay. A wealthy family, Alice, Bob,
+and their young son, Charlie, are sailing
+
+6305
+00:47:48,960 --> 00:47:53,350
+around the world. When they encounter a
+massive storm, Charlie is thrown overboard,
+
+6318
+00:47:53,720 --> 00:47:58,420
+presumed drowned. Okay. This is very
+colorful language for these problems that
+
+6330
+00:47:58,520 --> 00:48:02,560
+are in the writers. 20 years later, a man
+comes to Alice and Bob claiming to be
+
+6347
+00:48:02,560 --> 00:48:08,400
+Charlie, having maybe been marooned on an
+island for that long. Okay. Alice and Bob
+
+6362
+00:48:08,400 --> 00:48:12,820
+are excited but skeptical, and they order a
+DNA matching test from the genetic testing
+
+6377
+00:48:12,820 --> 00:48:22,240
+company, 46 and V. Given Alice and Bob,
+sorry, given three length N DNA sequences,
+
+6392
+00:48:23,420 --> 00:48:28,500
+basically strings of CGTA or something like
+that, from each of Alice's and Bob's DNA,
+
+6407
+00:48:28,520 --> 00:48:35,840
+Alice, Bob, and Charlie, the testing center
+will determine three, their ancestry as
+
+6420
+00:48:35,840 --> 00:48:41,380
+follows. If Charlie's DNA can be
+partitioned into two, not necessarily
+
+6431
+00:48:41,380 --> 00:48:46,500
+contiguous, subsequences of equal length,
+so basically I take, I can take the, if I
+
+6446
+00:48:46,500 --> 00:48:53,520
+have N is length five, or length six, it's
+better to be even. I need to find three
+
+6464
+00:48:53,520 --> 00:48:57,110
+characters in order, and then
+the other three characters,
+
+6473
+00:48:59,260 --> 00:49:06,780
+must match to make some substrings in, some
+subsequences in Alice and Bob's DNA. Okay.
+
+6488
+00:49:07,080 --> 00:49:12,080
+So there's, that's a little hard to parse,
+so let's look at an example here. For
+
+6504
+00:49:12,080 --> 00:49:22,580
+example, Alice's DNA is AATT. Bob's DNA is
+CCGG. If Charlie's DNA were CATG, they'd be
+
+6520
+00:49:22,580 --> 00:49:30,280
+matched, right? Because CG is a subsequence
+of Charlie's DNA, and is a subsequence of
+
+6535
+00:49:30,280 --> 00:49:39,960
+Bob's DNA. And AT is a subsequence of
+Charlie's DNA, and is also a subsequence of
+
+6551
+00:49:39,960 --> 00:49:46,500
+Alice's DNA. And so we've partitioned them
+into two equal length subsequences. These
+
+6564
+00:49:46,500 --> 00:49:50,520
+are not necessarily consecutive
+subsequences, but just any subsequences,
+
+6573
+00:49:52,820 --> 00:49:53,080
+such that,
+
+6575
+00:49:56,280 --> 00:50:04,220
+that they appear in Alice and Bob. But if
+Charlie would be found to be an imposter,
+
+6592
+00:50:04,380 --> 00:50:06,440
+if his DNA sequence were AGTC,
+
+6598
+00:50:08,500 --> 00:50:17,000
+essentially it's easy to realize that,
+because G and C are swapped, in terms of
+
+6613
+00:50:17,000 --> 00:50:25,180
+their ordering, and GC, the letters GC only
+appear in Bob's DNA, and don't appear in
+
+6629
+00:50:25,180 --> 00:50:29,380
+that order. Right? So it's easy to see that
+he's an imposter with these strings, but
+
+6645
+00:50:29,380 --> 00:50:34,040
+you can imagine with longer strings, this
+could be difficult to solve. Right? So we
+
+6660
+00:50:34,040 --> 00:50:38,840
+want an n to the fourth time algorithm, to
+determine whether Charlie is a fraud. Okay.
+
+6676
+00:50:39,740 --> 00:50:46,240
+So, I actually shortened this last night.
+This is like twice as long on the problem
+
+6692
+00:50:46,240 --> 00:50:51,460
+set, so, yeah, anyway. So how do
+we approach this problem? Yes?
+
+6704
+00:50:53,860 --> 00:50:58,900
+No, they don't have to be contiguous, like
+in the example. It would be matched if C
+
+6721
+00:50:58,900 --> 00:51:05,740
+and G is a subsequence, not contiguous,
+of C, A, T, G. Yeah? So that's an important
+
+6738
+00:51:05,860 --> 00:51:10,240
+part of this problem. I'm just, I'm not
+trying to figure out if there's, basically
+
+6753
+00:51:10,240 --> 00:51:14,580
+there are only two sub, contiguous
+subsequences of length 2n, that this thing
+
+6766
+00:51:14,580 --> 00:51:18,900
+can be partitioned in. I just look in the
+middle. No. We're looking for subsequences,
+
+6781
+00:51:19,340 --> 00:51:26,040
+not substrings. So, they kind of interleave
+like this in some way, and there's
+
+6795
+00:51:26,040 --> 00:51:29,220
+actually a number of different ways I
+can partition that. There's actually an
+
+6808
+00:51:29,220 --> 00:51:34,160
+exponential number of ways. So, that's
+a problem, potentially. Yes? Is there a
+
+6821
+00:51:34,260 --> 00:51:39,160
+biological basis? No, there's no biological
+basis to this thing that I know of. Okay.
+
+6836
+00:51:40,260 --> 00:51:45,460
+All right. So, how do we solve this
+problem? What problem does this look like?
+
+6851
+00:51:48,520 --> 00:51:52,960
+I mean, it seems like string matching.
+Right? So, I might want to think it's
+
+6866
+00:51:53,100 --> 00:51:58,340
+something like longest common subsequence.
+Right? But here I have three sequences
+
+6878
+00:51:58,340 --> 00:52:04,060
+instead of two sequences. And we've got
+this other weird condition where we kind of
+
+6893
+00:52:04,060 --> 00:52:09,660
+need an exact partition of Charlie.
+Right? I need to use all of the letters in
+
+6909
+00:52:09,660 --> 00:52:15,000
+Charlie, but I don't have to use all of the
+letters in Alice and Bob. Right? So, let's
+
+6927
+00:52:15,000 --> 00:52:23,960
+just, let's get some notation here. You
+know, A, B, and C are n length strings.
+
+6943
+00:52:28,540 --> 00:52:28,680
+Right?
+
+6944
+00:52:31,830 --> 00:52:38,320
+So, what could I do? Let's
+define some subproblems. If I were
+
+6956
+00:52:40,840 --> 00:52:48,940
+to go via longest common subsequence, I
+might keep track of an index of a suffix or
+
+6973
+00:52:48,940 --> 00:52:56,540
+prefix of each one of these strings. Right?
+That kind of makes sense. Something like
+
+6988
+00:52:56,540 --> 00:53:03,310
+I, J, K, where we're
+talking about the suffixes,
+
+6997
+00:53:05,480 --> 00:53:19,900
+sorry, that's prefixes, I, B, J, and C, K.
+Right? That seems reasonable, at least.
+
+7012
+00:53:19,960 --> 00:53:23,080
+Right? It's what we would do
+for longest common subsequence.
+
+7022
+00:53:26,080 --> 00:53:26,820
+What's the problem here?
+
+7026
+00:53:29,020 --> 00:53:34,820
+I mean, I could match this guy with one of
+these guys or decide to skip it and match
+
+7045
+00:53:34,820 --> 00:53:40,100
+one of these guys and decide to
+skip it. But if I do that, I might get
+
+7062
+00:53:42,180 --> 00:53:42,880
+a subsequence.
+
+7064
+00:53:46,680 --> 00:53:56,100
+But actually, I always need to match all
+of C. So, that might make sense. I always
+
+7081
+00:53:56,100 --> 00:53:58,640
+need to match all of C.
+
+7087
+00:54:00,680 --> 00:54:02,380
+Right? So, in a sense,
+
+7092
+00:54:09,680 --> 00:54:13,140
+let's see. Let's see.
+How can I do this?
+
+7101
+00:54:16,060 --> 00:54:20,620
+I need to match all of C, but I also need
+to make sure I'm using exactly n over 2
+
+7121
+00:54:20,620 --> 00:54:30,640
+characters from C in Boo. I'm exactly n
+over 2 characters from C in A. Does that
+
+7138
+00:54:30,640 --> 00:54:36,980
+make sense? So, how can I satisfy that
+condition? Now I understand why I used
+
+7153
+00:54:36,980 --> 00:54:43,220
+prefixes before. And I
+swapped it to suffixes here.
+
+7162
+00:54:45,270 --> 00:54:46,670
+But we'll make it work.
+
+7167
+00:54:52,080 --> 00:55:00,560
+How can I remember how many characters
+I assigned from Alice versus Bob? Right? As
+
+7182
+00:55:00,560 --> 00:55:02,920
+I'm matching characters
+in Alice and Bob,
+
+7189
+00:55:05,600 --> 00:55:11,540
+I need to kind of remember where they
+point to or how many I've already used in
+
+7206
+00:55:11,540 --> 00:55:15,090
+Charlie so that I can
+divvy up the remainder
+
+7215
+00:55:17,320 --> 00:55:24,860
+in here. Oh, actually, this works in a
+different sense. There's like 18 different
+
+7229
+00:55:24,860 --> 00:55:32,860
+ways we could do this. So, OK. So, I need
+to remember how many I've already used up
+
+7247
+00:55:33,200 --> 00:55:37,000
+so that I can be sure to allocate exactly
+that many characters in the future to
+
+7263
+00:55:37,000 --> 00:55:41,180
+either Alice or Bob. Right?
+So, how can I remember that?
+
+7274
+00:55:43,620 --> 00:55:47,380
+I can just remember
+how many do I...
+
+7282
+00:55:54,760 --> 00:56:03,960
+I'll do it the way that I did it before,
+which is I can remember two different
+
+7299
+00:56:04,040 --> 00:56:11,220
+things here. I can remember how many things
+I have left to match in Alice in C, or I
+
+7318
+00:56:11,220 --> 00:56:19,480
+can remember how many things I've already
+matched in C to Alice. OK? If I talk about
+
+7335
+00:56:19,480 --> 00:56:25,240
+how many things I've already matched, then
+I can index this thing by the sum of those
+
+7352
+00:56:25,240 --> 00:56:31,640
+things. If I talk about how many things
+I have yet to match, I have to do like n
+
+7371
+00:56:31,640 --> 00:56:38,580
+minus the things. OK? So, those are the
+different parameters that we can do. We'll
+
+7386
+00:56:38,580 --> 00:56:40,650
+do what's in my notes,
+and I'll try to fix it.
+
+7397
+00:56:43,420 --> 00:56:43,620
+OK.
+
+7398
+00:56:46,980 --> 00:56:52,860
+So, what we're going to do is remember
+or figure out how many things I'm still
+
+7414
+00:56:52,860 --> 00:56:59,460
+needing to match in C to Alice and
+Bob. Right? So, I'm going to call this K...
+
+7431
+00:56:59,460 --> 00:57:13,880
+Sorry. KI. I is associated with A, and B
+is associated with J. And KJ. OK? This is
+
+7449
+00:57:13,880 --> 00:57:16,220
+going to be the...
+
+7453
+00:57:20,400 --> 00:57:25,760
+I have to write this down. Well, OK. So,
+this is going to be... What kind of output
+
+7471
+00:57:25,760 --> 00:57:29,920
+do I want to my subproblem? I just want to
+know if these things are... If he's a fraud
+
+7490
+00:57:29,920 --> 00:57:34,840
+or not. So, this is going to
+be a Boolean. Right? So, true if
+
+7504
+00:57:37,280 --> 00:57:39,360
+can match
+
+7506
+00:57:41,580 --> 00:57:42,730
+KI length.
+
+7508
+00:57:48,120 --> 00:57:56,280
+Subsequence of suffix
+
+7511
+00:57:59,000 --> 00:58:02,500
+A suffix is this guy.
+
+7516
+00:58:07,460 --> 00:58:28,480
+And length KJ. I guess KJ length.
+Subsequence of suffix BJI. Or BJ suffix.
+
+7530
+00:58:28,760 --> 00:58:28,880
+Right?
+
+7531
+00:58:32,460 --> 00:58:43,300
+To all characters in... And now, what is
+this in? This is the hard part. Do I need a
+
+7550
+00:58:43,300 --> 00:58:47,620
+separate index for C?
+
+7554
+00:58:49,960 --> 00:58:51,220
+To know where I am in C?
+
+7561
+00:58:53,360 --> 00:59:00,060
+In a sense, yes. I need to know where I am
+in C. How much I have to match. Right? But
+
+7582
+00:59:00,060 --> 00:59:09,860
+if I need to match KI to KJ to all of them,
+then there better be KI plus J things left
+
+7603
+00:59:09,880 --> 00:59:16,580
+in C. Right? So, in a sense, I don't need
+to remember that information again. It's
+
+7619
+00:59:16,580 --> 00:59:20,660
+not independent to my other parameters.
+I can compute it. Right? I can throw it in,
+
+7635
+00:59:21,360 --> 00:59:26,820
+but I can determine it from the other
+parameters. Right? So, I want to match it
+
+7651
+00:59:26,820 --> 00:59:36,600
+with the suffix of C. Of length KI plus KJ.
+So, I think this is the only part that is
+
+7671
+00:59:36,660 --> 00:59:41,880
+going to be annoying to me.
+Okay. So, this should be suffix
+
+7683
+00:59:44,580 --> 00:59:47,800
+of all of the things
+
+7688
+00:59:53,700 --> 00:59:57,700
+minus KI minus KJ minus 1.
+
+7694
+01:00:00,610 --> 01:00:09,160
+It's just this. And why is that? Okay. If
+I've matched everything, KI and KJ are both
+
+7711
+01:00:09,160 --> 01:00:17,760
+0. And I should have nothing in C,
+which should be N colon. Okay? We're zero
+
+7727
+01:00:17,760 --> 01:00:23,580
+indexed. Yes, we are. Whenever I use Python
+notation, I better be zero indexed. Okay.
+
+7742
+01:00:24,840 --> 01:00:29,520
+Does this make sense as a subproblem?
+I mean, it's confusing. Hopefully, it makes
+
+7756
+01:00:29,520 --> 01:00:32,740
+sense. Right? What I'm going to try to
+do is I'm going to match some number of
+
+7773
+01:00:32,740 --> 01:00:38,700
+characters in this suffix, which is
+hopefully longer than KI. Right? Otherwise,
+
+7785
+01:00:39,400 --> 01:00:45,560
+I'm going to be in a base case where this
+is impossible. Right? And some subsequence
+
+7801
+01:00:45,680 --> 01:00:50,580
+of this matched completely
+into this. All right. So, those
+
+7811
+01:00:52,760 --> 01:00:56,380
+are my subproblems. I'm
+going to try to relate them now.
+
+7822
+01:01:00,570 --> 01:01:10,100
+XIJ, KI, KJ. What is this going to equal?
+All right. Well, we've got Booleans. So,
+
+7838
+01:01:10,220 --> 01:01:23,120
+this is AND false otherwise. Okay. That's
+a Boolean. All right. So, I just need some
+
+7854
+01:01:23,120 --> 01:01:29,640
+subproblem I recurse on to be true. So,
+what's the combinator for some of a bunch
+
+7870
+01:01:29,640 --> 01:01:37,600
+of choices, Boolean choices, any one of
+which may be true? I want to combine a
+
+7886
+01:01:37,600 --> 01:01:42,860
+bunch of them. I just want to see if any of
+them are true. I'm going to OR over them.
+
+7906
+01:01:43,900 --> 01:01:52,660
+Okay? And I'm going to OR over four
+choices. Okay? What are my choices? Either
+
+7921
+01:01:52,660 --> 01:02:03,020
+the first thing in A matches with C. The
+first thing in B matches with C. Or I don't
+
+7940
+01:02:03,020 --> 01:02:12,300
+match with either. Right? So, those are my
+four choices. So, if I match with A, I plus
+
+7958
+01:02:12,300 --> 01:02:18,700
+1, I recurse on a
+smaller suffix of A. And A
+
+7969
+01:02:21,020 --> 01:02:26,560
+by adding, oh, this all just
+works. Great. KJ, this is I.
+
+7981
+01:02:29,710 --> 01:02:47,640
+If AI equals CI and AI is greater than 0.
+Right? So, if KI is greater than 0, I need
+
+8001
+01:02:47,640 --> 01:02:54,420
+to match an I. Right? So, this conditional
+doesn't even make sense unless I've
+
+8015
+01:02:54,420 --> 01:03:00,880
+evaluated this KI to be bigger than 0.
+Otherwise, I'm trying to access I of N.
+
+8031
+01:03:01,200 --> 01:03:05,280
+Right? So, I'm just putting this
+conditional on there. Same with matching B.
+
+8044
+01:03:06,200 --> 01:03:18,880
+I, J plus 1, KI, KJ plus 1. If, sorry, this
+should be minus 1. I have fewer characters
+
+8063
+01:03:18,880 --> 01:03:22,560
+that I have to recurse on.
+So, that's a typo in my notes.
+
+8076
+01:03:30,550 --> 01:03:36,440
+So, C, oh, this is not CI. What is this?
+It's whatever that thing is. So, I'm going
+
+8094
+01:03:36,440 --> 01:03:38,380
+to just say question mark.
+
+8099
+01:03:41,500 --> 01:03:48,360
+And KJ is greater than 0. So, I'll fill
+that in in the notes. It's going to be some
+
+8118
+01:03:48,360 --> 01:03:53,160
+complicated expression that looks like
+that. Okay. It's exactly that expression.
+
+8129
+01:03:54,280 --> 01:03:56,780
+Yes. That it is.
+So, it's that thing.
+
+8137
+01:04:31,700 --> 01:04:41,940
+Assuming if I less than N. Right? I don't
+want to move off the end of this thing. Or
+
+8156
+01:04:41,940 --> 01:04:55,440
+XI, J plus 1, KI, KJ. If J is less than N.
+Okay. So, those are my four choices. If I
+
+8177
+01:04:55,440 --> 01:04:59,600
+matched a letter, I'm great. Otherwise, I
+decrease the size of my subproblem. And I
+
+8192
+01:04:59,600 --> 01:04:59,700
+recurse.
+
+8193
+01:05:01,960 --> 01:05:01,960
+Okay?
+
+8194
+01:05:04,480 --> 01:05:16,200
+So, fun recursion. Topological sort. Right?
+These subproblems only depend on what?
+
+8206
+01:05:17,940 --> 01:05:22,900
+Larger I? Not quite.
+Larger J? Not quite.
+
+8214
+01:05:25,380 --> 01:05:32,000
+Changing K or J. These don't even change
+here. So, we're going to use depend on
+
+8230
+01:05:32,000 --> 01:05:41,220
+larger. I guess strictly. That's kind of an
+important thing. I plus J. Right? Because
+
+8245
+01:05:41,220 --> 01:05:45,840
+at least one of these two things is
+increasing. And then the nice thing about
+
+8260
+01:05:45,840 --> 01:05:52,040
+that is it kind of tells us when we should
+stop. Right? We should stop when either I
+
+8278
+01:05:52,040 --> 01:06:00,040
+or J get to N. We should know enough
+at that point to be able to determine if we
+
+8297
+01:06:00,040 --> 01:06:01,680
+succeeded or not. Possibly.
+
+8301
+01:06:04,920 --> 01:06:06,280
+So, we have our base case.
+
+8307
+01:06:10,500 --> 01:06:15,470
+What's the easy base case? When we
+succeeded. When have we succeeded?
+
+8319
+01:06:18,940 --> 01:06:25,700
+If we have nothing left in A and B. And
+we have nothing left in C. Right? I have
+
+8338
+01:06:25,700 --> 01:06:31,940
+nothing left to match. So, I have N. N.
+And I don't need to match anything else.
+
+8355
+01:06:32,600 --> 01:06:41,300
+That's just going to be true. Right? All
+roads point to this subproblem to get to a
+
+8372
+01:06:41,340 --> 01:06:47,960
+true solution. Right? Otherwise, we
+have some false base cases. If you set us
+
+8386
+01:06:47,960 --> 01:06:53,000
+something up like this, and you only give
+us a base case that's true, and you're or
+
+8403
+01:06:53,000 --> 01:06:57,940
+-ing over the things, your answer will
+always be true. So, you're not having any
+
+8418
+01:06:57,940 --> 01:07:02,360
+discriminatory power. At all. If you give
+us a true base case, you better be giving
+
+8434
+01:07:02,360 --> 01:07:10,220
+us some false base cases. Or one, at least.
+So, in the case where the first one is N,
+
+8453
+01:07:11,680 --> 01:07:14,180
+and we have some I, K, J,
+
+8460
+01:07:16,740 --> 01:07:19,720
+this is going to
+be false if what?
+
+8468
+01:07:23,480 --> 01:07:32,970
+If we have nothing left in A, I, or O,
+but this guy is positive, we got problems.
+
+8486
+01:07:34,360 --> 01:07:41,640
+Right? Otherwise, this thing is 0. And
+we'll just try to match everything up here.
+
+8501
+01:07:41,640 --> 01:07:46,320
+And eventually, we'll get down to this base
+case or something where this thing goes to
+
+8517
+01:07:46,320 --> 01:07:48,760
+0, and we got a problem.
+
+8523
+01:07:51,140 --> 01:07:55,700
+And the same goes for the other
+side as well. If we run out of things in B,
+
+8541
+01:07:59,860 --> 01:08:04,700
+when the number of things we need to match
+in B is greater than 0. OK? So, those are
+
+8560
+01:08:04,700 --> 01:08:05,340
+our base cases.
+
+8563
+01:08:07,420 --> 01:08:08,880
+The original problem is what?
+
+8568
+01:08:12,240 --> 01:08:19,680
+Yeah. It's just going to be one of our
+subproblems, N, N, and then N over 2, and N
+
+8587
+01:08:19,680 --> 01:08:25,510
+over 2. Right? I'm trying to match half
+of the things in C with half of the things.
+
+8605
+01:08:26,100 --> 01:08:26,260
+Right?
+
+8606
+01:08:29,149 --> 01:08:29,760
+0. Thank you.
+
+8609
+01:08:33,080 --> 01:08:39,140
+Because we're 0 index. Yes. Again, that's
+switching from prefix to suffix in the
+
+8623
+01:08:39,140 --> 01:08:45,120
+middle is fun. So, anyway. And it better
+be the case that N is 2, or else it's
+
+8641
+01:08:45,120 --> 01:08:48,939
+obviously false. Or is even, or
+else this is obviously false. OK?
+
+8653
+01:08:51,020 --> 01:08:56,700
+And then the last thing, which I'm not
+going to write down, is we have a constant
+
+8670
+01:08:56,840 --> 01:09:04,660
+work here. Right? Because I'm just checking
+the value of four subproblems and a
+
+8684
+01:09:04,660 --> 01:09:11,660
+conditional for each. And I have how many
+subproblems? I loops over N, J loops over
+
+8700
+01:09:11,660 --> 01:09:19,200
+N, K and KJ loop over N over 2. So, I get
+a quartic number of subproblems, quartic
+
+8718
+01:09:19,240 --> 01:09:25,340
+running time as desired. OK? So, I'm not
+going to write that down. It was quite a
+
+8735
+01:09:25,340 --> 01:09:25,680
+bit late.
+
+8737
+01:09:28,899 --> 01:09:32,760
+Let's do one more problem, which is sad,
+because the last one's about Gokiman Po,
+
+8752
+01:09:33,220 --> 01:09:39,819
+which is a fun, fun problem. Gokiman Po
+basically relies on, I'm trying to catch a
+
+8768
+01:09:39,819 --> 01:09:49,200
+bunch of pocket monsters. Just monsters, I
+think, is in this. And you can either go to
+
+8785
+01:09:49,200 --> 01:09:53,399
+a location and catch
+that monster for free.
+
+8793
+01:09:55,700 --> 01:10:01,360
+But that costs money, because I have to
+ride share there. OK? Or I don't have to go
+
+8811
+01:10:01,360 --> 01:10:08,640
+to that location, and I buy it on my
+in -app purchase. But that costs me a
+
+8828
+01:10:08,640 --> 01:10:15,560
+different amount of money. OK? But buying
+it in -app purchase kept me at the location
+
+8844
+01:10:15,560 --> 01:10:20,560
+I was previously, wherever I was. And
+so, the point of that problem is I need to
+
+8861
+01:10:20,560 --> 01:10:26,640
+remember where I was last, so that I know
+how far I need to travel to get to my next
+
+8881
+01:10:26,640 --> 01:10:30,720
+monster. OK. So, that's, going to be the
+last one that I'm not going to be able to
+
+8899
+01:10:30,720 --> 01:10:33,120
+get to. Number three
+
+8903
+01:10:35,260 --> 01:10:44,800
+is a problem about tapas. OK. So, these
+all come from spring 18. The first two came
+
+8920
+01:10:44,800 --> 01:10:51,740
+from a problem set. These next two come
+from the final exam that year. OK. Albert
+
+8936
+01:10:51,740 --> 01:10:52,720
+Ratkins,
+
+8937
+01:10:55,740 --> 01:11:01,960
+he's on a diet. But he has a dinner at an
+upscale tapas bar, where he got many, he's
+
+8956
+01:11:01,960 --> 01:11:07,620
+going to order many small plates. OK? There
+are n plates of food on the menu, where
+
+8973
+01:11:07,620 --> 01:11:13,320
+each plate has a certain information. It
+has a volume, a number of calories in that
+
+8989
+01:11:13,320 --> 01:11:19,060
+dish, and a sweetness label. Basically,
+0 or 1, whether it's sweet or not. OK?
+
+9004
+01:11:21,360 --> 01:11:26,100
+But he's on a diet, and he wants to eat no
+more than k calories during his meal, but
+
+9023
+01:11:26,100 --> 01:11:29,640
+wants to fill his stomach as much as
+possible, because he wants to feel full.
+
+9038
+01:11:30,240 --> 01:11:34,440
+Right? So, he wants to maximize the volume
+that he fills, even though he wants to
+
+9054
+01:11:34,440 --> 01:11:39,420
+reduce the number of calories, or restrict
+the number of calories. OK? He also wants
+
+9069
+01:11:39,420 --> 01:11:47,840
+to order exactly s sweet plates. OK?
+So, we've got this other condition, where I
+
+9084
+01:11:47,840 --> 01:11:52,240
+need to make sure I'm eating a certain
+number of sweet plates. It might be useful
+
+9100
+01:11:52,320 --> 01:11:55,820
+for me to remember how many sweet plates
+I've already eaten, so I make sure that I
+
+9117
+01:11:55,820 --> 01:12:01,060
+eat that number. OK? Without purchasing
+the same dish twice. OK. So, here's a
+
+9131
+01:12:01,060 --> 01:12:06,780
+condition that's similar to the knapsack
+0, 1 problem versus a knapsack kind of
+
+9145
+01:12:06,780 --> 01:12:12,140
+general problem. Am I allowed to take more
+than one of these things or not? Here, it's
+
+9162
+01:12:12,140 --> 01:12:17,320
+a restriction that I'm not allowed to take
+a plate more than once. OK? And I'm going
+
+9179
+01:12:17,320 --> 01:12:22,580
+to try to describe an order nks time
+algorithm to find the maximum volume of
+
+9194
+01:12:23,320 --> 01:12:30,200
+food Obert can eat, given his diet. OK. So,
+first thing I'm going to note here is one
+
+9212
+01:12:30,200 --> 01:12:35,100
+of the things that we talked about at the
+last dynamic programming lecture was, is
+
+9227
+01:12:35,100 --> 01:12:42,260
+this a polynomial running time that it's
+asking me for? Right? Actually, on your
+
+9241
+01:12:42,280 --> 01:12:47,780
+problem set 8, you were asked on each
+problem to categorize whether the running
+
+9255
+01:12:47,780 --> 01:12:52,180
+time of your algorithm was polynomial or
+not. And actually, you don't have to solve
+
+9270
+01:12:52,180 --> 01:12:55,840
+the problem in order to answer that
+question if we give you the running time.
+
+9285
+01:12:57,220 --> 01:13:00,220
+Right? If we give you the running time, you
+can just take a look at that running time
+
+9303
+01:13:00,220 --> 01:13:06,420
+and be like, oh, is that polynomial in the
+size of my input? And here it is, is it?
+
+9322
+01:13:07,640 --> 01:13:12,420
+All the ones previously were. This one was
+in order n. That was in order n squared,
+
+9339
+01:13:12,420 --> 01:13:16,780
+because n was the number of things in my
+input, the number of words it took to give
+
+9357
+01:13:16,780 --> 01:13:24,080
+you that input. Here, what do I have? I
+have a triple of numbers for each plate.
+
+9374
+01:13:24,420 --> 01:13:31,540
+There are n of them. So, n is polynomial.
+S is polynomial. Because s is smaller than
+
+9391
+01:13:31,540 --> 01:13:41,040
+n, and it's a positive number. But k, k is
+just some number in my input. Right? It's
+
+9409
+01:13:41,040 --> 01:13:45,940
+representable in potentially one word.
+That's the assumption. But it could have
+
+9421
+01:13:46,260 --> 01:13:51,260
+exponential size, depending on the size of
+my word of my machine. I don't know how big
+
+9438
+01:13:51,260 --> 01:13:57,480
+k is relative to n. And so, this is a
+pseudopolynomial running time. OK?
+
+9452
+01:14:00,040 --> 01:14:04,560
+It's just a number in my problem, similar
+to subset sum, similar to knapsack, which
+
+9467
+01:14:04,580 --> 01:14:09,020
+you guys did in lecture and recitation.
+And so, if we ask you on an exam, which we
+
+9485
+01:14:09,040 --> 01:14:13,740
+probably will, whether certain running
+times are polynomial or not, that's the
+
+9497
+01:14:13,740 --> 01:14:16,120
+logic that you go about
+it. How big is my input?
+
+9508
+01:14:18,480 --> 01:14:22,840
+What is my running time that I'm trying
+to evaluate? And can I bound each of those
+
+9525
+01:14:22,900 --> 01:14:27,280
+terms in terms of the size of my input? If
+not, then you say it's pseudopolynomial.
+
+9541
+01:14:28,320 --> 01:14:34,480
+OK? All right. So, let's try to tackle
+this problem. Already, because we've got
+
+9555
+01:14:34,480 --> 01:14:39,280
+pseudopolynomial, you're thinking
+maybe this is going to be knapsack -like or
+
+9567
+01:14:39,280 --> 01:14:44,560
+subset sum -like. OK? What do I
+need to? I'm just going to go straight for
+
+9583
+01:14:44,560 --> 01:14:48,330
+subproblems here. Actually,
+I should probably say
+
+9590
+01:14:50,500 --> 01:14:57,380
+what my things are. Meh, this is fine. I
+gave notation up there, didn't I? OK. So,
+
+9607
+01:14:58,000 --> 01:15:01,340
+we're going to have subproblems. I'm going
+to, I want to maximize the number, the
+
+9622
+01:15:01,340 --> 01:15:06,400
+volume of food. So, that should probably
+be the output of my subproblem, the max
+
+9637
+01:15:06,400 --> 01:15:12,800
+volume on some subset of dishes.
+Right? I'm going to choose suffixes here.
+
+9650
+01:15:15,240 --> 01:15:25,240
+I and some other stuff is going
+to be max volume of food possible.
+
+9664
+01:15:30,350 --> 01:15:32,440
+So, I'm going to have
+subproblems for plates
+
+9672
+01:15:34,720 --> 01:15:40,380
+pi to pn. I'm going to assume
+one indexed here, because why not?
+
+9685
+01:15:43,340 --> 01:15:48,940
+But do I need to remember information along
+the way? Yeah. Just like with subset sum
+
+9701
+01:15:48,940 --> 01:15:56,100
+or knapsack, I have this calorie limit.
+Right? So, it's going to be really useful
+
+9716
+01:15:56,220 --> 01:15:58,880
+for me to know how many calories I've
+already eaten or how many calories I've
+
+9731
+01:15:58,880 --> 01:16:05,220
+already eaten. Or how many calories I have
+left in my budget. Right? So, let's say j
+
+9748
+01:16:05,220 --> 01:16:22,220
+using at most j calories from the remaining
+dishes. And I need to make sure that I'm
+
+9765
+01:16:22,220 --> 01:16:28,880
+eating exactly some number of sweet plates
+in the future. And I need to remember, as I
+
+9782
+01:16:28,880 --> 01:16:33,320
+eat, a sweet plate, the number of sweet
+plates I need to eat decreases. And so, I
+
+9799
+01:16:33,320 --> 01:16:38,200
+want to generalize that. I'm going to
+put an s prime here to denote eating
+
+9814
+01:16:40,520 --> 01:16:41,460
+exactly
+
+9815
+01:16:44,240 --> 01:16:48,720
+s sweet plates.
+
+9818
+01:16:51,180 --> 01:16:52,740
+OK? So, that's my subproblem.
+
+9823
+01:16:56,900 --> 01:17:00,500
+I've got tons of board space. I'm
+going to go ahead and use it. Relation.
+
+9838
+01:17:04,420 --> 01:17:13,040
+We've got xij s prime equals. OK. I'm
+trying to maximize volume. Probably, I want
+
+9853
+01:17:13,040 --> 01:17:19,220
+to be maximizing over something. Right?
+This combinator is kind of what I like to
+
+9868
+01:17:19,300 --> 01:17:23,680
+call it. Right? Usually, what you're doing
+in dynamic programming is making some kind
+
+9882
+01:17:23,680 --> 01:17:30,880
+of choice or combining. Combinating.
+Combining. Combining some number of
+
+9892
+01:17:30,880 --> 01:17:35,880
+subproblems and choosing which one's the
+best. Right? If you just list a bunch of
+
+9907
+01:17:35,880 --> 01:17:40,380
+options here and don't tell us how to
+combine them, that's going to be a problem.
+
+9923
+01:17:40,380 --> 01:17:44,080
+Because we don't know what your dynamic
+program is doing at all. So, it's really
+
+9938
+01:17:44,080 --> 01:17:48,200
+useful for you to be able to tell us how
+you're combining your subproblems. Here,
+
+9953
+01:17:48,200 --> 01:17:54,040
+we're doing a maximization over the
+different volumes possible. If we decide to
+
+9966
+01:17:54,040 --> 01:18:04,680
+eat the plate i, then we get vi in volume.
+We fill our tummies with vi in volume. But
+
+9985
+01:18:04,680 --> 01:18:09,280
+then we have to recurse on using one
+fewer plate because we can't use that plate
+
+10001
+01:18:09,280 --> 01:18:17,180
+again. And we've decreased the amount
+of calories in our budget. And I'm going to
+
+10016
+01:18:18,300 --> 01:18:29,140
+say s prime minus si because si is 1 if
+it's sweet and 0 if it's not. So, it's kind
+
+10036
+01:18:29,140 --> 01:18:33,340
+of nice that they kind of gave us this
+notation here. I can just subtract it off
+
+10053
+01:18:33,340 --> 01:18:39,320
+if it's there. I don't have to do this
+conditional or something. And I don't ever
+
+10069
+01:18:39,320 --> 01:18:49,560
+want to go below these budgets. So,
+I'm just going to say if ci is less than or
+
+10087
+01:18:49,560 --> 01:18:56,360
+equal to j and si is less than or equal to
+s prime. OK? So, that's going to make sure
+
+10107
+01:18:56,360 --> 01:19:01,780
+that I never have these guys go negative.
+Otherwise, I don't eat the plate. And
+
+10122
+01:19:01,780 --> 01:19:08,720
+that's kind of the easy case because I
+just go i plus 1, j, s prime. These things
+
+10140
+01:19:08,760 --> 01:19:14,000
+didn't change. I just have one fewer thing
+left. So, I'm maximizing over these things.
+
+10155
+01:19:14,360 --> 01:19:23,120
+This one's an always. It's not an if. So, I
+just have two choices. I'm maximizing over
+
+10172
+01:19:23,120 --> 01:19:30,480
+them. Topological sort order. Here, I'm
+always recursing on a thing with larger i.
+
+10186
+01:19:33,420 --> 01:19:44,180
+Depend on larger i. So,
+acyclic. Happy. OK? Base cases.
+
+10196
+01:19:49,760 --> 01:19:50,480
+What's the good case?
+
+10200
+01:19:53,040 --> 01:19:58,320
+I get to the end. I've reached the end of
+my menu. I can't look at any more plates.
+
+10219
+01:20:02,690 --> 01:20:06,460
+I've already forbidden myself from going
+negative on the calories. So, that should
+
+10232
+01:20:06,460 --> 01:20:07,120
+be all good.
+
+10235
+01:20:09,560 --> 01:20:18,940
+But what do I want on the third parameter?
+0. I better have eaten exactly s plates.
+
+10252
+01:20:19,160 --> 01:20:28,500
+So, I want to get down to x, n plus
+1 because I'm 1 indexed. j for any j, 0.
+
+10272
+01:20:29,300 --> 01:20:35,500
+That's going to be 0. I get no calories
+there. But it's a good thing. It's a good
+
+10290
+01:20:35,500 --> 01:20:45,880
+place. It's fine. 0 is good. All right.
+This is done. I don't know. OK. There's
+
+10306
+01:20:45,880 --> 01:20:50,640
+another base case. What's the bad
+base case? I get to the end. I'm always
+
+10321
+01:20:50,640 --> 01:20:54,840
+increasing i. And so, I better be doing
+something on n plus 1. I got to the end.
+
+10339
+01:20:57,300 --> 01:21:02,260
+j, again, is going to always be. Non
+-negative because we're always going to be
+
+10354
+01:21:02,260 --> 01:21:08,360
+in our calorie budget.
+But if this is anything other
+
+10364
+01:21:10,600 --> 01:21:15,220
+than s prime greater than 0, if it's
+anything but 0, what is that going to be?
+
+10381
+01:21:17,300 --> 01:21:21,720
+Minus infinity. Minus infinity. I never
+want to be in this situation. If I do my
+
+10397
+01:21:21,720 --> 01:21:27,540
+dynamic program and I get a minus infinity
+up at the top, that means there is no path
+
+10415
+01:21:28,180 --> 01:21:32,220
+to this subprime. So, I'm going to have a
+problem here where I'm happy. I'm always
+
+10431
+01:21:32,220 --> 01:21:40,280
+sad. And so, I return that the maximum
+volume of food Obert can eat and maintain
+
+10447
+01:21:40,280 --> 01:21:48,100
+his diet is not possible. Essentially,
+there aren't s sweet dishes in the thing
+
+10461
+01:21:48,440 --> 01:21:54,260
+whose calorie budget are below my limit.
+And that's probably an easier thing to
+
+10475
+01:21:54,260 --> 01:21:56,820
+check than in this bound.
+
+10480
+01:21:59,180 --> 01:22:03,200
+Our original subproblems
+now. Solution is given by what?
+
+10489
+01:22:08,180 --> 01:22:12,160
+Just one of our subproblems. It's just
+seeing what's the maximum volume. I don't
+
+10503
+01:22:12,260 --> 01:22:19,460
+have to retrace my steps to figure out my
+thing. I say one of the subproblems. It's
+
+10520
+01:22:20,100 --> 01:22:26,400
+using all of the things on my menu,
+using my entire budget k, and trying to get
+
+10537
+01:22:26,400 --> 01:22:34,140
+exactly s things. That's going to be my
+output to my algorithm. And this takes what
+
+10553
+01:22:34,140 --> 01:22:43,080
+time? How many subproblems do I
+have? I have n plus 1 subproblems for this
+
+10568
+01:22:43,080 --> 01:22:49,860
+parameter. I have k plus 1 possible things
+for this parameter. And I have s plus 1
+
+10585
+01:22:50,060 --> 01:22:56,460
+possible things for this parameter.
+So, I get order n k s subproblems.
+
+10598
+01:22:59,910 --> 01:23:07,560
+How much work per subproblem? Just a
+max of two things. So, constant work per
+
+10613
+01:23:07,580 --> 01:23:08,180
+subproblem
+
+10614
+01:23:11,080 --> 01:23:14,720
+yields order n k s time total.
+
+10621
+01:23:16,980 --> 01:23:23,140
+OK. So, those are three nice practice
+problems for you. Two that are polynomial,
+
+10635
+01:23:23,300 --> 01:23:27,380
+one that's pseudopolynomial. You have one
+more example in there, which is the Gokin
+
+10649
+01:23:27,380 --> 01:23:31,380
+-Mon -Poe problem, which is a fun
+problem. It involves remembering additional
+
+10661
+01:23:31,380 --> 01:23:37,680
+information that's not really a
+pseudopolynomial number in your problem,
+
+10671
+01:23:37,680 --> 01:23:44,940
+but it's the location of where I was last
+or where I was going. So, take a look at
+
+10690
+01:23:44,940 --> 01:23:51,580
+that problem. It's another kind of non
+-trivial way of expanding subproblems. And
+
+10703
+01:23:51,580 --> 01:23:54,400
+with that, good
+luck on your quiz 3.
+
