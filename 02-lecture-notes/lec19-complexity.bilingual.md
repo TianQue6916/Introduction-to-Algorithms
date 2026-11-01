@@ -26,6 +26,10 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 | **Chess**（国际象棋） | 在给定局面中，某方能否 forced win（逼出胜局）？ |
 | **Halting problem**（停机问题） | 给定 computer program（计算机程序）对给定输入是否会终止？ |
 
+![图 1-1：七个问题及其决策版本的对照表（原书排版）](_assets/lec19_fig_1_1.png)
+
+**图 1-1**：七行里只有前两行（s-t Shortest Path、Negative Cycle）的决策版属于 P；第三行 Longest Simple Path 与第一行只差 `simple` 一词，判定就从多项式可解跳到 NP-complete；最后一行 Halting problem 连 decidability 都没有 —— 这张表的七行恰好横跨 P、NP-complete、EXP-complete、undecidable 四个层级。*Adding the word `simple` moves shortest path out of P, and the bottom row is not even decidable: seven rows span four complexity levels.*
+
 - **Algorithm/Program（算法/程序）**：一段 constant-length code（定长代码）——运行在 word size 为 $\Omega(\log n)$ bits 的 word-RAM 上——用来求解某个问题；即它对**每一个**输入都产生正确输出，且代码的长度与实例大小无关
 - 若存在某个 program 能在 finite time（有限时间）内求解该问题，则称该问题是 **decidable（可判定的）**
 
@@ -65,6 +69,10 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - **EXP**：能在 exponential time（指数时间）$2^{n^{O(1)}}$ 内判定的问题（**我们日常考虑的大多数问题都在这里**）
 - **P**：能在 polynomial time（多项式时间）$n^{O(1)}$ 内判定的问题（efficient algorithms（高效算法），本课焦点）
 
+![图 1-2：R / EXP / P 三个可判定类及其定义（原书排版）](_assets/lec19_fig_1_2.png)
+
+**图 1-2**：EXP 的指数 $2^{n^{O(1)}}$ 与 P 的多项式 $n^{O(1)}$ 用的是**同一个** $O(1)$ 记号 —— 差别只在谁被指数化：$n$ 作底得多项式，$2$ 作底、$n^{O(1)}$ 作指数得指数。因此 $P \subsetneq EXP$ 不是「量」的差别（不是某个常数更大），而是 time hierarchy theorem 保证的严格分层；右列括号注把三个类的用途钉死：EXP 是「日常思考的问题所在」，P 才是本课的目标。*P and EXP share the same $O(1)$ exponent; only the base differs, and the time hierarchy theorem makes the gap strict rather than quantitative.*
+
 🎥 *Demaine 定义 P 与 EXP 时点明本课视角*："P is the set of all problems solvable in polynomial time. OK. So these are the problems that are efficiently solvable. P is set of all of them. And for contrast, EXP is the set of all problems solvable in exponential time. Exponential here means something like 2 to the n to the constant."（翻译：P 是所有能在多项式时间内求解的问题的集合——也就是能被高效求解的那些问题。作为对照，EXP 是所有能在指数时间内求解的问题的集合；这里的指数大致是 $2^{n^{O(1)}}$ 的意思。）
 - 这些集合两两不同：$P \subsetneq EXP \subsetneq R$（由 time hierarchy theorems（时间谱系定理）保证，见 6.045）
 - 例如 Chess 属于 $EXP \setminus P$
@@ -103,6 +111,10 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 | **Subset Sum** | 一个 items 集合 $A'$ | 检查 $A'$ 是否 $\subseteq A$，且其元素和是否为 $S$ |
 | **Tetris** | 一串 moves（走法） | 检查这些 moves 是否允许 survival（存活） |
 
+![图 2-1：五个 NP 问题的 certificate 与 verifier 对照表（原书排版）](_assets/lec19_fig_2_1.png)
+
+**图 2-1**：Certificate 一列全部是多项式长度的 witness（一条路径、一个环、一个子集 $A'$、一串 moves），Verifier 一列做的事全部是「求和 + 与阈值比较」或「检查 $\subseteq$ / $\in$」，即 $O(n)$ 到 $O(n^2)$ 的死算，没有一行需要「聪明」。这张表就是 NP 定义 $\exists$ 短证书 $+$ 多项式验证的字面物证；也说明为什么「验证」不构成求解 —— 表格给了答案，验证器只需核对，它并不产生答案。*Every certificate is a polynomial-size witness and every verifier is plain sum-and-compare: the $\exists$ + poly-check definition written out row by row.*
+
 - **$P \subseteq NP$**：verifier $V$ 可以忽略 certificate 直接求解该实例
 - **$NP \subseteq EXP$**：把所有可能的 certificates 都试一遍！至多 $2^{n^{O(1)}}$ 个，对每个都运行 verifier $V$
 - **Open（未解）**：$P \stackrel{?}{=} NP$？$NP \stackrel{?}{=} EXP$？
@@ -138,6 +150,10 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 | Integer-weighted Shortest Path（整数权最短路径） | 细分每条边 | Unweighted Shortest Path（无权最短路径） |
 | Longest Simple Path（最长简单路径） | 把权重取负 | Shortest Path（最短路径） |
 
+![图 3-1：三种归约 A → B 的对照表（原书排版）](_assets/lec19_fig_3_1.png)
+
+**图 3-1**：三行都朝「右边那个问题」归约，但方向信息各不相同 —— 无权→带权是**加一般性**（赋等权）；整数权→无权是反过来，用一个**更特殊**的模型去解更一般的模型（把权 $w$ 细分成 $w$ 条单位边，把权重编码进结构，前提是 $w$ 多项式有界）；最长→最短是**取负权**，仅当无负环时保持答案。第二行是这张表的反直觉点：归约的难度偏序允许特例解一般。*Each row moves right along the difficulty order, and the integer to unweighted row shows a special case solving a general one by encoding weights into structure.*
+
 - 若 **NP 中的每个问题**都能多项式归约到 problem $A$，则称 $A$ 是 **NP-hard（NP 难）** 的
 - 即 $A$ 至少和 NP 中每个问题一样难（对每个 $X \in NP$ 有 $X \le A$，即 $A$ 可以用来解每个 NP 问题）
 - **NP-complete（NP 完全）** $= NP \cap NP\text{-hard}$
@@ -145,6 +161,10 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - 第一个 NP-complete 问题？**NP 中的每个决策问题都能多项式归约到"判定一个逻辑电路是否可满足"**——这个问题叫 **Circuit SAT（电路可满足性）**
 - Longest Simple Path 与 Tetris 都是 NP-complete 的，所以只要 $P \ne NP$（NP 中存在问题不属于 P），它们就不在 P 中
 - **Chess 是 EXP-complete 的**：属于 EXP，且 EXP 中每个问题都能归约到它（所以 $\notin P$）
+
+![图 3-2：P / NP / EXP / R 与 NP-hard / EXP-hard 的难度数轴（原书彩色图）](_assets/lec19_fig_3_2.png)
+
+**图 3-2**：数轴自左向右是 P ⊂ NP ⊂ EXP ⊂ R，而 NP-hard / EXP-hard 的箭头指向右端 —— 「hard」不是某个位置，而是**从该点向右的整条射线段**。于是 NP-complete（$NP \cap NP$-hard）恰好落在 NP 区间的右端点：它既是 NP 的成员（所以可以验证），又已经能编码 NP 里所有问题（所以最右）。EXP-complete 同理落在 EXP 右端。图上 P 与 NP 之间、NP 与 EXP 之间的位置关系是**示意**（原文标注 informal），因为 $P \stackrel{?}{=} NP$ 至今未解。*`Hard` denotes a rightward half-line, not a point; NP-complete therefore sits exactly at the right endpoint of NP, and the diagram is explicitly informal because $P$ vs $NP$ is open.*
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 归约（reduction）你在本课早已用过、L15 也点过名（reduce to a problem you already know），但本页才第一次把它形式化为 $A \to B$、$A \le B$ 的难度偏序。回看 L15-L18 的"把一个新问题化成已知问题"操作：把图问题化到 DAG shortest paths、把 Rod Cutting 化到更小规模的 Rod Cutting（那是 DP 的 self-reduction）。本页把它抽象成：若存在"把 $A$ 的每个实例多项式时间地改写成 $B$ 的实例、且保持 YES/NO 答案不变"的转换，则 $B$ 能解 $A$，记 $A \le B$。这个 $\le$ 是**难度偏序**：$B$ 在偏序中不矮于 $A$（$B$ 至少一样难）。表格三行都是你已掌握的算法，这里换个视角看它们其实是归约：无权 → 带权（$B$ 更一般，$A \le B$：赋等权即可）；带权 → 无权（**$B$ 更特殊却也能解 $A$**：把权为 $w$ 的边细分成 $w$ 条单位边，于是"细分"这个小把戏证明 integer-weighted $\le$ unweighted——**一个更弱的问题模型反而能解更强的问题**，因为细分把权重信息编码进图结构，这直观展示了归约的"编码力"（前提是权重规模多项式有界，否则细分边数指数膨胀，转换本身不再是多项式时间——这条与 L18 伪多项式主题遥相呼应））；最长路径 → 最短路径（取负权重，但注意这只在无负环时成立，否则最短路径算法失效——归约必须**保持答案**，任何破坏语义的转化都是无效归约，这是归约设计的头号陷阱）。
 

@@ -368,7 +368,7 @@ x - 1 < \lfloor x \rfloor \le x \le \lceil x \rceil < x + 1 \tag{3.3}
 \left\lfloor \frac{a}{b} \right\rfloor \ge \frac{a - b + 1}{b} \tag{3.7}
 ```
 
-> <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 恒等式 (3.4)–(3.7) 都能用一个可复用的「区间夹逼展开法」两行证掉，以 (3.4) 为例。记 $k=\lceil x/a\rceil$，由取整定义有 $k-1<x/a\le k$，两边乘 $a$ 得 $a(k-1)<x\le ak$；再除以 $ab$ 得 $k-1<\frac{x}{ab}\le k$，而这恰好就是 $\lceil\frac{x}{ab}\rceil=k$ 的定义——证明完成。核心手法：把嵌套取整翻译成"$x$ 落在哪个端点为整数的区间"内，端点是整数时取整被"冻结"，便可逐层剥开；万能起手式就是上方 (3.3) 那条 $x-1<\lfloor x\rfloor\le x\le\lceil x\rceil<x+1$。注意 (3.4)、(3.5) 对 $x$ 般的实数成立而不只是整数，这也是区间法比"硬猜"可靠的地方。以后分析 $\lceil n/2\rceil$ 规模的递归（如递归式 (4.3)）或证明主方法时，这套"取整即区间"的翻译会反复出现。
+> <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 恒等式 (3.4)–(3.7) 都能用一个可复用的「区间夹逼展开法」两行证掉，以 (3.4) 为例。记 $k=\lceil x/a\rceil$，由取整定义有 $k-1\lt x/a\le k$，两边乘 $a$ 得 $a(k-1)\lt x\le ak$；再除以 $ab$ 得 $k-1<\frac{x}{ab}\le k$，而这恰好就是 $\lceil\frac{x}{ab}\rceil=k$ 的定义——证明完成。核心手法：把嵌套取整翻译成"$x$ 落在哪个端点为整数的区间"内，端点是整数时取整被"冻结"，便可逐层剥开；万能起手式就是上方 (3.3) 那条 $x-1<\lfloor x\rfloor\le x\le\lceil x\rceil\lt x+1$。注意 (3.4)、(3.5) 对 $x$ 般的实数成立而不只是整数，这也是区间法比"硬猜"可靠的地方。以后分析 $\lceil n/2\rceil$ 规模的递归（如递归式 (4.3)）或证明主方法时，这套"取整即区间"的翻译会反复出现。
 
 floor function $f(x) = \lfloor x \rfloor$ 是 monotonically increasing（单调递增）的，ceiling function $f(x) = \lceil x \rceil$ 也是如此。
 

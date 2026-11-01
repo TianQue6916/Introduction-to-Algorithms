@@ -551,7 +551,7 @@ SELECT 算法通过执行以下步骤来确定一个包含 $n > 1$ 个互异元�
 
 类似地，至少有 $3n/10 - 6$ 个元素小于 $x$。因此，在最坏情况下，第 5 步至多对 $7n/10 + 6$ 个元素递归调用 SELECT。
 
-> <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 为什么每组恰好是 5 个，而不是 3 或 7？这是一笔可以心算的代数账本。$x$ 是各组中位数的中位数，所以约一半的组各自贡献至少 $\lceil g/2\rceil$ 个保证大于（或小于）$x$ 的元素，$g$ 是组大小：$g=3$ 时每侧只能保证淘汰约 $n/3$ 个元素，两个递归的自变量之和 $n/3+2n/3=n$ "不缩水"，$T(n)=T(n/3)+T(2n/3)+\Theta(n)$ 只能解出 $\Theta(n\lg n)$——这正是习题 9.3-1 要你论证的事实。$g=5$ 时每侧保证淘汰 $3n/10-6$，两递归之和 $\frac{n}{5}+\frac{7n}{10}=\frac{9n}{10}<n$，这 0.1 的"缩水率"恰好抵消划分的 $O(n)$ 开销，在下一页代换中体现为负项 $cn-(cn/10+7c+an)$。$g=7$ 也线性（和为 $\frac{6n}{7}$），但每组插入排序与找中位数的常数更大——5 是"能用且最省"的最小选择。所以整个证明的线性性完全悬在"两个递归之和严格小于 $n$"这一个不等式上；这是分析"多个递归调用"型分治的通用判据，比主定理更精细的场合（如本节）全靠它定乾坤。
+> <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 为什么每组恰好是 5 个，而不是 3 或 7？这是一笔可以心算的代数账本。$x$ 是各组中位数的中位数，所以约一半的组各自贡献至少 $\lceil g/2\rceil$ 个保证大于（或小于）$x$ 的元素，$g$ 是组大小：$g=3$ 时每侧只能保证淘汰约 $n/3$ 个元素，两个递归的自变量之和 $n/3+2n/3=n$ "不缩水"，$T(n)=T(n/3)+T(2n/3)+\Theta(n)$ 只能解出 $\Theta(n\lg n)$——这正是习题 9.3-1 要你论证的事实。$g=5$ 时每侧保证淘汰 $3n/10-6$，两递归之和 $\frac{n}{5}+\frac{7n}{10}=\frac{9n}{10}\lt n$，这 0.1 的"缩水率"恰好抵消划分的 $O(n)$ 开销，在下一页代换中体现为负项 $cn-(cn/10+7c+an)$。$g=7$ 也线性（和为 $\frac{6n}{7}$），但每组插入排序与找中位数的常数更大——5 是"能用且最省"的最小选择。所以整个证明的线性性完全悬在"两个递归之和严格小于 $n$"这一个不等式上；这是分析"多个递归调用"型分治的通用判据，比主定理更精细的场合（如本节）全靠它定乾坤。
 
 现在我们可以为算法 SELECT 的 worst-case running time（最坏情况运行时间）$T(n)$ 建立一个 recurrence（递归式）。第 1、2、4 步需要 $O(n)$ 时间。（第 2 步包含 $O(n)$ 次对规模为 $O(1)$ 的集合的 insertion sort（插入排序）调用。）第 3 步耗时 $T(\lceil n/5 \rceil)$，第 5 步耗时至多 $T(7n/10 + 6)$，这里假设 $T$ 是 monotonically increasing（单调递增）的。
 
@@ -720,7 +720,7 @@ As in the quicksort analysis, we assume that all elements are distinct, and we r
 
 For $1 \le i < j \le n$, let
 
-$X_{ijk} = I\{\text{$z_i$ is compared with $z_j$ sometime during the execution of the algorithm to find $z_k$}\}$.
+$X_{ijk} = I\{\,z_i \text{ is compared with } z_j \text{ sometime during the execution of the algorithm to find } z_k\,\}$.
 
 a. Give an exact expression for $\mathrm{E}[X_{ijk}]$. (Hint: Your expression may have different values, depending on the values of $i$, $j$, and $k$.)
 

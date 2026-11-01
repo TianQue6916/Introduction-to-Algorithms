@@ -22,9 +22,13 @@
 
 由子序列定义，存在严格递增下标：
 
-$$1 \leq i_1 < i_2 < \cdots < i_k \leq m$$
+```math
+1 \leq i_1 < i_2 < \cdots < i_k \leq m
+```
 
-$$1 \leq j_1 < j_2 < \cdots < j_k \leq n$$
+```math
+1 \leq j_1 < j_2 < \cdots < j_k \leq n
+```
 
 使得 $x_{i_t} = y_{j_t} = z_t$ 对所有 $t \in [1, k]$ 成立。
 
@@ -96,17 +100,23 @@ $$1 \leq j_1 < j_2 < \cdots < j_k \leq n$$
 
 由于至少一个子情况成立，我们有：
 
-$$c[m][n] \leq \max(c[m-1][n],\; c[m][n-1])$$
+```math
+c[m][n] \leq \max(c[m-1][n],\; c[m][n-1])
+```
 
 另一方面，显然有：
 
-$$c[m][n] \geq c[m-1][n] \quad \text{且} \quad c[m][n] \geq c[m][n-1]$$
+```math
+c[m][n] \geq c[m-1][n] \quad \text{且} \quad c[m][n] \geq c[m][n-1]
+```
 
 （因为 $X[1..m-1]$ 和 Y 的任何公共子序列也是 X 和 Y 的公共子序列。）
 
 所以：
 
-$$c[m][n] = \max(c[m-1][n],\; c[m][n-1])$$
+```math
+c[m][n] = \max(c[m-1][n],\; c[m][n-1])
+```
 
 **注意：这个证明完全不依赖"$z_k \neq x_m$"（字符不等）这个条件。** 它只用了"$i_k < m$ 或 $j_k < n$"——这是位置层面的判断，与字符值无关。无论 $z_k$ 的字符值是否等于 $x_m$，只要它匹配的位置不是 m，推理就成立。
 
@@ -118,8 +128,12 @@ $$c[m][n] = \max(c[m-1][n],\; c[m][n-1])$$
 
 不会。上面的证明是**夹逼法**：
 
-$$下界：c[m][n] \geq \max(c[m-1][n], c[m][n-1])$$
-$$上界：c[m][n] \leq \max(c[m-1][n], c[m][n-1])$$
+```math
+下界：c[m][n] \geq \max(c[m-1][n], c[m][n-1])
+```
+```math
+上界：c[m][n] \leq \max(c[m-1][n], c[m][n-1])
+```
 
 当 $c[m-1][n] = c[m][n-1] = V$ 时，上下界都等于 V，所以 $c[m][n]$ 被夹逼在 V 上，必须等于 V。max 取出的就是 V。**这不是"猜"的，是被不等式逼出来的。**
 

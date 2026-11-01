@@ -11,10 +11,39 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 讲师点明课程转折：前半学期是 **existing algorithms（已有算法）**——排序、graph algorithms（图算法）、data structures（数据结构），你学会用它们解题；从今天开始进入 **algorithmic design（算法设计）**——面对一个从未见过的问题，从零构思 polynomial time algorithm（多项式时间算法）。
 
+原书在这里用三栏清单把"已知问题"的库存全部摊开（LNotes 15 p1 的 tabular 排版，正文可逐格重建，故以表格而非位图补回）：
+
+| Search Data Structures | Sort Algorithms | Graph Algorithms |
+|---|---|---|
+| Array | Insertion Sort | Breadth First Search |
+| Linked List | Selection Sort | DAG Relaxation (DFS + Topo) |
+| Dynamic Array | Merge Sort | Dijkstra |
+| Sorted Array | Counting Sort | Bellman-Ford |
+| Direct-Access Array | Radix Sort | Johnson |
+| Hash Table | AVL Sort | |
+| AVL Tree | Heap Sort | |
+| Binary Heap | | |
+
+三栏**互不对齐**：8 / 7 / 5 项，行数不同，说明这是三个**正交**的知识库存，选哪一栏取决于输入是 set、是 sequence、还是 graph —— 而不是"同一问题的三种解法"。
+
+
 核心思想是 **recursive algorithm design（递归算法设计）**：
 - 我们想要 constant-sized code（恒定大小的代码）解决 arbitrary size problems（任意规模的问题）
 - recursive view（递归视图）特别契合 induction technique（归纳法证明）——这门课一直在用的证明技术
 - 递归调用构成 **subproblem graph（子问题图）**，这是分析递归算法的核心工具
+
+递归算法按**子问题依赖图的形状**分类，原书这张双列小表（LNotes 15 p1）同样是可逐格重建的 tabular：
+
+| Class | Graph |
+|---|---|
+| Brute Force | Star |
+| Decrease & Conquer | Chain |
+| Divide & Conquer | Tree |
+| Dynamic Programming | DAG |
+| Greedy/Incremental | Subgraph |
+
+5 类对 5 形，是**双射**：判据是图的形状，与时间复杂度无关，也与是否真的写成递归无关。
+
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 🎥 *Demaine 在视频中以轻松的口吻开场*："Today we start a totally new section of the class... how to from scratch come up with a polynomial time algorithm." *他强调这是从"使用已知算法"到"设计新算法"的思维跃迁。*
 
@@ -197,6 +226,11 @@ Prefixes 和 suffixes 通常够用且是线性数量，比二次型的 substring
 
 **示例：** $v = [-1, 1, 1, 1, 9, 9, 3, -3, -5, 2, 2]$
 
+![图 15-5-1：bowling 示例数组，方框标出可配对击倒的相邻球瓶](_assets/lec15_fig_5_1.png)
+
+**图 15-5-1**：方框的**宽度**编码一次投球覆盖的球瓶数——单格是单独击倒（取 $v_i$），双格是相邻两瓶一起击倒（取 $v_i \cdot v_{i+1}$）。可被反驳的主张：`[9, 9]`、`[2, 2]`、`[-3, -5]` 被框成对，而 `-1`、`3` 各自成单格，说明"配对"是一个**分组决策**而不是序列上的固定切分——这正是 $B(i)$ 递推里要 guess 的那一步；若配对是固定的，递推只剩一个分支，$\Theta(n)$ 会退化成平凡扫描。
+
+
 > 例中 $9 \times 9 = 81$ 很诱人，$-5 \times -5 = 25$ 也值得。相邻负数相乘反而赚分。
 
 ### <span style="color:#2471a3;">**[solution]**</span> <span style="color:#c0392b">SRT BOT 设计</span>
@@ -233,6 +267,11 @@ graph LR
     B2 -->|"v2·v3"| B4
     B3 -->|"..."| Bn
 ```
+
+![图 15-6-1：bowling 的 subproblem DAG，从 B0 到 Bn 的每条路径对应一种打球策略](_assets/lec15_fig_6_1.png)
+
+**图 15-6-1**：每个 $B_i$ 只有两条出边——上行"跳过或单瓶"权重 $\max\{v_i, 0\}$ 连到 $B_{i+1}$，下行"连击"权重 $v_i \cdot v_{i+1}$ 连到 $B_{i+2}$。可被反驳的主张：$B_0 \to B_n$ 的一条路径与一种打球策略**一一对应**，路径权重和等于总得分，所以 $B(i)$ 的递推式就是这张 DAG 上的 Bellman 方程，`max` 的三个分支正好对应"不走 / 走一步 / 走两步"三种出边选择。
+
 
 > <span style="color:#1e8449;">**[note] Note（译者注）——Local Brute Force（局部暴力枚举）：** 这个术语是本节课的核心洞见。我们只对**第一个球瓶**进行 local brute force（三种选择），不需要同时考虑所有球瓶。因为一旦决定了第一个球瓶的命运，剩下的仍然是同一个问题的更小实例（suffix）。这种"局部暴力 + 全局复用"的模式正是 DP 的精髓。🎥 *Demaine 对此颇为感慨：* "This is almost a trivial algorithm. It's amazing that this solves the bowling problem. Normally if I tried all the options... that would be exponential, $3 \times 3 \times 3$, that's bad. But because I can reuse these subproblems, it turns out to only be linear time. It's almost like magic."</span>
 

@@ -56,15 +56,21 @@
 
 对于有限 horizon $N$（即最多 $N$ 步决策），一个 **决策序列**（decision sequence）是一个 $N$ 元组：
 
-$$\pi = (a_0, a_1, \ldots, a_{N-1}) \in A^N$
+```math
+\pi = (a_0, a_1, \ldots, a_{N-1}) \in A^N
+```
 
 给定 $\pi$ 和初始状态 $s_0$，状态序列 $\{s_t\}$ 由递推确定：
 
-$$s_{t+1} = T(s_t, a_t), \quad t = 0, 1, \ldots, N-1$
+```math
+s_{t+1} = T(s_t, a_t), \quad t = 0, 1, \ldots, N-1
+```
 
 总代价为：
 
-$$J_\pi(s_0) = \sum_{t=0}^{N-1} C(s_t, a_t) + C_F(s_N)$
+```math
+J_\pi(s_0) = \sum_{t=0}^{N-1} C(s_t, a_t) + C_F(s_N)
+```
 
 其中 $C_F(s_N)$ 是终端代价（terminal cost），当 $s_N \in F$ 时通常为 $0$，否则为 $+\infty$。
 
@@ -74,7 +80,9 @@ $$J_\pi(s_0) = \sum_{t=0}^{N-1} C(s_t, a_t) + C_F(s_N)$
 
 给定策略 $\pi$，从状态 $s$ 出发的 **值函数**（value function）为：
 
-$$V^\pi(s) = C(s, \pi(s)) + V^\pi(T(s, \pi(s)))$
+```math
+V^\pi(s) = C(s, \pi(s)) + V^\pi(T(s, \pi(s)))
+```
 
 （递归定义，终端状态处 $V^\pi(s) = 0$）
 
@@ -82,11 +90,15 @@ $$V^\pi(s) = C(s, \pi(s)) + V^\pi(T(s, \pi(s)))$
 
 **最优值函数**（optimal value function）：
 
-$$V^*(s) = \min_{\pi} V^\pi(s)$
+```math
+V^*(s) = \min_{\pi} V^\pi(s)
+```
 
 **最优策略**（optimal policy）$\pi^*$ 满足：
 
-$$V^{\pi^*}(s) = V^*(s), \quad \forall s \in S$
+```math
+V^{\pi^*}(s) = V^*(s), \quad \forall s \in S
+```
 
 > 这就是 DP 的目标：求出 $V^*(s_0)$ 以及实现它的 $\pi^*$。
 
@@ -112,13 +124,17 @@ Richard Bellman 在 1957 年出版的 *Dynamic Programming* 一书中首次系�
 
 这意味着存在另一个决策序列 $(a_k', a_{k+1}', \ldots, a_{N-1}')$ 满足：
 
-$$\sum_{t=k}^{N-1} C(s_t', a_t') + C_F(s_N') \;<\; \sum_{t=k}^{N-1} C(s_t^*, a_t^*) + C_F(s_N^*)$$
+```math
+\sum_{t=k}^{N-1} C(s_t', a_t') + C_F(s_N') \;<\; \sum_{t=k}^{N-1} C(s_t^*, a_t^*) + C_F(s_N^*)
+```
 
 其中 $s_k' = s_k^*$（从同一状态出发），$s_{t+1}' = T(s_t', a_t')$。
 
 **Step 2**：构造新的"混合"决策序列（cut-and-paste）。
 
-$$\pi' = (a_0^*, a_1^*, \ldots, a_{k-1}^*, \; a_k', a_{k+1}', \ldots, a_{N-1}')$$
+```math
+\pi' = (a_0^*, a_1^*, \ldots, a_{k-1}^*, \; a_k', a_{k+1}', \ldots, a_{N-1}')
+```
 
 即前 $k$ 步照搬 $\pi^*$，第 $k$ 步起切换为更优的尾段。
 
@@ -223,7 +239,9 @@ Bellman 方程将一个 $N$ 步的优化问题**压缩为一步**：你只需要
 
 称一个优化问题 $\mathcal{P}$ 具有 **最优子结构**，如果其最优解 $x^*$ 可以递归地表示为子问题最优解的函数：
 
-$$x^* = \Phi(x_1^*, x_2^*, \ldots, x_m^*)$$
+```math
+x^* = \Phi(x_1^*, x_2^*, \ldots, x_m^*)
+```
 
 其中：
 
@@ -237,7 +255,9 @@ $$x^* = \Phi(x_1^*, x_2^*, \ldots, x_m^*)$$
 
 子问题的最优解选择 **不互相冲突**。形式化：子问题的解空间 $\mathcal{X}_1 \times \mathcal{X}_2 \times \cdots \times \mathcal{X}_m$ 上，原问题的可行域是笛卡尔积的一个子集，且约束在不同子问题间是可分离的（separable）。
 
-$$\mathcal{X}_{\text{feasible}} = \{(x_1, \ldots, x_m) \in \mathcal{X}_1 \times \cdots \times \mathcal{X}_m \mid g_i(x_i) \leq 0 \text{ 仅涉及 } x_i\}$$
+```math
+\mathcal{X}_{\text{feasible}} = \{(x_1, \ldots, x_m) \in \mathcal{X}_1 \times \cdots \times \mathcal{X}_m \mid g_i(x_i) \leq 0 \text{ 仅涉及 } x_i\}
+```
 
 > **反例**：最长简单路径（Longest Simple Path）不具备最优子结构，因为子路径的选择会互相约束——子路径 $P_1$ 使用的顶点不能被子路径 $P_2$ 重复使用。这就是子问题**不独立**。
 
@@ -247,7 +267,9 @@ $$\mathcal{X}_{\text{feasible}} = \{(x_1, \ldots, x_m) \in \mathcal{X}_1 \times 
 
 若 $x_i'$ 优于 $x_i^*$（对某个子问题 $\mathcal{P}_i$），且其他子问题解不变，则：
 
-$$\Phi(x_1^*, \ldots, x_i', \ldots, x_m^*) \text{ 优于 } \Phi(x_1^*, \ldots, x_i^*, \ldots, x_m^*)$$
+```math
+\Phi(x_1^*, \ldots, x_i', \ldots, x_m^*) \text{ 优于 } \Phi(x_1^*, \ldots, x_i^*, \ldots, x_m^*)
+```
 
 > 这保证了"每个子问题取最优 → 整体最优"的推理链条不中断。
 
@@ -284,11 +306,15 @@ V^*(s \mid h_1) = V^*(s \mid h_2) = V^*(s)
 
 假设 $P_{ij}$ **不是** $v_i$ 到 $v_j$ 的最短路径。则存在路径 $P_{ij}'$ 满足：
 
-$$w(P_{ij}') < w(P_{ij})$$
+```math
+w(P_{ij}') < w(P_{ij})
+```
 
 构造新路径（"剪切—粘贴"）：
 
-$$P' = (v_0, \ldots, v_{i-1}) \circ P_{ij}' \circ (v_{j+1}, \ldots, v_k)$$
+```math
+P' = (v_0, \ldots, v_{i-1}) \circ P_{ij}' \circ (v_{j+1}, \ldots, v_k)
+```
 
 计算权重：
 
@@ -369,7 +395,9 @@ J(s; a_0, \ldots, a_{k-1}) = C(s, a_0) + \sum_{t=1}^{k-1} C(s_t, a_t) + C_F(s_k)
 
 因此，**在第一步选择 $a_0$ 的条件下**，后续最优代价为 $V_{k-1}(T(s, a_0))$。第一步选择 $a$ 后能获得的最小总代价为：
 
-$$C(s, a) + V_{k-1}(T(s, a))$$
+```math
+C(s, a) + V_{k-1}(T(s, a))
+```
 
 在所有可行行动中取最小值：
 

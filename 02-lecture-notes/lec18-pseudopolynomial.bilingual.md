@@ -202,6 +202,22 @@ x(i, t) = \text{OR} \begin{cases} x(i + 1, t - A[i]) & \text{if } t \ge A[i] \\ 
 - Bottom-up（自底向上）：求解全部子问题（该例有 35 个）
 - **Top-down（自顶向下）**：只求解可达的子问题（该例只有 14 个！）
 
+![图 5-1：$A=(3,4,3,1)$、$T=6$ 的完整子问题网格与两条基态边界](_assets/lec18_fig_5_1.png)
+
+**图 5-1**：网格是 $(n+1)(T+1)=5\times 7=35$ 格，横轴 $j$ 是目标容量 $t$，纵轴 $i$ 是后缀起点（顶行 $A[4]=1$、底行 $i=0$ 表示没有元素可用）。35 格里只有 11 格是基态——$t=0$ 那一列的 5 格全部实心（YES，「空间恰好装满」），$i=0$ 那一行除交点外的 6 格全部空心圈（NO，「没有元素可装」）。剩下 $35-11=24$ 格才是递推真正要填的，细斜线是依赖边 $x(i,t)\to x(i+1,t)$ 与 $x(i,t)\to x(i+1,t-a_i)$。*The table has $(n+1)(T+1)=35$ cells, but 11 of them are already base cases: five fill the $t=0$ column with YES and six fill the $i=0$ row with NO, leaving 24 cells for the recurrence.*
+
+![图 5-2：bottom-up 段——被递推实际读取的格子加粗，其余只作背景](_assets/lec18_fig_5_2.png)
+
+**图 5-2**：这一张仍然解同一个实例，区别在于把「被递推真正读到」的格子用粗点和粗线描了出来：加粗部分只覆盖网格的一小片，其余格子以细灰点留在原处。也就是说，表格的**存在**是满的，被**用到**的却不到一半——这个差值正是紧接着 top-down 段要兑现的 $35-14=21$ 格。*Bottom-up still fills all 35 cells, yet only a thin band is traced in bold: being present in the table and being reached by the recurrence are two different sets.*
+
+![图 5-3：top-down 段起点——整张表只有入口格被加框](_assets/lec18_fig_5_3.png)
+
+**图 5-3**：top-down 第一次调用时，整张表只有一个格子被加框（$j=6$ 与最上面一行的交点，即原问题 $x(0,T)$ 的入口），其余格子全是灰点且没有任何 T/F 标记——因为此时一个子问题都还没展开。这张图说明 memoization 的起点必须是**单个状态**，而不是整张表。*Top-down starts from one boxed cell at $j=T$; every other cell is unexpanded and unlabelled, so the recursion begins from a single state rather than a whole table.*
+
+![图 5-4：top-down 展开后的可达轨迹——粗线与方框只覆盖网格的一部分](_assets/lec18_fig_5_4.png)
+
+**图 5-4**：从入口沿递推展开后，加粗的格子仍然只占网格的一小部分；最底一行上留了 1 个 T 方框和 3 个 F 方框，它们是途中撞上的 $i=0$ 基态——命中即停，不再往下展开。所以 top-down 的复杂度不是「表有多大」，而是「从入口能走到多少格」：同一实例 $35\to 14$ 的差距，全部来自这里。*After expansion the bold cells still cover only a corner of the grid, and the three $F$ plus one $T$ boxes on the bottom row are base cases hit and stopped at: top-down pays for reachable states, not for table size.*
+
 ### <span style="color:#2471a3;">**[step]**</span> <span style="color:#c0392b">6. Time（时间）</span>
 
 - 子问题数：$O(nT)$，每个子问题 $O(1)$ 工作量

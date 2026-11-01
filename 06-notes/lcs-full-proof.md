@@ -9,7 +9,9 @@
 
 **定义 1（子序列）** 设 $X = \langle x_1, \ldots, x_m \rangle$ 为有限序列。序列 $Z = \langle z_1, \ldots, z_k \rangle$ 称为 $X$ 的 **subsequence（子序列）**，若存在严格递增的下标序列
 
-$$1 \leqslant i_1 < i_2 < \cdots < i_k \leqslant m$
+```math
+1 \leqslant i_1 < i_2 < \cdots < i_k \leqslant m
+```
 
 使得对任意 $t \in [1, k]$，有 $x_{i_t} = z_t$。
 
@@ -19,11 +21,15 @@ $$1 \leqslant i_1 < i_2 < \cdots < i_k \leqslant m$
 
 **定义 3（LCS 长度）** $X$ 与 $Y$ 的 **LCS 长度**，记作 $c(X, Y)$，定义为：
 
-$$c(X, Y) = \max\{\,|Z| : Z \sqsubseteq X \text{ 且 } Z \sqsubseteq Y \,\}$
+```math
+c(X, Y) = \max\{\,|Z| : Z \sqsubseteq X \text{ 且 } Z \sqsubseteq Y \,\}
+```
 
 **定义 4（前缀子问题）** 对 $i \in [0, m], j \in [0, n]$，令
 
-$$c[i, j] = c(X[1..i],\, Y[1..j])$
+```math
+c[i, j] = c(X[1..i],\, Y[1..j])
+```
 
 即 $c[i, j]$ 是前缀 $X[1..i]$ 与 $Y[1..j]$ 的 LCS 长度。目标：求 $c[m, n]$。
 
@@ -33,8 +39,12 @@ $$c[i, j] = c(X[1..i],\, Y[1..j])$
 
 **定理 1（LCS 最优子结构）** 设 $X = \langle x_1, \ldots, x_m \rangle$, $Y = \langle y_1, \ldots, y_n \rangle$。令 $Z = \langle z_1, \ldots, z_k \rangle$ 是 $X$ 和 $Y$ 的任意一个 LCS。由子序列定义，存在严格递增的匹配下标：
 
-$$1 \leqslant i_1 < i_2 < \cdots < i_k \leqslant m \qquad\text{（Z 在 X 中的匹配下标）}$
-$$1 \leqslant j_1 < j_2 < \cdots < j_k \leqslant n \qquad\text{（Z 在 Y 中的匹配下标）}$
+```math
+1 \leqslant i_1 < i_2 < \cdots < i_k \leqslant m \qquad\text{（Z 在 X 中的匹配下标）}
+```
+```math
+1 \leqslant j_1 < j_2 < \cdots < j_k \leqslant n \qquad\text{（Z 在 Y 中的匹配下标）}
+```
 
 满足 $x_{i_t} = y_{j_t} = z_t$ 对所有 $t \in [1, k]$。
 
@@ -61,7 +71,9 @@ $$1 \leqslant j_1 < j_2 < \cdots < j_k \leqslant n \qquad\text{（Z 在 Y 中的
 
 假设 $i_k < m$（Z 在 X 中的最后一个匹配位置不是 m）。由于 $x_m = y_n$，且 $i_k < m$，我们可以将 $x_m$ 追加到 Z 的末尾，构造
 
-$$Z' = Z \parallel x_m$$
+```math
+Z' = Z \parallel x_m
+```
 
 - $Z' \sqsubseteq X$：下标序列 $i_1 < \cdots < i_k < m$ 严格递增。
 - $Z' \sqsubseteq Y$：同理，由于 $x_m = y_n$，Y 中的下标序列也可扩展一位。
@@ -75,7 +87,9 @@ $$Z' = Z \parallel x_m$$
 
 假设 $W$ 不是 $X[1..m-1]$ 与 $Y[1..n-1]$ 的 LCS。则存在 $W'$ 满足
 
-$$W' \sqsubseteq X[1..m-1],\quad W' \sqsubseteq Y[1..n-1],\quad |W'| > k-1$$
+```math
+W' \sqsubseteq X[1..m-1],\quad W' \sqsubseteq Y[1..n-1],\quad |W'| > k-1
+```
 
 构造 $Z'' = W' \parallel x_m$（粘贴操作）：
 
@@ -109,7 +123,9 @@ $\square$
 
 假设 Z 不是 $X[1..m-1]$ 与 $Y$ 的 LCS。则存在 $W'$ 满足
 
-$$W' \sqsubseteq X[1..m-1],\quad W' \sqsubseteq Y,\quad |W'| > k$
+```math
+W' \sqsubseteq X[1..m-1],\quad W' \sqsubseteq Y,\quad |W'| > k
+```
 
 由于 $W' \sqsubseteq X[1..m-1]$ 且 $X[1..m-1]$ 是 $X$ 的前缀，所以 $W' \sqsubseteq X$。
 
@@ -131,13 +147,13 @@ $\square$
 
 **定理 2（LCS 递推公式）** 对所有 $i \in [0, m]$, $j \in [0, n]$：
 
-$$
+```math
 c[i, j] = \begin{cases}
 0 & \text{若 } i = 0 \text{ 或 } j = 0 \\[6pt]
 c[i-1, j-1] + 1 & \text{若 } i, j > 0 \text{ 且 } x_i = y_j \\[6pt]
 \max(c[i-1, j],\; c[i, j-1]) & \text{若 } i, j > 0 \text{ 且 } x_i \neq y_j
 \end{cases}
-$$
+```
 
 **证明：** 对 $d = i + j$ 进行强数学归纳。
 
@@ -160,7 +176,9 @@ $$
 
 因此：
 
-$$c[i, j] = |Z| = |Z[1..k-1]| + 1 = c[i-1, j-1] + 1$$
+```math
+c[i, j] = |Z| = |Z[1..k-1]| + 1 = c[i-1, j-1] + 1
+```
 
 由归纳假设（$i-1 + j-1 = d-2 < d$），$c[i-1, j-1]$ 已知为正确值。故公式成立。
 
@@ -176,11 +194,15 @@ $$c[i, j] = |Z| = |Z[1..k-1]| + 1 = c[i-1, j-1] + 1$$
 
 $X[1..i-1] \sqsubseteq X[1..i]$，所以 $X[1..i-1]$ 与 $Y[1..j]$ 的任何公共子序列也是 $X[1..i]$ 与 $Y[1..j]$ 的公共子序列。因此：
 
-$$c[i, j] \geqslant c[i-1, j]$$
+```math
+c[i, j] \geqslant c[i-1, j]
+```
 
 同理 $c[i, j] \geqslant c[i, j-1]$。故：
 
-$$c[i, j] \geqslant \max(c[i-1, j],\, c[i, j-1]) \tag{1}$$
+```math
+c[i, j] \geqslant \max(c[i-1, j],\, c[i, j-1]) \tag{1}
+```
 
 **上界方向（$c[i, j] \leqslant \max(\cdots)$）：**
 
@@ -189,11 +211,15 @@ $$c[i, j] \geqslant \max(c[i-1, j],\, c[i, j-1]) \tag{1}$$
 
 每种情况下，$c[i, j]$ 等于 $\{c[i-1, j],\, c[i, j-1]\}$ 中的一个。因此：
 
-$$c[i, j] \leqslant \max(c[i-1, j],\, c[i, j-1]) \tag{2}$
+```math
+c[i, j] \leqslant \max(c[i-1, j],\, c[i, j-1]) \tag{2}
+```
 
 由 (1) 和 (2) 夹逼：
 
-$$c[i, j] = \max(c[i-1, j],\, c[i, j-1])$
+```math
+c[i, j] = \max(c[i-1, j],\, c[i, j-1])
+```
 
 由归纳假设（$i-1+j = d-1 < d$，$i+j-1 = d-1 < d$），$c[i-1, j]$ 和 $c[i, j-1]$ 已知为正确值。故公式成立。
 
@@ -213,7 +239,9 @@ $$c[i, j] = \max(c[i-1, j],\, c[i, j-1])$
 
 **答：** 安全。从证明的不等式 (1)(2)：
 
-$$c[i-1, j] \leqslant c[i, j] \leqslant \max(c[i-1, j],\, c[i, j-1])$
+```math
+c[i-1, j] \leqslant c[i, j] \leqslant \max(c[i-1, j],\, c[i, j-1])
+```
 
 当 $c[i-1, j] = c[i, j-1] = V$ 时，下界 $\geqslant V$，上界 $\leqslant V$，故 $c[i, j] = V$。max 不是"猜"出来的，是被**不等式夹逼**唯一确定的。
 

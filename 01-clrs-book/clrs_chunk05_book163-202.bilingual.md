@@ -877,7 +877,7 @@ d. Using QUICKSORT′, how would you adjust the analysis in Section 7.4.2 to avo
 
 An alternative analysis of the running time of randomized quicksort focuses on the expected running time of each individual recursive call to RANDOMIZED-QUICKSORT, rather than on the number of comparisons performed.
 
-a. Argue that, given an array of size $n$, the probability that any particular element is chosen as the pivot is $1/n$. Use this to define indicator random variables $X_q = I\,\{\text{the $q$th smallest element is chosen as the pivot}\}$. What is $\mathrm{E}[X_q]$?
+a. Argue that, given an array of size $n$, the probability that any particular element is chosen as the pivot is $1/n$. Use this to define indicator random variables $X_q = I\,\{\text{the }q\text{th smallest element is chosen as the pivot}\}$. What is $\mathrm{E}[X_q]$?
 
 b. Let $T(n)$ be a random variable denoting the running time of quicksort on an array of size $n$. Argue that
 
