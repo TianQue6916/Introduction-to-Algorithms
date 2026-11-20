@@ -12,42 +12,43 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 ---
 
 ## 1. Priority Queue Interface 优先队列接口
-
 - **跟踪大量项，快速访问 / 删除「最重要的」那一个。**
-  - 例：带宽有限的路由器（router），必须给某些类型的报文更高的优先级；
-  - 例：操作系统内核里的**process scheduling（进程调度）**；
-  - 例：**discrete-event simulation（离散事件模拟）**——下一个要发生的事件是什么？
-  - 例：图算法（graph algorithms，本课程后面会讲）。
+- 例：带宽有限的路由器（router），必须给某些类型的报文更高的优先级；
+- 例：操作系统内核里的**process scheduling（进程调度）**；
+- 例：**discrete-event simulation（离散事件模拟）**——下一个要发生的事件是什么？
+- 例：图算法（graph algorithms，本课程后面会讲）。
 - 按 `key = priority`（键 = 优先级）给项排序，因此是 **Set interface（集合接口）**，而不是 **Sequence interface（序列接口）**。
 - 针对 Set 操作的某个子集做了优化：
-
 | 操作 | 含义 |
 |---|---|
 | `build(X)` | 从可迭代对象 X 构建优先队列 |
 | `insert(x)` | 把项 x 加入数据结构 |
 | `delete_max()` | 删除并返回键最大的那个项 |
 | `find_max()` | 返回键最大的那个项 |
-
 - （通常只为「最大」或「最小」之一做优化，很少同时两者。）
 - **重点放在 `insert` 与 `delete_max` 两个操作上**：`build` 可以靠反复 `insert` 实现；`find_max()` 也可以由 `insert(delete_max())` 实现（删了再放回去）。
 
+  这里的关键是 `delete_max()` 的返回值语义：它是「删除**并返回**」那个键最大的项。因此 `insert(delete_max())` 的完整意思是——先由 `delete_max()` 把最大项从队列中取出、**并把它的值交回给你**，随即 `insert` 再把这个返回值原样放回队列。净效果是队列内容不变，但你借这一步拿到了「最大项的值」，这恰好就是 `find_max()` 要返回的东西。换句话说，`delete_max()` 的返回值被当成了 `find_max()` 的输出，而 `insert` 的作用只是把被删的项归位、不破坏队列。所以「删了再放回」并非无意义的空操作：**删除不是目的，取出那个值才是**，插回只是为了让「没有真正少元素」的查询语义成立。需要强调的是，这只是说明 `find_max` 能由更基础的 `insert` 与 `delete_max` **复合出来**（正如 `build` 能由反复 `insert` 复合出来），并不代表实际会这样实现——它要真的删、再插，比直接实现的 `find_max` 多付出一倍代价，所以「可以实现」不等于「推荐这样实现」。
+
 ### 核心概念定义
-
 > **定义（priority queue，优先队列）**：一种集合型数据结构，每次操作只关心「键值最大（或最小）」的那个元素，支持插入、删除最大/最小元、查询最大/最小元。可判定标准：它暴露的是 `insert` / `delete_max`（或 `find_max`）这类「按优先级取元素」的接口，而不是「按下标随机访问」的接口。
-
 > **定义（interface，接口）**：一个数据结构对外承诺支持的一组操作（方法签名 + 各自的时间复杂度语义）。Set interface 只关心「元素是否在集合里、按键比较」，不关心元素间的先后次序；Sequence interface 才关心元素的顺序。这是贯穿 6.006 的分类视角。
 
----
+设 $T(k)$ 为从某节点向下修复、且该节点到其子树最深叶子的距离为 $k$ 时，`delete_max` 的修复过程所花的时间。向下修复每向下走一层，都做常数次比较与交换（常数时间）；最坏情况下修复会一路走到叶子，沿途共走 $k$ 层，所以 $T(k)=O(k)$。又因为整棵树的高度 $h$ 满足 $k\le h$，且 $h=O(\log n)$（$n$ 为元素个数），于是 $T(k)=O(\log n)$——这给出的是**上界**。
+
+下界同样成立：存在一种最坏输入，使修复路径确实走满 $k$ 层（例如删掉根之后，新的根要一路下沉到叶子才满足堆性质）。这时每向下一层至少也要做常数次操作，故 $T(k)=\Omega(k)$。上下界都以 $k$ 为界，合起来即 $T(k)=\Theta(k)$。而在高度平衡的实现里，树高既不超过 $\Theta(\log n)$、也能达到 $\Theta(\log n)$，即 $k=\Theta(\log n)$，代入得 $T(k)=\Theta(\log n)$。
+
+因此 `delete_max` 的运行时间**与树的高度成正比**——「运行时间是树的高度」这一表述并不严谨，因为时间是时间、高度是长度，二者量纲不同，准确说法是时间**正比于**高度。在高度平衡的实现中，这个高度为 $\Theta(\log n)$，故 `delete_max` 的运行时间是 $\Theta(\log n)$。
 
 ## 2. Priority Queue Sort 优先队列排序
-
 - 任何一个优先队列数据结构都能「翻译」成一个排序算法：
-  - `build(A)`——例如按输入顺序一个一个 `insert`；
-  - 反复 `delete_min()`（或 `delete_max()`）来确定（反向的）有序顺序。
+- `build(A)`——例如按输入顺序一个一个 `insert`；
+- 反复 `delete_min()`（或 `delete_max()`）来确定（反向的）有序顺序。
 - 所有「难活」都藏在数据结构内部。
 - 运行时间是 $T_{\text{build}} + n \cdot T_{\text{delete\_max}} \le n \cdot T_{\text{insert}} + n \cdot T_{\text{delete\_max}}$。
+  - 这里 $T_{\text{build}}$ 指把 $n$ 个元素构造成优先队列（执行 `build(A)`）的总代价，$T_{\text{insert}}$ 指一次 `insert` 的代价，$T_{\text{delete\_max}}$ 指一次 `delete_max()` 的代价。
+  - 不等式中间那一步 $T_{\text{build}} \le n \cdot T_{\text{insert}}$ 成立，是因为 `build` 的实现方式就是「按输入顺序把 $n$ 个元素逐个 `insert` 进去」，于是建队总代价不会超过做 $n$ 次 `insert` 的代价。
 - 我们已经见过的很多排序算法，都可以看成一种「优先队列排序」：
-
 | Priority Queue 优先队列 | Operations $O(\cdot)$ | | | Priority Queue Sort 优先队列排序 | |
 |---|---|---|---|---|---|
 | Data Structure 数据结构 | `build(A)` | `insert(x)` | `delete_max()` | Time 时间 | In-place? 原地？ |
@@ -55,41 +56,33 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 | Sorted Dynamic Array 有序动态数组 | $n\log n$ | $n$ | $1^{(a)}$ | $n^2$ | Y |
 | Set AVL Tree 集合 AVL 树 | $n\log n$ | $\log n$ | $\log n$ | $n\log n$ | N |
 | **Goal 目标** | $n$ | $\log n^{(a)}$ | $\log n^{(a)}$ | $n\log n$ | Y |
-
-> 上表是打散后的原文表格重建。四行分别对应四种「优先队列排序」：动态数组 → **Selection Sort（选择排序）**；有序动态数组 → **Insertion Sort（插入排序）**；集合 AVL 树 → **AVL AVL Sort（排序）**；而最后一行是我们要达成的目标——`build` $O(n)$、`insert`/`delete_max` 平摊 $O(\log n)$、总时间 $O(n\log n)$ 且原地（In-place），这正好是 **堆排序（Heap Sort）** 的性能。
+> 上表是打散后的原文表格重建。四行分别对应四种「优先队列排序」：动态数组 → **Selection Sort（选择排序）**；有序动态数组 → **Insertion Sort（插入排序）**；集合 AVL 树 → **AVL Sort（AVL 排序）**；而最后一行是我们要达成的目标——`build` $O(n)$、`insert`/`delete_max` 平摊 $O(\log n)$、总时间 $O(n\log n)$ 且原地（In-place），这正好是 **堆排序（Heap Sort）** 的性能。
 >
 > 表中 `(a)` 表示平摊（amortized）代价：动态数组 `insert` 靠扩容均摊为 $O(1)$，有序动态数组 `delete_max` 靠从尾部删为 $O(1)$。`n^2` 的来源：$n \cdot T_{\text{insert}} + n \cdot T_{\text{delete\_max}}$，对动态数组是 $n\cdot 1 + n\cdot n = O(n^2)$，对有序动态数组是 $n\cdot n + n\cdot 1 = O(n^2)$。
-
 ---
 
 ## 3. Priority Queue: Set AVL Tree 用集合 AVL 树实现优先队列
-
 - **Set AVL 树**支持 `insert(x)`、`find_min()`、`find_max()`、`delete_min()`、`delete_max()`，每操作 $O(\log n)$ 时间。
-- 因此优先队列排序运行时间为 $O(n\log n)$ 时间。
-  - 这（本质上）就是第 7 讲的 AVL 排序。
+- 因此优先队列排序运行时间为 $O(n\log n)$。
+- 这（本质上）就是第 7 讲的 AVL 排序。
 - 可以通过**subtree augmentation（子树增强）** 把 `find_min()` / `find_max()` 加速到 $O(1)$ 时间。
-- 但这个数据结构很复杂，而且得到的排序**in-place（不是原地）** 的。
+- 但这个数据结构很复杂，而且得到的排序是 **in-place（原地）** 的。
 - 有没有一个更简单、专为优先队列设计、并且是原地 $O(n\lg n)$ 排序的数据结构？
 - **有的——binary heap（二叉堆）和堆排序（heap sort）。**
 - 本质做法：**在一个 Sequence 数据结构（数组）之上实现一个 Set 数据结构**，用我们学过的二叉树知识。
-
 ### Priority Queue: Array 用数组实现优先队列
-
 - 把元素存在一个**unordered（无序）动态数组**里。
 - `insert(x)`：把 x 追加到末尾，平摊 $O(1)$ 时间。
 - `delete_max()`：花 $O(n)$ 找最大，把它换到末尾再删掉。
 - `insert` 很快，但 `delete_max` 很慢。
 - 这种优先队列排序就是**选择排序**！（外加一些拷贝。）
-
 ### Priority Queue: Sorted Array 用有序数组实现优先队列
-
 - 把元素存在一个**sorted（有序）动态数组**里。
 - `insert(x)`：把 x 追加到末尾，再向下换到有序位置，$O(n)$ 时间。
 - `delete_max()`：从末尾删，平摊 $O(1)$。
 - `delete_max` 很快，但 `insert` 很慢。
 - 这种优先队列排序就是**插入排序**！（外加一些拷贝。）
 - **能否在这两种「数组优先队列」的两个极端之间找到一个折中？**
-
 ---
 
 ## 4. Array as a Complete Binary Tree 把数组看成完全二叉树
@@ -124,7 +117,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 \text{left}(i) = 2i + 1,\qquad \text{right}(i) = 2i + 2,\qquad \text{parent}(i) = \left\lfloor \frac{i-1}{2} \right\rfloor
 ```
 
-> 上面三式是打散后的公式重建。`left(i) = 2i+1`、`right(i) = 2i+2`、`parent(i) = (i-1)/2`（向下取整，原文的 $\lfloor \cdot \rfloor$ 与换行被 PDF 拆散，此处按「根为 0、左孩子 $2i+1$」的标准 0 基下标约定还原）。**自检**：代入 $i=0$，`left(0)=1`、`right(0)=2`，`parent(1)=\lfloor 0/2\rfloor=0$、`parent(2)=\lfloor 1/2\rfloor=0$，三者衔接一致——孩子 $1,2$ 的父正是根 $0$。
+> 上面三式是打散后的公式重建。`left(i) = 2i+1`、`right(i) = 2i+2`、`parent(i) = (i-1)/2`（向下取整，原文的 $\lfloor \cdot \rfloor$ 与换行被 PDF 拆散，此处按「根为 0、左孩子 $2i+1$」的标准 0 基下标约定还原）。**自检**：代入 $i=0$，`left(0)=1`、`right(0)=2`，`parent(1)=⌊0/2⌋=0`、`parent(2)=⌊1/2⌋=0`，三者衔接一致——孩子 $1,2$ 的父正是根 $0$。
 
 ---
 
@@ -197,17 +190,13 @@ T(n) = O(\log n) = \Theta(\log n)
 ---
 
 ## 7. Heap Delete Max 堆删除最大元
-
-- **Idea（一句话本质）**：最大键在根，但动态数组只能方便地删「最后一个元素」——于是把根与末元素交换、删掉末尾，再把「换下来的元素」沿向下方向与较大的孩子交换，直到最大堆性质恢复。
-
+- **Idea（一句话本质）**：最大键在根，但动态数组只能方便地删「最后一个元素」——于是把根与末元素交换、删掉末尾，再把「换下来的元素」（即原在末尾、被移到根的那个元素）沿向下方向与较大的孩子交换，直到最大堆性质恢复。
 - 动态数组只能方便地删最后一个元素，但最大键在树的根。
 - 所以把根节点 $i = 0$ 处的项，与堆数组中最后一个节点 $n-1$ 处的项交换。
 - `max_heapify_down(i)`：把根与较大的孩子交换，直到最大堆性质成立。
-  - 检查 $Q[i] \ge Q[j]$ 是否对 $j \in \{\text{left}(i), \text{right}(i)\}$ 都成立（$i$ 处的最大堆性质）；
-  - 若不成立，把 $Q[i]$ 与键最大的那个孩子 $Q[j]$（$j \in \{\text{left}(i), \text{right}(i)\}$）交换，然后递归调用 `max_heapify_down(j)`。
-
+- 检查 $Q[i] \ge Q[j]$ 是否对 $j \in \{\text{left}(i), \text{right}(i)\}$ 都成立（$i$ 处的最大堆性质）；
+- 若不成立，把 $Q[i]$ 与键最大的那个孩子 $Q[j]$（$j \in \{\text{left}(i), \text{right}(i)\}$）交换，然后递归调用 `max_heapify_down(j)`。
 ### Pseudocode（伪代码）
-
 ```math
 \begin{aligned}
 &\textbf{def}\;\text{max\_heapify\_down}(A, i, n):\\
@@ -222,32 +211,24 @@ T(n) = O(\log n) = \Theta(\log n)
 &\qquad\qquad \text{max\_heapify\_down}(A, j, n)
 \end{aligned}
 ```
-
 ### 正确性论证（循环不变式 / 归纳假设）
-
 > **不变式**：除了「可能被下移的那个节点」外，树的其余节点都满足最大堆性质。
 >
-> - 初始（把根与末元素交换后）：只有根处的新元素可能比它的某些后代小；删去的末元素已离开堆。不变式成立。
+> 这里「可能被下移的那个节点」指的就是 Idea 里说的「换下来的元素」——即根与末元素交换后、从原来根的位置开始一路往下换的那个元素。它和被删除的根的关系是：被删除的是原来就在根上的最大键，交换后随末元素一起移到数组末尾、离开堆；而「换下来的元素」本是数组末尾的项，交换后被移到了根，成为这棵树上唯一可能比后代小的元素。整棵树上唯一可能违反最大堆性质的，始终只是这个元素当前所在的那一个节点。
+>
+> - 初始（把根与末元素交换后）：「换下来的元素」此刻在根处，只有它可能比自己的某些后代小；删去的末元素（即原来的最大键）已离开堆。不变式成立。
 > - 归纳步：设当前只有节点 $i$ 可能小于它的后代。若 $Q[i] \ge Q[\text{left}(i)], Q[\text{right}(i)]$，则 $i$ 处性质恢复，结束；否则设 $j$ 是 $i$ 的键最大的孩子，交换 $Q[i]$ 与 $Q[j]$。交换后，$i$ 拿到的是「比原 $Q[i]$ 更大的孩子」，故 $i$ 处性质恢复；而「可能小于后代」的节点变成了 $j$，不变式推进到下一层。
 > - 终止：当 $i$ 是叶子，或 $Q[i]$ 已不小于两个孩子时，全树满足最大堆性质。归纳得证。
-
 ### 复杂度分析
-
 每次递归最多向下走一层，深度不超过树高 $h = O(\log n)$。设 $T(k)$ 为从某节点向下修复（其下方还有 $k$ 层）的代价，递推式：
-
 ```math
 T(k) \;=\; T(k-1) + O(1),\qquad T(0) = O(1)
 ```
-
 展开得 $T(k) = O(k)$，而 $k \le h = O(\log n)$，故：
-
 ```math
 T(n) = O(\log n) = \Theta(\log n)
 ```
-
 所以 `delete_max` 的运行时间是**树的高度**，即 $\Theta(\log n)$！
-
----
 
 ## 8. Heap Sort 堆排序
 
@@ -330,34 +311,25 @@ T(n) \;=\; T_{\text{build}}(n) + \sum_{k=1}^{n-1} O(\log k) \;=\; O(n) + O(n\log
 ---
 
 ## 10. Sequence AVL Tree Priority Queue 序列 AVL 树实现优先队列
-
 - 我们还在哪里见过「一个对数级数据结构却拥有线性建堆时间」？**Sequence AVL Tree！**
 - 把优先队列的项按任意顺序（插入顺序）存在 Sequence AVL Tree 里。
 - 维护 **max（和/或 min）augmentation（增强）**：
-  - `node.max` = 指向「node 的子树中键最大的节点」的指针。
-  - 这是一个**subtree property（子树性质）**，因此只需常数因子的额外开销来维护。
+- `node.max` = 指向「node 的子树中**键最大的节点**」的**指针**（注意：这个字段存的是指向该节点的指针，不是键值本身；要取最大键值时再通过该指针取 `node.max.key`）。
+- 这是一个**subtree property（子树性质）**，因此只需常数因子的额外开销来维护。
 - `find_min()` 与 `find_max()` 在 $O(1)$ 时间。
 - `delete_min()` 与 `delete_max()` 在 $O(\log n)$ 时间。
 - `build(A)` 在 $O(n)$ 时间。
-- **与二叉堆同样的界（甚至更多）。**
-
+- **与二叉堆有同样的界，而且更快地拿到极值：`find_min()`/`find_max()` 只需 $O(1)$（二叉堆同样 $O(1)$），而 `delete_min()`/`delete_max()`、`build(A)` 的界也与二叉堆一致；额外的收益是 Sequence AVL Tree 还能按位置做插入、删除、split、join 等序列操作，这是二叉堆做不到的。**
 ### 核心概念定义
-
 > **定义（subtree augmentation，子树增强）**：给树的每个节点额外存一个「可由其子树信息递推算出的量」（这里是子树最大键的指针），插入/删除时只需沿根到该节点的路径 $O(\log n)$ 时间更新即可维持。可判定标准：该量只依赖节点的键与两个孩子的对应量，不依赖子树之外的信息。
 
----
-
 ## 11. Set vs. Multiset 集合与多重集
-
 - 我们的 Set 接口假定**键不重复**，但可以用这些 Set 来实现允许重复键的 **Multiset（多重集）**：
-  - Set 中的每个项是一个 **Sequence（例如链表 linked list）**，用来存「键相同的那些 Multiset 项」，而该 Sequence 的键就是这一组项的键。
+- Set 中的每个项是一个 **Sequence（例如链表 linked list）**，用来存「键相同的那些 Multiset 项」，而该 Sequence 的键就是这一组项的键。
 - 事实上，不做这个归约，二叉堆和 AVL 树也能**直接**处理重复键的项（例如 `delete_max` 删除「某个」最大键的项），只需注意用 $\le$ 约束（而不是 Set AVL 树里的 $\lt $）。
-
+  - 这里的「Set AVL 树里的 $\lt$」指它作为二叉搜索树时的**二叉搜索树性质（BST property）**中的严格比较：对任意节点 $x$，左孩子键 $<$ $x$ 的键 $<$ 右孩子键，且整棵树**不允许出现键相等的两个节点**。这个严格小于是在 `insert` 和 `delete` 定位节点位置（判断该往左还是往右走）时用的比较约束。当要直接支持重复键时，就得把其中一侧的比较放宽成 $\le$（例如允许「键 $\le$ 父键」的项归到左子树），让相等的键也能被放进树里，`delete_max` 时只删掉其中一个即可。
 ### 核心概念定义
-
 > **定义（multiset，多重集）**：允许同一元素出现多次的集合，元素按「键值」而非「身份」归类。可判定标准：`insert` 两个键相等的项后，两者都在结构里，`delete_max` 只删掉其中一个最大键的项。Set 到 Multiset 的归约，就是把「同一键的多个项」打包成一条 Sequence 挂在 Set 的一个槽位上。
-
----
 
 ## 附：本讲核心概念速查（首次出现的英文原名 + 中文 + 定义）
 
