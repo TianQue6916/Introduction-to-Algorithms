@@ -93,13 +93,21 @@ Assuming that the number of cities appearing in any of the $n$ trucking routes i
 
 > **[solution] Solution（解答）:** 假设我们知道 $w^*$。那么我们可以构建一个图 $G_c = (V_c, E_c)$，每个城市对应一个 vertex（顶点），对每条满足 $w_i \ge w^*$ 的 trucking route $(s_i, t_i, w_i, c_i)$ 添加一条从 vertex $s_i$ 到 $t_i$ 的、weight 为 $c_i$ 的 directed edge（有向边），然后从 San Francisco 对应的 vertex 运行 Dijkstra，以找到将 weight $w^*$ 运到 Cambridge 的最小 cost。该图有 $n$ 条 edges 和最多 $O(\sqrt[3]{n})$ 个 vertices（根据题目陈述），因此即使使用 direct access array（直接访问数组）或 hash table（哈希表）作为 Dijkstra 的 priority queue（优先队列），Dijkstra 也能在 $O(n)$ 时间内运行。
 > 
-> <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 此处的 bottleneck path 问题即 classic **widest path problem（最宽路径问题）**，也称 maximum capacity path，是 network flow 和 routing 中的基础问题。当边权为 capacity 时，求最大 bottleneck 等价于找最大传输容量路径。
-> 
-> 为找到 $w^*$，我们构建一个类似于 $G_c$ 的图 $G_w = (V_w, E_w)$，每个城市对应一个 vertex，对每条 trucking route $(s_i, t_i, w_i, c_i)$ 添加一条从 vertex $s_i$ 到 $t_i$ 的、weight 为 $w_i$ 的 directed edge，令 $s$ 和 $t$ 分别为 San Francisco 和 Cambridge 对应的 vertices。问题即转化为确定从 $s$ 到 $t$ 的所有 paths 的最大 bottleneck（瓶颈）。我们可以 modify（修改）Dijkstra 来计算 bottleneck，方法是将 shortest path distance estimates（最短路径距离估计值）替换为 bottleneck estimates（瓶颈估计值）$b_s(v)$。具体来说，将所有 bottleneck estimates 初始化为 $0$（不运输任何东西即达到此值），$b_s(s)$ 除外，将其设为 positive infinity（正无穷），因为开始时我们没有任何限制；然后将它们全部加入一个 maximum priority queue（最大优先队列）。然后，重复从 priority queue 中移除具有最大 bottleneck estimate 的 vertex，并 relax（松弛）其所有 outgoing edges（出边）。为 relax 一条 weight 为 $w_i$ 的 edge $(u, v)$，设 $b_s(v) = \max(\min(b_s(u), w_i), b_s(v))$（要么通过 $u$ 到 $v$ 的 path 改进了 $b_s(v)$ 的 estimate，要么没有）。
-> 
-> 为证明对该修改后的 Dijkstra 是正确的，可以遵循 Lecture 13 笔记中证明正常 Dijkstra 正确性的相同 proof structure（证明结构）。具体来说，可以证明 Claim 2 的类比：对每个 $v \in V_w$，当 $v$ 从 Dijkstra's queue 中移除时，$b_s(v) = b(s, v)$。在此省略完整 proof。对于此问题，学生只需正确描述 algorithm 即可得满分，无需完整的 correctness proof（正确性证明）。
-> 
-> 修改后的 Dijkstra 完成后，根据 $w^*$ 的定义有 $w^* = b_s(t) = b(s, t)$。由于我们只将 relaxation step（松弛步骤）从一个 constant time operation（常数时间操作）改为另一个，并且遵循与在具有 $O(n)$ 条 edges 和 $O(\sqrt[3]{n})$ 个 vertices 的图上运行 Dijkstra 相同的结构，此修改后的 Dijkstra 也在 $O(n)$ 时间内运行（使用 direct access array 或 hash table 作为 Dijkstra 的 priority queue）。
+> <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这条注要说清一件事：把 Dijkstra 解成“最宽路径”，靠的不是改写代码，而是换掉它脚下那套“距离代数”。
+>
+> 先看标准 Dijkstra 用的运算是哪两个。路径的度量是把边权加起来，所以沿一条路径累积用加法；从若干候选里挑最优用取最小。两个算子各有单位元：加法的单位元是零，取最小的单位元是正无穷。整套正确性论证只用到这两个算子的三条性质：结合律、对序的单调性、以及单位元的存在。
+>
+> 最宽路径把这一对算子整体换掉：路径的度量改成取瓶颈，即沿途边权的最小值；从候选里挑最优改成取最大。单位元随之改变：取最小的单位元是正无穷，取最大的单位元是零。于是初始化变成“除源点外全为零、源点为正无穷”——源点是正无穷，因为出发时没有任何约束；其他顶点是零，表示“运不了任何重量”，这同时充当了“不可达”的标记。松弛那一步写成新估计等于当前估计与“前驱瓶颈和这条边权的较小者”里的较大者。
+>
+> 算一个小例子确认手感。图上有四条边：s 到 a 权五，a 到 t 权四，s 到 b 权三，b 到 t 权六。经 a 的路径瓶颈是四，经 b 的路径瓶颈是三，所以 s 到 t 的最宽值是四。最大优先队列的弹出顺序是 s、a、t、b：s 是正无穷，a 拿到五，t 拿到四，b 只有三。注意 t 在 b 之前就被弹出，说明这里的“定型”依赖的是“当前最大估计已经不可能被更大值超越”，与最短路里“最小估计已不可能更小”是对偶的论证。
+>
+> 有一个容易踩的初始化陷阱：把源点也初始化成零的话，所有估计都停在零，算法输出全零，看起来“跑通了”其实什么都没算。反过来，把不可达顶点初始化成正无穷，就会让“不连通”被当成“无限容量”，结果同样错。这两个边界值不是随手写的常数，它们就是两个算子的单位元，写错了等于换了一套代数。
+>
+> 跨课程连接：CSAPP 第 11 章 socket 与 TCP 栈。端到端吞吐的管道模型说得很直白——一条路径的可用速率由最窄的那段链路决定，再除以往返时延；这就是“取瓶颈”的现实版本，也是为什么跨洋链路上加带宽要先补最慢的一段。区别在于网络里的链路容量随负载变化、多条流彼此共享，而最宽路径模型假设静态权重、单流独占整条路径，所以它给的是上界而不是实测吞吐。
+>
+> 补一点来路与去向。这类问题在文献里叫 widest path（最宽路径），也叫 maximum capacity path（最大容量路径），是网络流与路由里的基础构件，和最小生成树里的瓶颈边、以及最大流的割容量是同一族思想。工业界做路由不会直接跑一遍 Dijkstra：Google Maps、OSRM 这类引擎先做预处理，用 Contraction Hierarchies（收缩层次，Geisberger 等人 2008 年提出）或 ALT（用 landmarks 与三角不等式做下界）把查询压到毫秒级。结构上它们仍然是“带优先级的松弛”，只是预处理把图收缩成层次，让查询少走很多冤枉路。
+>
+> 收束：Dijkstra 是一副框架，凡是满足结合律与单调性的合并算子都能套进去；换算子比换算法便宜得多，而判断能不能换，只需检查那三条性质。
 
 <span style="color:#2471a3;">**[part]**</span> <span style="color:#00838f">**(c)**</span>
 
