@@ -26,3 +26,6 @@
 对应方舟计划的**算法主线**，与 `Design-and-Analysis-of-Algorithms-6.046J`（进阶）构成两级算法训练。
 
 > 早期混入的 C/C++ 入门练习已于 2026-09-23 移至独立仓库 [`Introduction-to-Algorithms-codetry`](https://github.com/TianQue6916/Introduction-to-Algorithms-codetry)。
+---
+
+> 图片已按技能铁律 42 base64 内嵌进 md；`02-讲义/_assets/` 与 `02-讲义/assets/` 为源资产备份，勿删。
