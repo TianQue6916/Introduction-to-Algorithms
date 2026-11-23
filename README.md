@@ -28,7 +28,7 @@
 > 早期混入的 C/C++ 入门练习已于 2026-09-23 移至独立仓库 [`Introduction-to-Algorithms-codetry`](https://github.com/TianQue6916/Introduction-to-Algorithms-codetry)。
 ---
 
-> 图片已按技能铁律 42 base64 内嵌进 md；`02-讲义/_assets/` 与 `02-讲义/assets/` 为源资产备份，勿删。
+> 图片已按技能铁律 42 base64 内嵌进 md；56 个源文件（54 png + 2 svg）逐个按「字节数 + 前 64 字节 md5」核对命中后，源资产目录 `02-讲义/_assets/`、`02-讲义/assets/` 已删除，图片只存在于 md 的 data URI 里。
 
 ## 目录结构
 
@@ -37,7 +37,7 @@
 | 目录 | 内容 |
 |---|---|
 | `01-教材/` | CLRS 教材逐段双语翻译，平铺 6 个分块 `clrs_chunk01`–`clrs_chunk06`（覆盖 book p005–p242） |
-| `02-讲义/` | 课堂讲义 lec01–lec20：PDF 原件 + 译文 md（平铺）；`_assets/`、`assets/` 为讲义内嵌图片的源资产，勿删 |
+| `02-讲义/` | 课堂讲义 lec01–lec20：PDF 原件 + 译文 md（平铺）；`_assets/`、`assets/` 源资产目录已删除（图片全部 base64 内嵌在 md 中） |
 | `视频/` | 全部讲次与 Problem Session 的中英双语字幕（英文原轨 `.srt` + 中文轨 `.zho-hans.srt`／`.zh-CN.srt`）；视频本体因体积未收录 |
 | `03-已处理文件/` | 疑问驱动的 AI 资料：原 `06-笔记/` 全部个人推导笔记 + `06-notes/clrs_toc.txt` |
 | `04-题目/作业/` | 官方作业原件与译本（`MIT-6.006-Problem-Set-6-Chinese.docx`）+ Recitation 15–17 习题课材料（`r15`–`r17`） |
