@@ -47,3 +47,18 @@
 | `06-工具/` | 脚本、Lean 验证、给模型读的索引（本轮无内容） |
 | `_superseded/` | 历史被替换版本，原地保留不动 |
 | 仓根 | `README.md`、`llms.txt`、`LICENSE`、`NOTICE` |
+
+## 6.006 现状（2026-11-23 审计）
+
+| 项 | 现状 |
+|---|---|
+| 讲义 | 20 讲齐全：lec v2 主版本 + LNotes v1 紧凑版，两版内容已融合（每讲 `.pdf` 原件 + `.md` 译文） |
+| 教材 | CLRS book p005–p242，共 6 片（`clrs_chunk01`–`clrs_chunk06`），36 张原书插图已补 |
+| 题目 | Recitation 15–17（`r15`–`r17`）+ Exams 1–14（`EX1`–`EX14`，每份 `.pdf` + `.md`）；EX10–EX12 已按「每次带括号」重做 |
+| 清理 | lec18 重复 PDF（`lec18-pseudopolynomial-LNotes18.pdf`，8 页，与 `lec18-pseudopolynomial.pdf` 同源）已删除；归一化残留的空目录 `01-clrs-book/`、`03-problem-sets/`、`04-exams/`、`02-lecture-notes/LNotes/` 已清空并移除 |
+
+**已知缺失（本仓范围内做不了或未做）**
+
+- Problem Set 题目：PS1–PS5、PS7、PS8（仅存 PS6 中文版与 `ps6_sol`、`ps7_sol` 等解答）
+- 官方解答：Quiz 1、Quiz 3、Final（官方未公开解答）
+- Recitation 1–20：课程本身无译本（仅 r15–r17 有材料）
