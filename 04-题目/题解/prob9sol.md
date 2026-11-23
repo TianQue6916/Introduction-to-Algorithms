@@ -457,6 +457,42 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 > 跨课程连接：这段代码是 6.006 反复强调的「top-down（自顶向下）DP＝递归 + memo」的标准形态，与 CLRS §15.3 的 memoized-cut-rod（记忆化切杆）同构——递归函数只算遇到的subproblem（子问题），`memo` 那张 hash table（哈希表）保证每个subproblem（子问题）只算一次。它与 bottom-up（自底向上）填表版的复杂度相同，差别在常数与可读性：自顶向下只访问从初始状态可达的那些掩码（本题里 $2^{10}$ 个键远没有全部被碰到），自底向上则要机械地把整张表填满。对 $k = 5$ 这种小常数，两者都够快；一旦 $k$ 变大，自顶向下的「按需展开」会明显省。
 >
 > 收束：这道题的代码部分真正训练的是三件事——把「值 + 决策 + 后继」打包进同一张表、用严格小于控制并列取舍、以及交付前用独立的 checker（校验器）把「合法」这件事验证一遍而不是靠眼见。
+>
+> 附：核对脚本（本译注补写，非 MIT 官方解答）——把上文 `build_wall` 与它放进同一个文件里跑，输出就是上面那两段，逐字一致：
+>
+> ```python
+> def cells_of(P):
+>     cells = []
+>     for (i, j, t) in P:
+>         if t == '1':
+>             cells.append((i, j))
+>         elif t == 'D':
+>             cells += [(i, j), (i, j + 1)]
+>         else:                                   # 'R'
+>             cells += [(i, j), (i + 1, j)]
+>     return cells
+>
+> def check(P, B, label):
+>     empty = {(i, j) for j in range(len(B)) for i in range(len(B[0])) if B[j][i] == '.'}
+>     cells = cells_of(P); cs = set(cells)
+>     print(f'--- {label} ---')
+>     print('stones:', len(P), ' cube stones:', sum(1 for m in P if m[2] == '1'))
+>     print('covered cells:', len(cells), ' empty cells:', len(empty))
+>     print('missing cells:', sorted(empty - cs))
+>     print('covered-but-not-empty:', sorted(cs - empty))
+>     ok = (not (empty - cs)) and (not (cs - empty)) and len(cells) == len(cs)
+>     print('violations:', 'none' if ok else 'FOUND')
+>     print('VALID:', ok)
+>
+> B = ['..........', '..........', '..........', '.....#.##.', '..#..####.']
+> OFFICIAL = [(0,0,'D'), (0,2,'D'), (0,4,'R'), (1,0,'R'), (1,1,'R'),
+>             (1,2,'1'), (1,3,'R'), (2,2,'R'), (3,0,'D'), (3,3,'R'),
+>             (3,4,'R'), (4,0,'R'), (4,1,'R'), (4,2,'R'), (6,0,'D'),
+>             (6,2,'R'), (6,3,'1'), (7,0,'D'), (8,0,'D'), (8,2,'R'),
+>             (9,0,'D'), (9,3,'D')]
+> check(OFFICIAL, B, 'official placement (PDF)')
+> check(build_wall(B), B, 'reconstructed code output')
+> ```
 
 <!-- page 8/8 -->
 
