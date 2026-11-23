@@ -97,6 +97,8 @@ pin（球瓶）至多被击倒一次，不过玩家可以选择不击倒某些 p
 
 请描述一个 $O(n^3)$ 时间的 algorithm（算法），对给定的 $n$ 个 pin（球瓶）的输入序列，确定玩 Split Bowling（分裂保龄球）所能取得的 maximum score（最高得分）。
 
+> 〔原文标题作 `Splits Bowling`、正文作 `Split Bowling`，原文自身不一致；译文两处统一译作「分裂保龄球」，英文原名按原文各自保留〕
+
 > **[solution] Solution（解答）:**
 >
 > **1. Subproblems（子问题）**
