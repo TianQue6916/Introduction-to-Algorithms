@@ -61,7 +61,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 > - 每个subproblem（子问题）的工作量：$O(1)$
 > - 运行时间 $O(n^2)$
 
-> <span style="color:#7f8c8d;">〔本译注补写 · 原抽取串：`Let pi be the purchase price of object j, with ki its melting number`、`If i < ki, object j cannot be crafted`、`receive pi in revenue and lose ki coins`、`x(0, j) = 0 for i ∈ {0, . . . , n}`、`x(i, 0) = 0 for j ∈ {0, . . . , n}`、`nobjects`。原文里 $p_i$、$k_i$ 的下标都写成了 $i$（而 $i$ 在状态 $x(i,j)$ 里是金币数），文句却写 `object j`，即制品编号与金币数这两个下标写反了；另有两处 base case（基例）的哑变量写反；按数学意义重建为 $p_j$、$k_j$，基例重建为「$x(0,j)=0$ 对 $j$ 遍取」与「$x(i,0)=0$ 对 $i$ 遍取」，`nobjects` 重建为 `n objects`。〕</span>
+> <span style="color:#7f8c8d;">〔本译注补写 · 原抽取串：`Let pi be the purchase price of object j, with ki its melting number`、`If i < ki, object j cannot be crafted`、`receive pi in revenue and lose ki coins`、`x(0, j) = 0 for i ∈ {0, . . . , n}`、`x(i, 0) = 0 for j ∈ {0, . . . , n}`、`nobjects`。原文里 $p_i$、$k_i$ 的下标都写成了 $i$（而 $i$ 在状态 $x(i,j)$ 里是金币数），文句却写 `object j`，即制品编号用了金币数的下标 $i$；另有两处 base case（基例）的哑变量写反；按数学意义重建为 $p_j$、$k_j$，基例重建为「$x(0,j)=0$ 对 $j$ 遍取」与「$x(i,0)=0$ 对 $i$ 遍取」，`nobjects` 重建为 `n objects`。〕</span>
 
 > <span style="color:#1e8449;">**[note] Note（译者注 · 本译注补写，非 MIT 官方解答）:**</span> 这条注要回答的是：为什么这一维只能是「剩余金币数 $\times$ 制品前缀」，以及递推里那个 $j-1$ 为什么是整道题的关键。
 >
