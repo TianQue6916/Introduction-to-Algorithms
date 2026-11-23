@@ -7,7 +7,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 > <span style="color:#7f8c8d;">MIT 6.006 Spring 2020, Lecture 20 译注（对应视频：Course Review）</span>
 
-> 本讲义为中英行内双语译注，正文以中文为主，英文术语首次出现时标注 `English（中文）`，之后直接用 `English`。本讲是课程收官的复习课，无新算法与伪代码，重点在于把一学期的知识串成一张「如何解决算法问题」的方法论地图，并给出后续课程路线。核心概念首次出现时均给出英文原名 + 中文 + 一句可判定定义。
+> 本讲义为中英行内双语译注，正文以中文为主。**本文件遵循术语格式 English（中文）：每次出现都带括号（不区分首现与后文）。** 本讲是课程收官的复习课，无新算法与伪代码，重点在于把一学期的知识串成一张「如何解决算法问题」的方法论地图，并给出后续课程路线。
 
 ---
 
@@ -33,7 +33,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
   - **NP-hard（NP 困难）**：这样一类问题——**任何** NP 中的问题都能在多项式时间内归约（reduce）到它；它是「至少和 NP 一样难」的问题集合。
   - **NP-complete（NP 完全）**：**NP-hard 与 NP 的交集**，即「既是 NP 又 NP-hard」的问题集合，是 NP 中最难的那批。
 
-> 一句话串起来：**polynomial** 看的是「输入位长」上的多项式；**pseudopolynomial** 额外要求「数值大小」上也是多项式；**NP** 是「证书可快速验证」；**NP-hard** 是「能解所有 NP 问题」；**NP-complete** 是两者的交集。
+> 一句话串起来：**polynomial** 看的是「输入位长」上的多项式；**pseudopolynomial（伪多项式）** 额外要求「数值大小」上也是多项式；**NP** 是「证书可快速验证」；**NP-hard** 是「能解所有 NP 问题」；**NP-complete** 是两者的交集。
 
 ---
 
@@ -86,6 +86,10 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - **Graphs（图）**：Minimum Spanning Trees（最小生成树，MST）、Network Flows / Cuts（网络流 / 割）
 - **Algorithm Design Paradigms（算法设计范式）**：Divide & Conquer、Dynamic Programming、Greedy
 - **Complexity（复杂性）**：Reductions（归约）
+
+<!-- 并自 LNotes_20（v1 紧凑版） -->
+- (G) 6.851: Advanced Data Structures。
+- (G) 6.854: Advanced Algorithms。
 
 ### Relax the Problem（放松问题定义）
 
