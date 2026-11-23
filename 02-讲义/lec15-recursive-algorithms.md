@@ -31,6 +31,8 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - 我们想要 constant-sized code（恒定大小的代码）解决 arbitrary size problems（任意规模的问题）
 - recursive view（递归视图）特别契合 induction technique（归纳法证明）——这门课一直在用的证明技术
 - 递归调用构成 **subproblem graph（子问题图）**，这是分析递归算法的核心工具
+<!-- 并自 LNotes_15（v1 紧凑版） -->
+- Recursive function call（递归函数调用）：把它看成一个 graph，若 $B$ 调用 $A$，就连一条 $A \to B$ 的 directed edge。
 
 递归算法按**子问题依赖图的形状**分类，原书这张双列小表（LNotes 15 p1）同样是可逐格重建的 tabular：
 
@@ -85,6 +87,9 @@ SRT BOT（读作 **SortBot**）是本讲的核心框架。🎥 *Ku 调侃说这�
 
 描述子问题的含义，明确 parameters（参数）。
 
+<!-- 并自 LNotes_15（v1 紧凑版） -->
+- 常常记录 partial state（部分状态）：通过递增某些 auxiliary variables（辅助变量）来增加 subproblems（子问题）。
+
 ### <span style="color:#2471a3;">**[step]**</span> <span style="color:#c0392b">Step 2: Relate（递推关系）</span>
 
 ```math
@@ -99,7 +104,7 @@ Subproblem dependencies（子问题依赖）必须构成 DAG。如果有 cycle�
 
 ### <span style="color:#2471a3;">**[step]**</span> <span style="color:#c0392b">Step 4: Base cases（基例）</span>
 
-递推关系的 termination condition（终止条件）。任何递归结构都必须有 base cases。
+递推关系的 termination condition（终止条件）。任何递归结构都必须有 base cases（基例）。
 
 ### <span style="color:#2471a3;">**[step]**</span> <span style="color:#c0392b">Step 5: Original problem（原问题）</span>
 
@@ -119,18 +124,18 @@ Subproblem dependencies（子问题依赖）必须构成 DAG。如果有 cycle�
 
 🎥 *将熟悉的 Merge Sort（归并排序）套入 SRT BOT 框架作为第一个示范。*
 
-- **Subproblems:** $S(i, j) =$ sorted array on $A[i : j]$ for $0 \le i \le j \le n$
+- **Subproblems（子问题）:** $S(i, j) =$ sorted array on $A[i : j]$ for $0 \le i \le j \le n$
 - **Relation:** $S(i, j) = \text{merge}\big(S(i, m), S(m, j)\big)$ where $m = \lfloor (i + j)/2 \rfloor$
 - **Topo. order:** Increasing $j - i$（按子数组长度递增）
-- **Base cases:** $S(i, i + 1) = [A[i]]$
+- **Base cases（基例）:** $S(i, i + 1) = [A[i]]$
 - **Original:** $S(0, n)$
 - **Time:** $T(n) = 2 T(n/2) + O(n) = O(n \log n)$
 
-> 子问题 DAG 是 tree（树型）——divide & conquer（分治）。归并排序的子问题**不重叠**，因此不需要 memoization。
+> 子问题 DAG 是 tree（树型）——divide & conquer（分治）。归并排序的子问题**不重叠**，因此不需要 memoization（记忆化）。
 
 ---
 
-## <span style="color:#2471a3;">**[section]**</span> <span style="color:#c0392b">案例二：斐波那契数列——Memoization 的威力</span>
+## <span style="color:#2471a3;">**[section]**</span> <span style="color:#c0392b">案例二：斐波那契数列——Memoization（记忆化） 的威力</span>
 
 ### <span style="color:#2471a3;">**[example]**</span> <span style="color:#c0392b">朴素递归：指数级灾难</span>
 
@@ -143,10 +148,10 @@ def fib(n):
 ```
 
 按 SRT BOT：
-- **Subproblems:** $F(i) = F_i$ for $i \in \{0, \dots, n\}$
+- **Subproblems（子问题）:** $F(i) = F_i$ for $i \in \{0, \dots, n\}$
 - **Relation:** $F(i) = F(i-1) + F(i-2)$
 - **Topo. order:** Increasing $i$
-- **Base cases:** $F(0)=0, F(1)=1$
+- **Base cases（基例）:** $F(0)=0, F(1)=1$
 - **Original:** $F(n)$
 - **Time:** $T(n) = T(n-1) + T(n-2) + O(1)$
 
@@ -189,7 +194,7 @@ def fib(n):
 >
 > 最后把 top-down 与 bottom-up 的关系说清。两者算的是同一个 DAG 上的同一组值，只是遍历方向不同：top-down 从入口出发、只碰可达状态，用 dictionary 存；bottom-up 按拓扑序填一整张表，用数组存。可达状态少时前者省，稠密时后者省（没有哈希开销、没有递归栈）。判断标准是可测量的——若你估得出可达状态数远小于 |X|，就用 top-down；否则 bottom-up。本讲的 bowling 与 Fibonacci 都属于后者。
 >
-> 收束：memoization 只有一句话——同一个子问题只算一次；但它成立的前提是纯函数性（无副作用），一旦递归依赖外部可变状态，同一输入不再保证同一结果，表就失效。
+> 收束：memoization（记忆化） 只有一句话——同一个子问题只算一次；但它成立的前提是纯函数性（无副作用），一旦递归依赖外部可变状态，同一输入不再保证同一结果，表就失效。
 
 **Bottom-up 版本（按拓扑序迭代）：**
 
@@ -215,7 +220,15 @@ def fib(n):
 2. Overlapping subproblems（子问题重叠）——DAG 中 in-degree $> 1$
 3. Optimal substructure（最优子结构）——最优解由子问题最优解构成
 
+<!-- 并自 LNotes_15（v1 紧凑版） -->
+- 存在 recursive solution 意味着 subproblems（子问题） 是可分解的（这条性质常称为 optimal substructure，最优子结构；它是 recursion（递归） 的性质，不只属于 dynamic programming）。
+
 Demaine 对 DP 的经典描述：**"Careful brute force"（精巧的暴力）**。
+
+<!-- 并自 LNotes_15（v1 紧凑版） -->
+- Recursive algorithm 意味着一个 computation（计算）的 graph。
+- “Recurse but re-use”（递归但复用）：top down，记录并查表取 subproblem（子问题） solutions。
+- 常用于 counting（计数）/ optimization（优化）问题：这类问题的 recurrences 几乎自动就是正确的。
 
 > <span style="color:#1e8449;">**[note] Note（译者注）——第一性原理洞察：** DP 为什么是"精巧的暴力"? 传统 brute force（暴力搜索）尝试所有可能性，每层 $\times$ 分支，指数爆炸。DP 也是尝试所有可能性，但关键差异在于它事先定义了一个**多项式大小的子问题空间**，并保证**每一步的局部决策只依赖于这些子问题的解**。指数级的搜索路径被压缩到多项式时间——因为"精心地"选择了子问题来捕获所有必要信息。这不是魔法，而是选择了正确的 abstraction level（抽象层级）。</span>
 
@@ -241,14 +254,19 @@ Prefixes 和 suffixes 通常够用且是线性数量，比二次型的 substring
 
 将 DAG SSSP（单源最短路径）重新解释为 DP：
 
-- **Subproblems:** $\delta(s, v)$ for all $v \in V$
+- **Subproblems（子问题）:** $\delta(s, v)$ for all $v \in V$
 - **Relation:** $\delta(s, v) = \min\big\{\delta(s, u) + w(u, v) \mid u \in \text{Adj}^-(v)\big\} \cup \{\infty\}$
-- **Topo. order:** Topological order of $G$
-- **Base cases:** $\delta(s, s) = 0$
-- **Original:** All subproblems
+- **Topo. order:** Topological order（拓扑序） of $G$
+- **Base cases（基例）:** $\delta(s, s) = 0$
+- **Original:** All subproblems（子问题）
 - **Time:** $\displaystyle\sum_{v \in V} O(1 + |\text{Adj}^-(v)|) = O(|V| + |E|)$
 
 > **两种视角的等价性：** DAG Relaxation 是"从 $u$ 出发推送到邻居"（$\text{Adj}^+$ 视角），SRT BOT 版 DP 是"从 $v$ 收集所有入边"（$\text{Adj}^-$ 视角）。数学上完全等价。
+
+<!-- 并自 LNotes_15（v1 紧凑版） -->
+- DAG Relaxation 与这个 dynamic program 算出同样的 min 值，只是：
+  - 它是 step-by-step 地做（若新值 $<$ min，就通过 edge relaxation 更新 min），并且
+  - 它站在 $u$ 与 $Adj^+(u)$ 的视角，而不是 $v$ 与 $Adj^-(v)$ 的视角。
 
 ---
 
@@ -275,7 +293,24 @@ Prefixes 和 suffixes 通常够用且是线性数量，比二次型的 substring
 
 ### <span style="color:#2471a3;">**[solution]**</span> <span style="color:#c0392b">SRT BOT 设计</span>
 
-**Subproblems:** $B(i) =$ 仅考虑球瓶 $i, i+1, \dots, n-1$ 的最大得分（suffix）
+<!-- 并自 LNotes_15（v1 紧凑版） -->
+- 先从一个更熟悉的 divide-and-conquer algorithm 入手：
+  - Subproblems（子问题）：$B(i, j)$ 表示只考虑 pins $i, i + 1, \dots, j - 1$ 时的最大 score，其中 $0 \le i \le j \le n$。
+  - Relation：
+    - $m = \lfloor (i + j)/2 \rfloor$。
+    - 要么把 $m$ 与 $m + 1$ 一起击中，要么不。
+
+```math
+B(i, j) = \max\bigl\{v_m \cdot v_{m+1} + B(i, m) + B(m + 2, j),\ B(i, m + 1) + B(m + 1, j)\bigr\}
+```
+
+  - Topo. order：按 $j - i$ 递增。
+  - Base cases（基例）：$B(i, i) = 0$，$B(i, i + 1) = \max\{v_i, 0\}$。
+  - Original：$B(0, n)$。
+  - Time：$T(n) = 4T(n/2) + O(1) = O(n^2)$。
+- 这个 algorithm 能work，但不够快，也不好推广（例如推广到允许更大的 ball 一次击中三个 pins）。
+
+**Subproblems（子问题）:** $B(i) =$ 仅考虑球瓶 $i, i+1, \dots, n-1$ 的最大得分（suffix）
 
 **Relation:** 考虑第一个球瓶 $i$ 的三种选择。🎥 *Demaine 的核心洞见：* "The big idea here is to just think about... what could I do to pin i?"
 
@@ -289,11 +324,14 @@ B(i) = \max\big\{B(i+1),\; v_i + B(i+1),\; v_i \cdot v_{i+1} + B(i+2)\big\}
 
 **Topo. order:** Decreasing $i$（从 $n$ 递减到 $0$）
 
-**Base cases:** $B(n) = B(n+1) = 0$
+**Base cases（基例）:** $B(n) = B(n+1) = 0$
 
 **Original:** $B(0)$
 
 **Time:** $\Theta(n)$ 子问题 $\times \Theta(1)$ 每个 $= \Theta(n)$
+
+<!-- 并自 LNotes_15（v1 紧凑版） -->
+- 又快又容易推广！
 
 **子问题 DAG（maximum-weight path）：**
 
@@ -317,7 +355,11 @@ graph LR
 
 ### <span style="color:#2471a3;">**[code]**</span> <span style="color:#c0392b">代码实现</span>
 
-**Top-down（recursion + memoization）：**
+<!-- 并自 LNotes_15（v1 紧凑版） -->
+- 把 SRT BOT 规格翻译成 code 是自动的、直截了当的。
+- 上面 Bowling Dynamic Program 的结果如下：
+
+**Top-down（recursion（递归） + memoization（记忆化））：**
 
 ```python
 def bowl(v):
@@ -359,6 +401,12 @@ def bowl(v):
 3. **Polynomial constraint（多项式约束）**：确保决策空间是多项式级
 
 >Suffix 问题的标准技巧：**考虑第一个元素，枚举它能做的所有事。** Prefix 问题同理：考虑最后一个元素。
+
+<!-- 并自 LNotes_15（v1 紧凑版） -->
+- 在 bowling 的情形，这个问题是「开头的那两个 pins 我们怎么打？」
+- 在 bowling 的情形，因为问题要求 maximize，所以取 max。
+- 另一种理解：把这看成「正确地猜出」该问题的答案并直接 recurse；但在实现上我们确实会检查所有可能的猜测，然后返回「最好」的那个。
+- 计算 relation 时的 nonrecursive work 常常（但并非总是）等于我们尝试的答案个数。
 
 > <span style="color:#1e8449;">**[note] Note（译者注）——跨课程连接 CLRS 第 15 章：** 保龄球问题本质上是 CLRS 中 rod cutting（钢条切割）的变体。两者都是 suffix-based DP，递推形式一致：$B(i) = \max_k\{\text{value}_k + B(i+k)\}$。区别在于保龄球多了一个"跳过"选项。这种"第一个元素怎么处理"的 pattern 是 suffix-based DP 的标志性结构，在 CLRS 的 DP 章节中反复出现。</span>
 
