@@ -30,13 +30,13 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 >
 > **1. Subproblems（子问题）**
 >
-> - $x(i, j)$：把 $j$ 桶石油卖给第 $i$ 到第 $n$ 位买家的 order（订单）后缀时，能获得的最大 profit（利润）
+> - $x(i, j)$：把 $j$ 桶石油卖给由第 $i$ 到第 $n$ 位买家构成的 buyer suffix（买家后缀）时，能获得的最大 profit（利润）
 > - 对 $i \in \{1, \ldots, n + 1\}$，$j \in \{0, \ldots, m\}$
 >
 > **2. Relate（关系）**
 >
 > - Ron 对第 $i$ 位买家可以选择卖或者不卖
-> - 若卖，就不能再卖给他第二次，但必须把剩余的 oil barrel（油桶）卖出去
+> - 若卖，就不能再卖给他第二次，但剩下的 oil barrel（油桶）仍可卖给后面的买家〔原文作 "but must sell remaining barrels"，与题面「Ron（罗恩）不必卖掉他全部的石油」及 base case（基本情况）的 $-sj$ 冲突；按模型语义译作「仍可卖」〕
 > - 若不卖，待售的 oil barrel（油桶）数量不变
 >
 > ```math
@@ -69,7 +69,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 > - 每个 subproblem（子问题）的工作量：$O(1)$
 > - running time（运行时间）为 $O(nm)$，关于 input size（输入规模）是 pseudopolynomial（伪多项式）的
 
-> **Rubric（评分标准）:**（与 PS7 所有问题相同）
+> **Rubric（评分标准）:**（与 PS7 所有问题相同）〔原文如此；本卷是 Problem Set 8，疑为从 PS7 解答复制后残留〕
 >
 > - S：正确的 subproblem（子问题）描述 5 分
 > - R：正确的 recursive relation（递归关系）5 分

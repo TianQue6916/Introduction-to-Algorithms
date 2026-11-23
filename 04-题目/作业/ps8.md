@@ -12,7 +12,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 
 **Problem Set 8（习题集 8）**
 
-请在提供的 LATEX（排版系统）template（模板）中写出你的解答。追求 concise（简洁）的解答；convoluted and obtuse（复杂晦涩）的描述即使正确也可能得低分。本次没有需要提交的 coding（编程）部分。
+请在提供的 LaTeX（排版系统）template（模板）中写出你的解答。追求 concise（简洁）的解答；convoluted and obtuse（复杂晦涩）的描述即使正确也可能得低分。本次没有需要提交的 coding（编程）部分。
 
 请用 dynamic programming（动态规划）求解下列每一个问题。对每个问题，务必：定义一组 subproblems（子问题）、递归地建立 subproblem（子问题）之间的 relate（关系）、论证该 relation（关系）是 acyclic（无环）的、给出 base cases（基本情况）、由 subproblems（子问题）构造出原问题的解、并分析 running time（运行时间）。正确但低效的 dynamic program（动态规划）会获得可观的 partial credit（部分分）。
 
