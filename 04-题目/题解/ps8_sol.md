@@ -295,6 +295,8 @@ Kimmy Jerk（金米·杰克）是 USS Exitcost（「出局成本」号）的 cap
 >
 > - $x(j)$ 只依赖 $j$ 严格更大的 subproblems（子问题），所以是 acyclic（无环）的
 >
+> <!-- page 6/7 -->
+>
 > **4. Base（基本情况）**
 >
 > - $x(|\ell_i|) = 0$（没有剩下的 log（日志）需要复原）
@@ -324,5 +326,5 @@ Kimmy Jerk（金米·杰克）是 USS Exitcost（「出局成本」号）的 cap
 
 ---
 
-<!-- page 5/7 -->
+<!-- page 7/7 -->
 > <span style="color:#7f8c8d;">MIT OpenCourseWare · 6.006 Introduction to Algorithms, Spring 2020 · https://ocw.mit.edu · 引用本材料或使用条款的信息见 https://ocw.mit.edu/terms</span>
