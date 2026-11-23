@@ -21,6 +21,12 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 > **interface / ADT（定义）**：接口是对「一组操作及其语义」的抽象约定，只回答「能做什么」，不涉及「怎么做」。可判定标准：看它是否只描述操作签名与行为，而不绑定任何存储布局。
 
+<!-- 并自 LNotes_02（v1 紧凑版） -->
+- 一个 data structure 是存储 data 的方式，并配有对该 data 执行 operations 的 algorithms。
+- 所支持 operations 的 collection 称为 interface（接口），也叫 API 或 ADT（抽象数据类型）。
+- interface 是一份 specification（规格说明）：它规定支持哪些 operations——这对应 problem（问题）本身！
+- data structure 则是一种 representation（表示）：它规定这些 operations 如何被支持——这对应 solution（解）！
+
 ---
 
 ## 2. Sequence Interface 序列接口（L02, L07）
@@ -28,6 +34,10 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - 维护一串**项（items）**，其顺序是**外在的（extrinsic order）**——顺序由外部赋予，而非项本身决定。
 - 例：$(x_0, x_1, x_2, \dots, x_{n-1})$（从 0 开始的下标，zero indexing）。
 - （用 $n$ 表示当前存储在数据结构中的项的个数。）
+
+<!-- 并自 LNotes_02（v1 紧凑版） -->
+- 维护一个 items 的 sequence（序列），其 order（顺序）是 extrinsic（外在的）。
+- 约定用 $n$ 表示 data structure 中当前存储的 item 数量。
 
 ### 支持的操作
 
@@ -88,6 +98,15 @@ Stack and queue differ in exactly one operation — the delete end: stack uses `
 - 维护一组具有**unique keys（唯一键）** 的项（例如项 $x$ 带有键 $x.\text{key}$）。
 - （是 set 还是 multi-set？目前先限定为**唯一键**。）
 - 常把项自身的键设为该项本身，但可能希望在键之外存储更多信息。
+
+<!-- 并自 LNotes_02（v1 紧凑版） -->
+- Sequence 关心 extrinsic order（外在顺序），Set 关心 intrinsic order（内在顺序）。
+- 维护一个 item 的 set，其中每个 item 有 unique key（唯一键，例如 item $x$ 有 `x.key`）。
+- （是 Set 还是 multi-set？这里先限制为 unique keys。）
+- 我们常常把 item 的 key 就取作 item 本身，但有时也需要在 key 之外存储更多信息。
+- 它支持以下 set operations：
+- dictionary（字典）：就是去掉 Order operations 的 set
+- 在 recitation（习题课）中，你会被要求：给定一个 Sequence data structure，实现一个 Set。
 
 ### 支持的操作
 
@@ -164,6 +183,14 @@ Set adds the Order tier (4 operations) that Sequence lacks, because Set order is
 
 An array has only `get_at` and `set_at` in $\Theta(1)$ (blue); the other five dynamic operations are all $\Theta(n)$ (red), since inserting or deleting in a full array must shift the successors.
 
+<!-- 并自 LNotes_02（v1 紧凑版） -->
+- 但对 dynamic operations 就不那么理想了……
+- （为保持一致，我们维护「array 始终是满的」这一 invariant。）
+- 于是插入与移除 item 需要：
+  - reallocate（重新分配）整个 array
+  - 把被修改 item 之后的所有 items 都 shift（平移）过去
+- 由此得到 Array 的 worst case（最坏情况）代价：
+
 
 ---
 
@@ -193,6 +220,17 @@ An array has only `get_at` and `set_at` in $\Theta(1)$ (blue); the other five dy
 
 Linked list is the mirror image of array: `insert_first` and `delete_first` become $\Theta(1)$ while `get_at` and `set_at` rise to $\Theta(n)$, so no single structure gives both random access and $O(1)$ head operations.
 
+<!-- 并自 LNotes_02（v1 紧凑版） -->
+- 注意：这是 pointer data structure（指针数据结构），与 Python 的 "list" 没有关系。
+- 每个 item 存放在一个 node（节点）中，node 里含有指向 sequence 中下一个 node 的 pointer（指针）。
+- 每个 node 有两个 fields（字段）：`node.item` 与 `node.next`。
+- 只要重新连接 pointers（relink），就能直接操纵 nodes！
+- 维护一个指向 sequence 第一个 node 的 pointer，称为 head（头）。
+- 现在可以在 $\Theta(1)$ 时间内从 front（前端）插入与删除！很好！
+- （从 back（后端）高效地插入/删除同样可行；这件事你在 PS1 里会做。）
+- 能不能把两边的优点都拿到？可以！（某种意义上……）
+- Linked List 的 worst case 代价：
+
 
 ---
 
@@ -208,6 +246,16 @@ Linked list is the mirror image of array: `insert_first` and `delete_first` beco
 - 然而，任意 $\Theta(n)$ 次操作的**序列**总耗时仍是 $\Theta(n)$。
 - 因此每次操作**「平均而言」**只需 $\Theta(1)$ 时间。
 
+<!-- 并自 LNotes_02（v1 紧凑版） -->
+- 让 array 对 last（末尾）的 dynamic operations 变得高效。
+- Python 的 "list" 就是 dynamic array。
+- Idea！多分配一些额外空间，这样就不必每次 dynamic operation 都重新分配。
+- fill ratio（填充率）：$0 \le r \le 1$，即 items 数量与已分配空间之比。
+- 这样在下一次 reallocation 之前，必须先插入 $\Theta(n)$ 个 items。
+- 单次 operation 可能为了 reallocation 花掉 $\Theta(n)$ 时间。
+- 但是，任意 $\Theta(n)$ 个 operations 的序列总共只花 $\Theta(n)$ 时间。
+- 因此「平均而言」每个 operation 花 $\Theta(1)$ 时间。
+
 ---
 
 ## 7. Amortized Analysis 平摊分析
@@ -219,6 +267,13 @@ Linked list is the mirror image of array: `insert_first` and `delete_first` beco
 - 更多平摊分析技术将在 6.046 中学习！
 
 > **定义（amortized analysis，平摊分析）**：把一系列操作的总代价，按「每个操作平均分摊」的视角来衡量。可判定标准：给定 $k$ 次操作，能否证明总代价 $\le k \cdot T(n)$，从而宣称单次操作平摊为 $T(n)$。
+
+<!-- 并自 LNotes_02（v1 紧凑版） -->
+- 这是一种 data structure 分析技术，用来把代价分摊到许多 operations 上。
+- 若 $k$ 个 operations 的总代价至多为 $k \cdot T(n)$，则称该 operation 具有 amortized cost（均摊代价）$T(n)$。
+- 「$T(n)$ amortized」大致就是说：在许多 operations 上「平均」为 $T(n)$。
+- 向 dynamic array 中插入元素的 amortized time 是 $\Theta(1)$。
+- 更多 amortization analysis 技术见 6.046！
 
 ### 平摊代价的正式推导（以动态数组插入为例）
 
@@ -254,6 +309,18 @@ r_d = \frac{1}{1+\varepsilon}, \qquad r_i = \frac{1}{2}
 - 动态数组只支持**尾部**动态操作，且为 $\Theta(1)$ 时间。
 - Python `list` 的 `append` 与 `pop` 是平摊 $O(1)$ 时间，其他操作可能是 $O(n)$！
 - （在头部高效插入/删除同样可行，将在 PS1 中完成。）
+
+<!-- 并自 LNotes_02（v1 紧凑版） -->
+- 从 back 删除？不费力气就是 $\Theta(1)$ 时间，很好！
+- 但空间上可能非常浪费。我们希望 data structure 的 size 维持在 $\Theta(n)$。
+- 一个尝试：若 array 非常空，就 resize 到 $r = 1$。但交替进行插入与删除可能很糟……
+- Idea！当 $r < r_d$ 时，把 array resize 到 fill ratio $r_i$，其中 $r_d < r_i$（例如 $r_d = 1/4$，$r_i = 1/2$）。
+- 这样在下一次昂贵的 resize 之前，必须先做 $\Theta(n)$ 次便宜的 operations。
+- 于是可以把额外空间用量限制在 $(1+\varepsilon)n$ 以内，对任意 $\varepsilon > 0$ 都成立。具体取法为
+- Dynamic arrays 只在 last 方向的 dynamic operations 上做到 $\Theta(1)$ 时间。
+- Python List 的 `append` 与 `pop` 是 amortized $O(1)$ 时间，其他 operations 可能是 $O(n)$！
+- （从 front 高效地插入/删除同样可行；这件事你在 PS1 里会做。）
+- 三种 sequence data structure 的对照：
 
 ### 缩容策略的平摊代价推导
 
@@ -309,3 +376,10 @@ Dynamic Array's `insert_last` and `delete_last` are annotated $1_{(a)}$; the $(a
 ---
 
 *MIT OpenCourseWare · https://ocw.mit.edu · 6.006 Introduction to Algorithms, Spring 2020*
+
+<!-- 并自 LNotes_02（v1 紧凑版） -->
+## 版权页（原第 5 页）
+
+MIT OpenCourseWare，https://ocw.mit.edu
+6.006 Introduction to Algorithms，Spring 2020
+关于引用这些材料或使用条款的信息，见 https://ocw.mit.edu/terms
