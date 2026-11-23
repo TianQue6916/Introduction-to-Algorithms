@@ -328,7 +328,7 @@ Kimmy Jerk（金米·杰克）是 USS Exitcost（「出局成本」号）的 cap
 >
 > 代一组数看它在算什么。取损坏日志 $\ell = \texttt{abcab}$，并设 $L_u$ 统计出 $f(\texttt{a}) = 3$、$f(\texttt{b}) = 4$、$f(\texttt{c}) = 1$、$f(\texttt{ab}) = 6$、$f(\texttt{bc}) = 5$、$f(\texttt{cab}) = 2$，其余 word（词）的 $f$ 为 $0$。逐字母切成 $\texttt{a}|\texttt{b}|\texttt{c}|\texttt{a}|\texttt{b}$ 得 $3 + 4 + 1 + 3 + 4 = 15$；切成 $\texttt{a}|\texttt{bc}|\texttt{ab}$ 得 $3 + 5 + 6 = 14$；切成 $\texttt{ab}|\texttt{cab}$ 得 $6 + 2 = 8$；切成 $\texttt{abc}|\texttt{ab}$ 得 $0 + 6 = 6$。动态规划在 $16$ 种切法里取到 $15$，与穷举一致。这个例子的教益是：最优解**不**偏爱长 word（词）。虽然 $\texttt{ab}$ 单看频次 $6$ 很高，但用掉两个字符只换 $6$ 分，而同样两个字符拆成 $\texttt{a}$ 与 $\texttt{b}$ 能换 $3 + 4 = 7$ 分 —— 频次是"每个 word（词）出现多少次"，不是"每个字符值多少分"，长度与得分不成比例，所以必须逐个切点比较。
 >
-> 跨课程连接：CLRS 第 11 章讲 hash table（哈希表），给出了期望 $O(1)$ 查找的假设与证明骨架：在 simple uniform hashing（简单均匀散列）下链长期望为 $\alpha$，本题的"期望"二字就建立在这条定理上。CLRS 第 15 章（动态规划）里 word break（断词）问题与本题骨架完全同构：状态是后缀起点，转移枚举第一个 word（词）的结束位置。CSAPP 第 6 章讲 cache（高速缓存），它解释了为什么把 $f$ 缓存成表能把查询从"读 $m$ 个字符"降到"一次访存"：连续存放的键值对在一条 cache line（缓存行）里被一次读入，而字符串比较要逐字节走完整个 word（词），每字节都可能触发一次 cache miss（缓存缺失）。
+> 跨课程连接：CLRS 第 11 章讲 hash table（哈希表），给出了期望 $O(1)$ 查找的假设与证明骨架：在 simple uniform hashing（简单均匀散列）下链长期望为 $\alpha$，本题的"期望"二字就建立在这条定理上。CLRS 第 15 章（动态规划）里 word break（断词）问题与本题骨架完全同构：状态是后缀起点，转移枚举第一个 word（词）的结束位置。CSAPP 第 6 章讲 cache（高速缓存），它解释了为什么把 $f$ 缓存成表能把查询从"读 $m$ 个字符"降到"一次访存"：连续存放的键值对在一条 cache line（缓存行）里被一次读入，而字符串比较要逐字节走完整个 word（词），跨过的 cache line（缓存行）数随长度增长，每条都可能带来一次 cache miss（缓存缺失）；查表命中却只碰常数条 cache line（缓存行）。
 
 ---
 
