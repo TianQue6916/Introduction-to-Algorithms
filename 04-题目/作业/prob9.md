@@ -21,7 +21,7 @@ Ceal Naffrey（西尔·纳夫里）是一名急需用钱的小偷。他最近弄
 
 ### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 9-2. Career Fair Optimization（招聘会最优化）</span>
 
-Tim the Beaver（海狸蒂姆）每场 career fair（招聘会）都到场，不是为了找工作，而是为了领 free swag（免费赠品）。招聘会上有 $n$ 个 booth（摊位），每个摊位发放一种已知类型的赠品。要从 booth $i$（第 $i$ 个摊位）领到一件赠品，需要在那个摊位前排队 $t_i$ 分钟（$t_i$ 为整数）；该摊位的赠品带有整数 coolness（酷值）$c_i$ 与整数 weight（重量）$w_i$。从一个摊位领到一件赠品之后，Tim 要花整整 $1$ 分钟才能重新排进队里——排同一个摊位或任何别的摊位都一样。Tim 的 backpack（背包）最多能装下总重量 $b$ 的赠品；但任何时刻 Tim 都可以花整数 $h$ 分钟跑回家、把背包腾空、再返回招聘会，而重新排进队里还要另花 $1$ 分钟。已知这场招聘会恰好持续 $k$ 分钟，描述一个 $O(nbk)$ 时间的 algorithm（算法），求出 Tim 在这场招聘会期间能领到的赠品的 maximum total coolness（最大总酷值）。
+Tim the Beaver（海狸蒂姆）每场 career fair（招聘会）都到场，不是为了找工作，而是为了领 free swag（免费赠品）。招聘会上有 $n$ 个 booth（摊位），每个摊位发放一种已知类型的赠品。要从 booth $i$（摊位 $i$）领到一件赠品，需要在那个摊位前排队 $t_i$ 分钟（$t_i$ 为整数）；该摊位的赠品带有整数 coolness（酷值）$c_i$ 与整数 weight（重量）$w_i$。从一个摊位领到一件赠品之后，Tim 要花整整 $1$ 分钟才能重新排进队里——排同一个摊位或任何别的摊位都一样。Tim 的 backpack（背包）最多能装下总重量 $b$ 的赠品；但任何时刻 Tim 都可以花整数 $h$ 分钟跑回家、把背包腾空、再返回招聘会，而重新排进队里还要另花 $1$ 分钟。已知这场招聘会恰好持续 $k$ 分钟，描述一个 $O(nbk)$ 时间的 algorithm（算法），求出 Tim 在这场招聘会期间能领到的赠品的 maximum total coolness（最大总酷值）。
 
 > <span style="color:#7f8c8d;">〔原抽取串：`having integer coolness ci and integer weight wi`、`standing in line at that booth for integer ti minutes`。下标在文字层丢失，按数学意义重建为 $c_i$、$w_i$、$t_i$。〕</span>
 
