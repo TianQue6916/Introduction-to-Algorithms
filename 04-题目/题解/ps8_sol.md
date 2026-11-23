@@ -6,7 +6,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 
 ## <span style="color:#2471a3;">**[session]**</span> <span style="color:#c0392b">Problem Set 8（习题集 8）</span>
 
-> <span style="color:#7f8c8d;">MIT 6.006 Spring 2020, Problem Set 8 Solutions（习题集 8 解答）· 主题：Dynamic Programming（动态规划）· 对应 Lecture 15 之后的 DP 内容与 CLRS 第 15 章（动态规划）· 官方解答逐题全译，译者注另行标注</span>
+> <span style="color:#7f8c8d;">MIT 6.006 Spring 2020, Problem Set 8 Solutions（习题集 8 解答）· 主题：Dynamic Programming（动态规划）· 对应 Lecture 15 之后的 dynamic programming（动态规划）内容与 CLRS 第 15 章（动态规划）· 官方解答逐题全译，译者注另行标注</span>
 
 ---
 

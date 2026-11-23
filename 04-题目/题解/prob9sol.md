@@ -9,7 +9,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 
 这份解答按官方 Problem Session 9 的原样给出：每道题一套 SRTBOT 骨架，依次是 1\. Subproblems（子问题）、2\. Relate（关联）、3\. Topo. Order（拓扑序）、4\. Base（基例）、5\. Original（原问题）、6\. Time（时间分析）。五道题各自压住dynamic programming（动态规划）这条流水线上的一处不同关节：9-1 与 9-2 压住「状态里的资源维怎么摆」，9-3 压住「把子串判定外包给 hash table（哈希表）」，9-4 压住「区间型子问题与最坏情形取 $\max$」，9-5 压住「状态是一整个bitmask（位掩码）时怎么还保持线性于 $n$ 的拓扑序」。
 
-每道题末尾的 `[note]` 是译者注，不是官方内容：它补的是官方解答默认你会的那部分——为什么这个状态够用、为什么这个下标只能减一不能减零、数值上究竟跑出什么。凡能跑数的一律真跑并贴出真实输出。
+每道题末尾的 `[note]` 是译者注（本译注补写，非 MIT 官方解答）：它补的是官方解答默认你会的那部分——为什么这个状态够用、为什么这个下标只能减一不能减零、数值上究竟跑出什么。灰字段落〔原抽取串〕同样是本译注补写，记录 PDF 文字层的损坏与重建依据。凡能跑数的一律真跑并贴出真实输出。
 
 <!-- page 1/8 -->
 
@@ -61,7 +61,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 > - 每个subproblem（子问题）的工作量：$O(1)$
 > - 运行时间 $O(n^2)$
 
-> <span style="color:#7f8c8d;">〔原抽取串：`Let pi be the purchase price of object j, with ki its melting number`、`If i < ki, object j cannot be crafted`、`receive pi in revenue and lose ki coins`、`x(0, j) = 0 for i ∈ {0, . . . , n}`、`x(i, 0) = 0 for j ∈ {0, . . . , n}`、`nobjects`。原文把「制品编号」的下标写成了 $i$、把「金币数」的下标写成了 $j$，且两处 base case（基例）的哑变量写反；按数学意义重建为 $p_j$、$k_j$，基例重建为「$x(0,j)=0$ 对 $j$ 遍取」与「$x(i,0)=0$ 对 $i$ 遍取」，`nobjects` 重建为 `n objects`。〕</span>
+> <span style="color:#7f8c8d;">〔原抽取串：`Let pi be the purchase price of object j, with ki its melting number`、`If i < ki, object j cannot be crafted`、`receive pi in revenue and lose ki coins`、`x(0, j) = 0 for i ∈ {0, . . . , n}`、`x(i, 0) = 0 for j ∈ {0, . . . , n}`、`nobjects`。原文里 $p_i$、$k_i$ 的下标都写成了 $i$（而 $i$ 在状态 $x(i,j)$ 里是金币数），文句却写 `object j`，即制品编号与金币数这两个下标写反了；另有两处 base case（基例）的哑变量写反；按数学意义重建为 $p_j$、$k_j$，基例重建为「$x(0,j)=0$ 对 $j$ 遍取」与「$x(i,0)=0$ 对 $i$ 遍取」，`nobjects` 重建为 `n objects`。〕</span>
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这条注要回答的是：为什么这一维只能是「剩余金币数 $\times$ 制品前缀」，以及递推里那个 $j-1$ 为什么是整道题的关键。
 >
@@ -122,7 +122,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 >
 > **6. Time（时间分析）**
 >
-> - subproblem（子问题）数：$(k + 1)(b + 1) = O(kb)$，即 $i \in \{0, \dots, k\}$、$j \in \{0, \dots, b\}$ 的全部 $x(i, j)$
+> - subproblem（子问题）数：$\le (k + 1)(b + 1) = O(kb)$，即 $i \in \{0, \dots, k\}$、$j \in \{0, \dots, b\}$ 的全部 $x(i, j)$
 > - 每个subproblem（子问题）的工作量：$O(n)$
 > - 运行时间 $O(nbk)$，它对 $b$ 与 $k$ 是 pseudo-polynomial（伪多项式）的
 
