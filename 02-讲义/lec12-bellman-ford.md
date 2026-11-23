@@ -15,7 +15,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 **SSSP（Single-Source Shortest Paths，单源最短路径）问题**：给定带权图 $G=(V,E)$ 与源点 $s$，求 $s$ 到每个顶点 $v$ 的最短路径权值 $\delta(s,v)$（若 $v$ 经负权环可达则为 $-\infty$）。
 
-下表给出本课程四个场景与对应算法（Running Time 列 `O(·)`）：
+下表给出本课程四个场景与对应算法（Running Time（运行时间）列 `O(·)`）：
 
 | 图类型（Graph） | 权值（Weights） | 算法（Name） | 运行时间（Running Time） | 讲次（Lecture） |
 |---|---|---|---|---|
