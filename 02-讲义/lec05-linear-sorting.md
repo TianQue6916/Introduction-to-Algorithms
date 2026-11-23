@@ -37,6 +37,16 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 > 表中标注：(e) 表示**expected（期望）** 代价，(a) 表示**amortized（平摊）** 代价。直接访问数组的查找/插入/删除都是 $O(1)$，但 `find_min`/`find_max`/`find_prev`/`find_next` 需要扫描整个键空间，故为 $O(u)$；哈希表能高效查找但不支持顺序操作（Order 操作需 $O(n)$）。
 
+<!-- 并自 LNotes_05（v1 紧凑版） -->
+- Comparison search 的 lower bound：任何含 $n$ 个节点的 decision tree，高度都 $\ge \lceil \lg(n+1)\rceil - 1$。
+- 想更快，只能靠 random access indexing：一个 branching factor 为线性的 operation。
+- Direct access array 很快，但空间可能是 $\Theta(u)$，很浪费。
+- 空间问题的解法是映射（hashing）：把 key space $u$ 压到 $m = \Theta(n)$。
+- Hash table 给出 expected $O(1)$ 的 operations，动态场景下是 amortized $O(1)$。
+- 注意这个 expectation 与 input 无关：hash function 是从 universal hash family 里随机选的。
+- 下面这张 data structure overview 是上一讲的成果盘点。
+- 上一讲我们让 `find` 变快了。这一讲的问题是：能不能也让 sort 变快？
+
 ---
 
 ## 2. Comparison Sort Lower Bound 比较排序的下界
@@ -59,6 +69,20 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 > 关键论证（用「叶数 ≥ 输出数」的计数方式）：比较排序的每一步比较只有 $\le$ 和 $>$ 两种结果，故执行过程是一棵二叉树；对某一特定输入，算法沿一条「从根到叶」的路径走，每个叶对应一个「比较结果序列」。要区分 $n$ 个元素的所有 $n!$ 种排列，树的叶数 $L$ 必须至少为 $n!$。而一棵高度为 $h$ 的二叉树最多有 $2^h$ 个叶，即 $L \le 2^h$，联立得 $2^h \ge n!$，故 $h \ge \log(n!) = \Omega(n\log n)$。
 >
 > 这里放缩 $\log(n!) \ge \log((n/2)^{n/2})$ 的依据：$n! = 1\cdot 2\cdots n$ 中，后一半因子 $n/2, n/2+1, \dots, n$ 共 $n/2$ 个，每个都 $\ge n/2$，故 $n! \ge (n/2)^{n/2}$。由此得到干净的 $\Omega(n\log n)$ 下界，无需 Stirling 公式。
+
+<!-- 并自 LNotes_05（v1 紧凑版） -->
+- Comparison model 意味着 algorithm 的 decision tree 是 binary 的，即 branching factor 是常数。
+- 要求 leaf 数 $L \ge$ 可能的 output 数。
+- Tree height 下界是 $\Omega(\log L)$，所以 worst-case running time 是 $\Omega(\log L)$。
+- 给 $n$ 个元素的 array 排序，outputs 共有 $n!$ 个 permutations。
+- 于是 height 下界是
+
+```math
+\log(n!) \ge \log\left(\left(\frac{n}{2}\right)^{n/2}\right) = \Omega(n\log n)
+```
+
+- 所以 merge sort 在 comparison model 里已经是最优的。
+- 那能不能利用 direct access array 来突破这个 bound、sort 得更快？
 
 ---
 
@@ -102,6 +126,11 @@ T(n, u) \;=\; \underbrace{O(n)}_{\text{找最大值}} \;+\; \underbrace{O(u)}_{\
 
 > 注意：本算法**要求键互不相同**。若两个项键相同，后插入者会覆盖先插入者，导致丢项。这正是引出下节「计数排序」的动机。
 
+<!-- 并自 LNotes_05（v1 紧凑版） -->
+- 假设所有 keys 都是互不相同的非负整数，落在 $\{0, \dots, u-1\}$，于是 $n \le u$。
+- 花 $\Theta(n)$ 把每个 item 插进一个 size 为 $u$ 的 direct access array。
+- 再花 $\Theta(u)$ 按它们在 direct access array 中出现的顺序读出来。
+
 ---
 
 ## 4. 键空间过大怎么办：base-n 表示
@@ -116,6 +145,13 @@ T(n, u) \;=\; \underbrace{O(n)}_{\text{找最大值}} \;+\; \underbrace{O(u)}_{\
 ### base-n 拆分的正确性说明
 
 > 任何一个非负整数 $k$，用「除 $n$ 取商和余」都能唯一地写成 $k = an + b$（$0 \le b \lt  n$）。这里 $b = k \bmod n$ 是「least significant digit（低位）」，$a = \lfloor k/n \rfloor$ 是「most significant digit（高位）」。当 $u \lt  n^2$ 时，$k \lt  n^2$，故 $a = \lfloor k/n \rfloor \lt  n$，即高位也落在 $0..n-1$ 内，于是整个键可视为一个「两位 base-$n$ 数」$(a, b)_{n}$，其十进制值 $= an + b$。反之，给定 $(a,b)$ 也能唯一还原出 $k$——两者一一对应。
+
+<!-- 并自 LNotes_05（v1 紧凑版） -->
+- 但如果 key range 更大呢，比如 $u = \Omega(n^2)$ 甚至更大？
+- Idea！把每个 key $k$ 表示成一个 tuple $(a, b)$，满足 $k = an + b$ 且 $0 \le b < n$。
+- 具体地，取 $a = \lfloor k/n\rfloor < n$ 与 $b = (k \bmod n)$——这其实就是把 $k$ 写成 base-$n$（$n$ 进制）的两位数！
+- Python 内建就能做这件事：`(a, b) = divmod(k, n)`。
+- 那 tuple 该怎么 sort？
 
 ---
 
@@ -147,6 +183,19 @@ T(n, u) \;=\; \underbrace{O(n)}_{\text{找最大值}} \;+\; \underbrace{O(u)}_{\
 > 归纳成立。**关键在于稳定性**：高位相同时，必须靠底层稳定排序「锁住」低位已排好的顺序。这也是为何低位优先 + 稳定排序缺一不可。
 
 > **定义（stability，稳定性）**：一个排序算法是稳定的，当且仅当对任意两个键相等的项，它们在输出中的相对次序与输入中一致。可判定标准：造一个「含相同键、但携带不同卫星数据」的输入，看排序后同键项的先后是否保持不变。
+
+<!-- 并自 LNotes_05（v1 紧凑版） -->
+- 此时 item 的 key 是等长 tuple，即 `x.key = (x.k1, x.k2, x.k2, ...)`。
+- 我们希望按 lexicographic（字典序）对所有成分排序，所以第一个 key `k1` 是 most significant（最高位）。
+- 怎么排？Idea！用别的 auxiliary sorting algorithm（辅助排序算法）去分别排每一位 key。
+- 类比：就像在 spreadsheet 里按多列排序行。
+- 那顺序怎么定？从 least significant（最低位）排到 most significant（最高位）！
+- Idea！用 tuple sort，配 auxiliarily 的 direct access array sort，来排 $(a, b)$。
+- 但有个问题！即使 input keys 互不相同，也可能有很多整数的 $a$ 值相同、或 $b$ 值相同。
+- 所以需要一种允许 repeated keys（重复键）且能保持 input order 的 sort。
+- 也就是要求 sort 是 stable（稳定的）：repeated keys 在 output 中的相对次序与 input 中一致。
+- 而 direct access array sort 连「排一个含重复 keys 的 array」都做不到！
+- 那能不能修改 direct access array sort，让它容纳多个 keys 且保持稳定？
 
 ---
 
@@ -193,6 +242,14 @@ T(n, u) \;=\; O(n) + O(u) + O(n) + O(u) \;=\; O(n + u)
 > 计数排序是稳定的。对任意两个键相等的项 $x, y$（即 $x.\text{key} = y.\text{key}$），它们会进入**同一条链**。因为插入时总是 `append`（追加到链尾），而读出时又是**按链内顺序**逐个取出，所以链内顺序 = 插入顺序 = 输入顺序。故 $x, y$ 在输出中的相对次序与输入一致，稳定性成立。
 >
 > 直接访问数组排序之所以不稳定（甚至不适用），正因为它每格只存一个值，同键项会互相覆盖；计数排序用「链」补上了这一环。
+
+<!-- 并自 LNotes_05（v1 紧凑版） -->
+- 每个 array index 上不再存单个 item，而是存一条 chain——和 hashing 里的做法一样！
+- 为稳定性，chain 这个 data structure 必须记住 items 被加入的先后次序。
+- 用一个 sequence data structure（序列结构），它天然维护 insertion order（插入顺序）。
+- 插入 item $x$ 时，把它 `insert_last` 到 index `x.key` 那条 chain 的末尾。
+- 排序时，按 sequence 顺序把各条 chain 都读一遍，逐个 return items。
+- `counting_sort` 的总时间是 $\Theta(n + u)$：$\Theta(n)$ 建 chain，$\Theta(u)$ 扫全表。所以当 $u = O(n)$ 时它是线性的。
 
 ---
 
@@ -273,6 +330,19 @@ T(n, u) \;=\; O\!\left(n \cdot \log_n u\right)
 
 **关键结论**：当 $u = O(n^c)$ 且 $c$ 为常数时，$\log_n u \le c = O(1)$，故 $T(n) = O(cn) = O(n)$——**线性时间**。这正是突破比较排序 $\Omega(n\log n)$ 下界的做法：基数排序不靠「比较」，而是靠「用键定位」（随机访问），因此不受比较模型下界的约束。
 
+<!-- 并自 LNotes_05（v1 紧凑版） -->
+- Idea！若 $u < n^2$，就用 tuple sort，配 auxiliary counting sort 来排 tuples $(a, b)$。
+- 先排 least significant key $b$，再排 most significant key $a$。
+- Stability（稳定性）保证先前的排序结果不会被后一次排序打乱。
+- 这个 algorithm 的 running time 是 $O(2n) = O(n)$。太好了！
+- 推广：若每个 key 都小于 $n^c$，其中 $c = \log_n(u)$ 是正整数，那么每个 key 至多有 $c$ 位 base-$n$ digit。
+- 一个 $c$ 位数字可以在 $O(c)$ 时间内写成一个 $c$ 元素 tuple。
+- 我们花 $O(n)$ 时间来排这 $c$ 个 base-$n$ digits 中的每一位。
+- 所以配 auxiliary counting sort 的 tuple sort 总共跑 $O(cn)$ 时间。
+- 若 $c$ 是常数，即每个 key 都 $\le n^c$，这个 sort 就是线性的 $O(n)$！
+- 注意 `c = 1 + (u.bit_length() // n.bit_length())`：这里用二进制位长之比去估 $\lceil \log_n u\rceil$，是个不取对数函数的廉价上界写法。
+- 另外 `radix_sort` 里每一轮 `counting_sort(D)` 都要求 `D` 上的 key 是非负整数，所以循环体先把 `D[j].key` 设成当前这一位 `D[j].digits[i]`——这是「把某一位提出来当 key」的具体做法，也是 radix sort 的整个机制所在。
+
 ---
 
 ## 8. 排序算法总结表
@@ -290,6 +360,11 @@ T(n, u) \;=\; O\!\left(n \cdot \log_n u\right)
 **图 4-1**：五行里没有一行同时拿到「$O(n)$ 时间」和「In-place = Y」 —— Counting Sort（$n+u$）与 Radix Sort（$n+n\log_n u$）确实到达线性（蓝色），但 In-place 一列全是 N（红），即它们用 $\Theta(n+u)$ 的额外 counter 数组换来的线性；Insertion/Selection 是原地但时间钉死在 $n^2$（红）。Merge Sort 的 $n\log n$ 标成蓝色而非线性，说明在**比较模型**内 $n\log n$ 已是最优，要再突破必须放弃比较。*No row is both linear and in-place: linear sorts pay $O(n)$ extra space, in-place sorts stay at $n^2$, and merge sort marks $n\log n$ as the comparison-model ceiling.*
 
 > 上表是打散后的原文表格重建。`In-place` 指是否只使用常数额外空间：插入排序、选择排序为原地；归并排序、计数排序、基数排序需额外数组，非原地。`Stable` 一列中，选择排序因「跨距离交换」会破坏同键相对顺序，故不稳定；其余四个均稳定。计数排序、基数排序的复杂度分别写出 $n+u$ 与 $n+n\log_n u$，便于看出「当 $u$ 足够小时退化为线性」的条件。
+
+<!-- 并自 LNotes_05（v1 紧凑版） -->
+- 读这张表的正确姿势：只有 Counting Sort 与 Radix Sort 跳出 comparison model，靠的是 $O(1)$ random access indexing 提供的线性 branching factor。
+- 代价是它们要求 keys 是**有界整数**（且能当 index 用）。这种 assumption 在真实系统里经常满足（比如 32 位整数 ID），但一旦 key 是任意可比较对象，就退回 comparison model。
+- 顺着这条线往下看：Radix Sort 的 $n + n\log_n u$ 与 Sorted Array 的 $n\log n$ 相比，差别就在 $\log_n u$ 与 $\log n$ 这两个量——前者在 $u$ 是多项式大小时是常数。
 
 ---
 

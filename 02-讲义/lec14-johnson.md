@@ -36,6 +36,16 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
   - 用 **Bellman-Ford**（一般情形）：总时间 $|V| \cdot O(|V| \cdot |E|)$。
 - **本讲目标**：在**任意加权图**上，用 $|V| \cdot O(|V|\log|V| + |E|)$ 时间解出 APSP。
 
+<!-- 并自 LNotes_14（v1 紧凑版） -->
+- Input（输入）：directed graph（有向图）$G = (V, E)$，weights（权重）为 $w : E \to \mathbb{Z}$。
+- Output（输出）：对所有 $u, v \in V$ 给出 $\delta(u, v)$。
+- 若 $G$ 含 negative-weight cycle（负权环），则 abort（中止）。
+- 当需要理解整个 network（网络）时这很有用，例如 transportation（交通）、circuit layout（电路布局）、supply chains（供应链）……
+- 直接把某个 SSSP algorithm 跑 $|V|$ 次其实已经相当不错，因为 output 的规模是 $O(|V|^2)$：
+  - 若 weights 为正且被 $O(|V| + |E|)$ 界住，用 BFS 为 $|V| \cdot O(|V| + |E|)$。
+  - 若 weights 非负或 graph 是 undirected（无向的），用 Dijkstra 为 $|V| \cdot O(|V| \log |V| + |E|)$。
+- 今天：对任意 weighted graph，在 $|V| \cdot O(|V| \log |V| + |E|)$ 时间内解出 APSP。
+
 ---
 
 ## Approach（总体思路）
@@ -52,6 +62,21 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - **证明**：当权值非负时，最短路径一定是**简单路径**（simple path，即不重复经过顶点的路径）；但若存在负权环，绕着环多走几圈会让权值任意小，最短路就不再是简单路径。二者矛盾，故不可能。
 - 于是真正的问题是：**给定一张含负权边、但无负权环的图 $G$，能否把边权改成非负、同时保持最短路径不变？**
 
+<!-- 并自 LNotes_14（v1 紧凑版） -->
+- Idea：让所有 edge weights 变成非负，同时保持 shortest paths 不变！
+- 也就是把 $G$ reweight（重赋权）成 $G'$，使其不含 negative weights。
+- 并且要求 $G$ 中的 shortest path 在 $G'$ 中仍然最短。
+- 若已非负，就只需跑 $|V|$ 次 Dijkstra 来解 APSP。
+- Claim：可以在 $O(|V|(|V| + |E|))$ 时间内从 $G'$ 中的 distances 算出 $G$ 中的 distances。
+  - 先对每个 $s \in V'$ 用 $O(|V| + |E|)$ 时间从 distances 构造 shortest-path tree（L11）。
+  - 这棵树在 $G$ 中也是 shortest-paths tree，于是用 DFS 遍历它，同时算出 distances。
+- 但怎样才能构造出权重非负的 $G'$ 呢？这真的总是可能的吗？
+- Claim：若 $G$ 含 negative-weight cycle，则不可能。
+- Proof：没有 negative weights 时 shortest paths 是 simple（简单）的。
+- 一旦存在 negative-weight cycle，shortest path 就不再是 simple 的。
+- 于是问题变成：给定一个带 negative weights 但不含 negative-weight cycles 的 graph $G$。
+- 能否在保持 shortest paths 的前提下，把它的 edge weights 变成非负？
+
 ---
 
 ## Making Weights Non-negative（把权值变成非负）
@@ -61,6 +86,10 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - **idea**：把 $G$ 中「最小权值的相反数」加到**每条边**上！于是所有边权都非负了。:)
 - **FAIL（失败原因）**：这**不保持**最短路径！它会**偏向边数更少的路径**——因为每条边都被加了同样的常数，路径权值的增量与「边数」成正比，边数多的路径被「抬」得更高。:(
 - 例：设两条从 $s$ 到 $t$ 的路径，权值分别为 $-100$（含 $100$ 条边）与 $-1$（含 $1$ 条边）。原始最短路是 $-100$ 那条；给每条边加 $1$ 后，前者变成 $0$，后者变成 $0$，两者打平，最短路被改变了。这直观说明了「全局加常数」不可行。
+
+<!-- 并自 LNotes_14（v1 紧凑版） -->
+- Idea！给每条 edge 都加上「$G$ 中最小 weight 的相反数」！这样所有 weights 都非负了！:)
+- FAIL：这不能保持 shortest paths！它会 bias（偏袒）经过 edges 更少的那些 paths。:(
 
 ### 第二次尝试（局部调整，正确）
 
@@ -72,6 +101,16 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
   - 一条**穿过 $v$**（passing through $v$）的路径，其权值**（局部地）不变**——因为它经过 $v$ 时，进边被减了 $h$、出边被加了 $h$，两者抵消。
   - 由于「同起同终」的任意两条路径被改变了**相同的量**，其间的相对大小关系不变，故最短者仍最短。
 - 这是一个非常通用且好用的技巧：**在保持最短路径不变的前提下变换一张图**。
+
+<!-- 并自 LNotes_14（v1 紧凑版） -->
+- Idea！给定 vertex $v$，给它所有 outgoing edges 加 $h$，并给它所有 incoming edges 减 $h$。
+- Claim：在上述 reweighting 下，shortest paths 保持不变。
+- Proof：
+  - 每条从 $v$ 出发的 path 的 weight 改变 $h$。
+  - 每条终止于 $v$ 的 path 的 weight 改变 $-h$。
+  - 每条经过 $v$ 的 path 的 weight（在局部上）不变。
+- 这是一个非常 general（一般）且有用的 trick（技巧）。
+- 它能在保持 shortest paths 的同时 transform（变换）一个 graph！
 
 ---
 
@@ -98,6 +137,21 @@ w'(u, v) = w(u, v) + h(u) - h(v)
   - 于是每条从 $v_0$ 到 $v_k$ 的路径都改变了**相同的量** $h(v_0) - h(v_k)$。
   - 因此相对大小不变，任何最短路径仍然最短。∎
 
+<!-- 并自 LNotes_14（v1 紧凑版） -->
+- 对多个 vertices 同时做也成立！
+- 构造 graph $G'$：与 $G$ 相同，但每条 edge $(u, v) \in E$ 的 weight 为 $w'(u, v) = w(u, v) + h(u) - h(v)$。
+- Claim：$G$ 中的 shortest paths 在 $G'$ 中也是 shortest paths。
+- Proof：
+  - $\pi$ 在 $G'$ 中的 weight 为：
+
+
+```math
+w'(\pi) = \sum_{i=1}^{k} \bigl(w(v_{i-1}, v_i) + h(v_{i-1}) - h(v_i)\bigr) = w(\pi) + h(v_0) - h(v_k)
+```
+  - （$h$ 的求和 telescope（望远镜式相消）：每个内部下标 $i$ 都有一个正的与一个负的 $h(v_i)$。）
+  - 每条从 $v_0$ 到 $v_k$ 的 path 都改变同一个量。
+  - 因此任何 shortest path 仍然最短。
+
 ---
 
 ## Making Weights Non-negative（继续：寻找合适的势函数）
@@ -117,6 +171,19 @@ w'(u, v) = w(u, v) + h(u) - h(v)
 - **反之**，若对所有 $v \in V$，$\delta(s, v)$ 都有限：
   - 由三角不等式，对每条边 $(u, v) \in E$ 有 $w'(u, v) = w(u, v) + h(u) - h(v) \ge 0$，其中 $h(v) = \delta(s, v)$。
   - 于是 $G'$ 的新权值**非负**，且**保持最短路径**不变！问题解决。
+
+<!-- 并自 LNotes_14（v1 紧凑版） -->
+- 能否找到一个 potential function，使 $G'$ 中没有 negative edge weights？
+- 这看起来就像 triangle inequality（三角不等式）！
+- Idea！若取 $h(v) = \delta(s, v)$ 且对某个 $s$ 有 $\delta(s, v)$ 有限，则条件自然满足。
+- 但 graph 可能是 disconnected（不连通的）。
+- 这样的 vertex $s$ 未必存在……:(
+- Idea！新增一个 vertex $s$，并对每个 $v \in V$ 加一条指向它的 directed $0$-weight edge！:)
+- 于是对所有 $v \in V$ 都有 $\delta(s, v) \le 0$，因为存在一条 weight 为 $0$ 的 path。
+- Proof：
+  - 加入 $s$ 不会引入新的 cycles（$s$ 没有 incoming edges）。
+  - 所以若 reweight 后的 graph 含 negative-weight cycle，原 graph 也含。
+  - $G'$ 中的新 weights 非负，同时 shortest paths 保持不变！
 
 ---
 
@@ -138,14 +205,25 @@ w'(u, v) = w(u, v) + h(u) - h(v)
 
 > 说明第 4 步最后一条公式的方向：由势函数的 telescope 恒等式 $w'(\pi) = w(\pi) + h(u) - h(v)$，取最短路后得 $\delta'(u, v) = \delta(u, v) + h(u) - h(v)$。移项即 $\delta(u, v) = \delta'(u, v) - h(u) + h(v)$，代入 $h = \delta_x(x, \cdot)$ 得 $\delta(u, v) = \delta'(u, v) - \delta_x(x, u) + \delta_x(x, v)$。
 
+<!-- 并自 LNotes_14（v1 紧凑版） -->
+- 从 $G$ 构造 $G_x$：新增 vertex $x$，用 $0$-weight edge 把它连到每个 vertex $v \in V$。
+- 否则：
+    - 用 Dijkstra 在 $G'$ 中算出到所有 $v$ 的 shortest-path distances $\delta'(u, v)$。
+
 ---
 
 ## Correctness（正确性）
 
 - 「从 $G$ 到 $G'$ 的变换保持最短路径」这一点，已经在**势函数**一节证明过了。
 - 其余部分归结为 **Bellman-Ford** 与 **Dijkstra** 各自的正确性（分别在 L12、L13 用循环不变式论证过）。
-- 这里的本质是**归约**（reduction）：把「任意权值的 APSP」**归约**为「非负权值的 APSP」（Signed APSP $\to$ Non-negative APSP）。
+- 这里的本质是**reduction（归约）**：把「任意权值的 APSP」**归约**为「非负权值的 APSP」（Signed APSP $\to$ Non-negative APSP）。
 - 归约很省时间！今天不用再做归纳了。:)
+
+<!-- 并自 LNotes_14（v1 紧凑版） -->
+- 已经证明：从 $G$ 到 $G'$ 的 transformation 保持 shortest paths。
+- 剩下的部分归结为 Bellman-Ford 与 Dijkstra 的正确性。
+- 这里做的是从 Signed APSP（带符号的 APSP）到 Non-negative APSP（非负 APSP）的 reduction（归约）。
+- Reductions 省时间！今天不需要 induction！:)
 
 ---
 
@@ -167,6 +245,10 @@ O(|V| + |E|) + O(|V||E|) + O(|V| + |E|) + |V| \cdot O(|V|\log|V| + |E|) + O(|V|^
 ```
 
 > **递推与主项说明**：这不是递推式，而是若干独立步骤的**累加**。主项来自「$|V|$ 次 Dijkstra」的 $O(|V|^2\log|V| + |V||E|)$ 与「一次 Bellman-Ford」的 $O(|V||E|)$。由于 $O(|V|^2\log|V|)$ 与 $O(|V||E|)$ 二者大小关系不定（取决于图是稠密还是稀疏），最终写成两者之和 $O(|V|^2\log|V| + |V||E|)$。在**稀疏图**上（$|E| = O(|V|)$）约为 $O(|V|^2\log|V|)$，与「跑 $|V|$ 次 Dijkstra 于非负图」同阶，仅多一个 Bellman-Ford 的 $O(|V||E|)$ 开销；而在**稠密图**上 $|E| = O(|V|^2)$，退化为 $O(|V|^3)$，与 Floyd–Warshall 同阶。
+
+<!-- 并自 LNotes_14（v1 紧凑版） -->
+- 构造 $G_x$ 耗时 $O(|V| + |E|)$。
+- 从 $G'$ 中的 distances 算出 $G$ 中的 distances 耗时 $O(|V|^2)$。
 
 ---
 

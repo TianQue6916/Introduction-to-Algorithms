@@ -28,6 +28,11 @@ Two rows suffice to fix the lower bound: under the comparison model `find` canno
 - **Idea!（核心想法）**：我们想要更快的查找与动态操作。能否让 `find(k)` 比 $\Theta(\log n)$ 更快？
 - **Answer is no (lower bound)!（答案是「不能」，这是下界）**……但等等，其实也可以更快？先看下界是怎么来的。
 
+<!-- 并自 LNotes_04（v1 紧凑版） -->
+
+- Idea！我们想要更快的 search 与 dynamic operations。能不能让 `find(k)` 比 $\Theta(\log n)$ 更快？
+- 在 comparison model 下答案是「不能」，这是 lower bound（下界）。但换个 model，答案是「能」——本讲就干这件事。
+
 ### Comparison Model（比较模型）
 
 - 在该模型中，假设算法**只能通过比较（comparison）来区分元素**。
@@ -35,6 +40,14 @@ Two rows suffice to fix the lower bound: under the comparison model `find` canno
 - 比较操作为 `<, ≤, >, ≥, =, ≠`，输出为二值的 **True** 或 **False**。
 - **Goal（目标）**：存储 n 个可比较元素，支持 `find(k)` 操作。
 - 运行时间由「执行的比较次数」下界决定，所以要数比较次数（count comparisons）。
+
+
+<!-- 并自 LNotes_04（v1 紧凑版） -->
+
+- 在这个 model 里，假设 algorithm 只能通过 comparison（比较）来区分 items。
+- 允许的 comparisons 是 $<, \le, >, \ge, =, \ne$，输出是二值：True 或 False。
+- 目标：存储 $n$ 个 comparable items 构成的 set，支持 `find(k)`。
+- Running time 被比较次数从下方界定，所以**数比较次数**就等于在算时间。
 
 ### Decision Tree（决策树）
 
@@ -45,6 +58,16 @@ Two rows suffice to fix the lower bound: under the comparison model `find` canno
 - 一条**root-to-leaf path（根到叶的路径）**表示算法在某个输入上的一次执行。
 - 每个算法输出至少要有一个叶结点，因此查找需要 $\ge n + 1$ 个叶结点（n 个「找到」+ 1 个「未找到」）。
 
+
+<!-- 并自 LNotes_04（v1 紧凑版） -->
+
+- 任何 algorithm 都可以看成一棵由所执行 operations 构成的 decision tree。
+- internal node（内部节点）代表一次 binary comparison（二元比较），分成 True 与 False 两枝。
+- 对 comparison algorithm 而言，decision tree 一定是 binary 的（原文此处配图，见 [Figure 1]）。
+- leaf（叶子）代表 algorithm 终止，并产出对应的 output。
+- 一条 root-to-leaf path（根到叶路径）代表 algorithm 在某个 input 上的一次完整执行。
+- 每个可能的 output 至少要有一个 leaf，所以一次 search 需要至少 $n + 1$ 个 leaves（$n$ 个「命中」加一个「未命中」）。
+
 ---
 
 ## Comparison Search Lower Bound（比较查找的下界）
@@ -53,14 +76,14 @@ Two rows suffice to fix the lower bound: under the comparison model `find` canno
 
 推导链（每步含义）：
 
-1. running time ≥ #comparisons（运行时间 ≥ 比较次数）
+1. running time（运行时间） ≥ #comparisons（比较次数）
 2. ≥ 最长根到叶路径长度
 3. ≥ 决策树的高度 height
 
 即：
 
 ```math
-\text{running time} \;\ge\; \text{\#comparisons} \;\ge\; \text{最长路径长度} \;\ge\; \text{height of tree}
+\text{running time（运行时间）} \;\ge\; \text{\#comparisons} \;\ge\; \text{最长路径长度} \;\ge\; \text{height of tree}
 ```
 
 **问题**：包含 ≥ n 个结点的二叉树的最小高度是多少？
@@ -81,6 +104,17 @@ h \;\ge\; \lceil \lg(n+1) \rceil - 1 \;=\; \Omega(\log n)
 
 **要更快**，必须引入一种能带来「超常数 $\omega(1)$ 分叉因子」的操作。怎么做？
 
+<!-- 并自 LNotes_04（v1 紧凑版） -->
+
+- 一个 comparison search algorithm 的 worst-case running time 是多少？
+- 由于 running time $\ge$ 比较次数 $\ge$ 任何 root-to-leaf path 的最大长度 $\ge$ tree 的高度。
+- 那么，含 $\ge n$ 个节点的 binary tree，最小高度是多少？
+- 最小高度出现在 tree 是 complete（完全）的时候：除最后一行外每一行都填满。
+- 此时高度 $\ge \lceil \lg(n+1)\rceil - 1 = \Omega(\log n)$，所以任何 comparison sort 的 running time 都是 $\Omega(\log n)$。
+- Sorted array 恰好达到这个 bound！太好了。
+- 更一般地：若 tree 有 $\Theta(n)$ 个 leaves、最大 branching factor 为 $b$，则高度是 $\Omega(\log_b n)$。
+- 要想更快，就必须有一个能让 branching factor 达到 super-constant（超常数）即 $\omega(1)$ 的 operation。怎么做到？
+
 ---
 
 ## Direct Access Array（直接寻址数组）
@@ -95,6 +129,18 @@ h \;\ge\; \lceil \lg(n+1) \rceil - 1 \;=\; \Omega(\log n)
 - **例子**：若键是十字母的名字，每个名字占 1 bit，也需要 $26^{10} \approx 17.6$ TB 的空间。
 
 **问题**：如何用更少的空间？
+
+<!-- 并自 LNotes_04（v1 紧凑版） -->
+
+- 关键工具：Word-RAM model 里的 $O(1)$ time random access indexing（随机访问索引）。这等于拿到了 linear branching factor（线性分支因子）！
+- Idea！给每个 item 一个唯一整数 key $k \in \{0, \dots, u-1\}$，然后把 item 存在 array 的 index $k$ 处。
+- 这等于给 array 的每一个 index 都赋予了一个 meaning（语义）。
+- 若 keys 能塞进一个 machine word（机器字），即 $u \le 2^w$，则 worst-case 下 `find` 与 dynamic operations 都是 $O(1)$！太好了。
+- 6.006 的约定：除非长度被显式参数化，否则假设 input 的 number / string 都能塞进一个 word。
+- 理由是：计算机内存里的任何东西都是 binary integer，或者是内存中一个 (static) 64-bit address。
+- 但 space 是 $O(u)$，若 $n \ll u$ 就非常糟 :(
+- 例子：若 keys 是十个字母的姓名，要一位一 bit，就需要 $26^{10} \approx 17.6$ TB 空间。
+- 怎么才能用更少的空间？
 
 ---
 
@@ -112,6 +158,22 @@ h \;\ge\; \lceil \lg(n+1) \rceil - 1 \;=\; \Omega(\log n)
 1. **Open addressing（开放寻址）**：存到数组的别处。分析复杂，但常见且实用。
 2. **Chaining（拉链法）**：存到另一个支持动态集合接口（dynamic set interface）的数据结构里。
 
+<!-- 并自 LNotes_04（v1 紧凑版） -->
+
+- Idea！若 $n \ll u$，就把 keys 映射到一个更小的 range $m = \Theta(n)$，用小一号的 direct access array。
+- 此时 direct access array 称为 hash table（哈希表），$h(k)$ 称为 key $k$ 的 hash。
+- 若 $m \ll u$，由 pigeonhole principle（鸽巢原理），**没有任何** hash function 是 injective（单射）的。
+
+<!-- 并自 LNotes_04（v1 紧凑版） -->
+
+## Collision（碰撞）
+
+- 因此必然存在 keys $a, b$ 使 $h(a) = h(b)$，这就是 collision :(
+- 两个 items 不能存在同一个 index 上，那存哪儿？两种选择：
+  - 存到 array 的别处（open addressing，开放寻址）
+    - analysis 较复杂，但在工程上很常见、很实用。
+  - 存进另一个支持 dynamic set interface 的 data structure（chaining，链式法）。
+
 ---
 
 ## Chaining（拉链法）
@@ -121,6 +183,14 @@ h \;\ge\; \lceil \lg(n+1) \rceil - 1 \;=\; \Omega(\log n)
 - 若链长为 $O(1)$，则所有操作都是 $O(1)$！
 - 但若分布不均（例如 $h(k) = \text{常数}$），某条链长可达 $\Theta(n)$。
 - 因此需要**好的散列函数**。什么是好的散列函数？
+
+<!-- 并自 LNotes_04（v1 紧凑版） -->
+
+- Idea！把 collisions 存进另一个 data structure，也就是一条 chain。
+- 若 keys 大致均匀分布在各个 indices 上，chain 长度是 $n/m = n/\Omega(n) = O(1)$！
+- 若 chain 长度是 $O(1)$，则所有 operations 都花 $O(1)$ 时间！太好了。
+- 若不然，大量 items 可能映射到同一个位置，例如 $h(k) = \text{constant}$，那 chain 长度就是 $\Theta(n)$ :(
+- 所以需要一个好的 hash function。那什么算好的 hash function？
 
 ---
 
@@ -138,6 +208,17 @@ h(k) = k \bmod m
 - Python 就用了这种方法的某个变体，并加了一些额外混淆（mixing）。
 - 但若 $u \gg n$，**任何**固定的散列函数都存在某个输入集合会形成 $O(n)$ 长的链。
 - **Idea!** 不要用固定的散列函数！随机地（但要小心地）选一个。
+
+<!-- 并自 LNotes_04（v1 紧凑版） -->
+
+### Division method（除法法，坏的）
+
+- 这是一个 heuristic（启发式），在 keys 均匀分布时表现好。
+- $m$ 应当避开 stored keys 的对称性。
+- 取远离 $2$ 的幂与 $10$ 的幂的大素数，通常比较合理。
+- Python 用的是这个方法的一个变体，外加一些额外的 mixing（混洗）。
+- 但要注意：若 $u \gg n$，**任何** hash function 都存在某个 input set，使它造出一条 $O(n)$ 长度的 chain。
+- Idea！那就别用固定的 hash function，而是随机地（但要小心地）挑一个。
 
 ### Universal（全域散列，好，理论上有保证）：
 
@@ -191,6 +272,20 @@ X_i = \sum_{j} X_{ij}
 
 **定义（Load factor，负载因子）**：$\alpha = n/m$，即平均每个槽中的元素个数，是散列表性能的关键指标。
 
+<!-- 并自 LNotes_04（v1 紧凑版） -->
+
+### Universal method（全域法，理论上好的）
+
+- $\mathcal{H}$ 是一个 universal family（全域族），即对所有 $k_i \ne k_j \in \{0, \dots, u-1\}$ 都有
+- 全域性为什么有用？它直接推出 chain 长度短——是在 expectation（期望）意义下短。
+- 对 $h \in \mathcal{H}$ 定义 indicator random variable（指示随机变量）$X_{ij}$：
+  - 若 $h(k_i) = h(k_j)$ 则 $X_{ij} = 1$，否则 $X_{ij} = 0$。
+- index $h(k_i)$ 处 chain 的长度是 random variable $X_i = \sum_j X_{ij}$。
+- 求 index $h(k_i)$ 处 chain 的 expected size：
+- 其中那个单独的 $1$ 来自 $j = i$（自己一定和自己碰撞，$X_{ii} = 1$）；继续展开 $j \ne i$ 的每一项：
+- 代入全域性得 $\mathbb{E}\{X_{ij}\} \le 1/m$，于是
+- 又因为 $m = \Omega(n)$，所以 load factor（装载因子）$\alpha = n/m = O(1)$，故期望意义下是 $O(1)$！
+
 ---
 
 ## Dynamic（动态扩展）
@@ -201,6 +296,12 @@ X_i = \sum_{j} X_{ij}
 **amortized analysis（摊还分析）**：把一次性的大开销（如重建）均摊到多次廉价操作上，从而得到每次操作的「平均」代价；常见工具有聚合分析、记账法、势能法。
 
 - 因此散列表可实现动态集合操作，**期望摊还 $O(1)$** 时间！
+
+<!-- 并自 LNotes_04（v1 紧凑版） -->
+
+- 若 $n/m$ 离 $1$ 很远，就用新随机选出的 hash function、按新 size $m$ 重建整张表。
+- 这与 dynamic array 的 analysis 一样，重建的代价可以 amortize（摊还）到大量 dynamic operations 上。
+- 于是 hash table 能在 expected amortized（期望摊还）$O(1)$ 时间内实现 dynamic set operations :) 
 
 ---
 
@@ -220,6 +321,14 @@ X_i = \sum_{j} X_{ij}
 **图 4-1**：Direct Access Array 的 `find` 是 $1$ 但 `build` 要 $u$；Hash Table 把 `build` 压到 $n_{(e)}$、`find` 压到 $1_{(e)}$，代价是 `find_min` / `find_max` / `find_prev` / `find_next` 全部退化为 $n$ —— 常数期望查找是用顺序换来的。
 
 Direct Access Array buys `find` $=1$ by paying `build` $=u$; Hash Table pushes `build` to $n_{(e)}$ and `find` to $1_{(e)}$, but every order query degrades to $n$ — expected constant lookup is paid for with ordering.
+
+<!-- 并自 LNotes_04（v1 紧凑版） -->
+
+## 复杂度收尾对照表
+
+- 上标含义：$(e)$ = expected（期望意义下），$(a)$ = amortized（摊还意义下）。
+- 关键结论：hash table 把「search 比 $\Theta(\log n)$ 更快」这件在 comparison model 下不可能的事做到了，代价是放弃 order 操作——`find_min` / `find_max` / `find_prev` / `find_next` 退化成 $\Theta(n)$ 的线性扫描。
+- 这就是 set interface 里 Order 那一层的真实边界：一旦上了 hashing，键序信息就彻底丢了。
 
 
 ---

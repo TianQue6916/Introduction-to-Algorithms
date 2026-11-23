@@ -50,6 +50,10 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 **图 1-2**：Sorted Array 用 **build 从 n 涨到 n log n** 换来了 find(k) 从 n 降到 log n，而 insert/delete 仍是 n；Direct Access Array 是唯一让 find/insert/delete 全为 1 的结构，代价是 **find_min/find_max/find_prev/find_next 全是 u**（全域大小），因为直接寻址按 key 摆放、不保序。*Sorting pays for search with build time; direct addressing pays for ordered queries with the universe size u.*
 
+<!-- 并自 LNotes_06（v1 紧凑版） -->
+- 注意到两个 interface 的 Goal 行完全一样：**每一个 operation 都是 $O(\log n)$**。这一讲就是奔着它去的。
+- 怎么做到？靠 binary tree！
+
 ---
 
 ## 三、如何达成目标？—— 二叉树！（How? Binary Trees!）
@@ -57,6 +61,12 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 我们观察到一个关键事实：像**链表**这样的**pointer-based（基于指针）的数据结构**能够取得最坏情形（worst-case）的性能保证（因为指针结构天然支持 O(1) 的局部改动，无需整体搬移元素）。
 
 **Binary Tree（二叉树）**就是每个节点带三个指针的、基于指针的数据结构：
+
+<!-- 并自 LNotes_06（v1 紧凑版） -->
+- 上一讲之前我们用的都是 array 类结构；pointer-based data structure（基于指针的数据结构，如 Linked List）能拿到 worst-case 的性能保证。
+- binary tree 就是一种 pointer-based data structure，每个 node 存三个 pointers。
+- node 的表示：`node.{item, parent, left, right}`。
+- 例子（一棵六个节点的 binary tree）：
 
 ### Node representation（节点表示）
 
@@ -137,6 +147,22 @@ node.\{item,\ parent,\ left,\ right\}
 
 > **关键**：目前这个遍历顺序与节点里存的元素还没有任何语义关联。稍后我们会给遍历顺序赋予语义含义（比如「按 key 递增」或「按序列位置」），从而用它来实现集合（Set）和序列（Sequence）接口。
 
+<!-- 并自 LNotes_06（v1 紧凑版） -->
+- tree 的 root（根）没有 parent（例：`<A>`）。
+- tree 的 leaf（叶子）没有 children（例：`<C>`、`<E>`、`<F>`）。
+- 在以 `<R>` 为根的树中，定义 node `<X>` 的 depth(`<X>`) 为从 `<X>` 到 `<R>` 的 path 长度。
+- 定义 node `<X>` 的 height(`<X>`) 为以 `<X>` 为根的 subtree（子树）中任何 node 的 depth 的最大值。
+- Idea：把所有 operations 设计成跑 $O(h)$ 时间，$h$ 是根的 height；然后再去维持 $h = O(\log n)$。
+- 一个 binary tree 自带一种 inherent order（固有顺序），就是它的 traversal order（遍历序）：
+  - node `<X>` 的 left subtree 里每一个 node 都排在 `<X>` 之前。
+  - node `<X>` 的 right subtree 里每一个 node 都排在 `<X>` 之后。
+- 从 root 出发用一个 recursive algorithm 就能按 traversal order 列出所有 nodes：
+  - 递归列出 left subtree，列出自己，再递归列出 right subtree。
+  - 跑 $O(n)$ 时间，因为每个 node 的列出只花 $O(1)$。
+  - 例子：traversal order 是 (`<F>`, `<D>`, `<B>`, `<E>`, `<A>`, `<C>`)。
+- 目前 traversal order 与 stored items 之间还没有任何语义关系。
+- 后面我们会给 traversal order 赋予语义，用它来实现 Sequence / Set 两种 interface。
+
 ---
 
 ## 五、Tree Navigation（树的导航）
@@ -153,6 +179,13 @@ node.\{item,\ parent,\ left,\ right\}
 **复杂度**：O(h)，其中 h 是树的高度。
 
 **示例**：`<A>` 的子树里第一个节点是 `<F>`（一直沿左孩子往下走）。
+
+<!-- 并自 LNotes_06（v1 紧凑版） -->
+- 找 node `<X>` 的 subtree 在 traversal order 里的第一个 node（最后一个是镜像情形）。
+  - 若 `<X>` 有 left child，则递归返回 left subtree 的第一个 node。
+  - 否则 `<X>` 自己就是第一个 node，直接返回它。
+  - Running time（运行时间）是 $O(h)$，$h$ 是 tree 的 height。
+  - 例子：`<A>` 的 subtree 里第一个 node 是 `<F>`。
 
 ### 5.2 找后继节点（successor）与前驱（predecessor）
 
@@ -171,6 +204,13 @@ node.\{item,\ parent,\ left,\ right\}
 - `<E>` 的后继是 `<A>`（`<E>` 无右孩子，向上找：`<E>` 是 `<B>` 的右孩子，继续向上；`<B>` 是 `<A>` 的左孩子，故 `<A>` 是后继）；
 - `<C>` 的后继是 `None`（`<C>` 无右孩子，且沿 parent 一路向上都是「自己是右孩子」，直到根 `<A>` 也没有满足条件的祖先，说明 `<C>` 是最后一个节点）。
 
+<!-- 并自 LNotes_06（v1 紧凑版） -->
+- 找 node `<X>` 在 traversal order 中的 successor（后继，predecessor 即前驱是镜像情形）。
+  - 若 `<X>` 有 right child，则返回 right subtree 的第一个 node。
+  - 否则，沿 parent 往上走，返回「`<X>` 落在其 left subtree 里」的最低那个 ancestor（祖先）。
+  - Running time（运行时间）是 $O(h)$，$h$ 是 tree 的 height。
+  - 例子：successor 依次为——`<B>` 的是 `<E>`，`<E>` 的是 `<A>`，`<C>` 的是 None。
+
 ---
 
 ## 六、Dynamic Operations（动态操作）
@@ -180,6 +220,11 @@ node.\{item,\ parent,\ left,\ right\}
 - **添加**：在遍历顺序里，把新节点插到某个节点的后面（插到前面是对称的）；
 - **删除**：从树中移除某个元素对应的节点。
 
+<!-- 并自 LNotes_06（v1 紧凑版） -->
+- 任何改动都只涉及单个 item：只增删 leaves，不改中间结构：
+  - 在 traversal order 中某个 node 之后插入一个 node（之前是镜像情形）。
+  - 从 tree 里移除一个 item。
+
 ### 6.1 Insert（插入）：在节点 `<X>` 之后插入节点 `<Y>`
 
 **算法**：
@@ -188,6 +233,12 @@ node.\{item,\ parent,\ left,\ right\}
 - 否则（`<X>` 有右孩子），把 `<Y>` 设为 `<X>` 的**后继**的左孩子。（这个后继一定没有左孩子——否则它就不是「后继」了，因为它的左子树里会有比它更靠前、却又在 `<X>` 之后的节点。）
 
 **复杂度**：O(h)，其中 h 是树的高度（找后继需要 O(h)）。
+
+<!-- 并自 LNotes_06（v1 紧凑版） -->
+- 在 traversal order 中把 node `<Y>` 插到 node `<X>` 之后：
+  - 若 `<X>` 没有 right child，就把 `<Y>` 设为 `<X>` 的 right child。
+  - 否则，把 `<Y>` 设为 `<X>` 的 successor 的 left child（那个 successor 必然没有 left child）。
+  - Running time（运行时间）是 $O(h)$，$h$ 是 tree 的 height。
 
 **示例 1**：在遍历顺序里，把节点 `<G>` 插到 `<E>` 之前（等价于插到 `<E>` 的前驱 `<D>` 之后；`<D>` 有右孩子 `<F>`，故找 `<D>` 的后继 `<E>`，把 `<G>` 设为 `<E>` 的左孩子）：
 
@@ -235,6 +286,14 @@ node.\{item,\ parent,\ left,\ right\}
 > **本质**：删除非叶子节点时，先用「与最近邻（前驱或后继）交换元素」的方式，把要删的节点「下沉」到叶子位置，再把那个叶子摘掉。这样始终只删叶子，保持结构简单。
 
 **复杂度**：O(h)，其中 h 是树的高度（每次交换后向下递归一层，最多 h 层）。
+
+<!-- 并自 LNotes_06（v1 紧凑版） -->
+- 若 `<X>` 是 leaf，直接从 parent 上摘下并 return。
+- 否则 `<X>` 至少有一个 child：
+  - 若 `<X>` 有 left child，就与 `<X>` 的 predecessor 交换 items，然后递归。
+  - 否则 `<X>` 有 right child，就与 `<X>` 的 successor 交换 items，然后递归。
+- Running time（运行时间）是 $O(h)$，$h$ 是 tree 的 height。
+- 这个策略的要点：**永远只删 leaf**。非 leaf 的情形靠「与邻位的 leaf 换 item」把要删的东西一路换到叶子上，结构始终合法。
 
 **示例 1**：删除 `<F>`（它是叶子，直接摘除）：
 
@@ -319,6 +378,13 @@ T(h) = O(h)
 
 > 其余集合操作（insert、delete、find_min、find_max、find_prev、find_next）都遵循类似的「沿树向下走、每层 O(1)」模式，详见 recitation（习题课）。
 
+<!-- 并自 LNotes_06（v1 紧凑版） -->
+- 于是可以在 node `<X>` 的 subtree 里用 binary search 的方式在 $O(h)$ 时间内找到 key 为 $k$ 的 node：
+  - 若 $k$ 小于 `<X>` 处的 key，递归进 left subtree（或 return None）。
+  - 若 $k$ 大于 `<X>` 处的 key，递归进 right subtree（或 return None）。
+  - 否则，返回存在 `<X>` 里的那个 item。
+- 其他 Set operations 都遵循同一套模式；细节见 recitation（复习课）。
+
 ---
 
 ## 八、Application: Sequence（应用：序列）
@@ -374,6 +440,22 @@ T(h) = O(h)
 
 **更好做法**：可以在 O(n) 时间内一次性构建（通过把有序序列「自底向上」地搭建成一棵树）。详见 recitation。
 
+<!-- 并自 LNotes_06（v1 紧凑版） -->
+- Idea！Sequence Binary Tree（序列二叉树）：让 traversal order 就是 sequence order（序列序）。
+- 怎么在一个 subtree 的 traversal order 里找到第 $i$ 个 node？把这个 operation 叫 `subtree_at(i)`。
+- 当然可以把整个 traversal order 遍历一遍，但那很糟，是 $O(n)$。
+- 然而，如果我们能在 $O(1)$ 内算出一个 subtree 的 size，就能在 $O(h)$ 时间内解决：
+  - 怎么算？先看 left subtree 的 size $n_L$，把它与 $i$ 比较。
+  - 若 $i < n_L$，递归进 left subtree。
+  - 若 $i > n_L$，递归进 right subtree，同时把 $i$ 换成 $i' = i - n_L - 1$。
+  - 否则 $i = n_L$，你已经到达了目标 node！
+- 每个 node 的 subtree size 靠 augmentation（增广）维护，就直接挂在那个 node 上：
+  - 给每个 node 加一个 `node.size` field。
+  - 新增 leaf 时，对所有 ancestor $a$ 做 `a.size += 1`，花 $O(h)$ 时间。
+  - 删除 leaf 时，对所有 ancestor $a$ 做 `a.size -= 1`，花 $O(h)$ 时间。
+- Sequence 的其他 operations 都能直接从快的 `subtree_at(i)` 推出来。
+- 朴素地做，`build(X)` 要 $O(nh)$ 时间，但可以做到 $O(n)$；细节见 recitation。
+
 ---
 
 ## 九、So Far（目前进展总结）
@@ -402,12 +484,19 @@ T(h) = O(h)
 
 > 两表里，除了 build 之外，所有操作现在都是 O(h)；只要我们能保证 h = O(log n)，就能全面达到 O(log n) 的目标。
 
+<!-- 并自 LNotes_06（v1 紧凑版） -->
+- 我们现在卡在同一个地方：所有 operations 都是 $O(h)$，而 $h$ 没有任何保证——最坏情况下一棵退化成 chain 的 binary tree 有 $h = \Theta(n)$，那就什么都不省了。
+
 ---
 
 ## 十、Next Time（下次预告）
 
 - **目标**：在插入、删除之后**保持二叉树的平衡（balanced）**；
 - **手段**：通过**始终维持 h = O(log n)**，把现在的 O(h) 运行时间降为 **O(log n)**。
+
+<!-- 并自 LNotes_06（v1 紧凑版） -->
+- 在 insertion 或 deletion 之后，让 binary tree 保持 balanced（平衡）。
+- 通过维持 $h = O(\log n)$，把所有 $O(h)$ 的 running time（运行时间）降到 $O(\log n)$。
 
 > 这正是下一讲「二叉平衡树 / AVL 树」的引入动机：普通 BST 在最坏情形下可能退化成一条链（h = n），所有操作退化到 O(n)；通过旋转等平衡维护手段，把高度钉死在 O(log n)。
 
