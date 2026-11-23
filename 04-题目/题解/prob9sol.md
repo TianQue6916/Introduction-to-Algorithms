@@ -61,9 +61,9 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 > - 每个subproblem（子问题）的工作量：$O(1)$
 > - 运行时间 $O(n^2)$
 
-> <span style="color:#7f8c8d;">〔原抽取串：`Let pi be the purchase price of object j, with ki its melting number`、`If i < ki, object j cannot be crafted`、`receive pi in revenue and lose ki coins`、`x(0, j) = 0 for i ∈ {0, . . . , n}`、`x(i, 0) = 0 for j ∈ {0, . . . , n}`、`nobjects`。原文里 $p_i$、$k_i$ 的下标都写成了 $i$（而 $i$ 在状态 $x(i,j)$ 里是金币数），文句却写 `object j`，即制品编号与金币数这两个下标写反了；另有两处 base case（基例）的哑变量写反；按数学意义重建为 $p_j$、$k_j$，基例重建为「$x(0,j)=0$ 对 $j$ 遍取」与「$x(i,0)=0$ 对 $i$ 遍取」，`nobjects` 重建为 `n objects`。〕</span>
+> <span style="color:#7f8c8d;">〔本译注补写 · 原抽取串：`Let pi be the purchase price of object j, with ki its melting number`、`If i < ki, object j cannot be crafted`、`receive pi in revenue and lose ki coins`、`x(0, j) = 0 for i ∈ {0, . . . , n}`、`x(i, 0) = 0 for j ∈ {0, . . . , n}`、`nobjects`。原文里 $p_i$、$k_i$ 的下标都写成了 $i$（而 $i$ 在状态 $x(i,j)$ 里是金币数），文句却写 `object j`，即制品编号与金币数这两个下标写反了；另有两处 base case（基例）的哑变量写反；按数学意义重建为 $p_j$、$k_j$，基例重建为「$x(0,j)=0$ 对 $j$ 遍取」与「$x(i,0)=0$ 对 $i$ 遍取」，`nobjects` 重建为 `n objects`。〕</span>
 
-> <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这条注要回答的是：为什么这一维只能是「剩余金币数 $\times$ 制品前缀」，以及递推里那个 $j-1$ 为什么是整道题的关键。
+> <span style="color:#1e8449;">**[note] Note（译者注 · 本译注补写，非 MIT 官方解答）:**</span> 这条注要回答的是：为什么这一维只能是「剩余金币数 $\times$ 制品前缀」，以及递推里那个 $j-1$ 为什么是整道题的关键。
 >
 > 先看这道题逼出了什么。手边有两样互相消耗的东西：金币是唯一的可消耗资源，制品每件只能卖一次。若只看「金币还剩多少」，你无法保证同一件制品不被铸第二遍；若只看「挑到第几件」，你无法知道还剩多少金币可熔。所以状态必须同时记住这两个量，$x(i,j)$ 的两个参数就是这样被逼出来的，不是设计出来的。subproblem（子问题）的语义要读成「在预算 $i$ 之内、只从编号 $1$ 到 $j$ 的制品里选」——注意「只从到 $j$ 为止」这半句，它是让拓扑序成立的唯一理由。
 >
@@ -126,9 +126,9 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 > - 每个subproblem（子问题）的工作量：$O(n)$
 > - 运行时间 $O(nbk)$，它对 $b$ 与 $k$ 是 pseudo-polynomial（伪多项式）的
 
-> <span style="color:#7f8c8d;">〔原抽取串：`always`、`for k0  {1, . . . , n} where wk0  j, tk0 < i`、`when i > h`、`ck0 + x(i - tk0 - 1, j - wk0)`、`x(i - h - 1, b)`、`(k + 1)(b + 1) = O(kb)`。原文的三段 $\max$ 被抽成散落的几行，条件与取值分离；`∈`、`≤`、`<` 三个关系符全部丢失；`k'` 被抽成 `k0`。按数学意义重建为上面的分段式，`k0` 重建为 $k'$。原文 `psuedo-polynomial` 拼写有误，按其本义 pseudo-polynomial（伪多项式）译。〕</span>
+> <span style="color:#7f8c8d;">〔本译注补写 · 原抽取串：`always`、`for k0  {1, . . . , n} where wk0  j, tk0 < i`、`when i > h`、`ck0 + x(i - tk0 - 1, j - wk0)`、`x(i - h - 1, b)`、`(k + 1)(b + 1) = O(kb)`。原文的三段 $\max$ 被抽成散落的几行，条件与取值分离；`∈`、`≤`、`<` 三个关系符全部丢失；`k'` 被抽成 `k0`。按数学意义重建为上面的分段式，`k0` 重建为 $k'$。原文 `psuedo-polynomial` 拼写有误，按其本义 pseudo-polynomial（伪多项式）译。〕</span>
 
-> <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这条注要回答的是：为什么状态里必须同时有「剩余时间」和「剩余载重」，以及「回家」这个动作凭什么不增加状态维数。
+> <span style="color:#1e8449;">**[note] Note（译者注 · 本译注补写，非 MIT 官方解答）:**</span> 这条注要回答的是：为什么状态里必须同时有「剩余时间」和「剩余载重」，以及「回家」这个动作凭什么不增加状态维数。
 >
 > 先数资源。Tim 手上有两样独立在消耗的东西：时间（$k$ 分钟）与背包载重（$b$）。领一件赠品同时消耗两者（$t_{k'} + 1$ 分钟、$w_{k'}$ 重量），所以两者都不能从状态里省掉——省掉时间就不知道还能领几件，省掉载重就不知道还能装多少。于是 $x(i,j)$ 的两个参数同样是逼出来的。注意那个额外的 $+1$：「领到一件之后要花 $1$ 分钟才重新排进队里」，官方的转移把它写进了 $i - t_{k'} - 1$，这一分钟不是装饰，它是「连续领两件」与「领一件就走」的差别所在。
 >
@@ -190,9 +190,9 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 > - 运行时间 $O(k(|P| + k|S|))$，它对输入规模是 polynomial（多项式）的
 > - 注意：若这 $k|S|$ 次查表都能在 $O(1)$ 时间内完成，就有可能做到 $O(k(|P| + |S|))$——具体手段是 rolling hash（滚动哈希）或 suffix tree（后缀树），而这两样**本课程（6.006）不讲授**（原文：`not covered in this course`）
 
-> <span style="color:#7f8c8d;">〔原抽取串：`S[i :]`、`S[i : j]`、`j  {1, . . . , min(k, |S| - i)}`、`(expected) O(k|P |)`、`2 n(k + 1)`。`∈` 丢失、竖线 `|` 在部分位置丢失，按数学意义重建。另注：官方把 $m(i,j)$ 写成「子串 $S[i:j]$」，而下一段又用 $x(i+j)$ 跳到新起点，严格记号应为 $S[i:i+j]$；本译文按官方原样保留 $S[i:j]$ 的写法，只在这一处指出记号口径，不改动其内容。〕</span>
+> <span style="color:#7f8c8d;">〔本译注补写 · 原抽取串：`S[i :]`、`S[i : j]`、`j  {1, . . . , min(k, |S| - i)}`、`(expected) O(k|P |)`、`2 n(k + 1)`。`∈` 丢失、竖线 `|` 在部分位置丢失，按数学意义重建。另注：官方把 $m(i,j)$ 写成「子串 $S[i:j]$」，而下一段又用 $x(i+j)$ 跳到新起点，严格记号应为 $S[i:i+j]$；本译文按官方原样保留 $S[i:j]$ 的写法，只在这一处指出记号口径，不改动其内容。〕</span>
 
-> <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这条注要回答的是：为什么判定「这一段是不是标记」必须外包给 hash table（哈希表），以及「猜长度」为什么只猜 $k$ 种而不是 $|S|$ 种。
+> <span style="color:#1e8449;">**[note] Note（译者注 · 本译注补写，非 MIT 官方解答）:**</span> 这条注要回答的是：为什么判定「这一段是不是标记」必须外包给 hash table（哈希表），以及「猜长度」为什么只猜 $k$ 种而不是 $|S|$ 种。
 >
 > 先看朴素做法的代价。若每遇到一个位置 $i$、每猜一个长度 $j$，就真去 $P$ 里线性搜一遍，那么单个subproblem（子问题）要做 $k$ 次、每次 $|P|$，总计 $O(k|S|\cdot|P|)$；题目给的界是 $O(k|P| + k^2|S|)$，把 $|P|$ 从「每个子问题都要付一次」降成「只付一次」。这个降法就是预处理：把所有标记一次性放进 hash table（哈希表），此后「这条子串是不是标记」变成一个 $O(1)$（期望）的表查询，代价是 $O(k|P|)$ 的建表时间。这是**预处理换查询**最标准的一笔账，也是本题为什么要把「建表」写在 Subproblems（子问题）第 1 条而不是写在 Relate（关联）里的原因。
 >
@@ -251,9 +251,9 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 > - 每个subproblem（子问题）的工作量：$O(\max(1, j - i)) = O(n)$
 > - 运行时间 $O(n^3k)$，它对 $k$ 是 pseudo-polynomial（伪多项式）的。不过，既然要检查全部 $n$ 层楼永远不需要丢超过 $n$ 个 egg（鸡蛋），只对 $k \le n$ 计算subproblem（子问题）就够了；于是把要检查的subproblem（子问题）限制在这个范围内，就能在 $O(n^3)$ 时间内回答本题，而这对 $n$ 是 polynomial（多项式）的
 
-> <span style="color:#7f8c8d;">〔原抽取串：`with floors i to j  i remaining to check`、`x(i, j, 0) =  for i, j  {0, . . . , n} with i  j`、`2 n(k + 1)`、`psuedo-polynomial`。`≥`、`∞`、`≤`、`∈`、二项式系数 $\binom{n}{2}$ 的上标全部在文字层丢失；原文 `psuedo-` 拼写有误。按数学意义重建为 $j \ge i$、$x(i,j,0)=\infty$、$i \le j$、$i,j \in \{0,\dots,n\}$、$\binom{n}{2}(k+1)$，并按本义译为 pseudo-polynomial（伪多项式）。原文 `it suffices to only compute subproblems for k ≤ n` 中的 `≤` 已由版面核对确认为「小于等于」，不是「大于等于」。〕</span>
+> <span style="color:#7f8c8d;">〔本译注补写 · 原抽取串：`with floors i to j  i remaining to check`、`x(i, j, 0) =  for i, j  {0, . . . , n} with i  j`、`2 n(k + 1)`、`psuedo-polynomial`。`≥`、`∞`、`≤`、`∈`、二项式系数 $\binom{n}{2}$ 的上标全部在文字层丢失；原文 `psuedo-` 拼写有误。按数学意义重建为 $j \ge i$、$x(i,j,0)=\infty$、$i \le j$、$i,j \in \{0,\dots,n\}$、$\binom{n}{2}(k+1)$，并按本义译为 pseudo-polynomial（伪多项式）。原文 `it suffices to only compute subproblems for k ≤ n` 中的 `≤` 已由版面核对确认为「小于等于」，不是「大于等于」。〕</span>
 
-> <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这条注要回答的是：为什么递推里是 $\min$ 套 $\max$（而不是两个 $\min$），以及为什么「总下落高度」这个目标会让递推里少掉那个常见的 $+1$。
+> <span style="color:#1e8449;">**[note] Note（译者注 · 本译注补写，非 MIT 官方解答）:**</span> 这条注要回答的是：为什么递推里是 $\min$ 套 $\max$（而不是两个 $\min$），以及为什么「总下落高度」这个目标会让递推里少掉那个常见的 $+1$。
 >
 > 先把两个角色分开。取 $\min$ 的是你：要从所有可能的下落楼层 $f$ 里挑一个最省高度的。取 $\max$ 的不是对手，而是一个**固定但未知的常数**——这栋楼的 breaking floor（破裂楼层）只有一个真值，鸡蛋碎或不碎由它决定，你无法选。所以对给定的 $f$，最坏情形是那两个分支里更贵的那个：蛋碎了就得在下方 $f-1$ 层里继续、且少一个蛋；蛋没碎就得在上方继续、蛋数不变。$\max$ 就是把「不确定性」这一层写进式子，$\min$ 才是你的决策。这也解释了为什么 base case（基例）里 $e = 0$ 要取 $\infty$：没有蛋却还有楼层要查，这个分支根本不可行，必须让它被 $\max$ 每次都选中、从而永远不会成为最优。
 >
@@ -336,9 +336,9 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 > - 每个subproblem（子问题）的工作量：$O(k)$，用来查 memo（记忆表），或用来算出一个新的列
 > - 运行时间 $O(2^{2k}kn)$，它对 $k$ 是 exponential（指数级）的，但对 $n$ 是 polynomial（多项式）的
 
-> <span style="color:#7f8c8d;">〔原抽取串：`n2k2k = O(n22k) subproblems`、`2k possible columns`、`always`、`if c1[t(c1) + 1] is True`、`if c2[t(c1)] is True`。上标在文字层被压平（$2^k$ 抽成 `2k`、$2^{2k}$ 抽成 `22k`），三段 $\min$ 的条件与取值被分行拆散。按数学意义重建为 $2^k$ 种列、$n\,2^{2k}$ 个子问题、以及上面那个带三行条件的分段式。〕</span>
+> <span style="color:#7f8c8d;">〔本译注补写 · 原抽取串：`n2k2k = O(n22k) subproblems`、`2k possible columns`、`always`、`if c1[t(c1) + 1] is True`、`if c2[t(c1)] is True`。上标在文字层被压平（$2^k$ 抽成 `2k`、$2^{2k}$ 抽成 `22k`），三段 $\min$ 的条件与取值被分行拆散。按数学意义重建为 $2^k$ 种列、$n\,2^{2k}$ 个子问题、以及上面那个带三行条件的分段式。〕</span>
 
-> <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这条注要回答的是：为什么状态里只要两列、为什么那一列的状态是一个长度 $k$ 的布尔串、以及 $O(2^{2k}kn)$ 这个式子里的三个因子各是谁。
+> <span style="color:#1e8449;">**[note] Note（译者注 · 本译注补写，非 MIT 官方解答）:**</span> 这条注要回答的是：为什么状态里只要两列、为什么那一列的状态是一个长度 $k$ 的布尔串、以及 $O(2^{2k}kn)$ 这个式子里的三个因子各是谁。
 >
 > 先说「为什么只要两列」。石头只有三种形状：$1 \times 1$ 的方石占一格，竖放长石占同一列相邻的两行，横放长石占同一行相邻的两列。三种形状的**列跨度**最大是 $2$——任何一块石头都不可能同时碰到第 $i$ 列与第 $i+2$ 列。于是当你从最左列往右推进时，第 $i$ 列之后的第二列还没有被任何石头碰过，它的状态完全由输入 $B$ 决定（记作 $C_0(i+2)$），不需要记在状态里。**这一条「跨度上界」就是状态宽度的来源**：跨度是 $2$，状态里就要存 $2$ 列的掩码；若题目允许 $1 \times 3$ 的长石，状态就得存 $3$ 列，复杂度里的指数从 $2k$ 变成 $3k$。
 >
@@ -410,9 +410,9 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 >     return P
 > ```
 
-> <span style="color:#7f8c8d;">〔原抽取串：`def build wall(B)`、`new_c1 = [i for i in c1]`、`new_c2 = [i for i in c2]`、`if i == len(B[0]) - 1`。下划线在文字层丢失，重建为 `build_wall`；原文循环变量确实写作 `i`（与外层参数同名），按原样保留，原因见下注。缩进由版面重建：官方 PDF 中这段代码的缩进在抽取时被压平，此处按 Python 语法与注释位置复原，并已实际运行验证。〕</span>
+> <span style="color:#7f8c8d;">〔本译注补写 · 原抽取串：`def build wall(B)`、`new_c1 = [i for i in c1]`、`new_c2 = [i for i in c2]`、`if i == len(B[0]) - 1`。下划线在文字层丢失，重建为 `build_wall`；原文循环变量确实写作 `i`（与外层参数同名），按原样保留，原因见下注。缩进由版面重建：官方 PDF 中这段代码的缩进在抽取时被压平，此处按 Python 语法与注释位置复原，并已实际运行验证。〕</span>
 
-> <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这条注要回答的是：这段代码为什么把「值」和「父指针」一起塞进 memo（记忆表）、`new_c1 = [i for i in c1]` 这行看似会覆盖外层 `i` 为什么却无害、以及它跑出来的结果与题面给的那组 $P$ 是什么关系。
+> <span style="color:#1e8449;">**[note] Note（译者注 · 本译注补写，非 MIT 官方解答）:**</span> 这条注要回答的是：这段代码为什么把「值」和「父指针」一起塞进 memo（记忆表）、`new_c1 = [i for i in c1]` 这行看似会覆盖外层 `i` 为什么却无害、以及它跑出来的结果与题面给的那组 $P$ 是什么关系。
 >
 > 先说 memo（记忆表）的形状。`memo[key] = (best, move, parent)` 三元组一次存下三样东西：`best` 是从这个subproblem（子问题）出发所需的最少方石数，`move` 是这一步放了哪块石头（一个 `(i, j, '1'/'D'/'R')` 三元组），`parent` 是走完这一步之后落到的下一个子问题（一个 `(i, c1, c2)` 键）。三者一起存的原因很直接：题目要的不只是「最少几块方石」，还要那块数所对应的**摆放本身**。只存 `best` 能算出 $2$，但拿不出那 $22$ 个三元组；事后想补，就得重新搜索。这与 6.006 第 16 讲讲 LCS（最长公共子序列）时把 parent pointers（父指针）列为必备组件是同一条要求：值用来定答案，指针用来还原答案。
 >
