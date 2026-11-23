@@ -34,7 +34,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 
 ### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 8-1. Oil Well that Ends Well（善始善终的油井）</span>
 
-大亨 Ron Jockefeller（罗恩·洛克菲勒）的 oil wells（油井）本月将产出 $m$ 桶石油。Ron 手里有一份来自潜在买家的 $n$ 张 order（订单）的清单，其中第 $i$ 张 order（订单）表示买家愿意买 $a_i$ 桶，总价为 $p_i$（不是每桶单价），这个总价可能为负。<sup>1</sup> 每张 order（订单）必须整单完成，否则完全不完成，并且每张 order（订单）只能被完成一次。Ron 不必卖掉他全部的石油，但每桶未售出的石油他要付 $s$ 美元的 storage cost（存储成本）。请描述一个 $O(nm)$ 时间的 algorithm（算法），用来确定要完成哪些 order（订单），使得 Ron 的 profit（利润，可能为负）最大化。
+大亨 Ron Jockefeller（罗恩·洛克菲勒）的 oil wells（油井）本月将产出 $m$ 桶石油。Ron（罗恩）手里有一份来自潜在买家的 $n$ 张 order（订单）的清单，其中第 $i$ 张 order（订单）表示买家愿意买 $a_i$ 桶，总价为 $p_i$（不是每桶单价），这个总价可能为负。<sup>1</sup> 每张 order（订单）必须整单完成，否则完全不完成，并且每张 order（订单）只能被完成一次。Ron（罗恩）不必卖掉他全部的石油，但每桶未售出的石油他要付 $s$ 美元的 storage cost（存储成本）。请描述一个 $O(nm)$ 时间的 algorithm（算法），用来确定要完成哪些 order（订单），使得他的 profit（利润，可能为负）最大化。
 
 > <sup>1</sup> 今年早些时候，oil futures contract（石油期货合约）的价格变成了负数：人们在付钱以求**不**接收石油的交割，因为石油的需求大幅下降，而能储存石油的地方不够用了。
 
@@ -64,7 +64,7 @@ pin（球瓶）至多被击倒一次，不过玩家可以选择不击倒某些 p
 \max\Big\{\sum_{a_i \in A_j} a_i \ \Big|\ j \in \{1, 2, 3, 4\}\Big\}
 ```
 
-> 〔原抽取串：`A1  A2  A3  A4 n= A` 与 `max aiAj ai | j  {1, 2, 3, 4}`；`n=` 是 `⊔=`（或 `∪̇ =`，即 disjoint union（互不相交的并））的错位抽取，`aiAj` 是 $\sum_{a_i \in A_j}$ 的碎片，包含符号 `⊆`、求和号 $\sum$ 与花括号均丢失，此处按 partition（划分）的数学含义重建〕
+> 〔原抽取串：`A1  A2  A3  A4 n= A` 与 `max aiAj ai | j  {1, 2, 3, 4}`；`n=` 是 `⊔=` 的错位抽取（`⊔` 即 disjoint union（互不相交的并）符号，原文排的是带点的并集符号），`aiAj` 是 $\sum_{a_i \in A_j}$ 的碎片，包含符号 `⊆`、求和号 $\sum$ 与花括号均丢失，此处按 partition（划分）的数学含义重建〕
 
 ---
 

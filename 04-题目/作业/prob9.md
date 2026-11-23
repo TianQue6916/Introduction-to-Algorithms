@@ -29,7 +29,7 @@ Tim the Beaver（海狸蒂姆）每场 career fair（招聘会）都到场，不
 
 ### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 9-3. Protein Parsing（蛋白质解析）</span>
 
-Prof. Leric Ander（莱里克·安德教授）的实验室做 DNA 实验。对任何一条 DNA strand（DNA 链）——即一串 nucleotide（核苷酸），取值为 A、C、G 或 T——做过实验之后，实验室会把它切成若干段，以便其中任何有用的 protein marker（蛋白质标记）都能用于后续实验。Ander 的实验室编好了一张已知蛋白质标记的清单 $P$，其中每个蛋白质标记都对应一条长度至多 $k$ 个核苷酸的序列。对一条 DNA 链 $S$ 的一个 division（切分）是一个有序序列 $D = (d_1, \dots, d_m)$，每一项都是 DNA 链，且把 $D$ 按序 concatenation（拼接）起来正好得到 $S$。一个切分 $D$ 的 value（价值）是 $D$ 中那些作为蛋白质标记出现在 $P$ 里的 DNA 链的条数。给定一条 DNA 链 $S$ 与蛋白质标记的集合 $P$，描述一个 $O(k(|P| + k|S|))$ 时间的 algorithm（算法），求出 $S$ 的所有切分中可能的最大价值。
+Prof. Leric Ander（莱里克·安德教授）的实验室做 DNA 实验。对任何一条 DNA strand（链状 DNA 分子）——即一串 nucleotide（核苷酸），取值为 A、C、G 或 T——做过实验之后，实验室会把它切成若干段，以便其中任何有用的 protein marker（蛋白质标记）都能用于后续实验。Ander 的实验室编好了一张已知蛋白质标记的清单 $P$，其中每个蛋白质标记都对应一条长度至多 $k$ 个核苷酸的序列。对一条 DNA 链 $S$ 的一个 division（切分）是一个有序序列 $D = (d_1, \dots, d_m)$，每一项都是 DNA 链，且把 $D$ 按序 concatenation（拼接）起来正好得到 $S$。一个切分 $D$ 的 value（价值）是 $D$ 中那些作为蛋白质标记出现在 $P$ 里的 DNA 链的条数。给定一条 DNA 链 $S$ 与蛋白质标记的集合 $P$，描述一个 $O(k(|P| + k|S|))$ 时间的 algorithm（算法），求出 $S$ 的所有切分中可能的最大价值。
 
 > <span style="color:#7f8c8d;">〔原抽取串：`D = (d1, . . . , dm)`。下标在文字层丢失，按数学意义重建为 $d_1, \dots, d_m$。〕</span>
 
