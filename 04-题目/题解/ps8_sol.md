@@ -271,9 +271,9 @@ Kimmy Jerk（金米·杰克）是 USS Exitcost（「出局成本」号）的 cap
 >
 > 第一步，扫描这 $O(m^2 n)$ 份长度至多为 $m$ 的 uncorrupted logs（未损坏日志），把每个 word（词）$w$ 插入一张 hash table（哈希表）$H$，让它映射到 frequency（频次）$f(w)$。具体来说，若 $w$ 不在 $H$ 中出现，就把 $w$ 加入 $H$ 并映射到 $1$；若 $w$ 已在 $H$ 中出现，就把映射到的值加 $1$。这一过程直接算出所有出现在 $L_u$ 中任何一份 log（日志）里的 word（词）的 $f(w)$，期望时间为 $O(m^3 n)$，因为对每个 word（词）做 hash（散列）的时间与其长度成正比。
 >
-> 第二步，我们用 dynamic programming（动态规划）算出 $L_c$ 中每份 log（日志）$\ell_i$ 的一个 restoration（复原），期望时间 $O(m^3)$，于是总的期望 running time（运行时间）为 $O(m^3 n)$，它关于 input size（输入规模）是 polynomial（多项式）的（输入中至少有 $(nm)$ 个字符）。
+> 第二步，我们用 dynamic programming（动态规划）算出 $L_c$ 中每份 log（日志）$\ell_i$ 的一个 restoration（复原），期望时间 $O(m^3)$，于是总的期望 running time（运行时间）为 $O(m^3 n)$，它关于 input size（输入规模）是 polynomial（多项式）的（输入中至少有 $\Omega(nm)$ 个字符）。
 >
-> 〔原抽取串：末句作 `there are at least (nm) characters in the input`；按前文的输入规模，$L_u$ 有 $O(m^2 n)$ 份长度至多 $m$ 的 log（日志），字符数下界实际为 $O(m^3 n)$ 量级，原文写 $(nm)$ 疑为笔误，此处照原文保留并标出〕
+> 〔原文作 `there are at least Ω(nm) characters in the input`（$\Omega$ 在纯文本抽取里被丢掉，本处按页面视觉核对恢复）。复核结论：这不是笔误，而是一个偏弱但够用的下界 —— 把 $m$ 与 $n$ 都当作输入自带的尺寸参数（$m, n \le |input|$），配合 $mn \le |input|$ 即得 $m^3 n \le |input|^3$，多项式性成立；更紧的记账见本问译注：$L_u$ 的 $O(m^2 n)$ 份日志在最坏情形下本身就贡献 $\Theta(m^3 n)$ 个字符〕
 >
 > **1. Subproblems（子问题）**
 >

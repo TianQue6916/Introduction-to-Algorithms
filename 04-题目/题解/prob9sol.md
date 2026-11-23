@@ -5,7 +5,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 
 ## <span style="color:#2471a3;">**[session]**</span> <span style="color:#c0392b">Problem Session 9 Solutions（习题课 9 解答）</span>
 
-> <span style="color:#7f8c8d;">MIT 6.006 Spring 2020, Problem Session 9 Solutions（习题课 9 官方解答）· 主题：dynamic programming（动态规划）· 本文件只含五道题的官方解法，逐条照官方 PDF 的 SRTBOT 六步译出；题面见同目录的作业文件，唯一例外是 9-5 的 (a)(b) 小问——官方 PDF 第 5–6 页把它们重印在解答里，译文照原样保留</span>
+> <span style="color:#7f8c8d;">MIT 6.006 Spring 2020, Problem Session 9 Solutions（习题课 9 官方解答）· 主题：dynamic programming（动态规划）· 本文件只含五道题的官方解法，逐条照官方 PDF 的 SRTBOT 六步译出；题面见作业文件 `04-题目/作业/prob9.md`，唯一例外是 9-5 的 (a)(b) 小问——官方 PDF 第 5–6 页把它们重印在解答里，译文照原样保留</span>
 
 这份解答按官方 Problem Session 9 的原样给出：每道题一套 SRTBOT 骨架，依次是 1\. Subproblems（子问题）、2\. Relate（关联）、3\. Topo. Order（拓扑序）、4\. Base（基例）、5\. Original（原问题）、6\. Time（时间分析）。五道题各自压住dynamic programming（动态规划）这条流水线上的一处不同关节：9-1 与 9-2 压住「状态里的资源维怎么摆」，9-3 压住「把子串判定外包给 hash table（哈希表）」，9-4 压住「区间型子问题与最坏情形取 $\max$」，9-5 压住「状态是一整个bitmask（位掩码）时怎么还保持线性于 $n$ 的拓扑序」。
 
