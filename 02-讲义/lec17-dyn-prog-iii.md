@@ -48,6 +48,25 @@ $\sum_{x \in X} \text{work}(x)$，或若对所有 $x \in X$ 都有 $\text{work}(
 
 - $\text{work}(x)$ 度量递推中的非递归工作量；递归调用视为 $O(1)$ 时间
 
+<!-- 并自 LNotes_17（v1 紧凑版）：L10-L26 -->
+1. Subproblem definition：subproblem $x \in X$。
+   - 用文字、以 parameters 的形式描述一个 subproblem 的含义。
+   - 常常取 input 的 subsets：序列的 prefixes、suffixes、contiguous substrings。
+   - 常常把多个 input 上的可能 subsets 相乘。
+   - 常常记录 partial state：通过递增某些 auxiliary variables 来增加 subproblems。
+2. Relate subproblem solutions recursively：$x(i) = f(x(j), \dots)$，其中 $j < i$（可有一个或多个）。
+   - 找出一个关于 subproblem solution 的问题：只要知道它的答案，就能把该 subproblem reduce 到更小的 subproblem(s)。
+   - 对该问题的所有可能答案做 local brute-force。
+3. Topological order：论证 relation 无环、subproblems 构成 DAG。
+4. Base cases：
+   - 对所有（可达的）独立 subproblems 给出解，即 relation 失效处。
+5. Original problem：
+   - 说明如何由 subproblem(s) 的解算出 original problem 的解。
+   - 可能要用 parent pointers 还原真正的 solution，而不仅是 objective function 的值。
+6. Time analysis：
+   - $\sum_{x \in X} \text{work}(x)$；若对所有 $x \in X$ 有 $\text{work}(x) = O(W)$，则为 $|X| \cdot O(W)$。
+   - $\text{work}(x)$ 度量 relation 中的 nonrecursive work；把 recursions 视为花费 $O(1)$ 时间。
+
 ### <span style="color:#2471a3;">**[recall]**</span> <span style="color:#c0392b">Recall: DAG Shortest Paths（回顾：DAG 最短路径，L15）</span>
 
 - Subproblems（子问题）：对所有 $v \in V$，求 $\delta(s, v)$
@@ -85,11 +104,14 @@ $\sum_{x \in X} \text{work}(x)$，或若对所有 $x \in X$ 都有 $\text{work}(
 >
 > 三列乘三行共 $(|V|+1)\cdot|V| = 12$ 个子问题。同一个图在 L15 的 DAG shortest paths（DAG 最短路径）里只有 3 个子问题，代价是不许有环。12 与 3 的差，就是「人为造无环」付的存储价。
 >
-> 跨课程连接有两处。其一是 CSAPP 第 6 章的多级存储层次：L1 未命中问 L2，L2 未命中问 L3 与主存，每一级只向下级要数，绝不横向互问——这与「第 $k$ 层只依赖第 $k-1$ 层」结构同构，把它读成同一张分层依赖图毫无违和。区别在动机：cache（高速缓存）复制数据是为了让平均访问延迟贴近最快一级，是硬件对 locality（局部性）的自动利用；这里复制状态是为了把环掰直、让 topological order（拓扑序，即 6.042J 图论里 DAG 顶点的线性排序）存在，是算法设计者手工付的存储代价。其二是 6.042J 的 topological order：那里的拓扑序是图给定之后「算出来」的，需要对图跑排序；这里的拓扑序是「按 $k$ 递增」直接指定的，先有次序再有依赖图，一个排序算法都不用跑。
+> 跨课程连接有两处。其一是 CSAPP 第 6 章的多级存储层次：L1 未命中问 L2，L2 未命中问 L3 与主存，每一级只向下级要数，绝不横向互问——这与「第 $k$ 层只依赖第 $k-1$ 层」结构同构，把它读成同一张分层依赖图毫无违和。区别在动机：cache（高速缓存）复制数据是为了让平均访问延迟贴近最快一级，是硬件对 locality（局部性）的自动利用；这里复制状态是为了把环掰直、让 topological order（拓扑序，即 6.042J 图论里 DAG 顶点的线性排序）存在，是算法设计者手工付的存储代价。其二是 6.042J 的 topological order（拓扑序）：那里的拓扑序是图给定之后「算出来」的，需要对图跑排序；这里的拓扑序是「按 $k$ 递增」直接指定的，先有次序再有依赖图，一个排序算法都不用跑。
 >
 > 与 6.046J 的框架对照着看，会发现两边是同一件事的两种切法。CLRS §15.3 把 DP 拆成四步：刻画最优解结构、递归定义最优值、自底向上计算、构造最优解；SRT BOT 是六步，多出的两处正是它的取舍——把「拓扑序」单列成一步，把「时间分析」单列成一步。多列拓扑序，是因为讲义把「递推无环」当作必须显式论证的义务，而书里把它藏在「自底向上」的遍历次序里，写代码时想不起来就是死循环；多列时间分析，是因为讲义要你按「子问题数 × 每个子问题的工作量」现算，而书里把它放在子问题图一节统一处理。换句话说，SRT BOT 不是另一套方法，是把 CLRS 里隐含的两条检查项提到了台面上。
 >
 > 一句话收束：subproblem expansion（子问题扩展）不是四招，是一招——缺什么就让什么成为坐标，只要新坐标的取值范围是输入的 polynomial（多项式）函数。下一节的 Bellman-Ford 是这招的第一帧慢镜头。
+
+<!-- 并自 LNotes_17（v1 紧凑版）：L30 -->
+- Subproblems：所有 $v \in V$ 的 $\delta(s, v)$。
 
 ---
 
@@ -168,6 +190,19 @@ $\sum_{x \in X} \text{work}(x)$，或若对所有 $x \in X$ 都有 $\text{work}(
 > 一个常用优化顺带说清：若某一轮完全没有更新，就说明已经收敛，可以提前退出。此时实际轮数等于「所有最短路径里最多的边数」$l$，复杂度从 $O(VE)$ 降到 $O(lE)$。分层表天然支持这个判断——只需比较第 $k$ 层与第 $k-1$ 层是否逐项相同，不必额外记账；而原地版本要靠一个布尔标记，因为改在同一张表上看不出「这轮动没动过」。
 >
 > 顺带把名字说清，免得被术语唬住。dynamic（动态）与 programming（规划）都不是计算机意义上的词：1950 年秋 Bellman 在 RAND 公司要给多阶段决策过程起名，担心当时的国防部长 Wilson 反感 research（研究）一词，就挑了 planning 的替代词 programming。🎥 *Demaine*："Mostly because it sounded cool, and he was trying to impress government agencies giving him grants."（翻译：主要是因为它听起来很酷，他想打动给他拨款的政府机构。） 算法的实质就是上面那一层摊开，与名字无关。
+
+<!-- 并自 LNotes_17（v1 紧凑版）：L43, L45-L46, L50, L59-L60, L64-L66, L71, L78 -->
+- 扩张 subproblems 以加入信息，使结构变成 acyclic（无环）！
+- $\delta_k(s, v)$ = 从 $s$ 到 $v$、使用至多 $k$ 条 edges 的 shortest path 的 weight。
+- 其中 $v \in V$，$0 \le k \le |V|$。
+- 猜从 $s$ 到 $v$ 的 shortest path 上的最后一条 edge $(u, v)$。
+- $\delta_0(s, s) = 0$；对 $v \ne s$ 有 $\delta_0(s, v) = \infty$（没有 edges）。
+- （画出 subproblem graph。）
+- 若存在有限的 shortest path，则 $\delta(s, v) = \delta_{|V|-1}(s, v)$。
+- 否则某个 $\delta_{|V|}(s, v) < \delta_{|V|-1}(s, v)$，说明 path 含 negative-weight cycle。
+- 可以记录 parent pointers，指向使 recurrence 取到最小的那个 subproblem。
+- subproblem $\delta_k(s, v)$ 的 work：$O(\deg_{in}(v))$。
+- 这不就是 Bellman-Ford 吗！（只是计算顺序略有不同。）
 
 ---
 
@@ -265,6 +300,18 @@ x(u, v, k) = \min\{x(u, k, k-1) + x(k, v, k-1), \ x(u, v, k-1)\}
 >
 > 与 Johnson 算法的分工也顺带说清：Johnson 先跑一遍 Bellman-Ford 重赋权、再跑 $|V|$ 遍 Dijkstra，稀疏图更快；Floyd–Warshall 不在乎负权边、只在稠密图 $E=\Theta(V^2)$ 时才与 Johnson 同阶，但它的三重循环几乎无分支，常数极小。选哪个只看 $E$ 与 $V^2$ 的比。
 
+<!-- 并自 LNotes_17（v1 紧凑版）：L82-L86, L90-L91, L96, L110, L117 -->
+- 可以像 Bellman–Ford 那样定义 subproblems：$\delta_k(u, v)$ = 从 $u$ 到 $v$、使用至多 $k$ 条 edges 的 path 的最小 weight。
+- 得到的运行时间是 $|V|$ 次 Bellman–Ford，即 $O(|V|^2 \cdot |E|) = O(|V|^4)$。
+- 从 L14 已知更好的 algorithm：Johnson 达到 $O(|V|^2 \log |V| + |V| \cdot |E|) = O(|V|^3)$。
+- 用一个简单的 dynamic program —— 称为 Floyd–Warshall —— 也能达到 $\Theta(|V|^3)$ 运行时间（对 dense graphs 与 Johnson 相当）。
+- 给 vertices 编号，使 $V = \{1, 2, \dots, |V|\}$。
+- $d(u, v, k)$ = 从 $u$ 到 $v$、只使用 $\{1, 2, \dots, k\} \cup \{u, v\}$ 中 vertices 的 path 的最小 weight。
+- 其中 $u, v \in V$，$1 \le k \le |V|$。
+- 只有 constant branching（常数分支）！不再需要猜前一个 vertex / edge。
+- 对所有 $u, v \in V$ 取 $x(u, v, |V|)$。
+- 每个 subproblem 只有常数个 dependencies，这把 running time 中的 $O(|E|)$ 因子降到了 $O(|V|)$。
+
 ---
 
 ## <span style="color:#2471a3;">**[section]**</span> <span style="color:#c0392b">Arithmetic Parenthesization（算术表达式括号化）</span>
@@ -328,6 +375,21 @@ x(u, v, k) = \min\{x(u, k, k-1) + x(k, v, k-1), \ x(u, v, k-1)\}
 > 另一个工程后果：父指针要存两份。目标只取 max，但最优路径完全可能在某一层走 min 分支（上面 $k=1$ 那一步就是），所以 $\min$ 与 $\max$ 各留一个切分点下标；回溯时从根按 max 方向走，到每一层再按实际用到的是哪一侧跳。少存一份，就只能还原出目标值而还原不出括号方案——这正是讲义第 5 步强调「存储两个 parent pointers」的原因，它构成一棵 binary tree（二叉树），每个内部结点对应一个最外层切分点。
 >
 > 还要划清一个界线，免得把双值当成区间 DP 的标配。CLRS §15.2 的 matrix-chain multiplication（矩阵链乘法）骨架与这里完全同构——区间子问题、猜最后一个切分点、$O(n^3)$——但它的代价是标量乘法次数，非负、按加法累加，单调，所以只需一个值。可见双值不是「区间 DP 的要求」，而是「运算不保序」的要求：先看算子在负数上会不会翻转顺序，翻转才付这两倍价钱。
+
+<!-- 并自 LNotes_17（v1 紧凑版）：L121-L122, L124, L129-L131, L135-L136, L140, L144, L149, L153-L154 -->
+- Input：arithmetic expression（算术表达式）$a_0 \ast_1 a_1 \ast_2 a_2 \cdots \ast_{n-1} a_{n-1}$，其中每个 $a_i$ 是 integer，每个 $\ast_i \in \{+, \times\}$。
+- Output：括号加在哪里，才能使表达式的求值最大。
+- 允许 negative integers（负整数）！
+- 只需对每个 subarray 取最大就够了吗？不够！$(-3) \times (-3) = 9 > (-2) \times (-2) = 4$。
+- $x(i, j, \text{opt})$ = 对 $a_i \ast_{i+1} \cdots \ast_{j-1} a_{j-1}$ 加括号所能得到的 opt 值。
+- 其中 $0 \le i < j \le n$，$\text{opt} \in \{\min, \max\}$。
+- 猜最外层括号的位置 / 最后求值的那个 operation。
+- $x(i, j, \text{opt}) = \text{opt}\bigl\{x(i, k, \text{opt}') \ast_k x(k, j, \text{opt}'') \mid i < k < j;\ \text{opt}', \text{opt}'' \in \{\min, \max\}\bigr\}$。
+- 按 $j - i$ 递增：subproblem $x(i, j, \text{opt})$ 只依赖 $j - i$ 严格更小的 subproblems。
+- $x(i, i + 1, \text{opt}) = a_i$：只剩一个数，没有 operations 可做了！
+- 存 parent pointers（两个！）以找出 parenthesization（它构成一棵 binary tree！）。
+- subproblems 个数：少于 $n \cdot n \cdot 2 = O(n^2)$。
+- 每个 subproblem 的 work：$O(n) \cdot 2 \cdot 2 = O(n)$。
 
 ---
 
@@ -401,6 +463,22 @@ x(u, v, k) = \min\{x(u, k, k-1) + x(k, v, k-1), \ x(u, v, k-1)\}
 >
 > 与 L16 的 LIS 第一次失败对照着看也成立：那里 $x(i)$ 只存「以 $i$ 结尾的最优长度」，转移却要比较 $a_j<a_i$ 的所有 $j$，缺的是「上一个下标」这个状态；结构上同样是「被 min 或 max 压掉的信息正是转移需要的」。所以这条模板可以记成一句话：**转移里出现问号，就把问号对应的量变成下标**。最后原问题 $\min_f x(0,f)$ 把 $f$ 解绑，正对应「递推设约束、原问题解约束」这条分工。
 
+<!-- 并自 LNotes_17（v1 紧凑版）：L159, L161-L164, L173, L178, L181-L182, L189-L190, L195, L207, L214 -->
+- 给定 $n$ 个单音组成的序列 $t_0, t_1, \dots, t_{n-1}$，用右手弹奏（之后会推广到多个音与双手）。
+- 给定难度度量 $d(t, f, t', f')$：从「用 finger $f$ 弹 note $t$」转到「用 finger $f'$ 弹 note $t'$」的难度。
+  - 通常是各种难度的 penalty（惩罚）之和，例如：
+  - $1 < f < f'$ 且 $t > t'$ 是不舒服的。
+  - Legato（连奏、平滑）要求 $t \ne t'$（否则 penalty 无限大）。
+- $x(i)$ = 弹奏 notes $t_i, t_{i+1}, \dots, t_{n-1}$ 的最小总难度。
+- $x(i) = \min\{x(i + 1) + d(t_i, f, t_{i+1}, \text{?}) \mid 1 \le f \le F\}$。
+- 但不同的起手 finger 会同时影响 $x(i + 1)$ 与 $d(t_i, f, t_{i+1}, \text{?})$，可能一好一坏。
+- 需要一张表，把起手 fingers 映射到 $x(i + 1)$ 的 optimal solutions。
+- $x(i, f)$ = 在 note $t_i$ 上以 finger $f$ 起手、弹奏 notes $t_i, t_{i+1}, \dots, t_{n-1}$ 的最小总难度。
+- 其中 $0 \le i < n$，$1 \le f \le F$。
+- $x(i, f) = \min\{x(i + 1, f') + d(t_i, f, t_{i+1}, f') \mid 1 \le f' \le F\}$。
+- $\min\{x(0, f) \mid 1 \le f \le F\}$。
+- 与不同 notes 的个数无关！
+
 ---
 
 ## <span style="color:#2471a3;">**[section]**</span> <span style="color:#c0392b">Guitar Fingering（吉他指法）</span>
@@ -409,6 +487,10 @@ x(u, v, k) = \min\{x(u, k, k-1) + x(k, v, k-1), \ x(u, v, k-1)\}
 - 把「finger（手指）」重新定义为 tuple（元组）「(弹该音符的手指, 弹该音符的弦)」
 - 整个算法中，$F$ 被替换为 $F \cdot S$
 - 运行时间因此为 $\Theta(n \cdot F^2 \cdot S^2)$
+
+<!-- 并自 LNotes_17（v1 紧凑版）：L218-L219 -->
+- 同一个 note 最多有 $S$ 种弹法（$S$ = strings 的数量）。
+- 把 “finger” 重定义为 tuple（弹该 note 的 finger，弹该 note 的 string）。
 
 ## <span style="color:#2471a3;">**[section]**</span> <span style="color:#c0392b">Multiple Notes at Once（同时多个音符）</span>
 
@@ -458,6 +540,10 @@ x(u, v, k) = \min\{x(u, k, k-1) + x(k, v, k-1), \ x(u, v, k-1)\}
 >
 > 最后把名字的来历收在这里，作为对「为什么叫动态规划」的一次清算。1950 年秋 Bellman 在 RAND 公司要给多阶段决策方法起名，担心当时的国防部长 Wilson 反感 research（研究）一词，于是挑了 planning 的替代词 programming；dynamic（动态）取自方法本身随时间推进的形态。名字是为争取经费挑的，机制是上面这张乘法表。
 
+<!-- 并自 LNotes_17（v1 紧凑版）：L226-L227 -->
+- 给定更大的 transition difficulty function $d(t, f, t', f')$。
+- Goal：给出指法 $f_i : t_i \to \{1, 2, \dots, F\}$，说明每个 note 怎么按（对吉他还要说明用哪根 string），使 $\sum_{i=1}^{n-1} d(t_{i-1}, f_{i-1}, t_i, f_i)$ 最小。
+
 ## <span style="color:#2471a3;">**[section]**</span> <span style="color:#c0392b">Video Game Applications（电子游戏应用）</span>
 
 - **Guitar Hero / Rock Band（吉他英雄 / 摇滚乐队）**
@@ -466,6 +552,10 @@ x(u, v, k) = \min\{x(u, k, k-1) + x(k, v, k-1), \ x(u, v, k-1)\}
   - $F = 2$（两只脚）
   - $T = 2$（同时至多两个音符）
   - Exercise（练习）：处理持续音符——把「每只脚的位置」（在箭头上还是中间）作为后缀子问题的附加状态
+
+<!-- 并自 LNotes_17（v1 紧凑版）：L240, L243 -->
+- Dance Dance Revolution：
+  - Exercise：处理 sustained notes（持续音），把「每只脚在哪里」（在某个箭头上，或在中间）作为额外状态加入 suffix subproblems。
 
 ---
 
