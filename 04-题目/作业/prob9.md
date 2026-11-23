@@ -53,7 +53,7 @@ Problem Session 2 里那片 Porkland（猪肉国）的猪，决定沿着南边�
 
 Porkland 南边国界的地面高低不平，不过猪们已经把国界上每一平方米的地都整平到整数米的 elevation（高程）。称一个 border plan（边界规划）为一个 $n \times k$ 的 array（数组）$B$，它描述的是墙还没砌起来时国界的模样。$B[j][i]$ 对应的是这样一格 cubic meter（立方米格）：它的顶面在高程 $k - j$ 处，位于沿国界方向第 $i$ 米处。若这一格是空的、必须被石头盖住，则 $B[j][i]$ 为 `'.'`；若这一格里是 dirt（泥土）、因而本就不该被盖住，则 $B[j][i]$ 为 `'#'`。$B$ 具有这样的性质：若 $B[j][i]$ 被泥土占据，则它下面的每一格 $B[t][i]$ 也都被泥土占据（$t \in \{j, \dots, k - 1\}$）；并且每一列最上面那一格 $B[0][i]$ 初始都是空的。下面是 $n = 10$、$k = 5$ 时一个 $B$ 的例子。
 
-> <span style="color:#7f8c8d;">〔原抽取串：`an n � k array B`、`for t  {j, . . . , k - 1}`。`×` 与 `∈` 在文字层均丢失，按数学意义重建为 $n \times k$ 与 $t \in \{j, \dots, k-1\}$。〕</span>
+> <span style="color:#7f8c8d;">〔原抽取串：`an n � k array B`、`for t  {j, . . . , k - 1}`。`×` 与 `∈` 在文字层均未正确进入（前者被抽成非法字节、后者直接消失），按数学意义重建为 $n \times k$ 与 $t \in \{j, \dots, k-1\}$。〕</span>
 
 向边界规划 $B$ 中摆放石头的一次 placement（摆放）是一组 placement triple（摆放三元组）：
 
