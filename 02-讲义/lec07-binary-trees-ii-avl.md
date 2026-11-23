@@ -121,6 +121,9 @@ F(h) = 1 + F(h-1) + F(h-2) \ge 2F(h-2)
 
 > **递推式解自检**：代端点验证——$F(0)=1$，$F(1)=2$，$F(2)=1+2+1=4 \ge 2F(0)=2$ ✓；$F(3)=1+4+2=7 \ge 2F(1)=4$ ✓。下界 $2^{h/2}$ 在 $h=2$ 时给 $2^1=2 \le 4$ ✓。两段衔接正确。
 
+<!-- 并自 LNotes_07（v1 紧凑版） -->
+- 这个递推的含义值得点明：要让高度为 $h$ 而 node 尽量少，两个子树的高度只能是 $h-1$ 与 $h-2$（否则违反 skew $\le 1$），于是出现类似 Fibonacci 的递推，每两层至少翻一倍，这才给出 $2^{h/2}$。
+
 - 假设对一棵高度平衡的树添加或删除叶子，导致失衡（imbalance）：
   - 只有**该叶子的祖先**的子树高度或 skew 发生了变化。
   - 高度最多只变了 $\pm 1$，所以 skew 的绝对值仍 $\le 2$。
@@ -251,12 +254,18 @@ F(h) = 1 + F(h-1) + F(h-2) \ge 2F(h-2)
 - 子树大小是一种**子树属性**，因此可以用扩充来维护：
   - 由孩子的大小相加再加 1 即可算出。
 
+<!-- 并自 LNotes_07（v1 紧凑版） -->
+- 关键在于：rotation 会改动 nodes 的父子关系，因此 rotation 中被重连的那几个 node 都要重算 size，这与上一节「重连 nodes 在 $O(1)$ 更新」是同一件事。
+
 ---
 
 ## Conclusion（结论）
 
 - **Set（集合）AVL 树**：除 build 为 $O(n\log n)$、iter 为 $O(n)$ 外，所有集合操作均为 $O(\log n)$。
 - **Sequence（序列）AVL 树**：除 build 与 iter 为 $O(n)$ 外，所有序列操作均为 $O(\log n)$。
+
+<!-- 并自 LNotes_07（v1 紧凑版） -->
+- 两个 interface 的 Goal 行到这里全部达成。整条主线可以概括成：pointer-based 结构给了 worst-case 保证，binary tree 给了 traversal order 这个「免费的序」，AVL 的 skew 约束把 height 钉死在 $O(\log n)$。
 
 ---
 
@@ -267,6 +276,9 @@ F(h) = 1 + F(h-1) + F(h-2) \ge 2F(h-2)
 - **AVL Sort（AVL 排序）** 是一种新的 $O(n\log n)$ 时间排序算法。
 
 > **AVL Sort 复杂度（递推式）**：把 $n$ 个元素依次插入一棵 AVL 树，每次插入 $O(\log n)$，共 $n$ 次，总时间 $T_{\text{build}} = \sum_{i=1}^{n} O(\log i) = O(n\log n)$；再中序遍历 $O(n)$ 输出即得有序序列。故整体 $O(n\log n)$。
+
+<!-- 并自 LNotes_07（v1 紧凑版） -->
+- 注意这里没有矛盾：Lecture 5 已经证明 comparison sort 的下界是 $\Omega(n\log n)$，AVL Sort 恰好打到这个下界，说明它是 comparison model 下最优的那一类。
 
 ---
 

@@ -59,6 +59,21 @@ The 9 Set operations form four tiers, and the Order tier (4 operations) is the l
   - 更快地找 min/max（就在数组的第一个 / 最后一个位置）；
   - 用**binary search（二分查找）** 更快地查找：$O(\log n)$。
 
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 14–38 行 · 原 v1 的 Set Interface 四层（Container / Static / Dynamic / Order）逐操作说明，及「用 array 实现 set」 -->
+- `build(X)`：给定一个 iterable $X$，用 $X$ 里的元素 build 出这个 set。
+- `len()`：返回当前 stored items（已存元素）的个数。
+- `find(k)`：返回 key 等于 $k$ 的那个 stored item。
+- `insert(x)`：把 $x$ 加进 set；若已存在 key 为 `x.key` 的 item，则替换它。
+- `delete(k)`：把 key 为 $k$ 的 item 从 set 中移除并返回它。
+- `iter_ord()`：按 key order（键序）逐个返回 stored items。
+- `find_min()`：返回 key 最小的 stored item。
+- `find_max()`：返回 key 最大的 stored item。
+- `find_next(k)`：返回 key 严格大于 $k$ 的那些 item 中 key 最小的一个。
+- `find_prev(k)`：返回 key 严格小于 $k$ 的那些 item 中 key 最大的一个。
+- 把 items 以 arbitrary order（任意顺序）放进一个 array，就能实现一个 set——只是这个 set 不太 efficient。
+- 若把 stored items 按 key 递增 sorted（排好序），能换来两件好处：
+  - `find_min` / `find_max` 变快：直接取 array 的第一个 / 最后一个 index。
+
 ### 两种实现的复杂度对比
 
 | 数据结构 | build(X) | find(k) | insert(x) | delete(k) | find_min() | find_max() | find_prev(k) | find_next(k) |
@@ -79,6 +94,9 @@ Sorting the array drops `find` from $n$ to $\log n$ and `find_min` / `find_max` 
 
 ---
 
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 50 行 · 原 v1 section「## 操作成本对照表」的收尾提问 -->
+- 但问题来了：怎么**高效地**构造一个 sorted array？这正好就是本节的主题。
+
 ## 2. Sorting（排序）
 
 - 有了有序数组，我们就能借助二分查找，做出一个高效的集合数据结构。
@@ -89,6 +107,15 @@ Sorting the array drops `find` from $n$ to $\log n$ and `find_min` / `find_max` 
 - 例子：$[8, 2, 4, 9, 3] \to [2, 3, 4, 8, 9]$。
 - 一个排序是**destructive（破坏性的）**，如果它直接覆盖 $A$（而不是另建一个新数组 $B$ 来存有序版本）。
 - 一个排序是**in place（原地的）**，如果它只使用 $O(1)$ 额外空间（原地蕴含破坏性：in place ⊆ destructive）。
+
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 54–62 行 · 原 v1 section「## Sorting（排序）」 -->
+- 有了 sorted array，我们就能借 binary search 造出一个 efficient 的 set data structure。
+- Input：一个含 $n$ 个 number 的 (static) array $A$。
+- Output：一个 (static) array $B$，它是 $A$ 的一个 sorted permutation（有序置换）。
+  - Permutation（置换）：元素相同、顺序不同的一个 array。
+- 若一个 sort 直接覆写 $A$（而不是另造一个新 array $B$ 作为 $A$ 的有序版），称它是 destructive（破坏性的）。
+- 若一个 sort 只用 $O(1)$ extra space（额外空间），称它是 in place（原地）的。
+  - 注意包含关系：in place $\subseteq$ destructive。原地必然破坏输入，但破坏性未必原地。
 
 ### Permutation Sort（全排列排序）
 
@@ -114,6 +141,14 @@ def permutation_sort(A):          # 对 A 排序
 - **正确性**：靠穷举（case analysis）——把所有可能性都试一遍（暴力法 Brute Force），必然能覆盖到那个有序排列，故正确。
 - **运行时间**：$\Omega(n! \cdot n)$，这是**exponential（指数级）**的，慢到不可接受。结论：不能靠暴力，得找更聪明的排序。
 
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 66–80 行 · 原 v1 section「## Permutation Sort（置换排序）」 -->
+- $A$ 共有 $n!$ 个 permutations，其中至少有一个是 sorted 的。
+- 那就对每个 permutation 检查一遍是否 sorted，单次检查花 $\Theta(n)$。
+- 例子：$[2, 3, 1] \to \{[1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], [3,2,1]\}$。
+- permutation sort 的 analysis（分析）：
+  - Correctness（正确性）：由 case analysis（情形枚举）得出——把所有可能性都试一遍，即 Brute Force（暴力）。
+  - Running time（运行时间）：$\Omega(n! \cdot n)$，这是 exponential（指数级）的 :(
+
 ---
 
 ## 3. Solving Recurrences（解递推式）
@@ -125,6 +160,11 @@ def permutation_sort(A):          # 对 A 排序
 - **Master Theorem（主定理）**：一个公式，能直接解出大量常见递推式（详见 R03 讲义）。
 
 > 本讲后面会反复用前两种；主定理留到 recitation 展开。
+
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 86–88 行 · 原 v1 section「## Solving Recurrences（解递推式）」 -->
+- Substitution（代入法）：猜一个解，把代表函数代回 recurrence，验证等式成立。
+- Recurrence Tree（递推树）：画一棵树表示 recursive calls（递归调用），把各节点的 computation（计算量）求和。
+- Master Theorem（主定理）：一个能直接解一大批 recurrences 的公式（见 R03）。
 
 ---
 
@@ -157,6 +197,10 @@ def prefix_max(A, i):              # S(i)：返回 A[:i+1] 中最大值的下标
     return i                       # 基线：i = 0 时只有一个元素
 ```
 
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 92–93 行 · 原 v1 section「## Selection Sort（选择排序）」 -->
+- 在 prefix（前缀）$A[:i+1]$ 里找出一个最大的数，把它 swap（交换）到 $A[i]$。
+- 然后递归地对 prefix $A[:i]$ 排序。
+
 ### prefix_max 的复杂度分析
 
 - **基例**：当 $i = 0$，数组只有一个元素，最大值下标就是 $i$。
@@ -180,6 +224,13 @@ cn = \Theta(1) + c(n-1) \;\Longrightarrow\; cn = cn - c + \Theta(1) \;\Longright
 ```math
 \sum_{i=0}^{n-1} 1 = \Theta(n)
 ```
+
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 116–120 行 · 原 v1 section「### prefix_max 的 analysis」 -->
+- Base case（基础情形）：$i = 0$ 时 array 只有一个元素，最大值的 index 就是 $i$ 本身。
+- Induction（归纳步）：设对 $i$ 成立。$A[:i+1]$ 的最大值要么是 $A[:i]$ 的最大值，要么是 $A[i]$，两种情形都返回了正确的 index。
+- recurrence：$S(1) = \Theta(1)$，$S(n) = S(n-1) + \Theta(1)$。
+  - Substitution：设 $S(n) = \Theta(n)$，代回得 $cn = \Theta(1) + c(n-1)$，即 $c = \Theta(1)$，成立。
+  - Recurrence Tree：一条 $n$ 个节点的 chain（链），每节点 $\Theta(1)$ 工作量，于是 $\sum_{i=0}^{n-1} 1 = \Theta(n)$。
 
 ### selection_sort 的复杂度分析
 
@@ -209,6 +260,12 @@ cn^2 = cn^2 - 2cn + c + \Theta(n) \;\Longrightarrow\; c(2n - 1) = \Theta(n)
 \sum_{i=0}^{n-1} i = \frac{n(n-1)}{2} = \Theta(n^2)
 ```
 
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 124–128 行 · 原 v1 section「### selection_sort 的 analysis」 -->
+- Base case：$i = 0$ 时 array 只有一个元素，自然是 sorted。
+- Induction：设对 $i$ 成立。sorted output 的最后一个数必须是 array 里最大的数，而 algorithm 恰好把一个最大数放到了那里；剩下 $A[:i]$ 由 induction 保证 sorted。
+  - Substitution：设 $T(n) = \Theta(n^2)$，代回得 $cn^2 = \Theta(n) + c(n-1)^2$，即 $c(2n-1) = \Theta(n)$，成立。
+  - Recurrence Tree：一条 $n$ 个节点的 chain，第 $i$ 层工作量 $\Theta(i)$，于是 $\sum_{i=0}^{n-1} i = \Theta(n^2)$。
+
 ---
 
 ## 5. Insertion Sort（插入排序）
@@ -236,6 +293,10 @@ def insert_last(A, i):             # S(i)：假设 A[:i] 有序，使 A[:i+1] �
         insert_last(A, i - 1)      # S(i-1)：继续向前冒
 ```
 
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 132–133 行 · 原 v1 section「## Insertion Sort（插入排序）」 -->
+- 先递归地把 prefix $A[:i]$ 排好。
+- 再在「$A[:i]$ 已 sorted」这个假设下，通过 repeated swaps（反复交换）把 prefix $A[:i+1]$ 排好。
+
 ### insert_last 的复杂度分析
 
 - **基例**：当 $i = 0$，数组只有一个元素，天然有序。
@@ -247,6 +308,10 @@ S(1) = \Theta(1), \qquad S(n) = S(n-1) + \Theta(1) \;\Longrightarrow\; S(n) = \T
 ```
 
 （与 prefix_max 同型，代回即可得 $S(n) = \Theta(n)$。）
+
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 153–154 行 · 原 v1 section「### insert_last 的 analysis」 -->
+- Base case：$i = 0$ 时 array 只有一个元素，sorted。
+- Induction：设对 $i$ 成立。若 `A[i] >= A[i-1]`，整个 array 已 sorted；否则把最后两个元素 swap 之后，$A[:i]$ 由 induction 保证 sorted。
 
 ### insertion_sort 的复杂度分析
 
@@ -261,6 +326,10 @@ T(1) = \Theta(1), \qquad T(n) = T(n-1) + \Theta(n) \;\Longrightarrow\; T(n) = \T
 （与 selection sort 同型，代入法验证步骤完全一致，故 $T(n) = \Theta(n^2)$。）
 
 > **小结**：selection sort 与 insertion sort 都是 $\Theta(n^2)$，本质原因相同——每步递归都退化为「链式」结构（$T(n)=T(n-1)+\Theta(n)$），把问题只缩小 1。要突破平方，必须把问题「对半切」，引出归并排序。
+
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 159–160 行 · 原 v1 section「### insertion_sort 的 analysis」 -->
+- Base case：$i = 0$ 时 array 只有一个元素，sorted。
+- Induction：设对 $i$ 成立。由 induction，algorithm 把 $A[:i]$ 排好了；再由上面已证的 `insert_last`，剩余部分也被正确排好。
 
 ---
 
@@ -299,6 +368,10 @@ def merge(L, R, A, i, j, a, b):       # S(b-a = n)：把有序 L[:i]、R[:j] 归
 
 > 注意：这份讲义里的 `merge` 是「从后往前填」的写法——每次比较 $L$、$R$ 剩余前缀的**末位**，把较大的那个放到 $A$ 的末尾 $A[b-1]$，再递归向前。这与常见的「从前往后、双指针取较小者」方向相反，但逻辑等价（都是稳定地归并两个有序段）。
 
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 165–166 行 · 原 v1 section「## Merge Sort（归并排序）」 -->
+- 递归地把前半与后半各自排序（可以假设长度是二的幂）。
+- 再把两个 sorted 的 half（半段）merge（合并）成一个 sorted list，用的是 two finger algorithm（双指针算法）。
+
 ### merge 的复杂度分析
 
 - **基例**：当 $n = 0$，两个数组都为空，vacuously（空真）成立。
@@ -308,6 +381,10 @@ def merge(L, R, A, i, j, a, b):       # S(b-a = n)：把有序 L[:i]、R[:j] 归
 ```math
 S(0) = \Theta(1), \qquad S(n) = S(n-1) + \Theta(1) \;\Longrightarrow\; S(n) = \Theta(n)
 ```
+
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 196–197 行 · 原 v1 section「### merge 的 analysis」 -->
+- Base case：$n = 0$ 时两个 array 都是空，vacuously correct（空真成立）。
+- Induction：设对 $n$ 成立。`A[b-1]` 必须是 $L$、$R$ 两个 remaining prefix（剩余前缀）中的最大数；又因为它们各自 sorted，所以只要取各自最后一个元素中较大的那个就够；剩余部分由 induction 完成 merge。
 
 ### merge_sort 的复杂度分析
 
@@ -343,7 +420,30 @@ c\,n\log n = c\,n\log n - c\,n\log 2 + \Theta(n) \;\Longrightarrow\; c\,n\log 2 
 
 > **关键结论**：归并排序把「链式」的 $T(n)=T(n-1)+\Theta(n)$ 换成「二分」的 $T(n)=2T(n/2)+\Theta(n)$，复杂度从 $\Theta(n^2)$ 降到 $\Theta(n\log n)$。代价是归并需要 $O(n)$ 的辅助空间，所以它不是**原地（in place）** 排序。而这一 $\Theta(n\log n)$ 正是「基于比较的排序」的理论下限（comparison-based sorting lower bound），会在后续课程用决策树证明。
 
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 202–210 行 · 原 v1 section「### merge_sort 的 analysis」（含其后的 math 块） -->
+- Base case：$n = 1$ 时 array 只有一个元素，sorted。
+- Induction：设对所有 $k < n$ 成立。algorithm 由 induction 把两个更小的 half 排好，随后 `merge` 按上面已证的性质把它们合并成一个 sorted array。
+  - Substitution：猜 $T(n) = \Theta(n\log n)$，代回得 $cn\log n = \Theta(n) + 2c(n/2)\log(n/2)$，化简时用到 $\log 2 = 1$，最后 $cn\log 2 = \Theta(n)$，成立。
+  - Recurrence Tree：一棵 complete binary tree（完全二叉树），depth 为 $\log_2 n$，共 $n$ 个 leaf（叶子），第 $i$ 层有 $2^i$ 个节点、每节点 $O(n/2^i)$ 工作量，总计
+
+```math
+\sum_{i=0}^{\log_2 n} (2^i)\left(\frac{n}{2^i}\right) = \sum_{i=0}^{\log_2 n} n = \Theta(n\log n)
+```
+
 ---
+
+<!-- 并自 LNotes_03（v1 紧凑版）· 第 212–222 行 · 原 v1 section「## 四个 sort 的横向对照」（v2 无对应 section，整节并入，含表格） -->
+## 四个 sort 的横向对照
+
+| Algorithm | worst-case time | in place | stable | 核心机制 |
+|---|---|---|---|---|
+| Permutation Sort | $\Omega(n!\cdot n)$ | 否 | 否 | 枚举全部 permutations 后逐一验证 |
+| Selection Sort | $\Theta(n^2)$ | 是 | 否 | 每轮把 prefix 的最大值换到末尾 |
+| Insertion Sort | $\Theta(n^2)$ | 是 | 是 | 假定前半 sorted，反复 swap 塞入新元素 |
+| Merge Sort | $\Theta(n\log n)$ | 否（需 $O(n)$ 缓冲） | 是 | 分半递归 + two finger merge |
+
+- 这张表不是原文内容，是从前面四节的分析里汇总的；`stable`（稳定性）一列按各算法的构造直接读出：`merge` 中取 `L[i-1] > R[j-1]` 才取左边，相等时取右边，因此相等元素相对次序会翻转，这里按 Python 列表实现的通常版本记为不稳定，若改成 `>=` 则稳定。
+- Merge Sort 的 $O(n\log n)$ 是 comparison sort（比较排序）在 comparison model 下的最优上界，下界 $\Omega(n\log n)$ 由 decision tree（判定树）的高度给出，见后续讲义。
 
 ## 附：来源
 
