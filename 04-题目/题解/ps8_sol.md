@@ -249,7 +249,7 @@ pin（球瓶）至多被击倒一次，不过玩家可以选择不击倒某些 p
 
 ---
 
-<!-- page 4/7 -->
+<!-- page 5/7 -->
 ### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 8-4. Corrupt Chronicles（损坏的航海日志）</span>
 
 Kimmy Jerk（金米·杰克）是 USS Exitcost（「出局成本」号）的 captain（舰长），这艘 starship（星际飞船）的任务是探索新的世界。每天，Capt. Jerk（杰克舰长）都要往飞船的计算机上传一份 captain's log（舰长日志）：一个由至多 $m$ 个小写英文字母与空格构成的 string（字符串），其中日志里的一个 word（词）指的是任何不包含空格的 maximal substring（极大子串）。
