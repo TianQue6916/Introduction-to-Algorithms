@@ -30,6 +30,16 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
   这里的关键是 `delete_max()` 的返回值语义：它是「删除**并返回**」那个键最大的项。因此 `insert(delete_max())` 的完整意思是——先由 `delete_max()` 把最大项从队列中取出、**并把它的值交回给你**，随即 `insert` 再把这个返回值原样放回队列。净效果是队列内容不变，但你借这一步拿到了「最大项的值」，这恰好就是 `find_max()` 要返回的东西。换句话说，`delete_max()` 的返回值被当成了 `find_max()` 的输出，而 `insert` 的作用只是把被删的项归位、不破坏队列。所以「删了再放回」并非无意义的空操作：**删除不是目的，取出那个值才是**，插回只是为了让「没有真正少元素」的查询语义成立。需要强调的是，这只是说明 `find_max` 能由更基础的 `insert` 与 `delete_max` **复合出来**（正如 `build` 能由反复 `insert` 复合出来），并不代表实际会这样实现——它要真的删、再插，比直接实现的 `find_max` 多付出一倍代价，所以「可以实现」不等于「推荐这样实现」。
 
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- 目标：跟踪大量 items，并能快速访问 / 移除其中最重要的那个。
+  - 例子：带宽受限的 router（路由器），必须对某几类 message 优先处理。
+  - 例子：operating system kernel 里的 process scheduling（进程调度）。
+  - 例子：discrete-event simulation（离散事件模拟）——下一个发生的事件是哪个？
+  - 例子：graph algorithms（图算法，本课后半段会用到）。
+- 用 key = priority（优先级）给 items 排序，所以这是一个 Set interface，而非 Sequence interface。
+- 它只针对 Set operations 的一个特定子集做优化：
+- 通常只针对 max 或 min 之一做优化，而不是两者同时。
+
 ### 核心概念定义
 > **定义（priority queue，优先队列）**：一种集合型数据结构，每次操作只关心「键值最大（或最小）」的那个元素，支持插入、删除最大/最小元、查询最大/最小元。可判定标准：它暴露的是 `insert` / `delete_max`（或 `find_max`）这类「按优先级取元素」的接口，而不是「按下标随机访问」的接口。
 > **定义（interface，接口）**：一个数据结构对外承诺支持的一组操作（方法签名 + 各自的时间复杂度语义）。Set interface 只关心「元素是否在集合里、按键比较」，不关心元素间的先后次序；Sequence interface 才关心元素的顺序。这是贯穿 6.006 的分类视角。
@@ -59,6 +69,13 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 > 上表是打散后的原文表格重建。四行分别对应四种「优先队列排序」：动态数组 → **Selection Sort（选择排序）**；有序动态数组 → **Insertion Sort（插入排序）**；集合 AVL 树 → **AVL Sort（AVL 排序）**；而最后一行是我们要达成的目标——`build` $O(n)$、`insert`/`delete_max` 平摊 $O(\log n)$、总时间 $O(n\log n)$ 且原地（In-place），这正好是 **堆排序（Heap Sort）** 的性能。
 >
 > 表中 `(a)` 表示平摊（amortized）代价：动态数组 `insert` 靠扩容均摊为 $O(1)$，有序动态数组 `delete_max` 靠从尾部删为 $O(1)$。`n^2` 的来源：$n \cdot T_{\text{insert}} + n \cdot T_{\text{delete\_max}}$，对动态数组是 $n\cdot 1 + n\cdot n = O(n^2)$，对有序动态数组是 $n\cdot n + n\cdot 1 = O(n^2)$。
+
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- 任何 priority queue data structure 都能翻译成一个 sorting algorithm：
+  - `build(A)`，例如按 input order 一个个 `insert`。
+  - 反复 `delete_min()`（或 `delete_max()`），由此确定（逆序的）sorted order。
+- 所有难活在 data structure 内部完成。
+- 我们此前见过的很多 sorting algorithms 都能看成 priority queue sort：
 ---
 
 ## 3. Priority Queue: Set AVL Tree 用集合 AVL 树实现优先队列
@@ -70,12 +87,27 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - 有没有一个更简单、专为优先队列设计、并且是原地 $O(n\lg n)$ 排序的数据结构？
 - **有的——binary heap（二叉堆）和堆排序（heap sort）。**
 - 本质做法：**在一个 Sequence 数据结构（数组）之上实现一个 Set 数据结构**，用我们学过的二叉树知识。
+
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- 于是 priority queue sort 跑 $O(n\log n)$ 时间。
+  - 这（基本上）就是 Lecture 7 的 AVL Sort。
+- 但这个 data structure 太复杂，而且得到的 sort 不是 in-place 的。
+- 那么，有没有一个只服务 priority queue 的更简单结构，同时能给出 in-place 的 $O(n\lg n)$ sort？
+- 它的本质是：在一个 Sequence data structure（array）之上，借用我们已经学过的 binary tree 知识，去实现一个 Set data structure。
+
 ### Priority Queue: Array 用数组实现优先队列
 - 把元素存在一个**unordered（无序）动态数组**里。
 - `insert(x)`：把 x 追加到末尾，平摊 $O(1)$ 时间。
 - `delete_max()`：花 $O(n)$ 找最大，把它换到末尾再删掉。
 - `insert` 很快，但 `delete_max` 很慢。
 - 这种优先队列排序就是**选择排序**！（外加一些拷贝。）
+
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- 把 elements 存在一个 unordered dynamic array 里。
+- `insert(x)`：把 $x$ append 到末尾，amortized $O(1)$。
+- `delete_max()`：$O(n)$ 找出 max，把 max swap 到末尾再删掉。
+- 此时的 priority queue sort 就是 selection sort！（外加一些 copying）
+
 ### Priority Queue: Sorted Array 用有序数组实现优先队列
 - 把元素存在一个**sorted（有序）动态数组**里。
 - `insert(x)`：把 x 追加到末尾，再向下换到有序位置，$O(n)$ 时间。
@@ -83,6 +115,13 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - `delete_max` 很快，但 `insert` 很慢。
 - 这种优先队列排序就是**插入排序**！（外加一些拷贝。）
 - **能否在这两种「数组优先队列」的两个极端之间找到一个折中？**
+
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- 把 elements 存在一个 sorted dynamic array 里。
+- `insert(x)`：append 到末尾，再反复 swap 下移到 sorted position，$O(n)$。
+- `delete_max()`：从末尾删除，$O(1)$ amortized。
+- 此时的 priority queue sort 就是 insertion sort！（外加一些 copying）
+- 那么，能不能在这两个 array 极端之间找到一个折中？
 ---
 
 ## 4. Array as a Complete Binary Tree 把数组看成完全二叉树
@@ -107,6 +146,12 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 - $n$ 个项的数组，其「完全树视角」的高度是 $\lceil \lg n \rceil$，因此是一颗**balanced binary tree（平衡二叉树）**。
 
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- Idea：把 array 解释成一棵 complete binary tree（完全二叉树），第 $i$ 层最多有 $2^i$ 个 node，只有最大那一层的 nodes 是左对齐（left-aligned）的。
+- 等价说法：complete tree 是按 reading order（阅读序）密集填满的——从 root 到 leaves、从左到右。
+- 这是一个视角转换：arrays 与 complete binary trees 之间存在 bijection（双射）。
+- 从 complete tree 这个视角看，含 $n$ 个 item 的 array 的 height 是 $\lceil \lg n\rceil$，所以它就是一棵 balanced binary tree。
+
 ### Implicit Complete Tree 隐式完全树
 
 - 完全二叉树的结构可以是**implicit（隐式的）**，不必存指针。
@@ -118,6 +163,15 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 ```
 
 > 上面三式是打散后的公式重建。`left(i) = 2i+1`、`right(i) = 2i+2`、`parent(i) = (i-1)/2`（向下取整，原文的 $\lfloor \cdot \rfloor$ 与换行被 PDF 拆散，此处按「根为 0、左孩子 $2i+1$」的标准 0 基下标约定还原）。**自检**：代入 $i=0$，`left(0)=1`、`right(0)=2`，`parent(1)=⌊0/2⌋=0`、`parent(2)=⌊1/2⌋=0`，三者衔接一致——孩子 $1,2$ 的父正是根 $0$。
+
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- complete binary tree 的结构可以完全是 implicit（隐式）的，不必存 pointers。
+- root 在 index 0。
+- 用 index arithmetic（下标算术）就能算出邻居：
+  - `left(i) = 2i + 1`
+  - `right(i) = 2i + 2`
+  - `parent(i) = floor((i - 1) / 2)`
+- 这是本讲所有魔法的来源：**指针被下标算术替代了**，于是「树形结构」不花任何存储代价，而且父子关系可在 $O(1)$ 内算出。
 
 ---
 
@@ -133,6 +187,17 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
   - 归纳步：$\text{depth}(\text{parent}(j)) - \text{depth}(i) = d - 1 \lt  d$，由归纳假设得 $Q[i] \ge Q[\text{parent}(j)]$；
   - 再由 $\text{parent}(j)$ 处的最大堆性质得 $Q[\text{parent}(j)] \ge Q[j]$。
 - 特别地，最大元素在最大堆的根处。
+
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- Idea：让较大的 elements 待在 tree 中较高的位置，但只要求 locally（局部地）成立。
+- Max-heap（最大堆）就是「在所有 nodes 上都满足 max-heap property」的一个 array。
+- Claim：在一个 max-heap 中，每个 node $i$ 都满足：对 `subtree(i)` 里所有 nodes $j$ 有 $Q[i] \ge Q[j]$。
+- Proof：
+  - 对 $d = \mathrm{depth}(j) - \mathrm{depth}(i)$ 做 induction。
+  - Base case（基例）：$d = 0$ 意味着 $i = j$，于是 $Q[i] \ge Q[j]$（其实相等）。
+  - 因为 $\mathrm{depth}(\mathrm{parent}(j)) - \mathrm{depth}(i) = d-1 < d$，由 induction 得 $Q[i] \ge Q[\mathrm{parent}(j)]$。
+  - 又由 $\mathrm{parent}(j)$ 处的 Max-Heap Property 得 $Q[\mathrm{parent}(j)] \ge Q[j]$。
+- 特别地，max item 一定在 max-heap 的 root 处。
 
 ### 核心概念定义
 
@@ -150,6 +215,16 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - `max_heapify_up(i)`：与父节点交换，直到最大堆性质成立。
   - 检查 $Q[\text{parent}(i)] \ge Q[i]$ 是否成立（这是 $\text{parent}(i)$ 处最大堆性质的一部分）；
   - 若不成立，交换 $Q[i]$ 与 $Q[\text{parent}(i)]$，然后递归调用 `max_heapify_up(parent(i))`。
+
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- 花 amortized $O(1)$ 把新 item $x$ append 到 array 末尾，使它成为 reading order 里的下一个 leaf $i$。
+- `max_heapify_up(i)`：与 parent 反复 swap，直到满足 Max-Heap Property。
+  - 检查是否有 $Q[\mathrm{parent}(i)] \ge Q[i]$（这是 $\mathrm{parent}(i)$ 处 Max-Heap Property 的一部分）。
+  - 若不成立，就 swap $Q[i]$ 与 $Q[\mathrm{parent}(i)]$，然后递归 `max_heapify_up(parent(i))`。
+- Correctness：
+  - Max-Heap Property 保证所有 nodes $\ge$ 其 descendants，唯一可能被破坏的是 $Q[i]$ 可能大于它的某些 ancestors（除非 $i$ 就是 root，那就已经完事了）。
+  - 若需要 swap，同一个保证在把 $Q[i]$ 换成 $Q[\mathrm{parent}(i)]$ 之后依然成立。
+- Running time（运行时间）：tree 的 height，所以是 $\Theta(\log n)$！
 
 ### Pseudocode（伪代码）
 
@@ -196,6 +271,18 @@ T(n) = O(\log n) = \Theta(\log n)
 - `max_heapify_down(i)`：把根与较大的孩子交换，直到最大堆性质成立。
 - 检查 $Q[i] \ge Q[j]$ 是否对 $j \in \{\text{left}(i), \text{right}(i)\}$ 都成立（$i$ 处的最大堆性质）；
 - 若不成立，把 $Q[i]$ 与键最大的那个孩子 $Q[j]$（$j \in \{\text{left}(i), \text{right}(i)\}$）交换，然后递归调用 `max_heapify_down(j)`。
+
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- dynamic array 只能轻易移除最后一个 element，但 max key 在 tree 的 root 上。
+- 所以先把 root node $i = 0$ 的 item 与 heap array 里 node $n-1$ 的最后一个 item 交换。
+- `max_heapify_down(i)`：把 root 与更大的那个 child 反复 swap，直到满足 Max-Heap Property。
+  - 检查是否有 $Q[i] \ge Q[j]$ 对所有 $j \in \{\mathrm{left}(i), \mathrm{right}(i)\}$（即 $i$ 处的 Max-Heap Property）。
+  - 若不成立，就在 $\{\mathrm{left}(i), \mathrm{right}(i)\}$ 里挑 key 最大的那个 child $j$，swap $Q[i]$ 与 $Q[j]$，然后递归 `max_heapify_down(j)`。
+- Correctness：
+  - Max-Heap Property 保证所有 nodes $\ge$ 其 descendants，唯一可能被破坏的是 $Q[i]$ 可能小于它的某些 descendants（除非 $i$ 是 leaf，那就已经完事了）。
+  - 若需要 swap，同一个保证在把 $Q[i]$ 换成 $Q[j]$ 之后依然成立。
+- Running time（运行时间）：tree 的 height，所以是 $\Theta(\log n)$！
+
 ### Pseudocode（伪代码）
 ```math
 \begin{aligned}
@@ -236,6 +323,10 @@ T(n) = O(\log n) = \Theta(\log n)
 - 运行时间是 $O(n\log n)$，因为每次 `insert` 和 `delete_max` 都只要 $O(\log n)$。
 - 但通常会加入两个改进：
 
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- 把 max-heap 插进 priority queue sort，就得到一个新的 sorting algorithm。
+- 但这个算法通常还会带上两处改进：
+
 ### In-place Priority Queue Sort 原地优先队列排序
 
 - 最大堆 Q 是更大数组 A 的一个**prefix（前缀）**，用一个变量 $|Q|$ 记住有多少项属于堆。
@@ -245,6 +336,14 @@ T(n) = O(\log n) = \Theta(\log n)
 - 用「数组」做原地优先队列排序，恰是**选择排序**；
 - 用「有序数组」做原地优先队列排序，恰是**插入排序**；
 - 用「二叉最大堆」做原地优先队列排序，就是**堆排序**。
+
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- Max-heap $Q$ 是更大 array $A$ 的一个 prefix，另外记住有多少 items $|Q|$ 属于 heap。
+- $|Q|$ 初始为 0；`insert` 阶段结束后变成 $|A|$；`delete` 阶段结束后又回到 0。
+- `insert()` 把 array 中 index $|Q|$ 处的下一个 item 吸收进 heap。
+- `delete_max()` 把 max item 挪到末尾，然后通过递减 $|Q|$ 把它「放弃」掉。
+- 用 binary Max Heap 做 in-place priority queue sort，就是 Heap Sort。
+- 这条对应关系很值得记住：**三个 sort 的差别只在 priority queue 的实现**，排序骨架完全一样。
 
 ### Idea（算法思路）
 
@@ -292,6 +391,19 @@ T(n) \;=\; T_{\text{build}}(n) + \sum_{k=1}^{n-1} O(\log k) \;=\; O(n) + O(n\log
 - 所以可以 $O(n)$ 时间建堆。
 - （但这并不会加速堆排序的 $O(n\lg n)$ 总性能。）
 
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- 把 $n$ 个 items 逐个 `insert` 进 heap，会对 $i$ 从 0 到 $n-1$（从 root 往下）调用 `max_heapify_up(i)`：
+```math
+\text{worst-case swaps} \approx \sum_{i=0}^{n-1}\mathrm{depth}(i) = \sum_{i=0}^{n-1}\lg i = \lg(n!) \ge (n/2)\lg(n/2) = \Omega(n\lg n)
+```
+- Idea！一开始就把整个 array 当成一棵 complete binary tree，然后对 $i$ 从 $n-1$ 到 0（从 leaves 往上）调用 `max_heapify_down(i)`：
+```math
+\text{worst-case swaps} \approx \sum_{i=0}^{n-1}\mathrm{height}(i) = \sum_{i=0}^{n-1}(\lg n - \lg i) = \lg\frac{n^n}{n!} = \Theta\left(\lg\frac{n^n}{n(n/e)^n}\right) = O(n)
+```
+- 所以 heap 可以在 $O(n)$ 时间内建好。
+- （但这并不会改善 heap sort 的 $O(n\lg n)$ 总体性能。）
+- 两个求和式的差别值得看清：按 depth 求和时绝大多数 nodes 都在深层、每个贡献 $\lg n$；按 height 求和时绝大多数 nodes 都在浅层、每个贡献小常数。**求和方向决定了总和的两个不同量级**，这是线性建堆的全部内容。
+
 ### 公式重建与自检
 
 > 上面的两个求和式是 PDF 打散后的重建，按数学意义还原如下：
@@ -320,6 +432,14 @@ T(n) \;=\; T_{\text{build}}(n) + \sum_{k=1}^{n-1} O(\log k) \;=\; O(n) + O(n\log
 - `delete_min()` 与 `delete_max()` 在 $O(\log n)$ 时间。
 - `build(A)` 在 $O(n)$ 时间。
 - **与二叉堆有同样的界，而且更快地拿到极值：`find_min()`/`find_max()` 只需 $O(1)$（二叉堆同样 $O(1)$），而 `delete_min()`/`delete_max()`、`build(A)` 的界也与二叉堆一致；额外的收益是 Sequence AVL Tree 还能按位置做插入、删除、split、join 等序列操作，这是二叉堆做不到的。**
+
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- 在线性 build time 这件事上，我们还在别处见过另一个「原本是 logarithmic 的 data structure」吧？
+- 把 priority queue 的 items 按 arbitrary order（也就是 insertion order）存进 Sequence AVL Tree。
+- 这是一个 subtree property，所以维护它只增加常数因子开销。
+- `build(A)` 花 $O(n)$ 时间。
+- 与 binary heaps 的 bounds 完全一样（而且还多给了别的 operation）。
+
 ### 核心概念定义
 > **定义（subtree augmentation，子树增强）**：给树的每个节点额外存一个「可由其子树信息递推算出的量」（这里是子树最大键的指针），插入/删除时只需沿根到该节点的路径 $O(\log n)$ 时间更新即可维持。可判定标准：该量只依赖节点的键与两个孩子的对应量，不依赖子树之外的信息。
 
@@ -328,6 +448,12 @@ T(n) \;=\; T_{\text{build}}(n) + \sum_{k=1}^{n-1} O(\log k) \;=\; O(n) + O(n\log
 - Set 中的每个项是一个 **Sequence（例如链表 linked list）**，用来存「键相同的那些 Multiset 项」，而该 Sequence 的键就是这一组项的键。
 - 事实上，不做这个归约，二叉堆和 AVL 树也能**直接**处理重复键的项（例如 `delete_max` 删除「某个」最大键的项），只需注意用 $\le$ 约束（而不是 Set AVL 树里的 $\lt $）。
   - 这里的「Set AVL 树里的 $\lt$」指它作为二叉搜索树时的**二叉搜索树性质（BST property）**中的严格比较：对任意节点 $x$，左孩子键 $<$ $x$ 的键 $<$ 右孩子键，且整棵树**不允许出现键相等的两个节点**。这个严格小于是在 `insert` 和 `delete` 定位节点位置（判断该往左还是往右走）时用的比较约束。当要直接支持重复键时，就得把其中一侧的比较放宽成 $\le$（例如允许「键 $\le$ 父键」的项归到左子树），让相等的键也能被放进树里，`delete_max` 时只删掉其中一个即可。
+
+<!-- 并自 LNotes_08（v1 紧凑版） -->
+- 我们的 Set interface 假设没有 duplicate keys，但可以用这些 Sets 去实现允许 duplicate keys 的 Multiset：
+  - Set 里每个 item 是一个 Sequence（例如 linked list），这个 Sequence 存放 Multiset 中 key 相同的那些 items，而 Sequence 的 key 就是那个共享的 key。
+- 事实上，不做这层归约，binary heaps 与 AVL trees 也能直接处理 duplicate-key items（此时 `delete_max` 删掉「某个」key 最大的 item），只要注意把约束写成 $\le$ 而不是 Set AVL Tree 里的 $<$。
+
 ### 核心概念定义
 > **定义（multiset，多重集）**：允许同一元素出现多次的集合，元素按「键值」而非「身份」归类。可判定标准：`insert` 两个键相等的项后，两者都在结构里，`delete_max` 只删掉其中一个最大键的项。Set 到 Multiset 的归约，就是把「同一键的多个项」打包成一条 Sequence 挂在 Set 的一个槽位上。
 
