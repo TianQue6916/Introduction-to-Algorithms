@@ -16,8 +16,12 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 DP 的本质回顾：
 
 - Recursion（递归）中 **subproblem dependencies（子问题依赖）重叠**，形成 DAG（有向无环图）
-- **"Recurse but re-use"（递归但复用）**——即 top-down（自顶向下）实现：记录并查找子问题解（memoization，记忆化）
+- **"Recurse but re-use"（递归但复用）**——即 top-down（自顶向下）实现：记录并查找子问题解，即 memoization（记忆化）
 - **"Careful brute force"（精细的暴力枚举）**——即 bottom-up（自底向上）实现：按序求解每个子问题
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- “Recurse but re-use”（递归但复用）：Top down，记录并查表取 subproblem solutions（子问题解）。
+- “Careful brute force”（小心的暴力）：Bottom up，按顺序做每个 subproblem（子问题）。
 
 ### <span style="color:#2471a3;">**[step]**</span> <span style="color:#c0392b">Dynamic Programming Steps（SRT BOT 六步法）</span>
 
@@ -28,7 +32,17 @@ DP 的本质回顾：
 - 对多输入，常取各输入子集的 **product（笛卡尔积）**
 - 常记录 partial state（部分状态）：通过递增辅助变量扩展子问题
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 用文字、以 parameters 的形式描述一个 subproblem（子问题）的含义。
+- 常常取 input 的 subsets：序列的 prefixes、suffixes、contiguous substrings。
+- 常常把多个 input 上的可能 subsets 相乘（multiply）。
+- 常常记录 partial state：通过递增某些 auxiliary variables 来增加 subproblems（子问题）。
+
 **Step 2: Relate subproblem solutions recursively（递归关联子问题解）**
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 找出一个关于 subproblem solution（子问题解）的问题：只要知道它的答案，就能把该 subproblem reduce 到更小的 subproblem(s)（子问题）。
+- 对这个问题的所有可能答案做 local brute-force。
 
 ```math
 x(i) = f\big(x(j), \dots\big) \quad \text{for one or more } j < i
@@ -39,11 +53,24 @@ x(i) = f\big(x(j), \dots\big) \quad \text{for one or more } j < i
 
 **Step 3: Topological order（拓扑序）**——论证关联是 acyclic（无环的），子问题构成 DAG。
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+3. Topological order（拓扑序）：论证 relation 无环、subproblems（子问题）构成 DAG。
+
 **Step 4: Base cases（基例）**——为所有（可达的）关联失效的独立子问题给出解。
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 对所有（可达的）独立 subproblems（子问题）给出解，即 relation 失效处。
 
 **Step 5: Original problem（原问题）**——说明如何从子问题解组装原问题解；可能要用 parent pointers（父指针）恢复 actual solution（实际方案），而不仅是 objective function（目标函数）值。
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 说明如何由 subproblem(s)（子问题）的解算出 original problem 的解。
+
 **Step 6: Time analysis（时间分析）**
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- $\sum_{x \in X} \text{work}(x)$；若对所有 $x \in X$ 有 $\text{work}(x) = O(W)$，则为 $|X| \cdot O(W)$。
+- $\text{work}(x)$ 度量 relation 中的 nonrecursive work；把 recursions（递归）视为花费 $O(1)$ 时间。
 
 ```math
 \sum_{x \in X} \text{work}(x) \quad \text{；若对所有 } x \in X \text{ 有 } \text{work}(x) = O(W)，\text{则为 } |X| \cdot O(W)
@@ -76,6 +103,9 @@ x(i) = f\big(x(j), \dots\big) \quad \text{for one or more } j < i
 - **Example（例）：** $A = \text{hieroglyphology}$，$B = \text{michaelangelo}$
 - **Solution（解）：** hello 或 heglo 或 iello 或 ieglo，长度均为 5
 - 这是关于 subsequence 长度的 maximization problem（最大化问题）
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 给定两个 strings（字符串）$A$ 与 $B$，找出 $A$ 的一个 longest（最长、不要求 contiguous）subsequence，使它也是 $B$ 的 subsequence。
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这条注要把一个看起来只是措辞的区分，落到复杂度预算上：subsequence（子序列）与 substring（连续子串）不是两种说法，而是两个规模不同的状态空间。
 >
@@ -124,6 +154,13 @@ x(i) = f\big(x(j), \dots\big) \quad \text{for one or more } j < i
 - **若不匹配**：它们不可能同时出现在某个最长公共子序列中
   - **Guess（猜测）：** $A[i]$ 或 $B[j]$ 至少有一个不在 LCS 中
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 首字符要么 match（相同），要么不同。
+  - （若没有 LCS 用到这对相同首字符，那么用上它只会让 solution 更好。）
+  - （若某个 LCS 用了 $A[i]$ 的首字符却没用 $B[j]$ 的首字符，那么把 $B[j]$ 也配上同样是最优的。）
+- 于是猜：$A[i]$ 与 $B[j]$ 中哪一个不在 LCS 里。
+- （画出所有矩形网格状的 dependency 的一个子集。）
+
 ```math
 x(i, j) = \begin{cases}
 x(i+1, j+1) + 1 & \text{if } A[i] = B[j] \\[4pt]
@@ -155,9 +192,17 @@ x(i+1, j+1) + 1 & \text{if } A[i] = B[j] \\[4pt]
 - 最简表述顺序：**decreasing $i + j$（按 $i+j$ 递减）**
 - 便于 bottom-up 代码的顺序：**decreasing $i$，然后 decreasing $j$**（即从右下角向左上角逐行填表）
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- Subproblems（子问题） $x(i, j)$ 只依赖严格更大的 $i$、或严格更大的 $j$、或两者都更大。
+- 最容易表述的 order：按 $i + j$ 递减。
+- 对 bottom-up code 好用的 order：先按 $i$ 递减，再按 $j$ 递减。
+
 ### <span style="color:#2471a3;">**[step]**</span> <span style="color:#c0392b">4. Base cases（基例）</span>
 
 - $x(i, |B|) = x(|A|, j) = 0$——其中一条字符串为空
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- $x(i, |B|) = x(|A|, j) = 0$（其中一个 string 为空）。
 
 ### <span style="color:#2471a3;">**[step]**</span> <span style="color:#c0392b">5. Original problem（原问题）</span>
 
@@ -165,11 +210,17 @@ x(i+1, j+1) + 1 & \text{if } A[i] = B[j] \\[4pt]
 - 存储 parent pointers（父指针）以重建 subsequence：
   - 若父指针同时增加两个下标（即走了匹配分支），把该字符加入 LCS
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 若 parent pointer 让两个 index 都递增，就把该 character 加入 LCS。
+
 ### <span style="color:#2471a3;">**[step]**</span> <span style="color:#c0392b">6. Time（时间分析）</span>
 
 - 子问题数：$(|A| + 1) \cdot (|B| + 1)$
 - 每个子问题工作量：$O(1)$
 - 总运行时间：$O(|A| \cdot |B|)$
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 每个 subproblem（子问题）的 work：$O(1)$。
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 从枚举方案到枚举状态，这一步是把复杂度从指数级压到多项式级，而它的机制值得单独拆开：解空间没有被缩小，被缩小的是「我要记住多少东西」。
 >
@@ -202,7 +253,7 @@ def lcs(A, B):
     return x[0][0]
 ```
 
-> <span style="color:#7f8c8d;">代码对应讲义第 3 页底部；二维数组 $x$ 的维度是 $(a+1) \times (b+1)$，最后一行/一列天然为 0（Python 列表初始化），正好充当 base cases。</span>
+> <span style="color:#7f8c8d;">代码对应讲义第 3 页底部；二维数组 $x$ 的维度是 $(a+1) \times (b+1)$，最后一行/一列天然为 0（Python 列表初始化），正好充当 base cases（基例）。</span>
 
 ---
 
@@ -214,12 +265,23 @@ def lcs(A, B):
 - **Solution（解）：** abort，长度为 5
 - 这是关于 subsequence 长度的 maximization problem（最大化问题）
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 给定一个 string $A$，找出 $A$ 的一个 longestsubsequence，使它严格递增（lexicographically，按字典序）。
+- Solution：abort，长度为 5。
+
 **⚠️ 一次失败的尝试（关键教学环节）：**
 
 - 自然的子问题是 $A$ 的 prefix/suffix，比如 suffix $A[i:]$
 - 关于 $A[i:]$ 的 LIS 的自然问题是：**$A[i]$ 在不在 LIS 中？**（2 种x z答案）
 - 但这样如何在 $A[i+1:]$ 上递归并保证是递增子序列？
 - **Fix（修复）：** 给子问题**加约束**，提供足够结构来保证递增性质
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 尝试性的解：
+  - 自然的 subproblems（子问题）是 $A$ 的 prefixes 或 suffixes，比如 suffix $A[i:]$。
+  - 关于 $A[i:]$ 的 LIS 的自然问题是：$A[i]$ 是否在 LIS 中？（2 个可能答案。）
+  - 但接下来如何在 $A[i + 1:]$ 上 recurse，并保证 subsequence 递增？
+  - 修法：给 subproblems（子问题）加 constraint（约束），提供足够结构来保证 increasing 性质。
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这个失败不是教学事故，它是一次可复现的诊断：递推写不出来的真正原因，是归纳假设携带的信息不够。
 >
@@ -244,12 +306,20 @@ def lcs(A, B):
 - $x(i)$ = 后缀 $A[i:]$ 的 **包含 $A[i]$ 的** 最长递增子序列长度
 - 参数范围：$0 \le i \le |A|$
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- $x(i)$ = 包含 $A[i]$ 的、suffix $A[i:]$ 的最长 increasing subsequence 的长度。
+
 ### <span style="color:#2471a3;">**[step]**</span> <span style="color:#c0392b">2. Relate（关联）</span>
 
 - 已知 $A[i]$ 在 LIS 中（它就是第一个元素）
 - 下一个问题：**LIS 的第二个元素是谁？**
   - 可以是任意 $A[j]$，其中 $j > i$ 且 $A[j] > A[i]$（保证递增）
   - 或者 $A[i]$ 就是 LIS 的最后一个元素
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 我们已假定 $A[i]$ 在 LIS 中（作为第一个 element）。
+- 下一个问题：LIS 的第二个 element 是什么？
+  - 可以是任何满足 $j > i$ 且 $A[j] > A[i]$ 的 $A[j]$（这样才 increasing）。
 
 ```math
 x(i) = \max\big\{\,1 + x(j) \mid i < j < |A|,\ A[j] > A[i]\,\big\} \cup \{1\}
@@ -275,15 +345,24 @@ x(i) = \max\big\{\,1 + x(j) \mid i < j < |A|,\ A[j] > A[i]\,\big\} \cup \{1\}
 
 - Decreasing $i$（$i$ 递减）
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 按 $i$ 递减。
+
 ### <span style="color:#2471a3;">**[step]**</span> <span style="color:#c0392b">4. Base cases（基例）</span>
 
 - **不需要单独基例**，因为递推中考虑了「$A[i]$ 是最后一个元素」的可能性（$\cup \{1\}$）
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 不需要 base case（基例），因为我们已经考虑了「$A[i]$ 是最后一个」这种可能。
 
 ### <span style="color:#2471a3;">**[step]**</span> <span style="color:#c0392b">5. Original problem（原问题）</span>
 
 - 整个 LIS 的第一个元素是谁？**Guess（猜）！**
 - $A$ 的 LIS 长度 = $\max\{x(i) \mid 0 \le i < |A|\}$
 - 存储 parent pointers（父指针）以重建子序列
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- LIS 的第一个 element 是什么？猜！
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这条注讲的是加约束之后必须偿付的那笔账：子问题为递推而变形，原问题就得负责把它拼回来。
 >
@@ -312,6 +391,11 @@ x(i) = \max\big\{\,1 + x(j) \mid i < j < |A|,\ A[j] > A[i]\,\big\} \cup \{1\}
 - 总运行时间：$O(|A|^2)$
 
 - **Exercise（练习）：** *Speed up to $O(|A| \log |A|)$ by doing only $O(\log |A|)$ work per subproblem, via AVL tree augmentation*（通过 AVL tree augmentation（AVL 树增强），让每个子问题只做 $O(\log |A|)$ 工作量，把总时间加速到 $O(|A| \log |A|)$）
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- subproblems（子问题）个数：$|A|$。
+- 每个 subproblem（子问题）的 work：$O(|A|)$。
+- 运行时间 $O(|A|^2)$。
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这个练习问的不是「换一种更省事的写法」，而是「这条递推的转移在做什么运算」。看清它是「带筛选条件的最大值查询」之后，加速就成了数据结构问题。
 >
@@ -352,6 +436,12 @@ def lis(A):
 - 每轮从**剩余硬币中取第一枚或最后一枚**
 - 我的目标：最大化我取到的硬币总价值，且**我先手**
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 两个 players（“me” 与 “you”）轮流行动。
+- 每一回合，从剩余的硬币中取走第一个或最后一个。
+- 我先手；我的目标是让我取走的硬币总价值最大。
+- 第一个 solution 利用这是 zero-sum game（零和博弈）：我拿走所有你没拿的。
+
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这条注要拆两件事：贪心为什么会输，以及「剩余物是什么形状」如何反过来决定子问题用哪种下标。
 >
 > 先说贪心输在哪，不要用「局部最优不等于全局最优」这句话敷衍过去。那句话对任何反例都成立，等于没说。真正的原因是对手存在：我的动作不只是拿走一枚硬币，它还改变了你下一步能拿什么。贪心把对手当成不动的环境，于是它评估每一枚硬币时用的是「这枚值多少」，而正确的评估是「这枚值多少，加上拿完之后对手被迫让给我多少」。前者是一阶量，后者才是这盘棋的真实收益。
@@ -377,11 +467,20 @@ def lis(A):
 - 选择与**游戏状态**对应的子问题：对每个连续子序列 $v_i, \dots, v_j$（$0 \le i \le j < n$）
 - $x(i, j)$ = 我从 $v_i, \dots, v_j$ 开始能拿到的最大总价值
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 选择与 game 状态相对应的 subproblems（子问题）。
+- 对从 $i$ 到 $j$ 的每个 contiguous subsequence of coins，$0 \le i \le j < n$。
+- $x(i, j)$ = 从价值为 $v_i, \dots, v_j$ 的硬币出发、我能取到的最大总价值。
+
 **2. Relate（关联）**
 
 - 我必须选硬币 $i$ 或硬币 $j$（**Guess（猜）！**）
 - 然后轮到你，你将分别得到 $x(i+1, j)$ 或 $x(i, j-1)$ 的价值
 - 为了算出我的价值：用区间总价值**减去**你能拿到的
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 我必须选 coin $i$ 或 coin $j$（猜！）。
+- 为算出我得多少，用硬币总价值减去这一份。
 
 ```math
 x(i, j) = \max\left\{\,v_i + \sum_{k=i+1}^{j} v_k - x(i+1, j),\ \ v_j + \sum_{k=i}^{j-1} v_k - x(i, j-1)\,\right\}
@@ -390,6 +489,9 @@ x(i, j) = \max\left\{\,v_i + \sum_{k=i+1}^{j} v_k - x(i+1, j),\ \ v_j + \sum_{k=
 **3. Topological order（拓扑序）**
 
 - Increasing $j - i$（按区间长度递增）
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 按 $j - i$ 递增。
 
 **4. Base cases（基例）**
 
@@ -400,6 +502,9 @@ x(i, j) = \max\left\{\,v_i + \sum_{k=i+1}^{j} v_k - x(i+1, j),\ \ v_j + \sum_{k=
 - $x(0, n-1)$
 - 存储 parent pointers（父指针）以重建策略
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 存 parent pointers 以重建 strategy（策略）。
+
 **6. Time（时间分析）**
 
 - 子问题数：$\Theta(n^2)$
@@ -409,6 +514,10 @@ x(i, j) = \max\left\{\,v_i + \sum_{k=i+1}^{j} v_k - x(i+1, j),\ \ v_j + \sum_{k=
 - 总运行时间：$\Theta(n^3)$
 
 - **Exercise（练习）：** *Speed up to $\Theta(n^2)$ time by precomputing all sums $\sum_{k=i}^{j} v_k$ in $\Theta(n^2)$ time, via dynamic programming (!)*（用 dynamic programming 在 $\Theta(n^2)$ 时间内预计算所有区间和 $\sum_{k=i}^{j} v_k$，把总时间加速到 $\Theta(n^2)$——区间和本身也靠 DP 算！）
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 每个 subproblem（子问题）的 work：$\Theta(n)$（用于计算 sums）。
+- 第二个 solution 使用 subproblem expansion（子问题扩张）：为「下一步轮到谁」增加 subproblems（子问题）。
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这条注有两个可拆的部件：一条把两个玩家压成一个函数的零和等式，以及一种把「反复重算的聚合量」提前算好的预处理动作。
 >
@@ -435,11 +544,21 @@ x(i, j) = \max\left\{\,v_i + \sum_{k=i+1}^{j} v_k - x(i+1, j),\ \ v_j + \sum_{k=
 - 选择与游戏**完整状态**对应的子问题：硬币区间 $[i, j]$ + 下一步行动的玩家 $p$
 - $x(i, j, p)$ = 当玩家 $p \in \{\text{me}, \text{you}\}$ 从 $v_i, \dots, v_j$ 开始时，**我**能拿到的最大总价值
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 选择与 game 的完整状态相对应的 subproblems（子问题）。
+- 从 $i$ 到 $j$ 的 contiguous subsequence of coins，以及接下来轮到哪个 player $p$。
+- $x(i, j, p)$ = 当 player $p \in \{\text{me}, \text{you}\}$ 从价值为 $v_i, \dots, v_j$ 的硬币出发时，我能取到的最大总价值。
+
 **2. Relate（关联）**
 
 - 玩家 $p$ 必须选硬币 $i$ 或硬币 $j$（**Guess（猜）！**）
 - 若 $p = \text{me}$，我拿到硬币价值；否则我什么也拿不到
 - 然后轮到另一名玩家
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- Player $p$ 必须选 coin $i$ 或 coin $j$（猜！）。
+- 若 $p = \text{me}$，则价值归我；否则我什么都得不到。
+- 然后轮到另一个 player。
 
 ```math
 \begin{aligned}
@@ -452,6 +571,9 @@ x(i, j, \text{you}) &= \min\{\,x(i+1, j, \text{me}),\ \ x(i, j-1, \text{me})\,\}
 
 - Increasing $j - i$（按区间长度递增）
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 按 $j - i$ 递增。
+
 **4. Base cases（基例）**
 
 - $x(i, i, \text{me}) = v_i$
@@ -462,11 +584,17 @@ x(i, j, \text{you}) &= \min\{\,x(i+1, j, \text{me}),\ \ x(i, j-1, \text{me})\,\}
 - $x(0, n-1, \text{me})$
 - 存储 parent pointers（父指针）以重建策略
 
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 存 parent pointers 以重建 strategy。
+
 **6. Time（时间分析）**
 
 - 子问题数：$\Theta(n^2)$
 - 每个子问题工作量：$\Theta(1)$
 - 总运行时间：$\Theta(n^2)$
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 每个 subproblem（子问题）的 work：$\Theta(1)$。
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 这一注要把「子问题扩展」的收支算清：多一个坐标，换掉一层循环；同时把「我取最大、你取最小」这条交替结构钉成模板。
 >
@@ -497,6 +625,13 @@ x(i, j, \text{you}) &= \min\{\,x(i+1, j, \text{me}),\ \ x(i, j-1, \text{me})\,\}
 - 更多的子问题和约束给关联提供更多「抓手」，使 DP 更可行
 - 通常存在 **trade-off（权衡）**：子问题数量 vs 关联的分支/复杂度
 - 更多例子见下一讲
+
+<!-- 并自 LNotes_16（v1 紧凑版） -->
+- 现在我们已看到两个例子：对 subproblems（子问题）加 constraint 或做 expansion。
+- 若你发现自己缺少信息来检验题目要求成立的条件，或者缺少可供 recurse 的自然 subproblem（子问题），就试试 subproblem constraint / expansion！
+- 更多的 subproblems（子问题）与 constraints 让 relation 有更多可用的信息，从而让 DP 更可行。
+- 通常这是 subproblems（子问题）数量与 relation 的分支 / 复杂度之间的 trade-off（权衡）。
+- 下次课还有更多例子。
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 本讲三个例子不是三个技巧，而是同一个动作在三种压力下的三个投影：都在改 Step 1，都在回答同一个问题——子问题还缺什么信息。
 >
