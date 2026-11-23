@@ -75,8 +75,7 @@
 - 多数人认为 $\mathbb{P} \subsetneq \mathbb{NP} \subsetneq \mathbb{EXP}$，即生成 solution 比检验 solution 更难。
 - 无论你往哪个方向证明出来，人们都会给你很多钱（100 万美元的 Millennium Prize，千禧年大奖）。
 - 为什么我们在意这个？
-- 若能证明某问题是 $\mathbb{NP}$ 中最难的问题，那么在 $\mathbb{P} 
-e \mathbb{NP}$ 的前提下，它就无法在多项式时间内求解。
+- 若能证明某问题是 $\mathbb{NP}$ 中最难的问题，那么在 $\mathbb{P} \ne \mathbb{NP}$ 的前提下，它就无法在多项式时间内求解。
 - 如何关联问题的难易？Reductions（归约）！
 
 ## Reductions
@@ -103,8 +102,7 @@ e \mathbb{NP}$ 的前提下，它就无法在多项式时间内求解。
 - 这个问题称为 “Circuit SAT”。
 - Longest Simple Path 与 Tetris 是 NP-complete。
 - 所以若有任何问题落在 $\mathbb{NP} \setminus \mathbb{P}$ 中，它们就是（这样的问题）。
-- Chess 是 EXP-complete：在 $\mathbb{EXP}$ 中，且 $\mathbb{EXP}$ 中每个问题都可归约到它（因此它 $
-otin \mathbb{P}$）。
+- Chess 是 EXP-complete：在 $\mathbb{EXP}$ 中，且 $\mathbb{EXP}$ 中每个问题都可归约到它（因此它 $\notin \mathbb{P}$）。
 
 ## Examples of NP-complete Problems（NP 完全问题的例子）
 

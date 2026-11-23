@@ -539,7 +539,7 @@ T(n) &\le \sum_{k=1}^{n} X_k \cdot \Bigl( T\bigl(\max(k-1,\, n-k)\bigr) + O(n) \
 ```math
 \max(k-1,\, n-k) =
 \begin{cases}
-k-1 & \text{若 } k > \lceil n/2 \rceil,\\[2pt]
+k-1 & \text{若 } k > \lceil n/2 \rceil,\\
 n-k & \text{若 } k \le \lceil n/2 \rceil.
 \end{cases}
 ```
@@ -698,7 +698,7 @@ SELECT 算法通过执行以下步骤来确定一个包含 $n > 1$ 个互异元�
 ```math
 T(n) \le
 \begin{cases}
-O(1) & \text{若 } n < 140,\\[2pt]
+O(1) & \text{若 } n < 140,\\
 T(\lceil n/5 \rceil) + T(7n/10 + 6) + O(n) & \text{若 } n \ge 140.
 \end{cases}
 ```
@@ -851,7 +851,7 @@ a. Describe an algorithm that uses $U_i(n)$ comparisons to find the $i$th smalle
 ```math
 U_i(n) =
 \begin{cases}
-T(n) & \text{if } i \ge n/2,\\[2pt]
+T(n) & \text{if } i \ge n/2,\\
 \lfloor n/2 \rfloor + U_i(\lceil n/2 \rceil) + T(2i) & \text{otherwise}.
 \end{cases}
 ```
