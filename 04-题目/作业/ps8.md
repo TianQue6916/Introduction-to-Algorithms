@@ -32,7 +32,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 
 ---
 
-### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 8-1. Oil Well that Ends Well（善始善终的油井）</span>
+### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 8-1. [25 points]（25 分）Oil Well that Ends Well（善始善终的油井）</span>
 
 大亨 Ron Jockefeller（罗恩·洛克菲勒）的 oil wells（油井）本月将产出 $m$ 桶石油。Ron（罗恩）手里有一份来自潜在买家的 $n$ 张 order（订单）的清单，其中第 $i$ 张 order（订单）表示买家愿意买 $a_i$ 桶，总价为 $p_i$（不是每桶单价），这个总价可能为负。<sup>1</sup> 每张 order（订单）必须整单完成，否则完全不完成，并且每张 order（订单）只能被完成一次。Ron（罗恩）不必卖掉他全部的石油，但每桶未售出的石油他要付 $s$ 美元的 storage cost（存储成本）。请描述一个 $O(nm)$ 时间的 algorithm（算法），用来确定要完成哪些 order（订单），使得他的 profit（利润，可能为负）最大化。
 
@@ -40,7 +40,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 
 ---
 
-### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 8-2. Splits Bowling（分裂保龄球）</span>
+### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 8-2. [25 points]（25 分）Splits Bowling（分裂保龄球）</span>
 
 在 Lecture 15 中，我们引入了 Bowling（保龄球）：这是一个单人游戏，在一列 $n$ 个 pin（球瓶）上进行，其中第 $i$ 个 pin（球瓶）的取值为整数 $v_i$（可能为负）。玩家反复用两种方式击倒 pin（球瓶）：
 
@@ -49,14 +49,16 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 
 pin（球瓶）至多被击倒一次，不过玩家可以选择不击倒某些 pin（球瓶）。Bowling（保龄球）的一个变体 Split Bowling（分裂保龄球）增加了第三种击倒两个 pin（球瓶）的方式，也就是让这两个 pin（球瓶）构成一个 split（分裂），具体是：
 
-- 若两个 pin（球瓶）$i$ 与 $j > i + 1$ 之间的所有 pin（球瓶）$\{i + 1, \ldots, j - 1\}$ 在此之前已被击倒，则可以击倒这两个 pin（球瓶）$i$ 与 $j$，得 $v_i \cdot v_j$ 分。
+- 若两个 pin（球瓶）$i$ 与 $j$ 满足 $j > i + 1$，且夹在两者之间的所有 pin（球瓶）$\{i + 1, \ldots, j - 1\}$ 在此之前都已被击倒，则可以击倒这两个 pin（球瓶）$i$ 与 $j$，得 $v_i \cdot v_j$ 分。
 
 请描述一个 $O(n^3)$ 时间的 algorithm（算法），对给定的 $n$ 个 pin（球瓶）的输入序列，确定玩 Split Bowling（分裂保龄球）所能取得的 maximum score（最高得分）。
+
+> <span style="color:#7f8c8d;">〔原文标题作 `Splits Bowling`、正文作 `Split Bowling`，原文自身不一致；译文两处统一译作「分裂保龄球」，英文原名按原文各自保留〕</span>
 
 ---
 
 <!-- page 2/3 -->
-### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 8-3. Quarter Partition（四等分划分）</span>
+### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 8-3. [25 points]（25 分）Quarter Partition（四等分划分）</span>
 
 给定一个 set（集合）$A = \{a_0, \ldots, a_{n-1}\}$，它包含 $n$ 个互不相同的正整数，令 $m = \sum_{a_i \in A} a_i$，请描述一个 $O(m^3 n)$ 时间的 algorithm（算法），返回 $A$ 的一个 partition（划分）：把 $A$ 分成四个 subset（子集）$A_1, A_2, A_3, A_4 \subseteq A$（其中 $A_1 \sqcup A_2 \sqcup A_3 \sqcup A_4 = A$，符号 $\sqcup$ 表示互不相交的并），使得它们各自的和之中最大的那个尽可能小，也就是使下面这个量最小化：
 
@@ -64,11 +66,11 @@ pin（球瓶）至多被击倒一次，不过玩家可以选择不击倒某些 p
 \max\Big\{\sum_{a_i \in A_j} a_i \ \Big|\ j \in \{1, 2, 3, 4\}\Big\}
 ```
 
-> 〔原抽取串：`A1  A2  A3  A4 n= A` 与 `max aiAj ai | j  {1, 2, 3, 4}`；`n=` 是 `⊔=` 的错位抽取（`⊔` 即 disjoint union（互不相交的并）符号，原文排的是带点的并集符号），`aiAj` 是 $\sum_{a_i \in A_j}$ 的碎片，包含符号 `⊆`、求和号 $\sum$ 与花括号均丢失，此处按 partition（划分）的数学含义重建〕
+> 〔原抽取串：`A1  A2  A3  A4 n= A` 与 `max aiAj ai | j  {1, 2, 3, 4}`。其中 `n=` 是 `⊔=` 的错位抽取：`⊔` 即 disjoint union（互不相交的并），原文排成带点的并集符号，抽取时塌成了 `n`；`aiAj` 则是 $\sum_{a_i \in A_j}$ 的碎片。`⊆`、求和号 $\sum$ 与花括号在抽取中一并丢失，此处按 partition（划分）的数学含义重建，未改动题意。〕
 
 ---
 
-### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 8-4. Corrupt Chronicles（损坏的航海日志）</span>
+### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 8-4. [25 points]（25 分）Corrupt Chronicles（损坏的航海日志）</span>
 
 Kimmy Jerk（金米·杰克）是 USS Exitcost（「出局成本」号）的 captain（舰长），这艘 starship（星际飞船）的任务是探索新的世界。每天，Capt. Jerk（杰克舰长）都要往飞船的计算机上传一份 captain's log（舰长日志）：一个由至多 $m$ 个小写英文字母与空格构成的 string（字符串），其中日志里的一个 word（词）指的是任何不包含空格的 maximal substring（极大子串）。
 
