@@ -73,7 +73,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 <!-- 并自 LNotes_05（v1 紧凑版） -->
 - Comparison model 意味着 algorithm 的 decision tree 是 binary 的，即 branching factor 是常数。
 - 要求 leaf 数 $L \ge$ 可能的 output 数。
-- Tree height 下界是 $\Omega(\log L)$，所以 worst-case running time 是 $\Omega(\log L)$。
+- Tree height 下界是 $\Omega(\log L)$，所以 worst-case running time（运行时间） 是 $\Omega(\log L)$。
 - 给 $n$ 个元素的 array 排序，outputs 共有 $n!$ 个 permutations。
 - 于是 height 下界是
 
@@ -334,7 +334,7 @@ T(n, u) \;=\; O\!\left(n \cdot \log_n u\right)
 - Idea！若 $u < n^2$，就用 tuple sort，配 auxiliary counting sort 来排 tuples $(a, b)$。
 - 先排 least significant key $b$，再排 most significant key $a$。
 - Stability（稳定性）保证先前的排序结果不会被后一次排序打乱。
-- 这个 algorithm 的 running time 是 $O(2n) = O(n)$。太好了！
+- 这个 algorithm 的 running time（运行时间） 是 $O(2n) = O(n)$。太好了！
 - 推广：若每个 key 都小于 $n^c$，其中 $c = \log_n(u)$ 是正整数，那么每个 key 至多有 $c$ 位 base-$n$ digit。
 - 一个 $c$ 位数字可以在 $O(c)$ 时间内写成一个 $c$ 元素 tuple。
 - 我们花 $O(n)$ 时间来排这 $c$ 个 base-$n$ digits 中的每一位。
