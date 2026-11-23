@@ -1,0 +1,193 @@
+# Introduction to Algorithms: 6.006（算法导论）
+
+Massachusetts Institute of Technology（麻省理工学院）
+Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku（顾杰森）, and Justin Solomon（贾斯汀·所罗门）
+
+## <span style="color:#2471a3;">**[session]**</span> <span style="color:#c0392b">Recitation 19: Complexity（习题课 19：复杂度）</span>
+
+> <span style="color:#7f8c8d;">MIT 6.006 Spring 2020, Recitation 19 · 主题：Computational Complexity（计算复杂度）——从 0-1 Knapsack（0-1 背包）的 pseudopolynomial time（伪多项式时间）算法一路讲到 NP-Complete（NP-完全） · 源 PDF 共 5 页：第 1–4 页为正文，第 5 页为 MIT OpenCourseWare（麻省理工学院开放课程）版权页</span>
+
+> <span style="color:#1e8449;">**[note] 版式说明（译者注）:**</span> 源 PDF 第 2–4 页的页眉印作 “Recitation 20: Complexity”，与正文标题 “Recitation 19” 不一致；这是源文件自身的排版错误，本译按原样保留、照实译出，并把该页眉在对应位置标出。原文正文只有讲义式要点与三张表，不含任何解答；因此本译不补任何解答内容。
+
+---
+
+### <span style="color:#2471a3;">**[topic]**</span> <span style="color:#c0392b">0-1 Knapsack Revisited（重访 0-1 背包）</span>
+
+- **0-1 Knapsack（0-1 背包）**
+
+  – Input（输入）: 一个 volume（容量）为 $S$ 的 knapsack（背包），要用 items（物品）把它填满：第 $i$ 个 item（物品）有 size（大小）$s_i$ 和 value（价值）$v_i$。
+
+  – Output（输出）: 一个 items（物品）的 subset（子集）（每个 item（物品）可以取 0 个或 1 个），满足 $\sum s_i \le S$，并最大化 $\sum v_i$。〔原抽取串：`si ≤ S maximizing vi`，其上方两个独立的 `P` 字符；`P` 是 $\sum$ 的错抽，此处按求和重建〕
+
+  – 可以用 dynamic programming（动态规划）在 $O(nS)$ 时间内求解
+
+- **How does running time compare to input?（运行时间和输入规模相比如何？）**
+
+  – input（输入）的 size（规模）是什么？若数字以 binary（二进制）写出，则 input（输入）的 size（规模）为 $O(n \log S)$ bits（位）
+
+  – 那么相对于 input（输入）而言，$O(nS)$ 就是 exponential time（指数时间）
+
+  – 若数字是 polynomially bounded（多项式有界）的，即 $S = n^{O(1)}$，那么该 dynamic program（动态规划）就是 polynomial（多项式）的〔原抽取串：`S = nO(1)`；上标遗失，按含义重建为 $n^{O(1)}$〕
+
+  – 这称为 pseudopolynomial time algorithm（伪多项式时间算法）
+
+- 当数字不是 polynomially bounded（多项式有界）时，0-1 Knapsack（0-1 背包）是否能在 polynomial time（多项式时间）内求解？
+
+- 若 $P$（多项式时间类）$\ne NP$（非确定性多项式时间类），则不能。〔原抽取串：`No if P 6= NP`；`6=` 是 $\ne$ 的错抽〕这是什么意思？（更多 Computational Complexity（计算复杂度）见 6.045 与 6.046）
+
+---
+
+### <span style="color:#2471a3;">**[topic]**</span> <span style="color:#c0392b">Decision Problems（判定问题）</span>
+
+- **Decision problem（判定问题）**: 把 inputs（输入）指派为 No（否，$0$）或 Yes（是，$1$）〔原抽取串：`assignment of inputs to No (0) or Yes (1)`〕
+
+- inputs（输入）要么是 No instances（否实例），要么是 Yes instances（是实例）（即 satisfying instances（可满足实例））
+
+| Problem（问题） | Decision（判定形式） |
+| --- | --- |
+| s-t Shortest Path（s-t 最短路径） | 给定的 $G$ 是否含一条从 $s$ 到 $t$、权重至多 $d$ 的 path（路径）？ |
+| Negative Cycle（负环） | 给定的 $G$ 是否含一个负权 cycle（环）？ |
+| Longest Path（最长路径） | 给定的 $G$ 是否含一条权重至少 $d$ 的 simple path（简单路径）？ |
+| Subset Sum（子集和） | 给定的整数集合 $A$ 是否含一个和为 $S$ 的 subset（子集）？ |
+| Tetris（俄罗斯方块） | 对给定的一串 pieces（方块），你能否存活？ |
+| Chess（国际象棋） | 给定棋盘下，某位玩家能否强制获胜？ |
+| Halting problem（停机问题） | 给定的 computer program（计算机程序）是否对给定的 input（输入）终止？ |
+
+- **Algorithm/Program（算法/程序）**: 长度固定的 code（代码）（运行在 word-RAM（字随机存取机）上，其 word（字）为 $\Omega(\log n)$ bits（位）），用来解决一个 problem（问题），即：它对每一个 input（输入）都产生正确的 output（输出），且 code（代码）的长度与 instance size（实例规模）无关
+
+- 若存在一个 program（程序）能在 finite time（有限时间）内解决该 problem（问题），则称该 problem（问题）是 decidable（可判定的）
+
+---
+
+### <span style="color:#2471a3;">**[topic]**</span> <span style="color:#c0392b">Decidability（可判定性）</span>
+
+- Program（程序）是有限的 bit string（位串）；problem（问题）是函数 $p : \mathbb{N} \to \{0, 1\}$，即无限的 bit string（位串）
+
+- （# of programs（程序的数量）$= |\mathbb{N}|$，countably infinite（可数无穷））$\ll$（# of problems（问题的数量）$= |\mathbb{R}|$，uncountably infinite（不可数无穷））〔原抽取串：`(# of programs |N|, countably inﬁnite)  (# of problems |R|, uncountably inﬁnite)`；两个括号之间丢失的字符按含义重建为 $\ll$〕
+
+- （用 Cantor's diagonal argument（康托对角线论证）证明，大概在 6.042 里讲过）
+
+- 这就证明了：绝大多数 decision problem（判定问题）无法被任何 program（程序）求解（undecidable（不可判定））
+
+- 例如 Halting problem（停机问题）就是 undecidable（不可判定）的（6.045 里有许多非常漂亮的证明）
+
+- 幸运的是，我们能想到的绝大多数 problem（问题）在结构上都是 algorithmic（可算法化的），因此都是 decidable（可判定的）
+
+---
+
+### <span style="color:#2471a3;">**[topic]**</span> <span style="color:#c0392b">Decidable Problem Classes（可判定的问题类）</span>
+
+| Class（类） | Definition（定义） | Remark（备注） |
+| --- | --- | --- |
+| R（递归语言类） | 可在 finite time（有限时间）内判定的一类 problems（问题） | ‘R’ 来自 recursive languages（递归语言） |
+| EXP（指数时间类） | 可在 exponential time（指数时间）$2^{n^{O(1)}}$ 内判定的一类 problems（问题） | 我们能想到的绝大多数 problems（问题）都在这里 |
+| P（多项式时间类） | 可在 polynomial time（多项式时间）$n^{O(1)}$ 内判定的一类 problems（问题） | efficient algorithms（高效算法），也就是本课的重点 |
+
+- 这三个集合互不相等，即 $P \subset EXP \subset R$（依据 time hierarchy theorems（时间层级定理），见 6.045）〔原抽取串：`P ( EXP ( R`；其中的 `(` 是 $\subset$ 的错抽〕
+
+---
+
+### <span style="color:#2471a3;">**[topic]**</span> <span style="color:#c0392b">Nondeterministic Polynomial Time (NP)（非确定性多项式时间）</span>
+
+- $P$（多项式时间类）是这样一类 decision problem（判定问题）的集合：存在一个 algorithm（算法）$A$，使得对每一个 size（规模）为 $n$ 的 instance（实例）$I$，$A$ 在 $I$ 上以 $poly(n)$ 时间运行，并正确解决 $I$
+
+- $NP$（非确定性多项式时间类）是这样一类 decision problem（判定问题）的集合：存在一个 algorithm（算法）$V$，称为 “verifier（验证器）”，它以 problem（问题）的一个 instance（实例）$I$，以及一个长度关于 $I$ 的 size（规模）为 polynomial（多项式）的 “certificate（证书）” bit string（位串）为 input（输入），使得：
+
+  – $V$ 总是在关于 $I$ 的 size（规模）为 polynomial（多项式）的时间内运行，
+
+  – 若 $I$ 是 YES-instance（是实例），则存在某个 certificate（证书）$c$，使得 $V$ 在 input（输入）$(I, c)$ 上返回 YES，并且
+
+  – 若 $I$ 是 NO-instance（否实例），那么无论交给 $V$ 的 $c$ 是什么，$V$ 在 $(I, c)$ 上总是输出 NO。
+
+- 你可以把 certificate（证书）理解成「$I$ 是 YES-instance（是实例）」的一个 proof（证明）。如果 $I$ 实际上是 NO-instance（否实例），那么任何 proof（证明）都不该奏效。
+
+> <span style="color:#7f8c8d;">（第 3 页页眉原文：`Recitation 20: Complexity` —— 源文件页眉编号错误，照实保留）</span>
+
+| Problem（问题） | Certificate（证书） | Verifier（验证器） |
+| --- | --- | --- |
+| s-t Shortest Path（s-t 最短路径） | 一条从 $s$ 到 $t$ 的 path（路径）$P$ | 把 $P$ 上的权重相加，检查是否 $\le d$ |
+| Negative Cycle（负环） | 一个 cycle（环）$C$ | 把 $C$ 上的权重相加，检查是否 $< 0$ |
+| Longest Path（最长路径） | 一条 path（路径）$P$ | 检查 $P$ 是否为权重至少 $d$ 的 simple path（简单路径） |
+| Subset Sum（子集和） | 一组 items（元素）$A'$ | 检查 $A' \subseteq A$ 的元素之和是否为 $S$ |
+| Tetris（俄罗斯方块） | 一串 moves（走法） | 检查这些 moves（走法）是否足以让你存活 |
+
+〔原抽取串：`A set of items A0` 与 `Checks if A0 ∈ A has sum S`；`A0` 是 $A'$ 的错抽（撇号上了行），`∈` 按含义重建为 $\subseteq$〕
+
+- $P \subset NP$（如果你能 solve（求解）这个 problem（问题），那么那个 solution（解）本身就是一个 certificate（证书））
+
+- 未决问题：$P = NP$ 吗？$NP = EXP$ 吗？
+
+- 大多数人认为 $P \subset NP \subsetneq EXP$，即 generating（生成）解比 checking（检查）解更难〔原抽取串：`P ( NP (( EXP), i.e.,t generating solutions harder than checking`；第一个 `(` 是 $\subset$，`((` 是 $\subsetneq$，`i.e.,t` 中的 `t` 是抽取时的杂散字符〕
+
+- 无论你从哪一边证出来，人们都会给你很多钱。（$1M Millennium Prize（千禧年大奖））
+
+- 我们为什么在乎这件事？因为只要能证明某个 problem（问题）是 $NP$（非确定性多项式时间类）中最难的 problem（问题），那么在 $P \ne NP$ 的前提下，这个 problem（问题）就不可能被在 polynomial time（多项式时间）内求解
+
+- 那么，我们怎样把 problem（问题）之间的难度关联起来？用 Reductions（归约）！
+
+---
+
+### <span style="color:#2471a3;">**[topic]**</span> <span style="color:#c0392b">Reductions（归约）</span>
+
+- 假设你想 solve（求解）problem（问题）$A$
+
+- 一种做法是：把 $A$ 转换成一个你已会解的 problem（问题）$B$
+
+- 再用针对 $B$ 的 algorithm（算法）来求解，并用它的结果算出 $A$ 的 solution（解）
+
+- 这称为从 problem（问题）$A$ 到 problem（问题）$B$ 的一个 reduction（归约）（$A \to B$）
+
+- 因为 $B$ 可以用来 solve（求解）$A$，所以 $B$ 至少一样难（$A \le B$）
+
+- 通用的 algorithm（算法）策略：reduce（归约）到一个你已会解的 problem（问题）
+
+| $A$ | Conversion（转换） | $B$ |
+| --- | --- | --- |
+| Unweighted Shortest Path（无权最短路径） | 给所有边赋相同权重 | Weighted Shortest Path（带权最短路径） |
+| Product Weighted Shortest Path（乘积权重最短路径） | Logarithms（取对数） | Sum Weighted Shortest Path（和权重最短路径） |
+| Sum Weighted Shortest Path（和权重最短路径） | Exponents（取指数） | Product Weighted Shortest Path（乘积权重最短路径） |
+
+- 若 $NP$（非确定性多项式时间类）中的每一个 problem（问题）都能 polynomially reducible（多项式归约）到 $A$，则称 problem（问题）$A$ 是 NP-Hard（NP-难）的
+
+- 也就是说，$A$ 至少和 $NP$（非确定性多项式时间类）中的每一个 problem（问题）一样难（都可以拿来解它们），即对 $X \in NP$（非确定性多项式时间类）有 $X \le A$
+
+- NP-Complete（NP-完全）$= NP \cap$ NP-Hard（NP-难）
+
+> <span style="color:#7f8c8d;">（第 4 页页眉原文：`Recitation 20: Complexity` —— 同上，源文件页眉编号错误）</span>
+
+- 所有 NP-Complete（NP-完全）的 problem（问题）都是等价的，即彼此可以互相归约
+
+- 第一个 NP-Complete（NP-完全）的 problem（问题）是哪个？每一个 decision problem（判定问题）都可以归约到「使一个 logical circuit（逻辑电路）可满足」
+
+- Longest Path（最长路径）、Tetris（俄罗斯方块）是 NP-Complete（NP-完全）的，Chess（国际象棋）是 EXP-Complete（EXP-完全）的
+
+```text
+Problem Difficulty（问题难度），informal（非正式）示意
+原图为一组嵌套集合的示意图，此处按语义重画，几何形状非精确还原。
+〔原抽取串：NP-Hard  EXP-Hard / EXP-Complete / NP-Complete / Problem Difficulty (informal) / P NP  EXP  R〕
+
+R（递归语言类）
+└── EXP（指数时间类）        ····· 对应 EXP-Hard（EXP-难）⊇ EXP-Complete（EXP-完全）
+    └── NP（非确定性多项式时间类） · 对应 NP-Hard（NP-难）⊇ NP-Complete（NP-完全）
+        └── P（多项式时间类）
+```
+
+---
+
+### <span style="color:#2471a3;">**[topic]**</span> <span style="color:#c0392b">0-1 Knapsack is NP-Hard（0-1 背包是 NP-难的）</span>
+
+- 把一个已知的 NP-Hard（NP-难）problem（问题）归约到 0-1 Knapsack（0-1 背包）：Partition（划分）
+
+  – Input（输入）: $n$ 个数字 $a_i$ 组成的 list（列表）
+
+  – Output（输出）: 是否存在把它分成两个和相等的 set（集合）的 partition（划分）？
+
+- Reduction（归约）: $s_i = v_i = a_i$，$S = \frac{1}{2}\sum a_i$〔原抽取串：`si = vi = ai, S = 21 P ai`；`21` 是 $\frac{1}{2}$ 的错抽，`P` 是 $\sum$ 的错抽，此处按数学含义重建〕
+
+- 0-1 Knapsack（0-1 背包）至少和 Partition（划分）一样难，所以既然 Partition（划分）是 NP-Hard（NP-难）的，0-1 Knapsack（0-1 背包）也就是 NP-Hard（NP-难）的
+
+- 而 0-1 Knapsack（0-1 背包）又在 $NP$（非确定性多项式时间类）中，所以它还是 NP-Complete（NP-完全）的
+
+---
+
+> <span style="color:#7f8c8d;">MIT OpenCourseWare（麻省理工学院开放课程）· https://ocw.mit.edu · 6.006 Introduction to Algorithms（算法导论）· Spring 2020（2020 年春季）· 关于引用这些材料或我们的使用条款，请见 https://ocw.mit.edu/terms</span>
