@@ -6,7 +6,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 
 ## <span style="color:#2471a3;">**[session]**</span> <span style="color:#c0392b">Problem Set 8（习题集 8）</span>
 
-> <span style="color:#7f8c8d;">MIT 6.006 Spring 2020, Problem Set 8 Questions（习题集 8 题卷）· 主题：Dynamic Programming（动态规划）· 对应 Lecture 15 之后的 DP 内容与 CLRS 第 15 章（动态规划）</span>
+> <span style="color:#7f8c8d;">MIT 6.006 Spring 2020, Problem Set 8 Questions（习题集 8 题卷）· 主题：Dynamic Programming（动态规划）· 对应 Lecture 15 及之后的 dynamic programming（动态规划）内容与 CLRS 第 15 章（动态规划）· 本文件是题卷，只含四道题面，不含解答</span>
 
 ---
 
@@ -20,7 +20,7 @@ Instructors（授课教师）: Erik Demaine（埃里克·德梅因）, Jason Ku�
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 整卷四题共享同一条隐藏考点：running time（运行时间）的 "polynomial（多项式）" 只在一种口径下有意义，就是**关于输入的编码长度**，而不是关于输入里出现的那些数值本身。这条口径决定了本卷每题最后那 3 分怎么拿。
 >
-> 先把两种口径摆清楚。输入是一个 bit string（位串），它的长度记作 $L$；算法在 RAM（随机存取机）上跑的步数记作 $T(L)$。说 $T$ 是 polynomial（多项式）的，意思是存在常数 $k$ 使 $T(L) = O(L^k)$。麻烦在于题目里的参数有两种身份：$n$ 是"有多少个东西"，编码长度约 $\log n$ 位；$m$ 是"多大一个数"，编码长度约 $\log m$ 位。一个耗时 $O(nm)$ 的 program（程序）对 $n$、$m$ 都是多项式，但对 $L$ 是 $O(2^{L})$ 量级 —— 因为它把 $m$ 的**数值**当成了循环上界。
+> 先把两种口径摆清楚。输入是一个 bit string（位串），它的长度记作 $L$；算法在 RAM（随机存取机）上跑的步数记作 $T(L)$。说 $T$ 是 polynomial（多项式）的，意思是存在常数 $k$ 使 $T(L) = O(L^k)$。麻烦在于题目里的参数有两种身份。$n$ 是"有多少个东西"：输入里真有 $n$ 份数据，每一份至少要占掉若干位，所以 $L$ 至少与 $n$ 同阶 —— 关于 $n$ 的多项式自动就是关于 $L$ 的多项式。$m$ 是"多大一个数"：它在输入里只以 $\log m$ 位的形式出现，数值翻倍、位数才加一。一个耗时 $O(nm)$ 的 program（程序）对 $n$、$m$ 都是多项式，一旦 $m$ 大到 $2^{\Theta(L)}$，这个上界对 $L$ 就是指数级 —— 因为它把 $m$ 的**数值**当成了循环上界。题目原话写的是 exponential in the size of the input（关于输入规模的指数），这里的 "size of the input" 只能读成「输入的位数」；若读成「输入里最大的那个数值」，三种标签的差别会整个消失。
 >
 > 三类标签的判据因此钉死：polynomial（多项式）要求 $T = O(L^k)$，例 8-2 的 $O(n^3)$；pseudopolynomial（伪多项式）要求 $T$ 关于数值多项式、关于 $L$ 指数，例 8-1 的 $O(nm)$ 与 8-3 的 $O(m^3 n)$；exponential（指数）要求连数值口径也救不回来，典型是枚举 $2^n$ 个子集。8-4 属于容易被误判的一类：它写作 $O(m^3 n)$，看似与 8-3 同形，但输入里明写着 $O(m^2 n)$ 份、每份至多 $m$ 个字符的日志，字符总数本身就已达 $O(m^3 n)$，所以这个上界关于 $L$ 是线性的，属 polynomial（多项式）。
 >
