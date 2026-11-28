@@ -13,10 +13,10 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 ## 1. Priority Queue Interface 优先队列接口
 - **跟踪大量项，快速访问 / 删除「最重要的」那一个。**
-- 例：带宽有限的路由器（router），必须给某些类型的报文更高的优先级；
+- 例：带宽有限的router（路由器），必须给某些类型的报文更高的优先级；
 - 例：操作系统内核里的**process scheduling（进程调度）**；
 - 例：**discrete-event simulation（离散事件模拟）**——下一个要发生的事件是什么？
-- 例：图算法（graph algorithms，本课程后面会讲）。
+- 例：graph algorithms（图算法，本课程后面会讲）。
 - 按 `key = priority`（键 = 优先级）给项排序，因此是 **Set interface（集合接口）**，而不是 **Sequence interface（序列接口）**。
 - 针对 Set 操作的某个子集做了优化：
 | 操作 | 含义 |
@@ -66,9 +66,9 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 | Sorted Dynamic Array 有序动态数组 | $n\log n$ | $n$ | $1^{(a)}$ | $n^2$ | Y |
 | Set AVL Tree 集合 AVL 树 | $n\log n$ | $\log n$ | $\log n$ | $n\log n$ | N |
 | **Goal 目标** | $n$ | $\log n^{(a)}$ | $\log n^{(a)}$ | $n\log n$ | Y |
-> 上表是打散后的原文表格重建。四行分别对应四种「优先队列排序」：动态数组 → **Selection Sort（选择排序）**；有序动态数组 → **Insertion Sort（插入排序）**；集合 AVL 树 → **AVL Sort（AVL 排序）**；而最后一行是我们要达成的目标——`build` $O(n)$、`insert`/`delete_max` 平摊 $O(\log n)$、总时间 $O(n\log n)$ 且原地（In-place），这正好是 **堆排序（Heap Sort）** 的性能。
+> 上表是打散后的原文表格重建。四行分别对应四种「优先队列排序」：动态数组 → **Selection Sort（选择排序）**；有序动态数组 → **Insertion Sort（插入排序）**；集合 AVL 树 → **AVL Sort（AVL 排序）**；而最后一行是我们要达成的目标——`build` $O(n)$、`insert`/`delete_max` 平摊 $O(\log n)$、总时间 $O(n\log n)$ 且 In-place（原地），这正好是 **Heap Sort（堆排序）** 的性能。
 >
-> 表中 `(a)` 表示平摊（amortized）代价：动态数组 `insert` 靠扩容均摊为 $O(1)$，有序动态数组 `delete_max` 靠从尾部删为 $O(1)$。`n^2` 的来源：$n \cdot T_{\text{insert}} + n \cdot T_{\text{delete\_max}}$，对动态数组是 $n\cdot 1 + n\cdot n = O(n^2)$，对有序动态数组是 $n\cdot n + n\cdot 1 = O(n^2)$。
+> 表中 `(a)` 表示amortized（平摊）代价：动态数组 `insert` 靠扩容均摊为 $O(1)$，有序动态数组 `delete_max` 靠从尾部删为 $O(1)$。`n^2` 的来源：$n \cdot T_{\text{insert}} + n \cdot T_{\text{delete\_max}}$，对动态数组是 $n\cdot 1 + n\cdot n = O(n^2)$，对有序动态数组是 $n\cdot n + n\cdot 1 = O(n^2)$。
 
 <!-- 并自 LNotes_08（v1 紧凑版） -->
 - 任何 priority queue data structure 都能翻译成一个 sorting algorithm：
@@ -85,7 +85,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - 可以通过**subtree augmentation（子树增强）** 把 `find_min()` / `find_max()` 加速到 $O(1)$ 时间。
 - 但这个数据结构很复杂，而且得到的排序是 **in-place（原地）** 的。
 - 有没有一个更简单、专为优先队列设计、并且是原地 $O(n\lg n)$ 排序的数据结构？
-- **有的——binary heap（二叉堆）和堆排序（heap sort）。**
+- **有的——binary heap（二叉堆）和heap sort（堆排序）。**
 - 本质做法：**在一个 Sequence 数据结构（数组）之上实现一个 Set 数据结构**，用我们学过的二叉树知识。
 
 <!-- 并自 LNotes_08（v1 紧凑版） -->
@@ -126,9 +126,9 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 ## 4. Array as a Complete Binary Tree 把数组看成完全二叉树
 
-- **Idea（一句话本质）**：把一个数组解释成一颗**完全二叉树（complete binary tree）**——除最大深度那层外，第 $i$ 层至多有 $2^i$ 个节点；最大深度那层的所有节点都**left-aligned（左对齐）**。
+- **Idea（一句话本质）**：把一个数组解释成一颗**complete binary tree（完全二叉树）**——除最大深度那层外，第 $i$ 层至多有 $2^i$ 个节点；最大深度那层的所有节点都**left-aligned（左对齐）**。
 - 等价地说：完全树是「按阅读顺序（root to leaves, left to right，从根到叶、从左到右）稠密填满」的。
-- 视角：**数组与完全二叉树之间存在双射（bijection）**。
+- 视角：**数组与完全二叉树之间存在bijection（双射）**。
 - 例：$Q = [0,1,2,3,4,5,6,7,8,9]$，按下标从 0 起按层填充：
 
 | 深度 | 下标 | 对应节点 |
@@ -147,7 +147,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - $n$ 个项的数组，其「完全树视角」的高度是 $\lceil \lg n \rceil$，因此是一颗**balanced binary tree（平衡二叉树）**。
 
 <!-- 并自 LNotes_08（v1 紧凑版） -->
-- Idea：把 array 解释成一棵 complete binary tree（完全二叉树），第 $i$ 层最多有 $2^i$ 个 node，只有最大那一层的 nodes 是左对齐（left-aligned）的。
+- Idea：把 array 解释成一棵 complete binary tree（完全二叉树），第 $i$ 层最多有 $2^i$ 个 node，只有最大那一层的 nodes 是left-aligned（左对齐）的。
 - 等价说法：complete tree 是按 reading order（阅读序）密集填满的——从 root 到 leaves、从左到右。
 - 这是一个视角转换：arrays 与 complete binary trees 之间存在 bijection（双射）。
 - 从 complete tree 这个视角看，含 $n$ 个 item 的 array 的 height 是 $\lceil \lg n\rceil$，所以它就是一棵 balanced binary tree。
@@ -368,7 +368,7 @@ def heap_sort(A):
 T(n) \;=\; T_{\text{build}}(n) + \sum_{k=1}^{n-1} O(\log k) \;=\; O(n) + O(n\log n) \;=\; O(n\log n)
 ```
 
-其中求和式由「每个 $k \le n$，故 $\log k \le \log n$」放大为 $(n-1)\cdot O(\log n) = O(n\log n)$。空间上只用 $O(1)$ 额外变量（前缀技巧），故**原地（in-place）**。
+其中求和式由「每个 $k \le n$，故 $\log k \le \log n$」放大为 $(n-1)\cdot O(\log n) = O(n\log n)$。空间上只用 $O(1)$ 额外变量（前缀技巧），故**in-place（原地）**。
 
 ---
 
@@ -447,7 +447,7 @@ T(n) \;=\; T_{\text{build}}(n) + \sum_{k=1}^{n-1} O(\log k) \;=\; O(n) + O(n\log
 - 我们的 Set 接口假定**键不重复**，但可以用这些 Set 来实现允许重复键的 **Multiset（多重集）**：
 - Set 中的每个项是一个 **Sequence（例如链表 linked list）**，用来存「键相同的那些 Multiset 项」，而该 Sequence 的键就是这一组项的键。
 - 事实上，不做这个归约，二叉堆和 AVL 树也能**直接**处理重复键的项（例如 `delete_max` 删除「某个」最大键的项），只需注意用 $\le$ 约束（而不是 Set AVL 树里的 $\lt $）。
-  - 这里的「Set AVL 树里的 $\lt$」指它作为二叉搜索树时的**二叉搜索树性质（BST property）**中的严格比较：对任意节点 $x$，左孩子键 $<$ $x$ 的键 $<$ 右孩子键，且整棵树**不允许出现键相等的两个节点**。这个严格小于是在 `insert` 和 `delete` 定位节点位置（判断该往左还是往右走）时用的比较约束。当要直接支持重复键时，就得把其中一侧的比较放宽成 $\le$（例如允许「键 $\le$ 父键」的项归到左子树），让相等的键也能被放进树里，`delete_max` 时只删掉其中一个即可。
+  - 这里的「Set AVL 树里的 $\lt$」指它作为二叉搜索树时的**BST property（二叉搜索树性质）**中的严格比较：对任意节点 $x$，左孩子键 $<$ $x$ 的键 $<$ 右孩子键，且整棵树**不允许出现键相等的两个节点**。这个严格小于是在 `insert` 和 `delete` 定位节点位置（判断该往左还是往右走）时用的比较约束。当要直接支持重复键时，就得把其中一侧的比较放宽成 $\le$（例如允许「键 $\le$ 父键」的项归到左子树），让相等的键也能被放进树里，`delete_max` 时只删掉其中一个即可。
 
 <!-- 并自 LNotes_08（v1 紧凑版） -->
 - 我们的 Set interface 假设没有 duplicate keys，但可以用这些 Sets 去实现允许 duplicate keys 的 Multiset：

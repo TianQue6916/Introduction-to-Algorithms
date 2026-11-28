@@ -80,7 +80,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 **图 2-1**：这段题词在 PDF 里是位图而非排版文本，像素内容为三行手写「11 August 1982 / prof. dr. Edsger W. Dijkstra / Burroughs Research Fellow」，其中姓氏保留了手写的重音符号 Dÿkstra；任何 `get_text()` 抽取都拿不到这几个字，删掉这张图等于从讲义里删掉一段只能由像素承载的史料。
 
-- **Idea（一句话本质）**：按"到源点 $s$ 的距离递增"的次序，对每个顶点做边松弛（relaxation）。
+- **Idea（一句话本质）**：按"到源点 $s$ 的距离递增"的次序，对每个顶点做relaxation（边松弛）。
 - **Idea**：用一个数据结构高效找出次序中的下一个顶点。
 
 <!-- 并自 LNotes_13（v1 紧凑版） -->
@@ -95,7 +95,7 @@ Dijkstra 依赖一个支持**按键值动态变更**的优先队列 $Q$，其 it
 - $Q.\text{delete\_min}()$ —— 删除键值最小的 item 并返回它
 - $Q.\text{decrease\_key}(id, k)$ —— 找到 ID 为 $id$ 的 item，把它的 key 改为 $k$
 
-**实现方式**：把一个 Priority Queue $Q'$ 与一个把 ID 映射到 $Q'$ 中位置的 **Dictionary（字典）** $D$ 交叉链接（cross-link）。假定顶点 ID 是从 $0$ 到 $|V|-1$ 的整数，于是 $D$ 可用**直接寻址数组**（direct access array）实现。为简洁，把 item $x$ 记为元组 $(x.id, x.key)$。
+**实现方式**：把一个 Priority Queue $Q'$ 与一个把 ID 映射到 $Q'$ 中位置的 **Dictionary（字典）** $D$ cross-link（交叉链接）。假定顶点 ID 是从 $0$ 到 $|V|-1$ 的整数，于是 $D$ 可用**direct access array（直接寻址数组）**实现。为简洁，把 item $x$ 记为元组 $(x.id, x.key)$。
 
 <!-- 并自 LNotes_13（v1 紧凑版） -->
 - Changeable Priority Queue（可改键优先队列）$Q$：item 带 key 与唯一 ID，支持以下 operations：
@@ -120,7 +120,7 @@ Dijkstra 依赖一个支持**按键值动态变更**的优先队列 $Q$，其 it
 \end{aligned}
 ```
 
-其中 $\text{Adj}^{+}(u)$ 表示 $u$ 的**出边邻接表**（outgoing adjacencies）。
+其中 $\text{Adj}^{+}(u)$ 表示 $u$ 的**outgoing adjacencies（出边邻接表）**。
 
 <!-- 并自 LNotes_13（v1 紧凑版） -->
 - 对所有 $v \in V$ 置 $d(s, v) = \infty$，再置 $d(s, s) = 0$。
@@ -283,8 +283,8 @@ O\big(B_{|V|} \;+\; |V|\cdot M_{|V|} \;+\; |E|\cdot D_{|V|}\big)
 
 **结论（何时选哪种）**：
 
-- 若图是**稠密图**（dense），即 $|E|=\Theta(|V|^2)$，用 **Array** 作 $Q'$，得 $O(|V|^2)$。
-- 若图是**稀疏图**（sparse），即 $|E|=\Theta(|V|)$，用 **Binary Heap** 作 $Q'$，得 $O(|V|\log|V|)$。
+- 若图是**dense（稠密图）**，即 $|E|=\Theta(|V|^2)$，用 **Array** 作 $Q'$，得 $O(|V|^2)$。
+- 若图是**sparse（稀疏图）**，即 $|E|=\Theta(|V|)$，用 **Binary Heap** 作 $Q'$，得 $O(|V|\log|V|)$。
 - **Fibonacci Heap** 理论上在所有情形下都好，但实践中很少用。
 
 <!-- 并自 LNotes_13（v1 紧凑版） -->

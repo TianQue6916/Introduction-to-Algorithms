@@ -13,7 +13,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 进入本讲之前，先回顾此前建立起来的一组图论概念与问题：
 
-- **graph definitions（图的定义）**：有向图 / 无向图（directed / undirected）、simple（简单图）、neighbors（邻点）、度（degree）；
+- **graph definitions（图的定义）**：directed / undirected（有向图 / 无向图）、simple（简单图）、neighbors（邻点）、degree（度）；
 - **graph representations（图的表示）**：用**Set（集合）**把顶点映射到其**adjacency list（邻接表）**；
 - **path（路径）**与**simple path（简单路径）**、**path length（路径长度）**、**distance（距离）**、**shortest path（最短路径）**；
 - **graph path problems（图上的路径问题）**，共四类：
@@ -26,10 +26,10 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
   - 配合适当的数据结构，运行时间为 $O(|V| + |E|)$（对输入规模线性）。
 
 > **图论术语回顾（首次出现给定义）**
-> - **图（graph）**：$G = (V, E)$，其中 $V$ 是顶点（vertex）集合，$E$ 是边（edge）集合；每条边连接两个顶点。
+> - **graph（图）**：$G = (V, E)$，其中 $V$ 是vertex（顶点）集合，$E$ 是edge（边）集合；每条边连接两个顶点。
 > - **adjacency list（邻接表）**：为每个顶点维护一个链表，存它所有「出邻点」。若用哈希表把顶点映射到邻接表，则遍历某顶点全部出邻点的时间与它的出度成正比。
 > - **reachable（可达）**：若图中存在一条从 $u$ 到 $v$ 的路径，则称 $v$ 从 $u$ 可达。
-> - **度（degree）**：无向图中与某顶点相连的边数；有向图中分**in-degree（入度）**与**out-degree（出度）**。
+> - **degree（度）**：无向图中与某顶点相连的边数；有向图中分**in-degree（入度）**与**out-degree（出度）**。
 
 ### Examples（示例图）
 
@@ -57,12 +57,12 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 **DFS（深度优先搜索）**与 BFS 类似，都是从一个源点 $s$ 出发搜图，但有两点关键区别：
 
-- 它解决的是**单源可达性（Single Source Reachability）**，而**不是** SSSP（最短路径）；但它对解决其他问题很有用（见后文拓扑排序、找环）；
+- 它解决的是**Single Source Reachability（单源可达性）**，而**不是** SSSP（最短路径）；但它对解决其他问题很有用（见后文拓扑排序、找环）；
 - 它返回一棵**parent tree（父指针树）**，即每个可达顶点指向其父节点、最终回溯到 $s$ 的指针集合——但**不保证是最短路径树**（每条 $s \to v$ 路径不一定是 $s$ 到 $v$ 的最短路径）。
 
 ### 2.2 Idea（一句话本质）
 
-**一句话本质**：从一个顶点出发，**沿某条路径一直往前走，直到走不动（卡住）为止；然后回溯（backtrack），直到发现一条尚未探索过的路径，再沿它继续走下去**。
+**一句话本质**：从一个顶点出发，**沿某条路径一直往前走，直到走不动（卡住）为止；然后backtrack（回溯），直到发现一条尚未探索过的路径，再沿它继续走下去**。
 
 更形式化地说：**递归地访问每个「出邻点」，但绝不重复访问任何一个顶点**。
 
@@ -183,7 +183,7 @@ O(1) \times \sum_{u \in V} \deg(u) = O(|E|)
 - 在有向图中，$u$ 可能从 $v$ 可达，但 $v$ 未必从 $u$ 可达——因此「连通性」在有向图中更复杂（本课不展开讨论）。
 - 由此定义两个问题：
   - **连通性判定 $\text{Connectivity}(G)$**：无向图 $G$ 是否连通？
-  - **连通分量 $\text{Connected Components}(G)$**：给定无向图 $G = (V, E)$，返回 $V$ 的一个**划分**（partition），把它分成若干子集 $V_i \subseteq V$（每个 $V_i$ 是一个**connected component（连通分量）**），满足：
+  - **连通分量 $\text{Connected Components}(G)$**：给定无向图 $G = (V, E)$，返回 $V$ 的一个**partition**（划分），把它分成若干子集 $V_i \subseteq V$（每个 $V_i$ 是一个**connected component（连通分量）**），满足：
     - 每个 $V_i$ 在 $G$ 中内部连通；
     - **不同连通分量之间没有边相连**。
 
@@ -251,7 +251,7 @@ O(1) \times \sum_{u \in V} \deg(u) = O(|E|)
 具体分两步：
 
 1. **判定是否无环**：对每条边 $(u, v)$，检查在「完成顺序的逆序」中，$v$ 是否排在 $u$ 之前（若是，则该边违背拓扑序，说明图含环）；
-   - 这一步用**哈希表（hash table）**或**直接寻址数组（direct access array）**（把顶点映射到它在逆序中的位置）实现，对每条边 $O(1)$，总计 $O(|E|)$ 时间。
+   - 这一步用**hash table（哈希表）**或**direct access array（直接寻址数组）**（把顶点映射到它在逆序中的位置）实现，对每条边 $O(1)$，总计 $O(|E|)$ 时间。
 
 2. **返回环本身**（当需要时）：在 Full-DFS 过程中，额外维护**「回到 $s$ 的路径上的祖先集合」**（ancestors，即 DFS 递归栈上的顶点）。
 

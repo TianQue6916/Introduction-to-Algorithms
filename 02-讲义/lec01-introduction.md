@@ -11,7 +11,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 ## 1. Problem（问题）与 Algorithm（算法）
 
-本课程的目标是教你**解决计算问题（computation problem）**，并且能够**说明你的解是正确的（correct）且高效的（efficient）**。
+本课程的目标是教你**解决 computation problem（计算问题）**，并且能够**说明你的解是正确的（correct）且高效的（efficient）**。
 
 ### 1.1 Problem（问题）
 
@@ -47,7 +47,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - 算法是一个**procedure（过程）**：把每个输入映射到**唯一的**一个输出（确定性，deterministic）。
 - 一个算法「解决了某个问题」，当且仅当它对该问题的**每一个**输入都返回正确的输出。
 - 例：解决「birthday matching（生日匹配）」问题的算法：
-  - 维护一份「姓名—生日」的记录（record），初始为空。
+  - 维护一份「姓名—生日」的 record（记录），初始为空。
   - 按某个顺序逐一「询问」每个学生：
     - 若该学生的生日已存在于记录中，则立即返回这对匹配（found pair）。
     - 否则把该姓名与生日加入记录。
@@ -114,7 +114,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - 如何衡量算法「多快」给出正确输出？
   - 直接测时间（time）当然可以，但我们希望性能**与具体机器无关（machine independent）**。
   - 思路：数一数算法返回前所执行的**fixed-time operations（固定时间操作）**的次数。
-  - 这个次数通常依赖于输入的大小（size of input）：输入越大，耗时越长。
+  - 这个次数通常依赖于 size of input（输入的大小）：输入越大，耗时越长。
   - 输入大小常记作 $n$，但**并非总是**用 $n$ 表示。
   - 若算法能在「关于输入大小的**polynomial time（多项式时间）**」内返回，就认为它是高效的（efficient）。
   - 注意：**并非所有问题都存在高效算法**！（见 L20。）
@@ -131,7 +131,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 ### 3.2 Asymptotic Notation（渐近记号）
 
-渐近记号的核心思想：**忽略常数因子（constant factors）和低阶项（low order terms）**，只看增长阶。
+渐近记号的核心思想：**忽略 constant factors（常数因子）和 low order terms（低阶项）**，只看增长阶。
 
 - **upper bound（上界）**：大 $O$ 记号，记 $O(\cdot)$
 - **lower bound（下界）**：大 $\Omega$ 记号，记 $\Omega(\cdot)$
@@ -168,7 +168,7 @@ For the same $n=1000$, stepping the growth class from constant to exponential mo
 
 - model of computation（计算模型）是对「机器上哪些操作可以在 $O(1)$ 时间内完成」的**specification（规格说明）**。
 - 本课程采用的模型叫 **Word-RAM（按机器字随机存取机）**：
-  - **machine word（机器字）**：由 $w$ 个比特（bit）组成的块，$w$ 即这个 $w$-bit Word-RAM 的**word size（字长）**。
+  - **machine word（机器字）**：由 $w$ 个 bit（比特）组成的块，$w$ 即这个 $w$-bit Word-RAM 的**word size（字长）**。
   - **memory（内存）**：一串**addressable（可寻址）的机器字序列**。
   - 处理器支持对「常数个（$O(1)$ 个）字」进行的诸多常数时间操作（以整数为基本单位）：
     - 整数算术：`+`、`-`、`*`、`//`（整除）、`%`（取余）
@@ -299,9 +299,9 @@ O(n) + \sum_{k=0}^{n-1}\left(O(1) + k \cdot O(1)\right) = O(n^2)
 
 1. Reduce（归约）到一个你已经会解的 problem（使用现成的 data structure 或 algorithm）。
 
-**搜索问题（Search Problem，基于数据结构）** 与 **排序算法（Sort Algorithms）**：
+**搜索问题（Search Problem，基于数据结构）** 与 **Sort Algorithms（排序算法）**：
 
-| 数据结构（Data Structure） | 排序算法（Sort Algorithm） |
+| Data Structure（数据结构） | Sort Algorithm（排序算法） |
 |---|---|
 | Static Array（静态数组，L01） | Insertion Sort（插入排序，L03） |
 | Linked List（链表，L02） | Selection Sort（选择排序，L03） |

@@ -154,7 +154,7 @@ x(i) = f(x(j), \ldots) \quad \text{for one or more } j < i
 
 ## <span style="color:#2471a3;">**[section]**</span> <span style="color:#c0392b">这是多项式时间吗？（Is This Polynomial Time?）</span>
 
-- （强）多项式时间（(strongly) polynomial time）意味着：运行时间被输入大小（以 word（机器字）为单位计量）的一个常数次多项式从上方界定
+- (strongly) polynomial time（（强）多项式时间）意味着：运行时间被输入大小（以 word（机器字）为单位计量）的一个常数次多项式从上方界定
 - 在 Rod Cutting 中，输入大小是 $L + 1$ 个 words（一个整数 $L$ 和 $v$ 中的 $L$ 个整数）
 - $O(L^2)$ 是 $L + 1$ 的常数次多项式，所以**是的：（强）多项式时间**
 
@@ -230,7 +230,7 @@ def cut_rod_pieces(L, v):
 - **输入**：$n$ 个正整数组成的序列 $A = \{a_0, a_1, \ldots, a_{n-1}\}$
 - **输出**：是否存在 $A$ 的一个子集恰好和为 $T$？（即是否存在 $A' \subseteq A$ 使得 $\sum_{a \in A'} a = T$？）
 - **例子**：$A = (1, 3, 4, 12, 19, 21, 22)$，$T = 47$ 可取 $A' = \{3, 4, 19, 21\}$
-- **优化问题？不，是判定问题（decision problem）！** 答案只有 YES（是）或 NO（否），TRUE（真）或 FALSE（假）
+- **优化问题？不，是decision problem（判定问题）！** 答案只有 YES（是）或 NO（否），TRUE（真）或 FALSE（假）
 - 例中答案是 YES。但对其他一些 $T$（例如 $T = 2, 6, 9, 10, 11, \ldots$），答案则是 NO
 
 <!-- 并自 LNotes_18（v1 紧凑版） -->

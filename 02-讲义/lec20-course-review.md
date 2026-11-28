@@ -27,7 +27,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 - **Most problems are not solvable efficiently（大多数问题不能高效求解）**，但我们关心的很多问题其实可以！
 - 复杂度术语的准确定义（这组是本节的核心，逐一定义）：
-  - **Polynomial（多项式）**：指「在**输入规模**（size of input）上是多项式的」。
+  - **Polynomial（多项式）**：指「在**size of input**（输入规模）上是多项式的」。
   - **Pseudopolynomial（伪多项式）**：指「在输入规模**和输入中数值的大小**上都是多项式的」——比 polynomial 更强，因为数值的大小可以是输入位长的指数级。
   - **NP（Nondeterministic Polynomial time，非确定性多项式时间）**：解**可被多项式时间检验**的问题类，即给定一个 certificate（证书/解），能在多项式时间内判定它是否合法。
   - **NP-hard（NP 困难）**：这样一类问题——**任何** NP 中的问题都能在多项式时间内归约（reduce）到它；它是「至少和 NP 一样难」的问题集合。
@@ -60,7 +60,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - **Reachability（可达性）**：从一个顶点能否到达另一个顶点。
 - **Connected Components（连通分量）**：无向图中互相可达的顶点构成的极大集合。
 - **Cycle Detection（环检测）**：判断图中是否存在环。
-- **Topological Sort（拓扑排序）**：对有向无环图（DAG）给顶点排一个线性序，使所有边都从较前的顶点指向较后的顶点。
+- **Topological Sort（拓扑排序）**：对DAG（有向无环图）给顶点排一个线性序，使所有边都从较前的顶点指向较后的顶点。
 - **Shortest Paths（最短路径）**两个变体：
   - **Single-Source Shortest Paths（单源最短路径，SSSP）**：从一个源点 $s$ 到所有其他顶点的最短路径。
   - **All-Pairs Shortest Paths（全源最短路径，APSP）**：所有顶点对之间的最短路径。
@@ -112,7 +112,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 换掉「RAM 模型」这个默认假设：
 
-- **Cache Models（缓存模型）**：考虑内存层级（memory hierarchy）的代价模型。
+- **Cache Models（缓存模型）**：考虑memory hierarchy（内存层级）的代价模型。
 - **Quantum Computer（量子计算机）**：利用量子特性来加速。
 - **Parallel Processors（并行处理器）**：用多个 CPU 而不是一个：
   - **Multicore（多核）**：大共享内存。

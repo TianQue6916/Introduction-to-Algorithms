@@ -7,20 +7,20 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 > <span style="color:#7f8c8d;">MIT 6.006 Spring 2020, Lecture 5 译注（对应视频：Linear Sorting）</span>
 
-> 本讲主题：**Linear Sorting（线性排序）**。从比较排序的下界出发，论证「基于比较的排序最坏 $\Omega(n\log n)$」，再借助直接访问数组（direct access array）与哈希思想突破下界，依次引出**直接访问数组排序 → Counting Sort（计数排序）→ Radix Sort（基数排序）**，最终得到 $O(n)$ 的线性排序算法，并重点讲解**stability（稳定性）**。
+> 本讲主题：**Linear Sorting（线性排序）**。从比较排序的下界出发，论证「基于比较的排序最坏 $\Omega(n\log n)$」，再借助 direct access array（直接访问数组）与哈希思想突破下界，依次引出**直接访问数组排序 → Counting Sort（计数排序）→ Radix Sort（基数排序）**，最终得到 $O(n)$ 的线性排序算法，并重点讲解**stability（稳定性）**。
 
 ---
 
 ## 1. Review 回顾
 
-- **comparison search lower bound（比较搜索下界）**：任何具有 $n$ 个节点的决策树（decision tree），其高度都满足 $h \ge \lceil \lg(n+1) \rceil - 1$。
-- 借助**random access indexing（随机访问索引）** 可以做得更快：这是一类**分支因子为线性（linear branching factor）** 的操作！
+- **comparison search lower bound（比较搜索下界）**：任何具有 $n$ 个节点的 decision tree（决策树），其高度都满足 $h \ge \lceil \lg(n+1) \rceil - 1$。
+- 借助**random access indexing（随机访问索引）** 可以做得更快：这是一类**linear branching factor（分支因子为线性）** 的操作！
 - 直接访问数组很快，但可能占用大量空间（$\Theta(u)$）。
 - 通过**映射（hashing，哈希）** 把键空间 $u$ 缩小到 $m = \Theta(n)$，解决空间问题。
-- hash table（哈希表）给出**期望 $O(1)$ 时间**的操作，若支持动态则**平摊 $O(1)$（amortized）**。
+- hash table（哈希表）给出**期望 $O(1)$ 时间**的操作，若支持动态则**amortized（平摊）$O(1)$**。
 - 期望与输入无关：从**universal hash family（全域哈希族）** 中随机选择哈希函数。
 - 数据结构全景回顾！
-- 上一讲我们实现了更快的查找（find）。能否也实现更快的排序（sort）？
+- 上一讲我们实现了更快的 find（查找）。能否也实现更快的 sort（排序）？
 
 ### 数据结构操作复杂度表
 
@@ -41,7 +41,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - Comparison search 的 lower bound：任何含 $n$ 个节点的 decision tree，高度都 $\ge \lceil \lg(n+1)\rceil - 1$。
 - 想更快，只能靠 random access indexing：一个 branching factor 为线性的 operation。
 - Direct access array 很快，但空间可能是 $\Theta(u)$，很浪费。
-- 空间问题的解法是映射（hashing）：把 key space $u$ 压到 $m = \Theta(n)$。
+- 空间问题的解法是 hashing（映射）：把 key space $u$ 压到 $m = \Theta(n)$。
 - Hash table 给出 expected $O(1)$ 的 operations，动态场景下是 amortized $O(1)$。
 - 注意这个 expectation 与 input 无关：hash function 是从 universal hash family 里随机选的。
 - 下面这张 data structure overview 是上一讲的成果盘点。
@@ -54,7 +54,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - **comparison model（比较模型）** 意味着算法的决策树是**binary tree（二叉树）**，即分支因子为常数。
 - 要求**叶节点数 $L \ge$ 可能的输出数**（每个输出至少对应一个叶）。
 - 树高下界为 $\Omega(\log L)$，故**最坏情况运行时间**为 $\Omega(\log L)$。
-- 对 $n$ 个元素的数组排序，可能的输出数是 $n!$ 种排列（permutations）。
+- 对 $n$ 个元素的数组排序，可能的输出数是 $n!$ 种 permutations（排列）。
 - 因此树高下界为：
 
 ```math
@@ -201,9 +201,9 @@ T(n, u) \;=\; \underbrace{O(n)}_{\text{找最大值}} \;+\; \underbrace{O(u)}_{\
 
 ## 6. Counting Sort 计数排序
 
-- 不再在每个数组下标处存单个项，而是存一条**链（chain）**，就像哈希（hashing）那样！
+- 不再在每个数组下标处存单个项，而是存一条**chain（链）**，就像 hashing（哈希）那样！
 - 为保持稳定，链数据结构要**记住项被加入的顺序**。
-- 用一个**保持插入顺序**的序列数据结构（sequence data structure）来实现链。
+- 用一个**保持插入顺序**的sequence data structure（序列数据结构）来实现链。
 - 插入项 $x$ 时，把 $x$ 追加到下标 $x.\text{key}$ 处链的末尾。
 - 排序时，按序列顺序读遍所有链，逐个返回项。
 

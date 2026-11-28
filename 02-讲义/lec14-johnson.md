@@ -27,11 +27,11 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 ## All-Pairs Shortest Paths（APSP，全源最短路径）
 
 - **输入**：有向图 $G = (V, E)$，权值函数 $w : E \to \mathbb{Z}$（边权为整数）。
-- **输出**：对**所有**顶点对 $u, v \in V$ 给出最短路径权值 $\delta(u, v)$；若图中含**负权环**（negative-weight cycle，见 L11）则**中止**（abort）。
+- **输出**：对**所有**顶点对 $u, v \in V$ 给出最短路径权值 $\delta(u, v)$；若图中含**negative-weight cycle（负权环，见 L11）**则**abort（中止）**。
 - **意义**：当我们需要理解「整张网络」的全貌时很有用，例如交通网络、circuit layout（电路布线）、supply chains（供应链）等。
 - **朴素做法**：把某个 SSSP 算法跑 $|V|$ 次（每个源点各一次），其实就已经相当好了——因为输出本身就有 $O(|V|^2)$ 的大小：
   - 用 **BFS**（广度优先搜索）：当权值为正且被 $O(|V| + |E|)$ 所界定（bounded）时，总时间 $|V| \cdot O(|V| + |E|)$；
-  - 用 **DAG Relaxation**（DAG 松弛）：当图无环（acyclic）时，总时间 $|V| \cdot O(|V| + |E|)$；
+  - 用 **DAG Relaxation**（DAG 松弛）：当图acyclic（无环）时，总时间 $|V| \cdot O(|V| + |E|)$；
   - 用 **Dijkstra**：当权值非负或图无向时，总时间 $|V| \cdot O(|V|\log|V| + |E|)$；
   - 用 **Bellman-Ford**（一般情形）：总时间 $|V| \cdot O(|V| \cdot |E|)$。
 - **本讲目标**：在**任意加权图**上，用 $|V| \cdot O(|V|\log|V| + |E|)$ 时间解出 APSP。
@@ -51,15 +51,15 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 ## Approach（总体思路）
 
 - **核心 idea（一句话本质）**：把图的边权**全部改造成非负**，同时**保持最短路径不变**，这样就能用「跑 $|V|$ 次 Dijkstra」来高效解 APSP。
-- 形式化：把 $G$ **重新加权**（reweight）成一张无负权的图 $G'$，使得「$G$ 中的一条最短路径，在 $G'$ 中仍是最短路径」。
+- 形式化：把 $G$ **reweight（重新加权）**成一张无负权的图 $G'$，使得「$G$ 中的一条最短路径，在 $G'$ 中仍是最短路径」。
 - 一旦权值非负，只需对 $|V|$ 个源点各跑一次 Dijkstra 即可得到 APSP。
 - **命题**：可以从 $G'$ 中的距离，用 $O(|V|(|V| + |E|))$ 时间反推 $G$ 中的距离：
-  - 对每个源 $s \in V$，先从 $G'$ 中的距离重建**最短路径树**（shortest-path tree），耗时 $O(|V| + |E|)$（见 L11）；
+  - 对每个源 $s \in V$，先从 $G'$ 中的距离重建**shortest-path tree（最短路径树）**，耗时 $O(|V| + |E|)$（见 L11）；
   - 该树同时是 $G$ 中的最短路径树，于是用 **DFS（深度优先搜索）** 遍历这棵树的同时顺带算出 $G$ 中的距离；
   - 总耗时 $O(|V| \cdot (|V| + |E|))$，这比「跑 $|V|$ 次 Dijkstra」还要少。
 - **但**：怎样造出边权非负的 $G'$？这件事到底可不可能？
 - **命题**：若 $G$ 含**负权环**，则**不可能**。
-- **证明**：当权值非负时，最短路径一定是**简单路径**（simple path，即不重复经过顶点的路径）；但若存在负权环，绕着环多走几圈会让权值任意小，最短路就不再是简单路径。二者矛盾，故不可能。
+- **证明**：当权值非负时，最短路径一定是**simple path（简单路径，即不重复经过顶点的路径）**；但若存在负权环，绕着环多走几圈会让权值任意小，最短路就不再是简单路径。二者矛盾，故不可能。
 - 于是真正的问题是：**给定一张含负权边、但无负权环的图 $G$，能否把边权改成非负、同时保持最短路径不变？**
 
 <!-- 并自 LNotes_14（v1 紧凑版） -->
@@ -93,7 +93,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 
 ### 第二次尝试（局部调整，正确）
 
-- **idea**：给定顶点 $v$，给 $v$ 的**所有出边**（outgoing edges）加 $h$，给 $v$ 的**所有入边**（incoming edges）减 $h$。
+- **idea**：给定顶点 $v$，给 $v$ 的**outgoing edges（所有出边）**加 $h$，给 $v$ 的**incoming edges（所有入边）**减 $h$。
 - **命题**：在上述**重新加权**下，最短路径保持不变。
 - **证明**（按路径与 $v$ 的关系分三类讨论）：
   - 每条**以 $v$ 为起点**的路径，权值都变化 $+h$；
@@ -117,7 +117,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 ## 推广到多顶点：Potential Function（势函数）
 
 - 上面的技巧对**多个顶点**同时做也成立！
-- 定义**势函数**（potential function）$h : V \to \mathbb{Z}$，把每个顶点 $v \in V$ 映射到一个整数**势**（potential）$h(v)$。
+- 定义**potential function（势函数）**$h : V \to \mathbb{Z}$，把每个顶点 $v \in V$ 映射到一个整数**potential（势）**$h(v)$。
 - 构造图 $G'$：与 $G$ 相同，但边 $(u, v) \in E$ 的新权值为
 
 ```math
@@ -158,15 +158,15 @@ w'(\pi) = \sum_{i=1}^{k} \bigl(w(v_{i-1}, v_i) + h(v_{i-1}) - h(v_i)\bigr) = w(\
 
 - 现在的问题变成：**能否找到一个势函数 $h$，使得 $G'$ 没有负权边？**
 - 即：是否存在 $h$，使对每条边 $(u, v) \in E$ 都满足 $w(u, v) + h(u) - h(v) \ge 0$？
-- 把这个条件**移项**，得 $h(v) \le h(u) + w(u, v)$——这**看起来像三角不等式**（triangle inequality）！
+- 把这个条件**移项**，得 $h(v) \le h(u) + w(u, v)$——这**看起来像 triangle inequality（三角不等式）**！
   - 回顾 L11 的三角不等式：若 $\delta(s, v)$ 有限，则 $\delta(s, v) \le \delta(s, u) + w(u, v)$，即「经中间点不会更近」。
 - **idea**：若取 $h(v) = \delta(s, v)$（$s$ 到 $v$ 的最短距离），且 $\delta(s, v)$ 对某个源 $s$ 有限，则三角不等式恰好保证上述条件成立！
-- **但**：图可能**不连通**（disconnected），此时可能不存在「能到达所有顶点」的源点 $s$…… :(
+- **但**：图可能**disconnected（不连通）**，此时可能不存在「能到达所有顶点」的源点 $s$…… :(
 - **idea（关键突破）**：**新加一个顶点 $s$**，从 $s$ 向每个 $v \in V$ 连一条**权值为 $0$ 的有向边**！:)
   - 这样对**所有** $v \in V$，都存在一条权值为 $0$ 的路径（即 $s \to v$ 这条边本身），故 $\delta(s, v) \le 0$。
 - **命题**：若对某个 $v \in V$ 有 $\delta(s, v) = -\infty$，则原图 $G$ 含有负权环。
 - **证明**：
-  - 加入 $s$ **不会引入新环**——因为 $s$ **没有入边**（incoming edges），任何环若要经过 $s$ 就必须有入边指向 $s$，故不可能。
+  - 加入 $s$ **不会引入新环**——因为 $s$ **没有 incoming edges（入边）**，任何环若要经过 $s$ 就必须有入边指向 $s$，故不可能。
   - 所以若新图中出现了负权环，该环必然**完全位于原图** $G$ 中，即原图也有负权环。
 - **反之**，若对所有 $v \in V$，$\delta(s, v)$ 都有限：
   - 由三角不等式，对每条边 $(u, v) \in E$ 有 $w'(u, v) = w(u, v) + h(u) - h(v) \ge 0$，其中 $h(v) = \delta(s, v)$。
@@ -196,7 +196,7 @@ w'(\pi) = \sum_{i=1}^{k} \bigl(w(v_{i-1}, v_i) + h(v_{i-1}) - h(v_i)\bigr) = w(\
 1. 从 $G$ 构造 $G_x$：新增顶点 $x$，对每个 $v \in V$ 加一条从 $x$ 到 $v$ 的**零权边**。
 2. 用 **Bellman-Ford** 计算 $\delta_x(x, v)$（对每个 $v \in V$）。
 3. 若存在 $v \in V$ 使 $\delta_x(x, v) = -\infty$：
-   - **中止**（abort），因为 $G$ 中存在负权环。
+   - **abort（中止）**，因为 $G$ 中存在负权环。
 4. 否则（对所有 $v$，$\delta_x(x, v)$ 有限）：
    - 对每条边重加权 $w'(u, v) = w(u, v) + \delta_x(x, u) - \delta_x(x, v)$，得到图 $G'$。
    - 对每个 $u \in V$：

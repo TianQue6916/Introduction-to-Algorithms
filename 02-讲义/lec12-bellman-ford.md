@@ -27,7 +27,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 **Previously（上一讲回顾）**：
 
 - weighted graph（带权图）、shortest-path weight（最短路径权值）$\delta(s,v)$、negative-weight cycle（负权环）的定义；
-- 如何由最短路径权值在 $O(\lvert V\rvert+\lvert E\rvert)$ 时间内构造最短路径树（shortest-path tree）；
+- 如何由最短路径权值在 $O(\lvert V\rvert+\lvert E\rvert)$ 时间内构造shortest-path tree（最短路径树）；
 - **DAG Relaxation**：在带权 DAG 上以 $O(\lvert V\rvert+\lvert E\rvert)$ 时间求解 SSSP 的算法；
 - 带负权边的 SSSP 目标：对每个 $v\in V$ 求出 $\delta(s,v)$（若 $v$ 经负权环可达则为 $-\infty$）；若存在从 $s$ 可达的负权环，则返回其中一个。
 
@@ -51,14 +51,14 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 4. 在 $G'$ 上从 $s$ 运行算法 $A$；
 5. $G'$ 连通，故 $\lvert V'\rvert=O(\lvert E'\rvert)=O(\lvert E\rvert)$，于是 $A$ 的运行时间为 $O(\lvert V\rvert\lvert E\rvert)$。
 
-**今日目标**：找到一种对一般图（general graph，含负权边、甚至负权环）都成立、且具有上述 $O(\lvert V\rvert\lvert E\rvert)$ 运行时间的 SSSP 算法——这就是 Bellman-Ford。
+**今日目标**：找到一种对general graph（一般图，含负权边、甚至负权环）都成立、且具有上述 $O(\lvert V\rvert\lvert E\rvert)$ 运行时间的 SSSP 算法——这就是 Bellman-Ford。
 
 ---
 
 ## 2. Simple Shortest Paths（简单最短路径）
 
 - 若图含环且带负权，则可能含负权环（麻烦所在）；
-- 但若图**不含**负权环，则最短路径一定是**简单路径**（simple path，即不重复经过任何顶点）。
+- 但若图**不含**负权环，则最短路径一定是**simple path（简单路径，即不重复经过任何顶点）**。
 
 **Claim 1（声明 1）**：若 $\delta(s,v)$ 有限，则存在一条到 $v$ 的**简单**最短路径。
 
@@ -82,7 +82,7 @@ Instructors: Erik Demaine, Jason Ku, and Justin Solomon
 - 若 $\delta(s,v)\neq-\infty$，则 $\delta(s,v)=\delta_{\lvert V\rvert-1}(s,v)$（因为此时最短路径是简单路径，至多 $\lvert V\rvert-1$ 条边，多给一条边也不会更短）；
 - 若 $\delta_{\lvert V\rvert}(s,v)\lt \delta_{\lvert V\rvert-1}(s,v)$：
   - 说明存在一条到 $v$ 的更短的**非简单**路径，故 $\delta(s,v)=-\infty$；
-  - 称这样的 $v$ 为**（负环）见证顶点（negative cycle witness，简称 witness）**。
+  - 称这样的 $v$ 为**negative cycle witness（（负环）见证顶点，简称 witness）**。
 - 注意：可能存在最短路径权值为 $-\infty$、但本身**不是** witness 的顶点（它们是被 witness 传播到 $-\infty$ 的）。
 
 **Claim 2（声明 2）**：若 $\delta(s,v)=-\infty$，则 $v$ 可从某个 witness 到达。
