@@ -104,7 +104,7 @@ Instructors: Erik Demaine（埃里克·德梅因）, Jason Ku（顾杰森）, an
 
 ### <span style="color:#2471a3;">**[problem]**</span> <span style="color:#c0392b">Problem 1. Counting Blobs（数连通块，S18 Quiz 2）</span>
 
-一个 image（图像）是黑白方形像素组成的 2D 网格（grid），每个白色像素都属于某个 blob（连通块）。两个白色像素**共享网格的一条边**时，它们属于同一个 blob。黑色像素不属于任何 blob。给定表示图像的一个 $n \times m$ array（数组），描述一个 $O(nm)$ 时间的 algorithm（算法）来数出图像中 blob 的个数。
+一个 image（图像）是黑白方形像素组成的 2D grid（网格），每个白色像素都属于某个 blob（连通块）。两个白色像素**共享网格的一条边**时，它们属于同一个 blob。黑色像素不属于任何 blob。给定表示图像的一个 $n \times m$ array（数组），描述一个 $O(nm)$ 时间的 algorithm（算法）来数出图像中 blob 的个数。
 
 > **[solution] Solution（解答）:**
 >
