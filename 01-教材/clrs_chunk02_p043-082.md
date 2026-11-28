@@ -638,7 +638,7 @@ a^{\log_b c} &= c^{\log_b a},
 
 ### Section 3.2 · Standard Notations and Common Functions（标准记号与常用函数）（续）
 
-根据 equation (3.15)（式 (3.15)），把对数的底（base）从一个常数换成另一个常数，只会让 logarithm（对数）的值改变一个 constant factor（常数因子）；因此当我们在意的是增长阶数、不关心常数因子时——例如在 O-notation（O 记号）中——我们常常直接使用记号 $\lg n$。Computer scientist（计算机科学家）觉得 2 是最自然的对数之底，因为太多的 algorithms（算法）与 data structures（数据结构）都涉及把一个问题 split（拆分）成两部分。
+根据 equation (3.15)（式 (3.15)），把对数的 base（底）从一个常数换成另一个常数，只会让 logarithm（对数）的值改变一个 constant factor（常数因子）；因此当我们在意的是增长阶数、不关心常数因子时——例如在 O-notation（O 记号）中——我们常常直接使用记号 $\lg n$。Computer scientist（计算机科学家）觉得 2 是最自然的对数之底，因为太多的 algorithms（算法）与 data structures（数据结构）都涉及把一个问题 split（拆分）成两部分。
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> "底数无关"的依据就是式 (3.15) 最后一条 $\log_b a=\frac{\log_c a}{\log_c b}$：换底只是除以一个常数 $\log_c b$，而 Θ 与 O 恰好对常数因子免疫。但这句结论有一个极易被套错的边界：它只对 logarithm（对数）成立，对 exponential（指数）完全不成立。分不清这两者，后面的比较就会一路错下去。
 >
@@ -1651,7 +1651,7 @@ T(n) =
 
 > <span style="color:#7f8c8d;">CLRS §4.2, p.80</span>
 
-我们用一次矩阵乘法换来了常数次数的矩阵加法——这就是一次 tradeoff（权衡）。一旦我们理解了 recurrence（递归式）及其解，就会看到这种权衡实际上带来了更低的渐近运行时间（asymptotic running time）。根据 Section 4.5 的 master method（主方法），recurrence (4.18) 的解为 $T(n) = \Theta(n^{\lg 7})$。
+我们用一次矩阵乘法换来了常数次数的矩阵加法——这就是一次 tradeoff（权衡）。一旦我们理解了 recurrence（递归式）及其解，就会看到这种权衡实际上带来了更低的 asymptotic running time（渐近运行时间）。根据 Section 4.5 的 master method（主方法），recurrence (4.18) 的解为 $T(n) = \Theta(n^{\lg 7})$。
 
 现在我们来描述细节。在第 2 步中，我们创建如下 10 个矩阵：
 

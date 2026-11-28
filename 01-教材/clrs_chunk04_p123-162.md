@@ -122,7 +122,7 @@ PERMUTE-BY-SORTING(A)
 \end{aligned}
 ```
 
-> 这样就证明了：得到恒等排列（identity permutation）的概率是 $1/n!$。
+> 这样就证明了：得到 identity permutation（恒等排列）的概率是 $1/n!$。
 
 > 我们可以把这个证明推广到优先级的任意一个排列。考虑集合 $\{1, 2, \ldots, n\}$ 的任何一个固定排列 $\sigma = \langle \sigma(1), \sigma(2), \ldots, \sigma(n) \rangle$。令 $r_i$ 表示分配给元素 $A[i]$ 的优先级的 rank（名次），其中拥有第 $j$ 小优先级的元素名次为 $j$。如果我们把 $E_i$ 定义为"元素 $A[i]$ 得到第 $\sigma(i)$ 小的优先级"，即 $r_i = \sigma(i)$ 这一事件，那么同样的证明仍然成立。因此，如果我们计算得到任何一个特定排列的概率，其计算过程与上面的完全相同，所以得到这个排列的概率同样是 $1/n!$。
 
@@ -496,7 +496,7 @@ X &= \sum_{i=1}^{k} \sum_{j=i+1}^{k} X_{ij}\,.
 
 #### Section 5.4.3 · Streaks（连续成功序列） <span style="color:#2471a3;">**[section]**</span>
 
-假设你抛掷一枚 fair coin（均匀硬币）$n$ 次。你期望看到的最长的连续 heads（正面）序列（streak）有多长？答案是 $\Theta(\lg n)$，正如下面的分析所表明的。
+假设你抛掷一枚 fair coin（均匀硬币）$n$ 次。你期望看到的最长的连续 heads（正面）streak（序列）有多长？答案是 $\Theta(\lg n)$，正如下面的分析所表明的。
 
 我们首先证明最长正面连续序列的期望长度是 $O(\lg n)$。每次抛掷出现正面的概率是 $1/2$。令 $A_{ik}$ 表示"长度至少为 $k$ 的正面连续序列从第 $i$ 次抛掷开始"这一 event（事件），更精确地说，表示"$k$ 次连续抛掷 $i, i+1, \ldots, i+k-1$ 全部为正面"这一事件，其中 $1 \le k \le n$ 且 $1 \le i \le n-k+1$。由于各次抛掷是 mutually independent（相互独立的），对任一给定的事件 $A_{ik}$，全部 $k$ 次抛掷都是正面的概率为
 
@@ -689,7 +689,7 @@ X = \sum_{i=1}^{n-k+1} X_{ik}\,.
 
 作为最后一个例子，我们考虑 hiring problem（雇用问题）的一个 variant（变体）。假设现在我们不想为了找出最好的那位而面试所有的 candidates（候选人），也不想随着应聘者越来越好而不停地雇用与解雇。相反，我们愿意满足于一位接近最好的候选人，以换取恰好只雇用一次。我们必须遵守公司的一项要求：每次面试之后，我们必须要么立即把职位提供给应聘者，要么立即拒绝该应聘者。那么，在"最小化面试量"与"最大化所雇用候选人的质量"之间如何 trade-off（权衡）？
 
-我们可以按如下方式 modeling（建模）这个问题。面试过一位应聘者之后，我们能够给每人一个 score（分数）；令 $\text{score}[i]$ 表示我们给第 $i$ 位应聘者的分数，并假设没有两位应聘者得到相同的分数。在我们见过 $j$ 位应聘者之后，我们知道这 $j$ 位中谁的分数最高，但不知道剩余的 $n-j$ 位应聘者中是否会有人得到更高的分数。我们决定采用这样的 strategy（策略）：选择一个 positive integer（正整数）$k < n$，先面试并拒绝前 $k$ 位应聘者，然后雇用其后第一位分数高于所有先前应聘者的应聘者。如果结果发现最有资格（best-qualified）的应聘者恰在前 $k$ 位被面试者之中，那么我们将雇用第 $n$ 位应聘者。我们在过程 ON-LINE-MAXIMUM$(k, n)$ 中将这一策略 formalize（形式化），它返回我们希望雇用的候选人的 index（下标）。
+我们可以按如下方式 modeling（建模）这个问题。面试过一位应聘者之后，我们能够给每人一个 score（分数）；令 $\text{score}[i]$ 表示我们给第 $i$ 位应聘者的分数，并假设没有两位应聘者得到相同的分数。在我们见过 $j$ 位应聘者之后，我们知道这 $j$ 位中谁的分数最高，但不知道剩余的 $n-j$ 位应聘者中是否会有人得到更高的分数。我们决定采用这样的 strategy（策略）：选择一个 positive integer（正整数）$k < n$，先面试并拒绝前 $k$ 位应聘者，然后雇用其后第一位分数高于所有先前应聘者的应聘者。如果结果发现 best-qualified（最有资格）的应聘者恰在前 $k$ 位被面试者之中，那么我们将雇用第 $n$ 位应聘者。我们在过程 ON-LINE-MAXIMUM$(k, n)$ 中将这一策略 formalize（形式化），它返回我们希望雇用的候选人的 index（下标）。
 
 ---
 
@@ -966,7 +966,7 @@ quicksort（快速排序）在 Chapter 7（第 7 章）中给出，同样对 $n$
 
 insertion sort、merge sort、heapsort 和 quicksort 都是 comparison sort（比较排序）：它们通过比较 elements（元素）来确定 input array（输入数组）的 sorted order（已排序顺序）。Chapter 8（第 8 章）一开始将引入 decision-tree model（决策树模型），以研究 comparison sorts 的性能局限。利用这一模型，我们证明任何 comparison sort 在 $n$ 个输入上的 worst-case running time 具有 $\Omega(n \lg n)$ 的下界，从而说明 heapsort 和 merge sort 是渐近最优的比较排序算法。
 
-Chapter 8 随后进一步说明：如果我们能够通过比较元素以外的手段收集到关于输入的 sorted order 的信息，就可以打破 $\Omega(n \lg n)$ 这一 lower bound（下界）。例如，counting sort（计数排序）假设输入的数都属于集合 $\{0, 1, \ldots, k\}$。通过利用 array indexing（数组下标索引）作为确定相对顺序的工具，counting sort 能够以 $\Theta(k + n)$ 时间对 $n$ 个数排序。于是，当 $k = O(n)$ 时，counting sort 的运行时间与 input array 的规模呈 linear（线性）关系。一个相关算法 radix sort（基数排序）可以用来扩展 counting sort 的适用范围。如果待排序的有 $n$ 个整数，每个整数有 $d$ 位数字（digit），而每一位数字最多可取 $k$ 种可能的值，那么 radix sort 能以 $\Theta(d(n + k))$ 时间对这些数排序。当 $d$ 为常数且 $k$ 为 $O(n)$ 时，radix sort 以线性时间运行。第三个算法 bucket sort（桶排序）需要知道 input array 中数的 probabilistic distribution（概率分布）。对于 uniformly distributed（均匀分布）在 half-open interval（半开区间）$[0, 1)$ 上的 $n$ 个实数，它能以 average-case（平均情况）$O(n)$ 时间完成排序。
+Chapter 8 随后进一步说明：如果我们能够通过比较元素以外的手段收集到关于输入的 sorted order 的信息，就可以打破 $\Omega(n \lg n)$ 这一 lower bound（下界）。例如，counting sort（计数排序）假设输入的数都属于集合 $\{0, 1, \ldots, k\}$。通过利用 array indexing（数组下标索引）作为确定相对顺序的工具，counting sort 能够以 $\Theta(k + n)$ 时间对 $n$ 个数排序。于是，当 $k = O(n)$ 时，counting sort 的运行时间与 input array 的规模呈 linear（线性）关系。一个相关算法 radix sort（基数排序）可以用来扩展 counting sort 的适用范围。如果待排序的有 $n$ 个整数，每个整数有 $d$ digit（位数字），而每一位数字最多可取 $k$ 种可能的值，那么 radix sort 能以 $\Theta(d(n + k))$ 时间对这些数排序。当 $d$ 为常数且 $k$ 为 $O(n)$ 时，radix sort 以线性时间运行。第三个算法 bucket sort（桶排序）需要知道 input array 中数的 probabilistic distribution（概率分布）。对于 uniformly distributed（均匀分布）在 half-open interval（半开区间）$[0, 1)$ 上的 $n$ 个实数，它能以 average-case（平均情况）$O(n)$ 时间完成排序。
 
 > <span style="color:#1e8449;">**[note] Note（译者注）:**</span> 比较排序的下界可以提前看穿，而且只需要两件 6.042J 的工具：把算法画成一棵树，再数叶子。
 >
@@ -1173,7 +1173,7 @@ Show that, with the array representation for storing an $n$-element heap, the le
 
 ### Section 6.2 · Maintaining the heap property（维护堆的性质） <span style="color:#2471a3;">**[section]**</span>
 
-为了维护 max-heap property（最大堆性质），我们调用 MAX-HEAPIFY（堆化）过程。它的 inputs（输入）是数组 $A$ 和一个指向数组的 index（下标）$i$。在被调用时，MAX-HEAPIFY 假定以 LEFT(i) 和 RIGHT(i) 为根的 binary trees（二叉树）都是 max-heap（最大堆），但 $A[i]$ 可能小于其 children（孩子），从而违背最大堆性质。MAX-HEAPIFY 让 $A[i]$ 的值在最大堆中"逐级下降"（float down），使得以 下标 $i$ 为根的 subtree（子树）重新遵循最大堆性质。
+为了维护 max-heap property（最大堆性质），我们调用 MAX-HEAPIFY（堆化）过程。它的 inputs（输入）是数组 $A$ 和一个指向数组的 index（下标）$i$。在被调用时，MAX-HEAPIFY 假定以 LEFT(i) 和 RIGHT(i) 为根的 binary trees（二叉树）都是 max-heap（最大堆），但 $A[i]$ 可能小于其 children（孩子），从而违背最大堆性质。MAX-HEAPIFY 让 $A[i]$ 的值在最大堆中 float down（"逐级下降"），使得以 下标 $i$ 为根的 subtree（子树）重新遵循最大堆性质。
 
 ```text
 MAX-HEAPIFY(A, i)
